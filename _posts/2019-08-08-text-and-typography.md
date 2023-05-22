@@ -329,38 +329,29 @@ int main(int argc, char* argv[]) {
 
 
 
-<details open=""
-    style="box-sizing: inherit; display: block; transition: all 0.5s ease-out 0s; cursor: auto; width: 690px;">
-    <summary
-        style="box-sizing: inherit; display: flex; transition: all 0.5s ease-out 0s; cursor: pointer; list-style: none; border-radius: 8px 8px 0px 0px; background-color: rgba(255, 136, 71, 0.2);">
-        <span class="accordion-trigger"
-            style="box-sizing: inherit; display: inline-flex; justify-content: space-between; align-items: center; min-height: 56px; width: 642px; padding: 8px 24px;"><span
-                class="trigger-text"
-                style="box-sizing: inherit; font-size: 1.125rem; padding-right: 24px;">Answer</span><span
-                class="btn-normalw bg-white bc-black-night fc-black-night"
-                style="box-sizing: inherit; appearance: none; display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0px 24px; font-size: 1rem; border-radius: 12px; text-decoration: none; color: rgb(20, 22, 30); border: 1px solid rgb(20, 22, 30); background-color: rgb(255, 255, 255);">Reveal</span></span>
-    </summary>
-    <div class="spoiler-content" style="box-sizing: inherit; padding: 16px 24px;">
-        <p
-            style="box-sizing: inherit; margin: 20px 0px 0px; font-size: 1rem; font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;; line-height: 1.66; word-break: break-word;">
-        </p>
-        <ul>
-            <li>
-                第一行
-            </li>
-            <li>
-                第二行
-            </li>
-            <li>
-                第三行
-            </li>
-            <li>
-                第四行
-            </li>
-        </ul>
-    </div>
+<details>
+  <summary>
+    <i>Click to view features</i>
+  </summary>
+  <ul>
+	  <li> Dark / Light Theme Mode </li>
+   	  <li> Dark / Light Theme Mode </li>
+    </ul>
 </details>
 
+
+
+```html
+<details>
+  <summary>
+    <i>Click to view features</i>
+  </summary>
+  <ul>
+	  <li> Dark / Light Theme Mode </li>
+   	  <li> Dark / Light Theme Mode </li>
+    </ul>
+</details>
+```
 
 
 
