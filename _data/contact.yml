@@ -1,24 +1,19 @@
 #  The contact options.
-# https://www.iconfont.cn/
-# _data/assets/cross_origin.yml -> iconfont.css
--
-  type: github
-  icon: 'fab fa-github'
 
--
-  type: zhihu
-  icon: 'iconfont icon-zhihu1'
+- type: github
+  icon: "fab fa-github"
+
+- type: zhihu
+  icon: "fa-brands fa-zhihu"
   url: 'https://www.zhihu.com/people/games_engine'
 
--
-  type: email
-  icon: 'iconfont icon-mail'
-  noblank: true            # 在当前页面打开链接
--
-  type: rss
-  icon: 'iconfont icon-rss'
-  noblank: true
+- type: email
+  icon: "fas fa-envelope"
+  noblank: true # open link in current tab
 
+- type: rss
+  icon: "fas fa-rss"
+  noblank: true
 # Uncomment and complete the url below to enable more contact options
 # -
 #   type: twitter
