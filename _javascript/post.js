@@ -5,7 +5,12 @@ import {
   initLocaleDatetime,
   initClipboard,
   initPageviews,
-  toc
+  toc,
+  highlightLines,
+  runCpp,
+  runJavascript,
+  runPython,
+  runRust
 } from './modules/plugins';
 
 basic();
@@ -17,3 +22,8 @@ initLocaleDatetime();
 initClipboard();
 toc();
 initPageviews();
+highlightLines();
+runCpp();
+runJavascript();
+runPython();
+runRust();

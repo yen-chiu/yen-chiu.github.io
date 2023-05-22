@@ -1,28 +1,37 @@
 #  The contact options.
+# https://www.iconfont.cn/
+# _data/assets/cross_origin.yml -> iconfont.css
+-
+  type: github
+  icon: 'fab fa-github'
 
-- type: github
-  icon: "fab fa-github"
+-
+  type: zhihu
+  icon: 'iconfont icon-zhihu1'
+  url: 'https://www.zhihu.com/people/games_engine'
 
-- type: twitter
-  icon: "fab fa-twitter"
-
-- type: email
-  icon: "fas fa-envelope"
-  noblank: true # open link in current tab
-
-- type: rss
-  icon: "fas fa-rss"
+-
+  type: email
+  icon: 'iconfont icon-mail'
+  noblank: true            # 在当前页面打开链接
+-
+  type: rss
+  icon: 'iconfont icon-rss'
   noblank: true
+
 # Uncomment and complete the url below to enable more contact options
-#
-# - type: mastodon
-#   icon: 'fab fa-mastodon'   # icons powered by <https://fontawesome.com/>
+# -
+#   type: twitter
+#   icon: 'iconfont icon-twitter'
+# -
+#   type: mastodon
+#   icon: 'iconfont icon-mastodon'   # icons powered by <https://fontawesome.com/>
 #   url:  ''                  # Fill with your Mastodon account page, rel="me" will be applied for verification
-#
-# - type: linkedin
-#   icon: 'fab fa-linkedin'   # icons powered by <https://fontawesome.com/>
+# -
+#   type: linkedin
+#   icon: 'iconfont icon-linkedin'   # icons powered by <https://fontawesome.com/>
 #   url:  ''                  # Fill with your Linkedin homepage
-#
-# - type: stack-overflow
-#   icon: 'fab fa-stack-overflow'
+# -
+#   type: stack-overflow
+#   icon: 'iconfont icon-stack-overflow'
 #   url:  ''                  # Fill with your stackoverflow homepage
