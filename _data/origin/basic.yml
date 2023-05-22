@@ -49,3 +49,9 @@ polyfill:
 
 mathjax:
   js: /assets/lib/mathjax/tex-chtml.js
+
+firacode:
+  css: /assets/lib/firacode/distr/fira_code.css
+
+socket-io-client:
+  js: /assets/lib/socket.io-client/dist/socket.io.min.js

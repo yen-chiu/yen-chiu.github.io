@@ -50,9 +50,9 @@
 
   <title>
     {%- unless page.layout == 'home' -%}
-      {{ page.title | append: ' | ' }}
+    {{ page.title | flatify | append: ' | '}}
     {%- endunless -%}
-    {{ site.title }}
+    {{ site.title | flatify }}
   </title>
 
   {% include favicons.html %}
@@ -108,6 +108,7 @@
 
   <!-- JavaScript -->
 
+  <script async src="{{ site.data.origin[type].socket-io-client.js | relative_url }}"></script>
   {% unless site.theme_mode %}
     {% include mode-toggle.html %}
   {% endunless %}

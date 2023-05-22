@@ -23,15 +23,15 @@
 
           {% elsif forloop.last %}
             {% if page.collection == 'tabs' %}
-              <span>{{ site.data.locales[include.lang].tabs[item] | default: page.title }}</span>
+              <span>{{ site.data.locales[include.lang].tabs[item] | default: page.title | flatify }}</span>
             {% else %}
-              <span>{{ page.title }}</span>
+              <span>{{ page.title | flatify }}</span>
             {% endif %}
 
           {% elsif page.layout == 'category' or page.layout == 'tag' %}
             <span>
               <a href="{{ item | relative_url }}">
-                {{ site.data.locales[include.lang].tabs[item] | default: page.title }}
+                {{ site.data.locales[include.lang].tabs[item] | default: page.title | flatify }}
               </a>
             </span>
           {% endif %}
