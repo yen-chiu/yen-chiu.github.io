@@ -35,7 +35,7 @@ With your property created, you now need to set up Data Stream to track your blo
 
 It should look like this:
 
-![google-analytics-data-stream](/posts/20210103/01-google-analytics-data-stream.png){: width="1086" height="542"}
+![google-analytics-data-stream](https://chirpy-img.netlify.app/posts/20210103/01-google-analytics-data-stream.png){: width="1086" height="542"}
 
 Now, click on the new data stream and grab the **Measurement ID**. It should look something like `G-V6XXXXXXXX`. Copy this to your `_config.yml`{: .filepath} file:
 
@@ -51,7 +51,7 @@ google_analytics:
 
 When you push these changes to your blog, you should start seeing the traffic on your Google Analytics. Play around with the Google Analytics dashboard to get familiar with the options available as it takes like 5 mins to pick up your changes. You should now be able to monitor your traffic in real time.
 
-![google-analytics-realtime](/posts/20210103/02-google-analytics-realtime.png){: width="616" height="557"}
+![google-analytics-realtime](https://chirpy-img.netlify.app/posts/20210103/02-google-analytics-realtime.png){: width="616" height="557"}
 
 ## Setup Page Views
 
@@ -89,17 +89,17 @@ There is a detailed [tutorial](https://developers.google.com/analytics/solutions
 
     ```console
     [root@bc96abf71ef8 /]# gcloud init
-
+    
     ~snip~
-
+    
     Go to the following link in your browser:
-
+    
         https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=XYZ.apps.googleusercontent.com&redirect_uri=ABCDEFG
-
+    
     Enter verification code: <VERIFICATION CODE THAT YOU GET AFTER YOU VISIT AND AUTHENTICATE FROM THE ABOVE LINK>
-
+    
     You are logged in as: [blah_blah@gmail.com].
-
+    
     Pick cloud project to use:
     [1] chirpy-test-300716
     [2] Create a new project
@@ -155,7 +155,7 @@ There is a detailed [tutorial](https://developers.google.com/analytics/solutions
     ```console
     [root@bc96abf71ef8 src]# gcloud app deploy
     Services to deploy:
-
+    
     descriptor:      [/tmp/google-analytics-super-proxy/src/app.yaml]
     source:          [/tmp/google-analytics-super-proxy/src]
     target project:  [chirpy-test-XXXX]
@@ -165,7 +165,7 @@ There is a detailed [tutorial](https://developers.google.com/analytics/solutions
 
 
     Do you want to continue (Y/n)? Y
-
+    
     Beginning deployment of service [default]...
     ╔════════════════════════════════════════════════════════════╗
     ╠═ Uploading 1 file to Google Cloud Storage                 ═╣
@@ -174,10 +174,10 @@ There is a detailed [tutorial](https://developers.google.com/analytics/solutions
     Updating service [default]...done.
     Setting traffic split for service [default]...done.
     Deployed service [default] to [https://chirpy-test-XXXX.ue.r.appspot.com]
-
+    
     You can stream logs from the command line by running:
     $ gcloud app logs tail -s default
-
+    
     To view your application in the web browser run:
     $ gcloud app browse
     ```
@@ -190,7 +190,7 @@ There is a detailed [tutorial](https://developers.google.com/analytics/solutions
 
 If everything went good, you'll get this screen:
 
-![superProxy-deployed](/posts/20210103/03-superProxy-deployed.png){: width="1366" height="354"}
+![superProxy-deployed](https://chirpy-img.netlify.app/posts/20210103/03-superProxy-deployed.png){: width="1366" height="354"}
 
 ### Create Google Analytics Query
 
@@ -205,23 +205,23 @@ The query parameters are as follows:
 
 In order to reduce the returned results and reduce the network bandwidth, we add custom filtering rules [^ga-filters]:
 
-- **filters**: fill in `ga:pagePath=~^/posts/.*/$;ga:pagePath!@=`.
+- **filters**: fill in `ga:pagePath=~^https://chirpy-img.netlify.app/posts/.*/$;ga:pagePath!@=`.
 
   Among them, `;` means using _logical AND_ to concatenate two rules.
 
-  If the `site.baseurl` is specified, change the first filtering rule to `ga:pagePath=~^/BASE_URL/posts/.*/$`, where `BASE_URL` is the value of `site.baseurl`.
+  If the `site.baseurl` is specified, change the first filtering rule to `ga:pagePath=~^/BASE_URLhttps://chirpy-img.netlify.app/posts/.*/$`, where `BASE_URL` is the value of `site.baseurl`.
 
 After <kbd>Run Query</kbd>, copy the generated contents of **API Query URI** at the bottom of the page and fill in the **Encoded URI for the query** of SuperProxy on GAE.
 
 After the query is saved on GAE, a **Public Endpoint** (public access address) will be generated, and we will get the query result in JSON format when accessing it. Finally, click <kbd>Enable Endpoint</kbd> in **Public Request Endpoint** to make the query effective, and click <kbd>Start Scheduling</kbd> in **Scheduling** to start the scheduled task.
 
-![superproxy-query](/posts/20210103/04-superproxy-query.png){: width="1100" height="126"}
+![superproxy-query](https://chirpy-img.netlify.app/posts/20210103/04-superproxy-query.png){: width="1100" height="126"}
 
 ## Configure Chirpy to Display Page View
 
 Once all the hard part is done, it is very easy to enable the Page View on Chirpy theme. Your superProxy dashboard should look something like below and you can grab the required values.
 
-![superproxy-dashboard](/posts/20210103/05-superproxy-dashboard.png){: width="1210" height="694"}
+![superproxy-dashboard](https://chirpy-img.netlify.app/posts/20210103/05-superproxy-dashboard.png){: width="1210" height="694"}
 
 Update the `_config.yml`{: .filepath} file of [**Chirpy**][chirpy-homepage] project with the values from your dashboard, to look similar to the following:
 
