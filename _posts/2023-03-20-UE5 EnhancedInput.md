@@ -52,22 +52,22 @@ tags: []
 
 ## 动态和上下文输入映射
 
-使用增强输入时，你可以在运行时为玩家添加和删除 **映射上下文（Mapping Contexts）** 。
+使用增强输入时，可以在运行时为玩家添加和删除 **映射上下文（Mapping Contexts）** 。
 
 这样可更轻松地管理大量 **操作（Actions）** 。
 
-你可以根据玩家的当前状态更改特定输入的行为。
+可以根据玩家的当前状态更改特定输入的行为。
 
-例如，如果你有一个可以行走、冲刺、俯卧的玩家角色。
+例如，如果有一个可以行走、冲刺、俯卧的玩家角色。
 
-- 对于其中每种角色移动类型，你可以交换映射上下文，让CTRL键执行不同的操作。
+- 对于其中每种角色移动类型，可以交换映射上下文，让CTRL键执行不同的操作。
   - 行走时按下CTRL键，角色应该蹲伏。
   - 冲刺时按下CTRL键，角色应该滑行。
   - 俯卧时按下CTRL键，角色应该重新站起来。
 
 ## 创建增强输入资产
 
-增强输入默认启用。你可以从内容浏览器点击 **添加（Add）** ( **+** )并找到 **输入（Input）** 类别，创建输入资产。
+增强输入默认启用。可以从内容浏览器点击 **添加（Add）** ( **+** )并找到 **输入（Input）** 类别，创建输入资产。
 
 ![image_0.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201221983.jpeg)
 
@@ -82,34 +82,42 @@ tags: []
 
 - **输入映射上下文（Input Mapping Contexts）** 
 
-- **输入修饰符（Input Modifiers）  **
+- **输入修饰符（Input Modifiers）**
 
 - **输入触发器（Input Triggers)** 
 
 
-### 输入动作
+### Input Actions - 输入动作
 
-**输入动作（Input Actions）** 是增强输入系统与项目代码之间的通信链接。
+**输入动作（Input Actions）** 是增强输入系统与项目代码之间的**通信**链接。
 
-输入动作在概念上相当于 **操作（Action）** 和 **轴（Axis）** 映射名称，只是它们是数据资产。
+- 在概念上相当于 **操作（Action）** 和 **轴（Axis）** 映射名称，只是它们是数据资产。
 
-每个输入动作应该表示用户可以执行的某件事，例如"蹲伏"或"发射武器"。
+- 每个IA该表示用户可以执行的某件事。
 
-你可以在蓝图或C++中添加 **输入侦听器（Input Listeners）** ，侦听输入动作的状态何时发生变化。
+  > 例如 : 
+  >
+  > - 蹲伏
+  > - 发射武器
 
-输入动作可以是多种不同的类型，这些类型将确定行为。你可以创建简单的布尔动作或更复杂的3D轴。动作类型将确定值。
+可以在蓝图或C++中添加 **输入侦听器（Input Listeners）** ，侦听输入动作的状态何时发生变化。
 
-布尔动作采用简单的 **布尔** 值， **Axis1D** 为 **浮点** 值， **Axis2D** 为 **FVector2D** ， **Axis3D** 为整个 **Fvector** 。
+IA 可以是多种不同的类型，这些类型将确定行为。可以创建简单的布尔动作或更复杂的3D轴。动作类型将决定值的类型。
+
+| ActionType | ValueType |
+| ---------: | --------- |
+|    Digital | Bool      |
+|     Axis1D | float     |
+|     Axis2D | FVector2D |
+|     Axis3D | Fvector   |
 
 ![image_1.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201412799.jpeg)
 
 输入动作可以是不同的值类型，这些类型将确定行为。
 
-你应该将布尔动作用于状态为开或关的输入。这相当于旧版输入系统中的较旧动作映射。
-
-对于游戏手柄控制杆值等控制点，你可以使用2D轴动作来保存控制杆位置的X和Y值。
-
-你可以使用3D轴保存更复杂的数据，例如运动控制器信息。
+- 应该将布尔动作用于状态为开或关的输入。这相当于旧版输入系统中的较旧动作映射。
+- 对于游戏手柄控制杆值等控制点，可以使用2D轴动作来保存控制杆位置的X和Y值。
+- 可以使用3D轴保存更复杂的数据，例如运动控制器信息。
 
 例如，
 
@@ -118,37 +126,48 @@ tags: []
 
 ![image_2.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201412100.jpeg)
 
-Lyra游戏示例中使用的不同输入动作。
+> Lyra游戏示例中使用的不同输入动作。
 
 
 
-#### 触发状态
+#### Trigger State - 触发状态
 
-**触发状态（Trigger State）** 表示动作的当前状态，例如 **已开始（Started）** 、 **进行中（Ongoing）** 、 **已触发（Triggered）** 、 **已完成（Completed）** 和 **已取消（Canceled）** 。通常，你将使用"已触发"状态。你可以绑定到C++和蓝图中的特定状态。
+触发状态表示动作的当前状态
 
-- **已触发（Triggered）：** 动作已触发。这意味着它完成了所有触发器要求的求值。
+- **已开始（Started）** 
 
-  > 例如，"按下并松开"触发器会在用户松开按键时发送。
+  - 发生了开始触发器求值的某个事件。
 
-- **已开始（Started）：** 发生了开始触发器求值的某个事件。
+    > 例如，"双击"触发器的第一次按下将调用"已开始"状态一次。
 
-  > 例如，"双击"触发器的第一次按下将调用"已开始"状态一次。
+- **进行中（Ongoing）** 
 
-- **进行中（Ongoing）：** 触发器仍在进行处理。
+  - 触发器仍在进行处理。
 
-  > 例如，当用户按下按钮时，在达到指定持续时间之前，"按住"动作处于进行中状态。
-  >
-  > 根据触发器，此事件将在收到输入值之后对动作求值时触发每次更新。
+    > 例如，当用户按下按钮时，在达到指定持续时间之前，"按住"动作处于进行中状态。
+    >
+    > 根据触发器，此事件将在收到输入值之后对动作求值时触发每次更新。
 
-- **已完成（Completed）：** 触发器求值过程已完成。
+- **已触发（Triggered）** 
 
-- **已取消（Canceled）：** 触发已取消。
+  - 动作已触发。这意味着它完成了所有触发器要求的求值。
 
-  > 例如，"按住"动作还没触发之前，用户就松开了按钮。
+    > 例如，"按下并松开"触发器会在用户松开按键时发送。
+
+- **已完成（Completed）** 
+
+  - 触发器求值过程已完成。
+
+- **已取消（Canceled）** 
+
+  - 例如，"按住"动作还没触发之前，用户就松开了按钮。
+
+
+通常，将使用 <kbd>Triggered </kbd>状态。
 
 #### 添加输入侦听器
 
-要在蓝图中添加输入动作侦听器，你可以在蓝图的事件图表中右键点击，然后键入你的输入动作数据资产的名称。
+要在蓝图中添加输入动作侦听器，可以在蓝图的事件图表中右键点击，然后键入的输入动作数据资产的名称。
 
 ![image_3.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201424213.jpeg)
 
@@ -156,13 +175,13 @@ Lyra游戏示例中使用的不同输入动作。
 
 添加输入动作事件并将其设置为执行打印字符串。
 
-你还可以绑定C++中的输入动作
+还可以绑定C++中的输入动作
 
 ```c++
 void AFooBar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-    // 你可以通过更改"ETriggerEvent"枚举值，绑定到此处的任意触发器事件
+    // 可以通过更改"ETriggerEvent"枚举值，绑定到此处的任意触发器事件
     Input->BindAction(AimingInputAction, ETriggerEvent::Triggered, this, &AFooBar::SomeCallbackFunc);
 }
 
@@ -174,13 +193,15 @@ void AFooBar::SomeCallbackFunc(const FInputActionInstance& Instance)
     float FloatValue = Instance.GetValue().Get<float>(); 
     bool BoolValue = Instance.GetValue().Get<bool>();
 
-    // 在此处实现你的精彩功能！
+    // 在此处实现的精彩功能！
 } 
 ```
 
-### 输入映射上下文
+### Input Mapping Contexts - 输入映射上下文
 
-**输入映射上下文（Input Mapping Contexts）** 是输入动作的集合，表示玩家可以处于的特定上下文。它们描述了关于什么会触发给定输入动作的规则。映射上下文可以动态地为每个用户添加、移除或优先安排次序。
+**输入映射上下文（Input Mapping Contexts）** 是输入动作的集合，表示玩家可以处于的特定上下文。
+
+它们描述了关于什么会触发给定输入动作的规则。映射上下文可以动态地为每个用户添加、移除或优先安排次序。
 
 要创建输入映射上下文，请右键点击 **上下文浏览器（Context Browser）** ，展开 **输入（Input）** 选项，然后选择 **输入映射上下文（Input Mapping Context）** 。
 
@@ -194,13 +215,13 @@ void AFooBar::SomeCallbackFunc(const FInputActionInstance& Instance)
 
 ![image_6.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201433762.jpeg)
 
-你可以通过本地玩家的增强输入本地玩家子系统（Enhanced Input Local Player Subsystem）将一个或多个上下文应用到本地玩家，并安排它们的优先次序，避免多个操作由于尝试使用同一输入而发生冲突。
+可以通过本地玩家的增强输入本地玩家子系统（Enhanced Input Local Player Subsystem）将一个或多个上下文应用到本地玩家，并安排它们的优先次序，避免多个操作由于尝试使用同一输入而发生冲突。
 
-你可以在这里将实际的键与输入动作绑定，并为每个动作指定额外触发器或修饰符。将输入映射上下文添加到增强输入子系统时，你还可以为其提供优先级。
+可以在这里将实际的键与输入动作绑定，并为每个动作指定额外触发器或修饰符。将输入映射上下文添加到增强输入子系统时，还可以为其提供优先级。
 
-如果你有多个上下文映射到同一个输入动作，那么在触发输入动作时，将考虑优先级最高的上下文，而忽略其他上下文。
+如果有多个上下文映射到同一个输入动作，那么在触发输入动作时，将考虑优先级最高的上下文，而忽略其他上下文。
 
-例如，你可以为一个可以游泳、行走、驾驶载具的角色提供多个输入映射上下文。一个上下文用于可用且始终映射到同一个用户输入的常见动作，另一个用于行程中每个单独的模式。
+例如，可以为一个可以游泳、行走、驾驶载具的角色提供多个输入映射上下文。一个上下文用于可用且始终映射到同一个用户输入的常见动作，另一个用于行程中每个单独的模式。
 
 开发人员随后可以将与载具相关的输入操作放入单独的输入映射上下文中，而该上下文随后在进入载具时添加到本地玩家，并在退出载具时从本地玩家身上移除。
 
@@ -208,13 +229,13 @@ void AFooBar::SomeCallbackFunc(const FInputActionInstance& Instance)
 
 此外，使用互斥的输入映射上下文有助于避免输入碰撞，这意味着当用户输入用于不同的输入动作时，输入绝不会意外触发错误的动作。
 
-你可以在蓝图或C++中将映射上下文添加到玩家
+可以在蓝图或C++中将映射上下文添加到玩家
 
 ```c++
 // 将映射上下文公开为头文件中的属性...
 UPROPERTY(EditAnywhere, Category="Input")
 TSoftObjectPtr<UInputMappingContext> InputMapping;
-// 在你的cpp中...
+// 在的cpp中...
 if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 {
     if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
@@ -241,13 +262,13 @@ if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 
 输入修饰符很适合用于应用灵敏度设置，在多个帧上平滑输入，或基于玩家状态更改输入的行为。
 
-由于你在创建自己的修饰符时可以访问 `UPlayerInput` 类，你可以访问所属玩家控制器，并获取所需的任意游戏状态。
+由于在创建自己的修饰符时可以访问 `UPlayerInput` 类，可以访问所属玩家控制器，并获取所需的任意游戏状态。
 
 ![image_8.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201452106.jpeg)
 
-你可以通过创建 `UInputModifier` 类的子类并覆盖 `ModifyRaw_Implementation` 函数，在C++或蓝图中创建自己的输入修饰符。
+可以通过创建 `UInputModifier` 类的子类并覆盖 `ModifyRaw_Implementation` 函数，在C++或蓝图中创建自己的输入修饰符。
 
-你还可以通过使用 **输入修饰符（Input Modifier）** 作为父类创建新的 **蓝图子类（Blueprint Child Class）** ，创建自己的输入修饰符。
+还可以通过使用 **输入修饰符（Input Modifier）** 作为父类创建新的 **蓝图子类（Blueprint Child Class）** ，创建自己的输入修饰符。
 
 ![image_9.jpg](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201455664.jpeg)
 
@@ -261,7 +282,7 @@ if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 
 ![image_11.jpg](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201456909.jpeg)
 
-你从 **Modify Raw** 返回的输入动作值将进入下一个输入修饰符（如有），或进入第一个输入触发器。
+从 **Modify Raw** 返回的输入动作值将进入下一个输入修饰符（如有），或进入第一个输入触发器。
 
 ![image_12.jpg](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201457795.jpeg)
 
@@ -326,7 +347,7 @@ protected:
 
 这种解译方向键或"WASD"键的方式可以将一维输入映射到二维输入操作。
 
-由于每个键报告一维正值，此值将始终占据X轴，并将在任意给定更新函数上具有值0.0或1.0。通过为向左和向下输入设置负值，并切换轴的顺序使输入的X轴值移至Y轴以用于向上和向下输入，你可以使用输入修饰符将一组一维输入解译为单个二维输入值。
+由于每个键报告一维正值，此值将始终占据X轴，并将在任意给定更新函数上具有值0.0或1.0。通过为向左和向下输入设置负值，并切换轴的顺序使输入的X轴值移至Y轴以用于向上和向下输入，可以使用输入修饰符将一组一维输入解译为单个二维输入值。
 
 ### 输入触发器
 
@@ -362,19 +383,19 @@ protected:
 - **持续（Ongoing）** 表明部分满足了输入触发器的条件，并且输入触发器正在处理，但尚未成功。
 - **已触发（Triggered）** 表明已满足输入触发器的所有条件，因此输入触发器成功。
 
-你可以通过扩展输入触发器基类，即 **输入触发器的计时库（Input Trigger Timed Base）** 来，创建自己的输入触发器。
+可以通过扩展输入触发器基类，即 **输入触发器的计时库（Input Trigger Timed Base）** 来，创建自己的输入触发器。
 
 ![image_14.jpg](https://docs.unrealengine.com/5.1/Images/making-interactive-experiences/Input/enhanced-input/image_14.jpg)
 
 **输入触发器的计时库（Input Trigger Timed Base）** 会检查输入是否已被按住特定时长，如是，则接受该输入并返回 **持续（Ongoing）** 状态。
 
-插件提供的"输入触发器的计时库（（Input Trigger Timed Base））"类永远不会返回 **已触发（Triggered）** 状态。你要在新建的输入触发器子类覆盖该函数，来确定它如何响应用户输入。
+插件提供的"输入触发器的计时库（（Input Trigger Timed Base））"类永远不会返回 **已触发（Triggered）** 状态。要在新建的输入触发器子类覆盖该函数，来确定它如何响应用户输入。
 
 函数 **Get Trigger Type** 将确定输入触发器的类型。
 
 **更新状态（Update State）** 将接受玩家的输入对象、当前输入操作值、增量时间，并返回 **无（None）** 、 **持续（Ongoing）** 或 **已触发（Triggered）** 状态。
 
-作为C++示例，你可以找到 `InputTriggers.h` 并观察 `UInputTriggerHold` 实现。
+作为C++示例，可以找到 `InputTriggers.h` 并观察 `UInputTriggerHold` 实现。
 
 **UInputTriggerHold.H**
 
@@ -433,17 +454,17 @@ ETriggerState UInputTriggerHold::UpdateState_Implementation(const UEnhancedPlaye
 
 可映射配置是输入映射上下文的集合，表示映射的一个"配置"或"预设"。
 
-例如，你可以有一个"默认"和"左撇子"可映射配置，保存了用于瞄准的不同输入映射上下文。
+例如，可以有一个"默认"和"左撇子"可映射配置，保存了用于瞄准的不同输入映射上下文。
 
-你可以使用这些配置预定义一组上下文及其优先级，以便一次性全部添加，而不必手动添加一组输入映射上下文。
+可以使用这些配置预定义一组上下文及其优先级，以便一次性全部添加，而不必手动添加一组输入映射上下文。
 
 映射提供了各种各样的元数据选项，可用于更轻松地处理编程UI设置屏幕。
 
 ## 调试命令
 
-你可以使用多个与输入相关的调试命令，来调试你可能在处理的与输入相关的行为。
+可以使用多个与输入相关的调试命令，来调试可能在处理的与输入相关的行为。
 
-使用命令 `showdebug enhancedinput` 会显示你的项目使用的可用输入动作和轴映射。
+使用命令 `showdebug enhancedinput` 会显示的项目使用的可用输入动作和轴映射。
 
 ![image_15.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201530844.jpeg)
 
@@ -455,7 +476,7 @@ ETriggerState UInputTriggerHold::UpdateState_Implementation(const UEnhancedPlaye
 
 增强输入还为玩家带来了"注入输入"的概念。
 
-这样你可以**调用蓝图、C++中的函数，或使用控制台命令模拟玩家的输入**。 你可以输入 `Input.+key` 控制台命令开始模拟输入。
+这样可以**调用蓝图、C++中的函数，或使用控制台命令模拟玩家的输入**。 可以输入 `Input.+key` 控制台命令开始模拟输入。
 
 下面是设置 `Gamepad_Left2D` 键的示例：
 
@@ -465,7 +486,7 @@ Input.+key Gamepad_Left2D X=0.7 Y=0.5
 Input.-key Gamepad_Left2D
 ```
 
-键名称是实际的FKey名称，可在 `InputCoreTypes.cpp` 文件中找到，如果你在显示的键名称中删除了空格，还可在键选择器控件中找到。
+键名称是实际的FKey名称，可在 `InputCoreTypes.cpp` 文件中找到，如果在显示的键名称中删除了空格，还可在键选择器控件中找到。
 
 ![image_17.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201532532.jpeg)
 
@@ -486,27 +507,27 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 ## 平台设置
 
-你可能希望将不同的输入设置用于不同的平台，例如Nintendo Switch上的旋转脸部按钮，或改变移动设备上可用的动作。
+可能希望将不同的输入设置用于不同的平台，例如Nintendo Switch上的旋转脸部按钮，或改变移动设备上可用的动作。
 
-增强输入提供了逐个平台的 **映射上下文重定向（Mapping Context Redirect）** ，可帮助你轻松做到。
+增强输入提供了逐个平台的 **映射上下文重定向（Mapping Context Redirect）** ，可帮助轻松做到。
 
-你可以基于 **增强输入平台数据（Enhanced Input Platform Data）** 类创建蓝图。
+可以基于 **增强输入平台数据（Enhanced Input Platform Data）** 类创建蓝图。
 
-你可以在该基类上构建，为你的游戏添加特定于平台的选项。
+可以在该基类上构建，为的游戏添加特定于平台的选项。
 
-默认情况下，它包含输入映射上下文的映射，允许你将一个上下文重定向到另一个上下文。
+默认情况下，它包含输入映射上下文的映射，允许将一个上下文重定向到另一个上下文。
 
 只要在特定平台上引用该映射上下文，它都将在重建映射之后替换为映射中的值。
 
 ![image_18.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201534482.jpeg)
 
-要应用此重定向，请将其添加到你的 **项目设置（Project Settings）** > **增强输入（Enhanced Input）** > **平台设置（Platform Settings）** > **输入数据（Input Data）**
+要应用此重定向，请将其添加到的 **项目设置（Project Settings）** > **增强输入（Enhanced Input）** > **平台设置（Platform Settings）** > **输入数据（Input Data）**
 
 ![image_19.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201534810.jpeg)
 
 这些项目设置会添加到平台 `DefaultInput.ini` ，这样它们**可进行热修复并可轻松更改**。
 
-由于平台设置提供了基类 `UEnhancedInputPlatformData` ，你可以通过创建自己的蓝图或C++子类来创建自定义平台设置，该子类可用于从任意地方访问设置。
+由于平台设置提供了基类 `UEnhancedInputPlatformData` ，可以通过创建自己的蓝图或C++子类来创建自定义平台设置，该子类可用于从任意地方访问设置。
 
 
 
@@ -560,9 +581,31 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 #### InputModifier
 
+> <EnginSrcDir>\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputModifiers.h
+
+- **DeadZone**: 限定值的范围
+- **Scalar**: 缩放一个标量
+- **Negate**: 取反
+- **Smooth**: 多帧之间平滑
+- **CurveExponential**: 指数曲线，XYZ
+- **CurveUser**: 自定义指数曲线，CurveFloat
+- **FOVScaling**: FoV缩放 - `UInputModifierFOVScaling`
+- **ToWorldSpace**: 输入设备坐标系向世界坐标系转换（调换XYZ顺序）
+- **SwizzleAxis**: 互换轴值
+- **Collection**: 嵌套子修改器集合
+
 ![截屏2023-03-20 21.32.17](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222824.png)
 
 #### InputTrigger
+
+- ETriggerEvent::ETriggerState发生转变时触发的事件，BindXXX的时候关注某个事件
+- Dow:值大于阈值（默认0.5）就触发
+- Pressed:不激活到激活
+- Released:激活到不激活
+- Hold:按住大于某个时间
+- HoldAndRelease:按住大于某个时间后松开
+- Tap:按下后快速抬起（默认0.2）
+- Chorded:根据别的Action联动触发
 
 ![截屏2023-03-20 21.34.02](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222956.png)
 
