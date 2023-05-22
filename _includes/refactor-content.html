@@ -226,9 +226,24 @@
         <span data-label-text="{{ _label_text | strip }}"><i class="{{ _label_icon }}"></i></span>
       {% endcapture %}
 
+      {% if _left contains 'run="' %}
+        {% assign _code = _left | split: 'run="' | last | split: '"' | first %}
+        {% capture _play_button %}
+          <button class="button-run-code button-run-{{ _code }}" aria-label="run" 
+                  output-title="{{ site.data.locales[site.lang].post.button.run.output }}"
+                  wait-message="{{ site.data.locales[site.lang].post.button.run.wait }}"
+                  error-prompt="{{ site.data.locales[site.lang].post.button.run.error_prompt }}">
+            <i class="iconfont icon-playfill"></i>
+          </button>
+        {% endcapture %}
+      {% else %}
+        {% assign _play_button = '' %}
+      {% endif %}
+
       {% assign _new_content = _new_content | append: _snippet
           | append: '<div class="code-header">'
           | append: _label
+          | append: _play_button
           | append: '<button aria-label="copy" data-title-succeed="'
           | append: site.data.locales[include.lang].post.button.copy_code.succeed
           | append: '"><i class="far fa-clipboard"></i></button></div>'

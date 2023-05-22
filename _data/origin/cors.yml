@@ -60,3 +60,10 @@ polyfill:
 
 mathjax:
   js: https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js
+
+firacode:
+  css: https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css
+
+socket-io-client:
+  js: https://cdn.jsdelivr.net/npm/socket.io-client@2/dist/socket.io.min.js
+
