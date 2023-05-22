@@ -1,25 +1,36 @@
 #  Sharing options at the bottom of the post.
 #  Icons from <https://fontawesome.com/>
+# https://www.jianshu.com/p/f51628c46827
 
 platforms:
   - type: Twitter
-    icon: "fab fa-twitter"
+    icon: "iconfont icon-twitter"
     link: "https://twitter.com/intent/tweet?text=TITLE&url=URL"
 
+  - type: Line
+    icon: "iconfont icon-13"
+    link: "https://lineit.line.me/share/ui?url=URL&text=TITLE"
+
   - type: Facebook
-    icon: "fab fa-facebook-square"
+    icon: "iconfont icon-facebook"
     link: "https://www.facebook.com/sharer/sharer.php?title=TITLE&u=URL"
 
   - type: Telegram
-    icon: "fab fa-telegram"
+    icon: "iconfont icon-telegram"
     link: "https://t.me/share/url?url=URL&text=TITLE"
 
-  # Uncomment below if you need to.
-  #
-  # - type: Linkedin
-  #   icon: "fab fa-linkedin"
-  #   link: "https://www.linkedin.com/sharing/share-offsite/?url=URL"
-  #
-  # - type: Weibo
-  #   icon: "fab fa-weibo"
-  #   link: "http://service.weibo.com/share/share.php?title=TITLE&url=URL"
+  - type: QQ
+    icon: "iconfont icon-QQ"
+    link: "http://connect.qq.com/widget/shareqq/index.html?url=URL&title=TITLE"
+
+  - type: QQ 空间
+    icon: "iconfont icon-qzone"
+    link: "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=URL&title=TITLE"
+
+  - type: 微博
+    icon: "iconfont icon-weibo"
+    link: "http://service.weibo.com/share/share.php?title=TITLE&url=URL"
+
+  - type: Wechat
+    icon: "fa-brands fa-weixin"
+    link: "https://www.addtoany.com/ext/wechat/share/#url=URL&title=TITLE"
