@@ -44,8 +44,15 @@ layout: default
   <!-- panel -->
   <div id="panel-wrapper" class="col-xl-3 ps-2 text-muted">
     <div class="access">
-      {% include update-list.html lang=lang %}
-      {% include trending-tags.html lang=lang %}
+      {% if page.layout != "post" or site.panel.post.lastmod %}
+        {% include update-list.html lang=lang  %}
+      {% endif %}
+      {% if page.layout != "post" or site.panel.post.trending_tags %}
+        {% include trending-tags.html lang=lang %}
+      {% endif %}
+      {% if page.layout != "post" or site.panel.post.external_links %}
+        {% include external-links.html lang=lang %}
+      {% endif %}
     </div>
 
     {% for _include in layout.panel_includes %}
@@ -60,7 +67,7 @@ layout: default
   <div class="row">
     <div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-3 pe-xl-4 mt-5">
       {% for _include in layout.tail_includes %}
-        {% assign _include_path = _include | append: '.html' %}
+        {% assign _include_path = _include | flatify | append: '.html' %}
         {% include {{ _include_path }} lang=lang %}
       {% endfor %}
     </div>
