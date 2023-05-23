@@ -51,6 +51,14 @@ Quisque egestas convallis ipsum, ut sollicitudin risus tincidunt a. Maecenas int
 
 ### Description list
 
+```markdown
+Sun
+: the star around which the earth orbits
+
+Moon
+: the natural satellite of the earth, visible by reflected light from the sun
+```
+
 Sun
 : the star around which the earth orbits
 
