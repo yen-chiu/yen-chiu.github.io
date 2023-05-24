@@ -675,3 +675,27 @@ EnhancedInputSubsystem
 ![截屏2023-03-20 22.05.04](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202223765.png)
 
 ![截屏2023-03-20 22.07.13](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202223875.png)
+
+
+
+----
+
+## OtherTips
+
+### 引擎Bug - "张冠李戴"
+
+`Engine\UnrealEngine\Engine\Source\Runtime\Engine\Private\InputVectorAxisDelegateBinding.cpp` - 35行
+
+错误：
+
+```c++
+InputComponent->AxisKeyBindings.RemoveAt(ExistingIndex);
+```
+
+
+正确：
+
+```c++
+InputComponent->VectorAxisBindings.RemoveAt(ExistingIndex);
+```
+
