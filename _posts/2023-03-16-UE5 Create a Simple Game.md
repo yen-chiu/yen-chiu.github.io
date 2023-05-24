@@ -15,7 +15,7 @@ image:
 
 下载[起始项目](https://koenig-media.raywenderlich.com/uploads/2017/08/InfiniteMatrixStarterProject.zip)并解压缩。转到项目文件夹并打开*InfiniteMatrix.uproject*。
 
-按*播放*测试运动控制。您可以通过*移动鼠标*进行垂直和水平移动。
+按*播放*测试运动控制。可以通过*移动鼠标*进行垂直和水平移动。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710546.gif)
 
@@ -25,21 +25,21 @@ image:
 
 导航到*Blueprints*文件夹并打开*BP_Player*。
 
-要向前移动玩家，您将在每一帧中为玩家的位置添加一个偏移量。
+要向前移动玩家，将在每一帧中为玩家的位置添加一个偏移量。
 
-首先，您需要创建一个变量来定义玩家向前移动的速度。创建一个名为*ForwardSpeed的* *Float*变量并将其默认值设置为*2000*。
+首先，需要创建一个变量来定义玩家向前移动的速度。创建一个名为*ForwardSpeed的* *Float*变量并将其默认值设置为*2000*。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710530.jpeg)
 
-接下来，确保您位于事件图表中，然后找到*Event Tick*节点。创建以下设置：
+接下来，确保位于事件图表中，然后找到*Event Tick*节点。创建以下设置：
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710244.jpeg)
 
-通过将*ForwardSpeed*与*Delta Seconds*相乘，您将获得*与帧速率无关的*结果。
+通过将*ForwardSpeed*与*Delta Seconds*相乘，将获得*与帧速率无关的*结果。
 
-*注意：*如果您不熟悉帧速率独立性，请阅读我们的[蓝图](https://rootjhon.github.io/posts/UE5-Blueprints/)教程。我们在*帧速率独立性*部分介绍了它。
+*注意：*如果不熟悉帧速率独立性，请阅读我们的[蓝图](https://rootjhon.github.io/posts/UE5-Blueprints/)教程。我们在*帧速率独立性*部分介绍了它。
 
-接下来，您将使用此结果沿单个轴移动玩家。
+接下来，将使用此结果沿单个轴移动玩家。
 
 ### 沿单轴移动
 
@@ -47,7 +47,7 @@ image:
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710818.jpeg)
 
-如果您尝试将*Float*结果连接到*Delta Location*输入，Unreal 会自动将其转换为*Vector*。
+如果尝试将*Float*结果连接到*Delta Location*输入，Unreal 会自动将其转换为*Vector*。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710516.jpeg)
 
@@ -55,7 +55,7 @@ image:
 
 对于这个游戏，向前移动应该只沿着*X 轴*。
 
-幸运的是，您可以将一个 Vector 拆分为三个*Float*组件。
+幸运的是，可以将一个 Vector 拆分为三个*Float*组件。
 
 - 确保*AddActorWorldOffset*节点的*Delta Location*引脚没有连接。
 
@@ -77,11 +77,11 @@ image:
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710349.gif)
 
-您可以创建一个自动生成隧道的蓝图，而不是手动放置隧道。
+可以创建一个自动生成隧道的蓝图，而不是手动放置隧道。
 
 ## 创建隧道生成器
 
-转到 Content Browser 并确保您位于*Blueprints*文件夹中。
+转到 Content Browser 并确保位于*Blueprints*文件夹中。
 
 以*Actor*作为父类创建一个新的蓝图类，将其命名为 *BP_TunnelSpawner* 然后打开它。
 
@@ -89,7 +89,7 @@ image:
 
 转到 My Blueprint 面板并创建一个名为*SpawnTunnel*的新函数。此功能的目的是在提供的位置生成隧道。
 
-要将位置传递给函数，函数需要一个*输入参数*。当您调用该函数时，这些将显示为输入引脚。
+要将位置传递给函数，函数需要一个*输入参数*。当调用该函数时，这些将显示为输入引脚。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710540.jpeg)
 
@@ -97,7 +97,7 @@ image:
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710808.jpeg)
 
-让我们继续创建一个输入参数。确保您位于*SpawnTunnel*函数的图表中。选择*Entry*节点，然后转到 Details 面板。单击*“输入”*部分旁边的*+*号。
+让我们继续创建一个输入参数。确保位于*SpawnTunnel*函数的图表中。选择*Entry*节点，然后转到 Details 面板。单击*“输入”*部分旁边的*+*号。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161710606.jpeg)
 
@@ -133,7 +133,7 @@ image:
 
 接下来，转到内容浏览器。*左键单击*并将*BP_TunnelSpawner* *拖到* 视口中。这会将它的一个实例添加到关卡中。
 
-如果您按下*Play*，游戏将在玩家上方和远离玩家的地方生成一条隧道。
+如果按下*Play*，游戏将在玩家上方和远离玩家的地方生成一条隧道。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161711564.gif)
 
@@ -141,11 +141,11 @@ image:
 
 然后，单击*编译*，然后返回到主编辑器。
 
-在下一节中，您将为*BP_Tunnel*设置功能。
+在下一节中，将为*BP_Tunnel*设置功能。
 
 ## 设置隧道蓝图
 
-*BP_Tunnel*将负责两件事。第一个是检测游戏何时应生成新隧道。为此，您将创建一个触发区域。一旦触发，*BP_Tunnel*将告诉*BP_TunnelSpawner*生成一个新隧道。通过这样做，您可以创造出无尽隧道的错觉。
+*BP_Tunnel*将负责两件事。第一个是检测游戏何时应生成新隧道。为此，将创建一个触发区域。一旦触发，*BP_Tunnel*将告诉*BP_TunnelSpawner*生成一个新隧道。通过这样做，可以创造出无尽隧道的错觉。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161711634.gif)
 
@@ -169,9 +169,9 @@ image:
 
 ### 创建重生点
 
-要定义生成点的位置，您可以使用*场景*组件。这些组件非常适合定义位置，因为它们只包含一个转换。它们在视口中也可见，因此您可以看到重生点的位置。
+要定义生成点的位置，可以使用*场景*组件。这些组件非常适合定义位置，因为它们只包含一个转换。它们在视口中也可见，因此可以看到重生点的位置。
 
-转到“组件”面板并确保您没有选择任何内容。添加一个*Scene*组件并将其重命名为*SpawnPoint*。
+转到“组件”面板并确保没有选择任何内容。添加一个*Scene*组件并将其重命名为*SpawnPoint*。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161711544.jpeg)
 
@@ -189,13 +189,13 @@ image:
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161711315.gif)
 
-由于最远的隧道始终是最后生成的隧道，因此您可以轻松获得对它的引用。
+由于最远的隧道始终是最后生成的隧道，因此可以轻松获得对它的引用。
 
 *打开SpawnTunnel*的图表。*右键单击* *Spawn Actor From Class*节点的*Return Value*引脚。选择*Promote to Variable*并将变量重命名为*NewestTunnel*。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161711512.jpeg)
 
-现在，您将始终参考最远的隧道。
+现在，将始终参考最远的隧道。
 
 接下来，创建一个新函数并将其命名为*SpawnTunnelAtSpawnPoint*。
 
@@ -225,19 +225,19 @@ image:
 
 现在，每个隧道都将引用*BP_TunnelSpawner*。
 
-接下来，您将告诉*BP_TunnelSpawner*在玩家进入*TriggerZone*时生成下一个隧道。
+接下来，将告诉*BP_TunnelSpawner*在玩家进入*TriggerZone*时生成下一个隧道。
 
 ### 编写触发区脚本
 
 单击*Compile*，然后切换到*BP_Tunnel*。
 
-转到 Components 面板并*右键*单击*TriggerZone*。选择*添加事件\添加 OnComponentBeginOverlap*。这会将以下节点添加到您的事件图表中：
+转到 Components 面板并*右键*单击*TriggerZone*。选择*添加事件\添加 OnComponentBeginOverlap*。这会将以下节点添加到的事件图表中：
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161712928.jpeg)
 
 只要另一个*Actor与* *TriggerZone*重叠，该节点就会执行。
 
-首先，您应该检查与*TriggerZone*重叠的*Actor*是否是玩家。
+首先，应该检查与*TriggerZone*重叠的*Actor*是否是玩家。
 
 *左键单击*并*拖动**Other Actor*引脚。在空白区域上松开鼠标*左键*，然后从菜单中选择*Cast to BP_Player 。*
 
@@ -260,7 +260,7 @@ image:
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161712429.gif)
 
-尽管游戏中不断地生成隧道，但它*看起来*并不是无穷无尽的。您可以通过始终显示一些隧道来缓解这种情况。稍后，当您将其与障碍物结合使用时，玩家将看不到生成的隧道。
+尽管游戏中不断地生成隧道，但它*看起来*并不是无穷无尽的。可以通过始终显示一些隧道来缓解这种情况。稍后，当将其与障碍物结合使用时，玩家将看不到生成的隧道。
 
 ## 生成更多隧道
 
@@ -268,25 +268,25 @@ image:
 
 打开*BP_TunnelSpawner并创建一个名为* *SpawnInitialTunnels*的新函数。
 
-要生成指定数量的隧道，您可以使用*ForLoop*节点。该节点将执行连接的节点指定的次数。
+要生成指定数量的隧道，可以使用*ForLoop*节点。该节点将执行连接的节点指定的次数。
 
 添加一个*ForLoop*节点并将其连接到*Entry*节点。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161712835.jpeg)
 
-要使*ForLoop*节点执行*n*次，您需要将*Last Index*设置为*n – 1*。
+要使*ForLoop*节点执行*n*次，需要将*Last Index*设置为*n – 1*。
 
-在本教程中，您将生成*三个*隧道。要执行三个循环，请将*Last Index*值设置为*2*。
+在本教程中，将生成*三个*隧道。要执行三个循环，请将*Last Index*值设置为*2*。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161712249.jpeg)
 
-*注意：*如果您不设置*First Index*或*Last Index*字段，它们将默认为*0*
+*注意：*如果不设置*First Index*或*Last Index*字段，它们将默认为*0*
 
-游戏开始时，玩家应始终从隧道开始。为此，您可以在玩家所在位置生成第一条隧道。
+游戏开始时，玩家应始终从隧道开始。为此，可以在玩家所在位置生成第一条隧道。
 
 ### 产生第一个隧道
 
-要确定第一个隧道是否已生成，您可以检查是否设置了*NewestTunnel 。*
+要确定第一个隧道是否已生成，可以检查是否设置了*NewestTunnel 。*
 
 如果未设置，则表示第一个隧道尚未生成。这是因为*NewestTunnel*仅在游戏生成隧道*后*设置。
 
@@ -304,7 +304,7 @@ image:
 
 此设置将在玩家 Pawn 的位置生成一条隧道。
 
-接下来，您将生成后续隧道。
+接下来，将生成后续隧道。
 
 ### 生成后续隧道
 
@@ -336,7 +336,7 @@ image:
 
 ## 制造障碍
 
-以下是您将用作障碍物的网格：
+以下是将用作障碍物的网格：
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161713510.jpeg)
 
@@ -364,7 +364,7 @@ image:
 
 ## 创建墙壁变化
 
-无需为每个变体创建新的蓝图，您只需随机化*WallMesh*即可。
+无需为每个变体创建新的蓝图，只需随机化*WallMesh*即可。
 
 打开*BP_Tunnel并创建一个名为* *RandomizeWall*的新函数。之后，创建以下图形：
 
@@ -372,15 +372,15 @@ image:
 
 顾名思义，*Set Static Mesh节点会将* *WallMesh*设置为提供的网格。
 
-要制作静态网格列表，您可以使用*选择*节点。
+要制作静态网格列表，可以使用*选择*节点。
 
 *左键单击*并*拖动* *New Mesh*引脚。释放*左键单击*空白区域，然后添加一个*选择*节点。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161714501.jpeg)
 
-*选择*节点允许您设置选项列表。Index输入确定*Select节点输出* *的*选项。
+*选择*节点允许设置选项列表。Index输入确定*Select节点输出* *的*选项。
 
-由于有四个墙壁网格可用，您需要再创建两个*选项*引脚。您可以通过*右键单击* *Select*节点并选择*Add Option Pin*来执行此操作。这样做直到你有*四个*选项引脚。
+由于有四个墙壁网格可用，需要再创建两个*选项*引脚。可以通过*右键单击* *Select*节点并选择*Add Option Pin*来执行此操作。这样做直到你有*四个*选项引脚。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161714638.jpeg)
 
@@ -397,13 +397,13 @@ image:
 
 ### 随机化墙
 
-您可以使用范围节点中的随机整数来获取随机数。该节点将返回一个>= Min 且 <= Max的值。
+可以使用范围节点中的随机整数来获取随机数。该节点将返回一个>= Min 且 <= Max的值。
 
 在 Range 节点中添加一个*Random Integer*并将其连接到*Select*节点的*Index*引脚。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161714690.jpeg)
 
-将*最大值*设置为*3*。这将为您提供四个可能的数字：0、1、2 和 3。
+将*最大值*设置为*3*。这将为提供四个可能的数字：0、1、2 和 3。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161715343.jpeg)
 
@@ -442,7 +442,7 @@ image:
 
 ## 处理墙壁碰撞
 
-要启用或禁用向前移动，您可以使用*布尔*变量。这些只有两种状态：*true*和*false*。
+要启用或禁用向前移动，可以使用*布尔*变量。这些只有两种状态：*true*和*false*。
 
 打开*BP_Player*，然后创建一个名为*IsDead的新* *布尔*变量。
 
@@ -462,13 +462,13 @@ image:
 
 ### 设置 IsDead 变量
 
-单击*Compile*，然后切换到*BP_Tunnel*。在“组件”面板中，*右键单击*WallMesh*并*选择*“添加事件\添加 OnComponentHit”*。这会将以下节点添加到您的事件图表中：
+单击*Compile*，然后切换到*BP_Tunnel*。在“组件”面板中，*右键单击*WallMesh*并*选择*“添加事件\添加 OnComponentHit”*。这会将以下节点添加到的事件图表中：
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161718020.jpeg)
 
 *只要另一个Actor*与*WallMesh*发生碰撞，该节点就会执行。
 
-首先，您需要检查与*WallMesh*发生碰撞的*Actor*是否是玩家。
+首先，需要检查与*WallMesh*发生碰撞的*Actor*是否是玩家。
 
 *左键单击*并*拖动* *Other Actor*引脚。在空白区域上松开鼠标*左键*，然后从菜单中选择*Cast to BP_Player 。*
 
@@ -484,15 +484,15 @@ image:
 
 ![img](https://koenig-media.raywenderlich.com/uploads/2017/08/11.gif)
 
-在下一节中，您将在玩家撞墙时显示一个重新启动按钮。
+在下一节中，将在玩家撞墙时显示一个重新启动按钮。
 
 ## 显示重启按钮
 
-您将显示的Widget为*WBP_Restart*。*您可以在UI*文件夹中找到它。这是它的样子：
+将显示的Widget为*WBP_Restart*。*可以在UI*文件夹中找到它。这是它的样子：
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161717711.jpeg)
 
-要显示或隐藏小部件，您需要对它的引用。打开*BP_Player*，然后创建一个名为*RestartWidget*的新变量。*将变量类型*更改为*WBP_Restart\Object Reference*。
+要显示或隐藏小部件，需要对它的引用。打开*BP_Player*，然后创建一个名为*RestartWidget*的新变量。*将变量类型*更改为*WBP_Restart\Object Reference*。
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303161717221.jpeg)
 
@@ -518,7 +518,7 @@ image:
 2. *设置仅输入模式 UI*将限制玩家与 UI 的交互。这是为了让玩家在死后无法四处走动。
 3. 顾名思义，*Set Show Mouse Cursor*只是显示鼠标光标
 
-要显示重启按钮，您需要做的就是在播放器与墙壁碰撞后调用*DisplayRestart 。*
+要显示重启按钮，需要做的就是在播放器与墙壁碰撞后调用*DisplayRestart 。*
 
 ### 调用显示函数
 
@@ -564,9 +564,9 @@ image:
 
 单击*Compile*，然后关闭*BP_Player*。
 
-打开*BP_TunnelSpawner*并确保您位于*SpawnInitialTunnels*图中。
+打开*BP_TunnelSpawner*并确保位于*SpawnInitialTunnels*图中。
 
-首先，您需要在生成新隧道之前移除现有隧道。
+首先，需要在生成新隧道之前移除现有隧道。
 
 *在Entry*节点之后添加一个*Sequence*节点。将*Then 1*引脚连接到*ForLoop*节点。
 
@@ -611,7 +611,7 @@ image:
 3. 如果是，它将调用*RestartGame*函数。此函数重置播放器并隐藏重启按钮。
 4. *Get All Actors of Class*并*Get*返回*BP_TunnelSpawner*，然后调用*SpawnInitialTunnels*。此函数将删除现有隧道并生成新隧道。
 
-*注意：*您可能想知道为什么我使用*Get All Actors Of Class而不是使用对* *BP_TunnelSpawner*的引用。主要原因是因为*BP_Tunnel与* *WBP_Restart*没有关系。对于像这样的简单游戏，执行上述方法比弄清楚在哪里存储引用更容易。
+*注意：*可能想知道为什么我使用*Get All Actors Of Class而不是使用对* *BP_TunnelSpawner*的引用。主要原因是因为*BP_Tunnel与* *WBP_Restart*没有关系。对于像这样的简单游戏，执行上述方法比弄清楚在哪里存储引用更容易。
 
 单击*编译*，然后关闭蓝图编辑器。按*播放键*测试重启按钮！
 

@@ -20,7 +20,7 @@ tags: []
 - **输入触发器（UInputTrigger）** 
 - **输入映射环境（UInputMappingContext）**
 
-这些可组合功能，在新的增强玩家输入(UEnhancedPlayerInput)和增强输入组件( UEnhancedInputComponent)的配合下提供了更灵活和更便利的输入配置和处理功能。
+这些可组合功能，在新的增强玩家输入(*UEnhancedPlayerInput*)和增强输入组件( *UEnhancedInputComponent*)的配合下提供了更灵活和更便利的输入配置和处理功能。
 
 ### 目标：
 
@@ -130,7 +130,7 @@ IA 可以是多种不同的类型，这些类型将确定行为。可以创建�
 
 
 
-#### Trigger State - 触发状态
+#### TriggerState - 触发状态
 
 触发状态表示动作的当前状态
 
@@ -165,7 +165,7 @@ IA 可以是多种不同的类型，这些类型将确定行为。可以创建�
 
 通常，将使用 <kbd>Triggered </kbd>状态。
 
-#### 添加输入侦听器
+#### BindAction - 监听IA触发
 
 要在蓝图中添加输入动作侦听器，可以在蓝图的事件图表中右键点击，然后键入的输入动作数据资产的名称。
 
@@ -203,43 +203,50 @@ void AFooBar::SomeCallbackFunc(const FInputActionInstance& Instance)
 
 它们描述了关于什么会触发给定输入动作的规则。映射上下文可以动态地为每个用户添加、移除或优先安排次序。
 
-要创建输入映射上下文，请右键点击 **上下文浏览器（Context Browser）** ，展开 **输入（Input）** 选项，然后选择 **输入映射上下文（Input Mapping Context）** 。
+创建输入映射上下文步骤：
+
+ <kbd>上下文浏览器（**Context Browser**） </kbd> ->  <kbd>输入（**Input**）</kbd> ->  <kbd>输入映射上下文（**Input Mapping Context**）</kbd>
 
 ![image_5.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201431911.jpeg)
 
-输入映射上下文的基本结构是一个在顶层具有输入操作列表的层级。
+IMC的基本结构是一个在顶层具有输入操作列表的层级。
 
 输入操作层下面是一个用户输入列表，该列表可以触发各个操作，例如键、按钮和动作轴。
 
-底层包含各个用户输入的输入触发器和输入修饰符列表，该列表可以用于确定如何过滤或处理输入的原始值，以及它必须满足哪些限制才能在其层级的顶层驱动输入操作。
+底层包含各个用户输入的输入触发器和输入修饰符列表，
+
+- 该列表可以用于确定**如何过滤或处理输入的原始值**，
+- 以及它必须**满足哪些限制才能在其层级的顶层驱动输入操作**。
 
 ![image_6.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201433762.jpeg)
 
-可以通过本地玩家的增强输入本地玩家子系统（**Enhanced Input Local Player Subsystem**）将一个或多个上下文应用到本地玩家，并安排它们的优先次序，避免多个操作由于尝试使用同一输入而发生冲突。
+可以通过 本地玩家的增强输入本地玩家子系统（**Enhanced Input Local Player Subsystem**）将**一个或多个**IMC应用到本地玩家，并安排它们的优先次序，避免多个操作由于尝试使用同一输入而发生冲突。
 
-可以在这里将实际的键与输入动作绑定，并为每个动作指定额外触发器或修饰符。将输入映射上下文添加到增强输入子系统时，还可以为其提供优先级。
+- 在这里将实际的键与输入动作绑定，并为每个动作指定额外触发器或修饰符。
+- 将输入映射上下文添加到增强输入子系统时，还可以为其提供优先级。
 
 如果有多个上下文映射到同一个输入动作，那么在触发输入动作时，将考虑优先级最高的IMC，而忽略其他IMC。
 
-例如，可以为一个可以游泳、行走、驾驶载具的角色提供多个输入映射上下文。
+例如：为一个可以游泳、行走、驾驶载具的角色提供多个输入映射上下文。
 
 - IMC - 1 :  常见动作的映射
 
 - IMC - N：特定行为的动作映射
 
-开发人员随后可以将与载具相关的输入操作放入单独的输入映射上下文中，而该上下文随后在进入载具时添加到本地玩家，并在退出载具时从本地玩家身上移除。
+可以将与载具相关的输入操作放入单独的输入映射上下文中，而该上下文随后在进入载具时添加到本地玩家，并在退出载具时从本地玩家身上移除。
 
 这样做有助于确保不合适的输入操作无法运行，从而优化并预防bug。
 
-此外，使用互斥的输入映射上下文有助于避免输入碰撞，这意味着当用户输入用于不同的输入动作时，输入绝不会意外触发错误的动作。
+此外，使用互斥的输入映射上下文有助于避免输入冲突，这意味着当用户输入用于不同的输入动作时，输入绝不会意外触发错误的动作。
 
 可以在蓝图或C++中将映射上下文添加到玩家
 
 ```c++
-// 将映射上下文公开为头文件中的属性...
+// .h 将映射上下文公开为头文件中的属性...
 UPROPERTY(EditAnywhere, Category="Input")
 TSoftObjectPtr<UInputMappingContext> InputMapping;
-// 在的cpp中...
+
+// .cpp
 if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 {
     if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
@@ -254,7 +261,7 @@ if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 
 ![image_7.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201443582.jpeg)
 
-### 输入修饰符
+### Input Modifiers - 输入修饰符
 
 **输入修饰符（Input Modifiers）** 是预处理器，能够修改UE接收的原始输入值，然后再将其发送到输入触发器上。
 
@@ -266,7 +273,7 @@ if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 
 输入修饰符很适合用于应用灵敏度设置，在多个帧上平滑输入，或基于玩家状态更改输入的行为。
 
-由于在创建自己的修饰符时可以访问 `UPlayerInput` 类，可以访问所属玩家控制器，并获取所需的任意游戏状态。
+**由于在创建自己的修饰符时可以访问 `UPlayerInput` 类，可以访问所属玩家控制器，并获取所需的任意游戏状态。**
 
 ![image_8.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201452106.jpeg)
 
@@ -301,36 +308,36 @@ class ULyraInputModifierAimInversion : public UInputModifier
 
 protected:
     virtual FInputActionValue ModifyRaw_Implementation(const UEnhancedPlayerInput* PlayerInput, FInputActionValue CurrentValue, float DeltaTime) override
-{
-{
-    ULyraLocalPlayer* LocalPlayer = LyraInputModifiersHelpers::GetLocalPlayer(PlayerInput);
-    if (!LocalPlayer)
     {
-        return CurrentValue;
+        {
+            ULyraLocalPlayer* LocalPlayer = LyraInputModifiersHelpers::GetLocalPlayer(PlayerInput);
+            if (!LocalPlayer)
+            {
+                return CurrentValue;
+            }
+
+            ULyraSettingsShared* Settings = LocalPlayer->GetSharedSettings();
+            ensure(Settings);
+
+            FVector NewValue = CurrentValue.Get<FVector>();
+
+            if (Settings->GetInvertVerticalAxis())
+            {
+                NewValue.Y *= -1.0f;
+            }
+
+            if (Settings->GetInvertHorizontalAxis())
+            {
+                NewValue.X *= -1.0f;
+            }
+
+            return NewValue;
+        }
     }
-
-    ULyraSettingsShared* Settings = LocalPlayer->GetSharedSettings();
-    ensure(Settings);
-
-    FVector NewValue = CurrentValue.Get<FVector>();
-
-    if (Settings->GetInvertVerticalAxis())
-    {
-        NewValue.Y *= -1.0f;
-    }
-
-    if (Settings->GetInvertHorizontalAxis())
-    {
-        NewValue.X *= -1.0f;
-    }
-
-    return NewValue;
-}
-}
 }; 
 ```
 
-#### 方向输入
+#### 二维方向输入示例
 
 一个可以良好展示输入修饰符用途的示例是，使用单一输入操作实现二维方向输入。
 
@@ -341,25 +348,29 @@ protected:
 具体而言，使用 **负（Negate）** 可以将某些键注册为负值，而使用 **交换输入轴值（Swizzle Input Axis Values）** 可以将某些键注册为Y轴，而不是默认的X轴值：
 
 | **字母键** | **方向键** | **所需输入解译** | **必需输入修饰符**                                           |
-| :--------- | :--------- | :--------------- | :----------------------------------------------------------- |
-| W          | 向上       | 正Y轴            | 交换输入轴值（YXZ或ZXY）（Swizzle Input Axis Values (YXZ or ZXY)） |
-| A          | 向左       | 负X轴            | 负（Negate）                                                 |
-| S          | 向下       | 负Y轴            | 负交换输入轴值（YXZ或ZXY）（Negate Swizzle Input Axis Values (YXZ or ZXY)） |
-| D          | 向右       | 正X轴            | （无）                                                       |
+| ---------: | ---------: | ---------------: | :----------------------------------------------------------- |
+|          W |       向上 |            正Y轴 | 交换输入轴值（YXZ或ZXY）（Swizzle Input Axis Values (YXZ or ZXY)） |
+|          A |       向左 |            负X轴 | 负（Negate）                                                 |
+|          S |       向下 |            负Y轴 | 负交换输入轴值（YXZ或ZXY）（Negate Swizzle Input Axis Values (YXZ or ZXY)） |
+|          D |       向右 |            正X轴 | （无）                                                       |
 
 ![image_13.jpg](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201500854.jpeg)
 
-这种解译方向键或"WASD"键的方式可以将一维输入映射到二维输入操作。
+这种解译方向键或"WASD"键的方式可以**将一维输入映射到二维输入**操作。
 
-由于每个键报告一维正值，此值将始终占据X轴，并将在任意给定更新函数上具有值0.0或1.0。通过为向左和向下输入设置负值，并切换轴的顺序使输入的X轴值移至Y轴以用于向上和向下输入，可以使用输入修饰符将一组一维输入解译为单个二维输入值。
+由于每个键报告一维正值，此值将始终占据X轴，并将在任意给定更新函数上具有值0.0或1.0。
 
-### 输入触发器
+通过为向左和向下输入设置负值，并切换轴的顺序使输入的X轴值移至Y轴以用于向上和向下输入，可以使用输入修饰符将一组一维输入解译为单个二维输入值。
 
-输入触发器确定用户输入在经历过输入修饰符的可选列表之后，是否会激活输入映射上下文中的相应输入动作。
+### Input Triggers - 输入触发器
+
+输入触发器确定用户输入在**经历过输入修饰符的可选列表之后**，**是否**会**激活**输入映射上下文中的**相应输入动作**。
 
 大部分输入触发器都会分析输入本身，检查最小动作值并验证各种模式，例如短暂点击、长时间按住或典型的"按下"或"释放"事件。
 
-此规则的一个例外是"同时按键"输入触发器，该触发器仅通过另一个输入操作触发。默认情况下，输入上的任意用户活动都会在每个更新函数上触发。
+此规则的一个例外是"**组合键**"输入触发器，该触发器仅通过另一个输入操作触发。
+
+默认情况下，输入上的任意用户活动都会在每个更新函数上触发。
 
 输入触发器有三种类型：
 
@@ -369,17 +380,13 @@ protected:
 
 下面是关于每种触发器类型在针对其他触发器类型的情形下如何交互的逻辑示例：
 
-```
-隐式 == 0，显式 == 0 - 始终触发，除非值为0。
-
-隐式 == 0，显式 > 0 - 至少一个显式已触发。
-
-隐式 > 0，显式 == 0 - 所有隐式已触发。
-
-隐式 > 0，显式 > 0 - 所有隐式和至少一个显式已触发。
-
-阻碍 - 覆盖其他所有触发器以强制触发器失败。
-```
+| 条件                            | 结果                                     |
+| ------------------------------- | ---------------------------------------- |
+| $ Implicit == 0,Explicit == 0 $ | 始终触发，除非值为0                      |
+| $ Implicit == 0,Explicit > 0 $  | 至少一个`Explicit`已触发                 |
+| $ Implicit > 0,Explicit == 0 $  | 所有`Implicit`已触发                     |
+| $ Implicit > 0,Explicit > 0 $   | 所有`Implicit`和至少一个`Explicit`已触发 |
+| $ Blocker $                     | 覆盖其他所有触发器以强制触发器失败       |
 
 处理用户输入后，输入触发器可能返回三种状态之一：
 
@@ -535,29 +542,29 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 
 
-## 新旧的InputSystem演变
+# 新旧的InputSystem演变
 
-### 旧版 Input
+## 旧版 Input
 
-#### InputStack
+### InputStack
 
 ![image-20230320195622359](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201956531.png)
 
-#### PlayerInput
+### PlayerInput
 
 - 存储按键映射： Key -> ActionName/AxisName
 - 存储按键的状态信息
 
 ![image-20230320200131928](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202001563.png)
 
-#### InputComponent
+### InputComponent
 
 - 存储键轴名字和回调的映射： ActionName/AxisName -> Delegate
 - 实现BindXXX
 
 ![image-20230320200202077](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202002223.png)
 
-#### input处理流程
+### input处理流程
 
 1. KetStateMap 存储按键状态信息
 2. 通过Key状态获取激活的Action和Axis
@@ -569,21 +576,21 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 
 
-### Enhanced Input
+## Enhanced Input
 
-#### Enhanced Framework
+### Enhanced Framework
 
 ![截屏2023-03-20 21.30.34](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222962.png)
 
-#### EnhancedPlayerInput
+### EnhancedPlayerInput
 
 ![截屏2023-03-20 21.31.48](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224758.png)
 
-#### EnhancedInputComponent
+### EnhancedInputComponent
 
 ![截屏2023-03-20 21.32.05](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222786.png)
 
-#### InputModifier
+### InputModifier
 
 > <EnginSrcDir>\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputModifiers.h
 
@@ -600,7 +607,7 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 ![截屏2023-03-20 21.32.17](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222824.png)
 
-#### InputTrigger
+### InputTrigger
 
 - ETriggerEvent::ETriggerState发生转变时触发的事件，BindXXX的时候关注某个事件
 - Dow:值大于阈值（默认0.5）就触发
@@ -613,23 +620,23 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 ![截屏2023-03-20 21.34.02](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222956.png)
 
-#### InputAction
+### InputAction
 
 ![截屏2023-03-20 21.35.34](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224525.png)
 
-#### InputMappingContext
+### InputMappingContext
 
 ![截屏2023-03-20 21.38.44](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222187.png)
 
-#### EnhancedInput处理流程
+### EnhancedInput处理流程
 
 ![截屏2023-03-20 21.39.33](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222208.png)
 
-#### Delegate运行流程
+### Delegate运行流程
 
 ![截屏2023-03-20 21.44.24](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222257.png)
 
-#### AddMappingContext流程
+### AddMappingContext流程
 
 ![截屏2023-03-20 21.44.38](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222334.png)
 
@@ -637,7 +644,7 @@ EnhancedInputSubsystem
 
 ![截屏2023-03-20 21.45.18](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222370.png)
 
-#### IMC BindAction
+### IMC BindAction
 
 初始情况应该在哪里开始应用IMC？
 

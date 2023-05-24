@@ -39,13 +39,13 @@ lineinfo.txt
 
 ### nm
 
-列出符号的标准工具是`nm`，您可以像这样简单地使用它：
+列出符号的标准工具是`nm`，可以像这样简单地使用它：
 
 ```undefined
 nm -gD yourLib.so
 ```
 
-如果您想查看 C++ 库的符号，请添加“-C”选项来对符号进行分解（分解后的可读性更高）。
+如果想查看 C++ 库的符号，请添加“-C”选项来对符号进行分解（分解后的可读性更高）。
 
 ```undefined
 nm -gDC yourLib.so
@@ -88,16 +88,16 @@ Symbol table '.dynsym' contains 112 entries:
 
 在libil2cpp.so上进行Android（IL2CPP）生产构建时，在发生的崩溃中表征一个调用堆栈，需要保存该库的符号表。
 
-该符号文件每次在 `<ProjectFolder>/Temp/ directory`{: .filepath}下构建时被创建，当编辑器应用退出后被移除，所以您可能看不到它们。
+该符号文件每次在 `<ProjectFolder>/Temp/ directory`{: .filepath}下构建时被创建，当编辑器应用退出后被移除，所以可能看不到它们。
 
 ## 解决方案
 
-每次构建后，您可以从下述位置获得符号：
+每次构建后，可以从下述位置获得符号：
 
  - `<ProjectFolder>\Temp\StagingArea\libs\x86\libil2cpp.so.debug`{: .filepath}
  - `<ProjectFolder>\Temp\StagingArea\libs\armeabi-v7a\libil2cpp.so.debug`{: .filepath}
 
-确保在关闭Unity编辑器之前将符号文件复制到不同的文件夹中。您也可以使用下面的后期构建脚本：
+确保在关闭Unity编辑器之前将符号文件复制到不同的文件夹中。也可以使用下面的后期构建脚本：
 
 ```c#
 using UnityEngine;

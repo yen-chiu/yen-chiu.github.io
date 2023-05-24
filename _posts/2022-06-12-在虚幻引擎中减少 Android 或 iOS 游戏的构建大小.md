@@ -27,7 +27,7 @@ tags: [AppSize]
 
 # Disabling plugins
 
-您的项目可能包含默认启用的未使用插件：
+的项目可能包含默认启用的未使用插件：
 
 - Android media player
 - Android movie player
@@ -45,9 +45,9 @@ tags: [AppSize]
 
 # Excluding packaged assets
 
-您还可以删除游戏中打包但从未使用过的未使用资产。以下示例与 Win64 平台相关。
+还可以删除游戏中打包但从未使用过的未使用资产。以下示例与 Win64 平台相关。
 
-首先，您需要确定需要排除哪些特定资产。为此，您需要打开`main.obb.png`游戏 pak 文件内“assets”文件夹中的存档文件。
+首先，需要确定需要排除哪些特定资产。为此，需要打开`main.obb.png`游戏 pak 文件内“assets”文件夹中的存档文件。
 
 要解压`.pak`文件并获取`main.obb.png`{: .filepath}文件，请在文件夹中打开控制台`Engine/Binaries/Win64`{: .filepath}并编写以下命令：
 
@@ -55,7 +55,7 @@ tags: [AppSize]
 UnrealPak.exe [PathToPakFile].pak -extract [PathToExtractPakFile]
 ```
 
-之后，您可以遍历提取的文件夹/文件并选择您的游戏中未使用的内容。
+之后，可以遍历提取的文件夹/文件并选择的游戏中未使用的内容。
 
 一旦确定了游戏中不需要哪些资源，在 `[PROJECT_NAME]/Build/Android`  打开（或创建）`PakBlacklist-Shipping.txt`{: .filepath}，并指定构建项目时需要排除的文件夹和文件。
 
@@ -93,7 +93,7 @@ UnrealPak.exe [PathToPakFile].pak -extract [PathToExtractPakFile]
 
 # 禁用引擎模块
 
-如果您仍然对构建大小不满意，还有另一种选择 - 通过禁用未使用但很重的模块来重建引擎，这些模块也包含在项目打包时。
+如果仍然对构建大小不满意，还有另一种选择 - 通过禁用未使用但很重的模块来重建引擎，这些模块也包含在项目打包时。
 
 为此，请下载引擎源代码、生成项目文件并通过 IDE 打开虚幻引擎解决方案。
 
@@ -126,4 +126,4 @@ bUseLauncherChecks = false;
 bEnforceIWYU = true;
 ```
 
-最后，您只需要为目标平台重建引擎和您的项目，仅此而已。
+最后，只需要为目标平台重建引擎和的项目，仅此而已。
