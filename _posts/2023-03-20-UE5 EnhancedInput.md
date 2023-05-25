@@ -408,7 +408,7 @@ protected:
 
 作为C++示例，可以找到 `InputTriggers.h` 并观察 `UInputTriggerHold` 实现。
 
-**UInputTriggerHold.H**
+#### **UInputTriggerHold.H**
 
 ```c++
 /** UInputTriggerHold
@@ -441,7 +441,7 @@ public:
 };
 ```
 
-**UInputTriggerHold.cpp**
+#### **UInputTriggerHold.cpp**
 
 ```c++
 ETriggerState UInputTriggerHold::UpdateState_Implementation(const UEnhancedPlayerInput* PlayerInput, FInputActionValue ModifiedValue, float DeltaTime)
@@ -479,15 +479,15 @@ ETriggerState UInputTriggerHold::UpdateState_Implementation(const UEnhancedPlaye
 
 ![image_15.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201530844.jpeg)
 
-使用命令：showdebug devices
+使用命令：`showdebug devices`
 
 ![image_16.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201530209.jpeg)
 
-## 注入输入
+## InjectInputForAction - 注入输入
 
-增强输入还为玩家带来了"注入输入"的概念。
+可以**调用蓝图、C++中的函数，或使用控制台命令模拟玩家的输入**。
 
-这样可以**调用蓝图、C++中的函数，或使用控制台命令模拟玩家的输入**。 可以输入 `Input.+key` 控制台命令开始模拟输入。
+可以输入 `Input.+key` 控制台命令开始模拟输入。
 
 下面是设置 `Gamepad_Left2D` 键的示例：
 
@@ -501,12 +501,6 @@ Input.-key Gamepad_Left2D
 
 ![image_17.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201532532.jpeg)
 
-
-
-在蓝图中注入输入
-
-
-
 ```c++
 UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
 
@@ -516,9 +510,9 @@ FInputActionValue ActionValue(1.0f); // 这可以是布尔、浮点、FVector2D�
 PlayerInput->InjectInputForAction(InputAction, ActionValue); 
 ```
 
-## 平台设置
+## 平台设置 - Enhanced Input Platform Data
 
-可能希望将不同的输入设置用于不同的平台，例如Nintendo Switch上的旋转脸部按钮，或改变移动设备上可用的动作。
+可能希望将不同的输入设置用于不同的平台，例如<kbd>Nintendo Switch</kbd>上的旋转脸部按钮，或改变移动设备上可用的动作。
 
 增强输入提供了逐个平台的 **映射上下文重定向（Mapping Context Redirect）** ，可帮助轻松做到。
 
@@ -532,7 +526,9 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 ![image_18.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201534482.jpeg)
 
-要应用此重定向，请将其添加到的 **项目设置（Project Settings）** > **增强输入（Enhanced Input）** > **平台设置（Platform Settings）** > **输入数据（Input Data）**
+要应用此重定向，将其添加到
+
+<kbd>项目设置（**Project Settings**）</kbd> => <kbd>增强输入（**Enhanced Input**）</kbd> => <kbd>平台设置（**Platform Settings**）</kbd> => <kbd>输入数据（**Input Data**）</kbd>
 
 ![image_19.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201534810.jpeg)
 
@@ -544,11 +540,11 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 # 新旧的InputSystem演变
 
-## 旧版 Input
+## PlayerInput - 旧版
 
 ### InputStack
 
-![image-20230320195622359](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201956531.png)
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850079243631685007923751.png)
 
 ### PlayerInput
 
@@ -562,9 +558,9 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 - 存储键轴名字和回调的映射： ActionName/AxisName -> Delegate
 - 实现BindXXX
 
-![image-20230320200202077](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202002223.png)
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850081123681685008111723.png)
 
-### input处理流程
+### Input处理流程
 
 1. KetStateMap 存储按键状态信息
 2. 通过Key状态获取激活的Action和Axis
@@ -572,27 +568,45 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 4. 触发所有搜集到的Delegate
 5. 重置KeyStateMap
 
-![截屏2023-03-20 21.24.06](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222852.png)
-
-
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850081493621685008148504.png)
 
 ## Enhanced Input
 
 ### Enhanced Framework
 
-![截屏2023-03-20 21.30.34](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222962.png)
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850073112151685007309480.png)
 
-### EnhancedPlayerInput
+**按键映射**
 
-![截屏2023-03-20 21.31.48](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224758.png)
+| PlayerInput               | EnhancedPlayerInput |
+| ------------------------- | ------------------- |
+| Key - ActionName/AxisName | Key - InputAction   |
 
-### EnhancedInputComponent
+- *EnhancedPlayerInput*
 
-![截屏2023-03-20 21.32.05](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222786.png)
+> ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850074253591685007424773.png)
+
+**键轴回调映射**
+
+| InputComponent                 | EnhancedInputComponent |
+| ------------------------------ | ---------------------- |
+| ActionName/AxisName - Delegate | InputAction - Delegate |
+
+- *EnhancedInputComponent*
+  - 存储InputAction和回调的映射InputAction -> Delegate
+  - 实现BindAction
+
+> ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850076443671685007644242.png)
 
 ### InputModifier
 
-> <EnginSrcDir>\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputModifiers.h
+> `<EnginSrcDir>\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputModifiers.h`
+
+- Mapping.Modifiers / Triggers针对当前IMC场景
+- InputAction.Modifiers / Triggers针对全局
+- 链式处理
+
+#### 内置的Modifier
 
 - **DeadZone**: 限定值的范围
 - **Scalar**: 缩放一个标量
@@ -605,24 +619,34 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 - **SwizzleAxis**: 互换轴值
 - **Collection**: 嵌套子修改器集合
 
-![截屏2023-03-20 21.32.17](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222824.png)
-
 ### InputTrigger
 
-- ETriggerEvent::ETriggerState发生转变时触发的事件，BindXXX的时候关注某个事件
-- Dow:值大于阈值（默认0.5）就触发
-- Pressed:不激活到激活
-- Released:激活到不激活
-- Hold:按住大于某个时间
-- HoldAndRelease:按住大于某个时间后松开
-- Tap:按下后快速抬起（默认0.2）
-- Chorded:根据别的Action联动触发
+`ETriggerEvent::ETriggerState` 发生变化时触发的事件，`BindXXX` 的时候关注某个事件
 
-![截屏2023-03-20 21.34.02](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222956.png)
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850083653631685008364706.png)
+
+- **Dow**: 值大于阈值（默认0.5）就触发
+- **Pressed**: 不激活到激活
+- **Released**: 激活到不激活
+- **Hold**: 按住大于某个时间
+- **HoldAndRelease**: 按住大于某个时间后松开
+- **Tap**: 按下后快速抬起（默认0.2）
+- **Chorded**: 根据别的Action联动触发 (*可应用于组合键*)
 
 ### InputAction
 
-![截屏2023-03-20 21.35.34](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224525.png)
+| FInputActionValue                 | FInputActionlnstance |
+| --------------------------------- | -------------------- |
+| Action的值： $ XYZ $,   $ 0 / 1 $ | Action的运行时状态   |
+
+- C++:
+  - void()
+  - void(const FInputActionValue&)
+  - void(const FInputActionlnstance&)
+- BP:
+  - void(FInputActionValue ActionValue , float ElapsedTime , float TriggeredTime)
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850088603651685008859421.png)
 
 ### InputMappingContext
 
