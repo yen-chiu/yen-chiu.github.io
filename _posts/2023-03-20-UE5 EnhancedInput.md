@@ -2,6 +2,7 @@
 title: UE5 EnhancedInput
 date: 2023-03-20 08:27:47 +0800
 categories: [Unreal,Beginner]
+math: true
 tags: []
 
 # Ref
@@ -471,17 +472,27 @@ ETriggerState UInputTriggerHold::UpdateState_Implementation(const UEnhancedPlaye
 
 映射提供了各种各样的元数据选项，可用于更轻松地处理编程UI设置屏幕。
 
-## 调试命令
+## ConsoleDebug - 调试命令
 
 可以使用多个与输入相关的调试命令，来调试可能在处理的与输入相关的行为。
 
-使用命令 `showdebug enhancedinput` 会显示的项目使用的可用输入动作和轴映射。
+| ConsoleCommands                               | 备注                                                   |
+| :-------------------------------------------- | :----------------------------------------------------- |
+| Input.+<action>  <ActionName>  <Value>        | 强制添加某个Action的输入                               |
+| Input.-<action> <ActionName>                  | 移除某Action的输入                                     |
+| Input.+<key> <Key> <Value>                    | 添加某Key的输入                                        |
+| Input.-<key> <keyName>                        | 移除某Key的输入                                        |
+| ShowDebug EnhancedInput                       | 显示调试界面；<br>显示的项目使用的可用输入动作和轴映射 |
+| `PlayerInput::InputKey/Axis()`                | 代码注入 - Key/Axis                                    |
+| `UEnhancedPlayerInput:InjectInputForAction()` | 代码注入 - InputAction                                 |
 
-![image_15.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201530844.jpeg)
+>  使用命令 `showdebug enhancedinput` 会显示的项目使用的可用输入动作和轴映射。
+>
+> ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850694336661685069432642.png)
 
-使用命令：`showdebug devices`
 
-![image_16.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201530209.jpeg)
+
+> 使用命令：`showdebug devices`  ![image_16.png](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303201530209.jpeg)
 
 ## InjectInputForAction - 注入输入
 
@@ -572,7 +583,12 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 ## Enhanced Input
 
-### Enhanced Framework
+- $ M $ Key :  $ N $ InputAction
+- $ 1 $ InputAction : $ M $ Modifier : $ N $ Trigger
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850702376631685070237123.png)
+
+### Enhanced Framework - 框架概览
 
 ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850073112151685007309480.png)
 
@@ -650,55 +666,118 @@ PlayerInput->InjectInputForAction(InputAction, ActionValue);
 
 ### InputMappingContext
 
-![截屏2023-03-20 21.38.44](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222187.png)
+- 一套当前的 <KBD>Key</KBD> **->** <KBD> InputAction </KBD> 的映射集合
+- 多个IMC同时作用，高优先级的会先处理，如果没有则触发到低优先级的
+- 高优先级的Key绑定会屏蔽低优先级的绑定
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850641796451685064179045.png)
 
 ### EnhancedInput处理流程
 
-![截屏2023-03-20 21.39.33](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222208.png)
+1. 兼容 Input 处理
+2. 遍历 EnhancedActionMappings
+3. 通过 KeyStateMap 查询获取 激活的Action
+4. 应用 Mapping.Modifiers 修改值
+5. 应用 Mapping.Triggers 决定触发状态
+6. 应用 Action.Modifiers 修改值
+7. 应用 Action.Triggers 决定触发状态
+8. 遍历引 InputStack 获取 EnhancedInputComponent 中的 Binding 回调
+9. 触发所有 Delegates
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850643656551685064365409.png)
 
 ### Delegate运行流程
 
-![截屏2023-03-20 21.44.24](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222257.png)
+<KBD>Key</KBD> **->**  <KBD>Action/Axis Name</KBD>  **->** <KBD>Binding Delegate</KBD> 
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850644516541685064451023.png)
 
 ### AddMappingContext流程
 
-![截屏2023-03-20 21.44.38](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222334.png)
+- InputMappingContext 会根据优先级排序
+- IMC:Mappings 也会根据动作联动而优先级排序
+- lMC:Mappings 会复制添加到 PlayerInput 的 EnhancedActionMappings
 
-EnhancedInputSubsystem
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850645736471685064573132.png)
 
-![截屏2023-03-20 21.45.18](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222370.png)
+### EnhancedInputSubsystem
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850646236471685064622791.png)
 
 ### IMC BindAction
 
-初始情况应该在哪里开始应用IMC？
+#### 初始情况应该在哪里开始应用IMC？
 
-后续运行时在蓝图中应该如何切换IMC?
+##### PlayerController IMC+BindAction
 
-何时Remove IMC?
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850676736581685067672812.png)
 
-在哪里绑定 Action 和Axis？
+- **C++**
 
-在蓝图中如何BindAction?
+  - **SetupInputComponent** 依然是最合适的位置
 
-![截屏2023-03-20 21.47.47](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222660.png)
+- **BP**
 
-![截屏2023-03-20 21.50.31](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224385.png)
+  - 在**BeginPlay**后Add[IMC]
 
-![截屏2023-03-20 21.52.58](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222439.png)
+  - 可直接Add Action Event
 
-![截屏2023-03-20 21.54.10](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222465.png)
+##### Pawn IMC+BindAction
 
-![截屏2023-03-20 21.59.11](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224154.png)
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850679396581685067938921.png)
 
-![截屏2023-03-20 22.02.02](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202224166.png)
+- **C++**
+  - **SetuplnputComponent**依然合适
+- **BP**
+  - 在**Possessed**事件内Add[IMC]
+  - 可直接Add Action Event
 
-![截屏2023-03-20 22.02.21](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222694.png)
+#### 何时Remove IMC?
 
-![截屏2023-03-20 22.02.30](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202222029.png)
+![image-20230526103458309](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202305261131456.png)
 
-![截屏2023-03-20 22.05.04](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202223765.png)
+##### PlayerController Remove(IMC)
 
-![截屏2023-03-20 22.07.13](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202303202223875.png)
+- PlayerController 的 IMC **不需要移除，因为PC一直在**
+
+##### Pawn Remove(IMC)
+
+- C++
+  - 在 **UnPossessed** 事件时移除 自身IMC
+- BP
+  - 在 **Unpossessed** 事件来移除 自身IMC
+
+#### 最佳实践
+
+- 分层的IMC设计：
+  - 基本输入（移动）
+  - 武器/载具
+  - 行为/Buff
+- Add(IMC,Priority),规划好Priority的值
+  - IMC的Priorit体现的是Key和InputAction之间的映射关系
+  - 但是找到InputAction,之后，还是依然按照InputStack的顺序来处理。
+- Pawn上可携带多个IMC,但只Apply一个
+- IMC不一定跟Pawn绑定关联，可根据运行时逻辑灵活Add
+- IMC代表输入的逻辑处理环境，BindAction代表输入事件该由谁来处理的职责
+
+## GameFeatures联动
+
+- AddInputContextMapping给PC Add(IMC),得在PC初始化后
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850696926611685069692333.png)
+
+- 可继承自 PlayerControlsComponent扩展
+- IMC 和 IA 等都可放在 GameFeature里动态加载
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850698716641685069871117.png)
+
+## GAS联动
+
+- 自动添加 UAbilityInputBindingComponent组件，并 SetInputBinding
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850699516641685069951475.png)
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16850699696621685069969538.png)
 
 
 
