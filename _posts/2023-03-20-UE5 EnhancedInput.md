@@ -25,7 +25,7 @@ tags: []
 
 ### 目标：
 
-- 重新梳理简化： Axis/Action —> Action（统一）
+- 重新梳理简化： Axis/Action -> Action（统一）
 
 - 运行时重新映射输入场景： UInputMappingContext
 

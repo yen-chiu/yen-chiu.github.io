@@ -30,7 +30,7 @@ PAUSE
 ```
 lineinfo.txt
 
-```
+```bash
  -a -C -f -e "F:/WorkProject/_Develop/program/client/trunk/game/Prj-G/addr2lineTools/libil2cpp.sym" 01a23918 00f45b68 01c335f0 00488808 019df9ec
 ```
 {: .nolineno file="lineinfo.txt" }
@@ -41,13 +41,13 @@ lineinfo.txt
 
 列出符号的标准工具是`nm`，可以像这样简单地使用它：
 
-```undefined
+```bash
 nm -gD yourLib.so
 ```
 
 如果想查看 C++ 库的符号，请添加“-C”选项来对符号进行分解（分解后的可读性更高）。
 
-```undefined
+```bash
 nm -gDC yourLib.so
 ```
 
