@@ -6,6 +6,18 @@
   # 为 true 时当且仅当图片无法加载时，使用名字替代。为 false 时始终显示名字。
   automatic_name: true
   link: http://dreamfairy.cn/blog/
+  width: 20
+  height: 20
+
+-
+  icon: https://profile-counter.glitch.me/Rootjhon/count.svg
+  use_iconfont: false
+  name: Visitor
+  automatic_name: true
+  link: https://rootjhon.github.io/
+  width: 150
+  height: 20
+
 # 在下面添加更多外部链接
 # -
 #   icon: 
@@ -13,3 +25,6 @@
 #   name:
 #   automatic_name:
 #   link: 
+#   width: 20
+#   height: 20
+
