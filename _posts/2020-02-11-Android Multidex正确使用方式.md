@@ -21,9 +21,10 @@ Android 应用 (APK) 文件包含 Dalvik Executable (DEX) 文件形式的可执�
 
 # 二、Multidex使用简单配置
 
+1. Gralde 配置
 
-```
-// 1. Gralde 配置
+
+```groovy
 android {
     defaultConfig {
         ...
@@ -38,8 +39,11 @@ dependencies {
      api 'com.android.support:multidex:1.0.3'
      api 'com.android.support:multidex-instrumentation:1.0.3'
 }
+```
 
-// 2. 清单配置
+2. 清单配置
+
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myapp">
@@ -48,8 +52,11 @@ dependencies {
         ...
     </application>
 </manifest>
+```
 
-// 3. Application初始化
+3. Application初始化
+
+```java
 public class MyApplication extends SomeOtherApplication {
   @Override
   protected void attachBaseContext(Context base) {
@@ -58,7 +65,6 @@ public class MyApplication extends SomeOtherApplication {
   }
 }
 ```
-
 
 # 三、高级配置，multiDexKeepFile 属性
 
@@ -75,7 +81,7 @@ com/example/MyOtherClass$InnerClass.class// 内部类配置方式
  - 在配置multidex-config.txt前，先release一遍，找到app/build/intermediates/multi-dex/release/maindexlist.txt这个文件的所有内容复制到multidex-config.txt文件中。maindexlist.txt里面的内容是通过一系统列方法算出APP启动所关联的类。
 
 在build.gradle文件配置
-```
+```groovy
 android {
     buildTypes {
         release {
@@ -88,7 +94,7 @@ android {
 
 每个包内方法数上限配置(**对低端机型很重要**)
 
-```
+```groovy
  dexOptions {
         javaMaxHeapSize "4g"
         preDexLibraries = false
