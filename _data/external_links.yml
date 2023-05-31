@@ -1,4 +1,13 @@
 -
+  icon: https://profile-counter.glitch.me/Rootjhon/count.svg
+  use_iconfont: false
+  name: 
+  automatic_name: true
+  link: https://rootjhon.github.io/
+  width: 150
+  height: 20
+
+-
   icon: https://raw.githubusercontent.com/Rootjhon/img_note/empty/16790410035611679041003479.png
   # 是否使用 Iconfont 的图标字体
   use_iconfont: false
@@ -9,14 +18,6 @@
   width: 20
   height: 20
 
--
-  icon: https://profile-counter.glitch.me/Rootjhon/count.svg
-  use_iconfont: false
-  name: Visitor
-  automatic_name: true
-  link: https://rootjhon.github.io/
-  width: 150
-  height: 20
 
 # 在下面添加更多外部链接
 # -
