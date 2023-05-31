@@ -9,7 +9,7 @@
           {% if external_link.use_iconfont %}
             <i class="iconfont {{ external_link.icon }}"></i>
           {% else %}
-            <img src="{{ external_link.icon }}" width="{{ external_link.width }}" height="{{ external_link.height }}" alt="{{ external_link.name | default: ' ' }}" />
+            <img src="{{ external_link.icon }}" width="{{ external_link.width }}" height="{{ external_link.height }}" alt="{{ external_link.name | default: '-' }}" />
             {% if external_link.name %}
                 &nbsp;{{- external_link.name -}}
             {% endif %}
