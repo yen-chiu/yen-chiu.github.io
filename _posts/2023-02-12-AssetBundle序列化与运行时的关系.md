@@ -37,6 +37,10 @@ tags: [AssetBundle, 内存优化]
   > 
   > BundleB = [DependencyAsset3]
   > ```
+  >
+  > ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202306011048072.png)
+  
+  
 
 ## SerializedFile
 
