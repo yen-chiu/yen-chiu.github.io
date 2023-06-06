@@ -2,7 +2,7 @@
 title: Unity Addressables
 date: 2022-03-18 22:41:00 +0800
 categories: [Unity,资源管理]
-tags: [Addressables]
+tags: [Addressables,AssetBundle]
 
 ---
 
