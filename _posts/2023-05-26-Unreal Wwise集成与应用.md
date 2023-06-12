@@ -8,6 +8,7 @@ tags: []
 # - https://www.audiokinetic.com/zh/library/edge/?source=UE4&id=using_initialsetup.html
 # - https://www.audiokinetic.com/zh/library/edge/?source=UE4&id=using_features_localization.html
 # - https://www.audiokinetic.com/zh/library/edge/?source=UE4&id=using_features_reference_load_switch_container.html
+# - https://www.audiokinetic.com/zh/library/edge/?source=UE4&id=using_faq.html
 ---
 
 ## 集成
@@ -286,7 +287,84 @@ void PostEvent(UAkAudioEvent* Event, AActor* GameObject)
 
 此外，在 submaps 或菜单中加载和设置开关或状态时要小心。当这些关卡被卸载时，如果 Switch 或 State Value 资产没有在持久关卡中被引用，它们可能也会被卸载，这会导致它们相关的媒体被卸载。若Switch Value或State Value仍然设置在场景中的GameObject上，很可能会产生不合预期的行为。
 
-简单来说，需要管理好 Switch 、State 的内存资源。
+<u>简单来说，需要管理好 Switch 、State 的内存资源</u>。
+
+### 启用 Reference-Loaded Switch Container Media
+
+每个[UAkAudioEvent](https://www.audiokinetic.com/zh/library/2022.1.4_8202/?source=UE4&id=pg_features_objects_assets.html#features_objects_classes_UAkAudioEvent)都包含[FWwiseEventInfo](https://www.audiokinetic.com/zh/library/2022.1.4_8202/?source=UE4&id=pg_features_objects_assets.html#features_objects_classes_FWwiseEventInfo)结构，以此了解别其所代表的 Wwise Event。
+
+WwiseEventInfo 结构还包含 SwitchContainerLoading 字段，它可以启用  reference-loaded  Switch Container media。
+
+- 设置为**AlwaysLoad**（所有事件的默认模式）时，所有媒体资源都随事件一起加载。
+- 设置为**LoadOnReference**时，只有引用的媒体资源随事件一起加载。
+
+### 技术细节
+
+当此选项被激活且 Wwise Event 资产由 WwiseResourceCooker 烘焙时，其烘焙数据包含一组 SwitchContainerLeaves。
+
+这些 Leaf 是由一系列不同的 Switch Value 或 State Value 到所要加载的媒体和 SoundBank 的映射。
+
+![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202306091144330.png)
+
+比如这个例子，FS_Dirt_[01-04] 资源仅当 `Human_Surface_Material` 和 `Material_Dirt` Switches Values 被加载时才需要。
+
+这由 <KBD>SwitchContainerLeaf</KBD> 表示，它具有由一对 `Human_Surface_Material` 和 `Material_Dirt` 开关组成的“键”，以及被依赖的 FS_Dirt_[01-04] 。
+
+在通过 WwiseResourceLoader 加载 Wwise Event 时，会与对应的一组 SwitchContainerLeaf 添加到 WwiseResourceLoader 针对各个已知道的 Switch Value 和 State Value 跟踪的 Leaf 列表中。由 WwiseResourceLoader 加载（或卸载）。
+
+> - 只有在通过 WwiseResourceLoader 加载 Event、Switch 和 State 素材时，才会对媒体依赖关系进行评估
+> - Setting and unsetting Switches or States in the Sound Engine does not cause media to be loaded or unloaded.
+
+要进一步优化内存使用，还可以禁用[UAkAudioType](https://www.audiokinetic.com/zh/library/2022.1.4_8202/?source=UE4&id=pg_features_objects_assets.html#features_objects_classes_UAkAudioType)公开的**AutoLoad**属性，该属性适用于所有 Wwise 资源。在禁用此选项时，必须调用各个素材的 **LoadData** 和 **UnloadData**（可在 Blueprint 中找到）方法来驱动WwiseResourceLoader 的加、卸载。
+
+## 第三人称听者设置
+
+![企业微信截图_16863021986371](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202306091726206.png)
+
+## FAQ
+
+### 最好不要混用 Unreal Audio 和Wwise
+
+- 在 IOS 上可能遇到Crash、无法加载的情况，一定要用的话，需要设置 [Using the AkAudioMixer Module](https://www.audiokinetic.com/zh/library/2022.1.4_8202/?source=UE4&id=using_features_akaudiomixer.html)
+
+- 禁用 Unreal Audio的步骤：
+
+  - 将 `<UE_ROOT>/Engine/Config/iOS/IOSEngine.ini` AudioDeviceModuleName 字段置空
+
+    ```ini
+    AudioDeviceModuleName=IOSAudio
+    ```
+
+    ```ini
+    AudioDeviceModuleName=
+    ```
+
+    
+
+### 如何使用 Debug库构建？
+
+在以下文件中将 `bDebugBuildsActuallyUseDebugCRT` 变量设为 `true` ：`<UE_ROOT>/Engine/Source/Programs/UnrealBuildTool/Configuration/BuildConfiguration.cs`。
+
+
+
+### UE5 Android 构建时特别注意事项
+
+**必须更改 `ThirdParty` 文件夹内的 Android SDK 文件夹层级结构。**
+
+![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16865346979601686534697373.png)
+
+| 原目录 | 目标目录 |
+| -----: | :------- |
+| `Android_armeabi-v7a`  |  `Android/armeabi-v7a` |
+| `Android_arm64-v8a` |  `Android/arm64-v8a` |
+| `Android_x86` | `Android/x86` |
+| `Android_x86_64` |  `Android/x86_64` |
+
+
+
+
+
+
 
 
 
