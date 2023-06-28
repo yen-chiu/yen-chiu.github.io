@@ -2,6 +2,7 @@
 title: 程序化地形 GPU Driven Terrain
 date: 2020-06-21 12:32:00 +0800
 categories: [图形编程,地形系统]
+mermaid: true
 tags: [GPUDriven,Terrain]
 
 # 
