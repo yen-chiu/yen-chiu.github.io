@@ -40,9 +40,11 @@ layout: default
   <!-- panel -->
   <div id="panel-wrapper" class="col-xl-3 ps-2 text-muted">
     <div class="access">
-      {% include_cached update-list.html lang=lang %}
-      {% include_cached trending-tags.html lang=lang %}
-      {% include_cached external-links.html lang=lang %}
+      {% if page.layout != "post" %}
+        {% include_cached update-list.html lang=lang %}
+        {% include_cached trending-tags.html lang=lang %}
+        {% include_cached external-links.html lang=lang %}
+      {% endif %}
     </div>
 
     {% for _include in layout.panel_includes %}
