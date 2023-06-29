@@ -8,6 +8,11 @@ tags: [GPUDriven,Terrain]
 # 
 # Ref
 # - https://www.gdcvault.com/play/1025480/Terrain-Rendering-in-Far-Cry
+# - https://developer.nvidia.com/gpugems/gpugems2/part-i-geometric-complexity/chapter-2-terrain-rendering-using-gpu-based-geometry
+# - https://github.com/wlgys8/GPUDrivenTerrainLearn
+# - https://zhuanlan.zhihu.com/p/388844386
+# - https://www.lfzxb.top/terrain-rendering-in-far-cry5/
+# - https://catlikecoding.com/unity/tutorials/procedural-meshes/modified-grid/
 
 ---
 
