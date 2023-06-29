@@ -171,6 +171,8 @@ fi;
 ## Mathematics - 数学符号
 
 > 在文章开头需添加  `math: true`
+>
+> Ref \>> [url](https://blog.csdn.net/ajacker/article/details/80301378)
 
 The mathematics powered by [**MathJax**](https://www.mathjax.org/):
 
@@ -184,14 +186,48 @@ $$ \sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6} $$
 
 When $a \ne 0$, there are two solutions to $ax^2 + bx + c = 0$ and they are
 
-> - `$a \ne 0$`
-> - `$ax^2 + bx + c = 0$`
+> - `$ a \ne 0 $`
+> - `$ ax^2 + bx + c = 0 $`
 
 ```mathematica
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 ```
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
+
+
+
+### 希腊字母
+
+- 如果要大写希腊字母，则首字母大写即可，如`\Gamma`显示为 $ \Gamma $
+- 如果要使希腊字母显示为斜体，则前面添加`var`即可，如`\varGamma`显示为 $ \varGamma $
+
+| 显示 | 命令 | 显示 | 命令 |
+| ---- | ---- | ---- | ---- |
+| $$ \alpha $$ | `\alpha` | $$ \beta $$ | `\beta` |
+| $$ \gamma $$ | `\gamma` | $$ \delta $$ | `\delta` |
+| $$ \epsilon $$ | `\epsilon` | $$ \zeta $$ | `\zeta` |
+| $$ \eta $$ | `\eta` | $$ \theta $$ | `\theta` |
+| $$ \iota $$ | `\iota` | $$ \kappa $$ | `\kappa` |
+| $$ \lambda $$ | `\lambda` | $$ \mu $$ | `\mu` |
+| $$ \nu $$ | `\nu` | $$ \xi $$ | `\xi` |
+| $$ \pi $$ | `\pi` | $$ \rho $$ | `\rho` |
+| $$ \sigma $$ | `\sigma` | $$ \tau $$ | `\tau` |
+| $$ \upsilon $$ | `\upsilon` | $$ \phi $$ | `\phi` |
+| $$ \chi $$ | `\chi` | $$ \psi $$ | `\psi` |
+| $$ \omega $$ | `\omega`   |              |          |
+
+### 矢量
+
+单字母向量:
+
+- `\vec a` =  $ \vec a $
+- `\overrightarrow a` = $ \overrightarrow a $
+
+多字母向量:
+
+- `\vec {ab}` =  $ \vec {ab} $
+- `\overrightarrow {ab}` = $ \overrightarrow {ab} $
 
 
 
