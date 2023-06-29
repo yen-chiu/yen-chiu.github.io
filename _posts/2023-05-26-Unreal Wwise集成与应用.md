@@ -167,8 +167,8 @@ public class xxTarget : TargetRules
 {
 	public xxTarget(TargetInfo Target) : base(Target)
 	{
-        DisablePlugins.Add("Wwise");
-    }
+		DisablePlugins.Add("Wwise");
+	}
 }
 ```
 
