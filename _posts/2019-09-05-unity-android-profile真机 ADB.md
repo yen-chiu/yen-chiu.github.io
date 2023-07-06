@@ -34,7 +34,7 @@ Terms
 一般来说内存占用大小有如下规律：VSS >= RSS >= PSS >= USS
 ```
 
-```
+```bash
 方法1. 基于adb shell dumpsys meminfo的方式，打印详细的当前环境PSS使用信息
 adb shell "dumpsys meminfo | grep package"     //其中package为具体应用的包名信息
 例如： adb shell "dumpsys meminfo | 具体应用包名"  //当前系统某个APP的总体情况
@@ -98,18 +98,17 @@ package为应用的包名，activity为具体页面，启动测试可以是launc
 
 下载到本地
 
-```
+```bash
 adb pull storage/emulated/0/logsample/xlog/LOGSAMPLE_20190611.xlog  [保存到本地的位置(可选)]
 ```
 
 上传 
 
-```
+```bash
 abd push [要上传的文件位置] [要保存的设备目录]  
 ```
 
 ----
-
 
 结论： 
  `adb forward tcp:55000 localabstract:Unity-`
@@ -144,7 +143,7 @@ ADB的方式
 注：不同版本默认端口有所不同
 
 **可Unity一点反应也没有**
- 
+
 ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16762621539161676262153035.png)
 
 **然后使用默认的端口映射34999或54999是为什么还是不行？**
