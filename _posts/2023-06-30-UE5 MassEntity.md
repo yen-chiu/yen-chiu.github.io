@@ -8,6 +8,10 @@ tags: [ECS]
 # - https://docs.unrealengine.com/5.0/en-US/mass-entity-in-unreal-engine/
 # - https://github.com/Megafunk/MassSample/
 # - https://dev.epicgames.com/community/learning/tutorials/JXMl/unreal-engine-your-first-60-minutes-with-mass
+# - https://www.bilibili.com/video/BV1nB4y1y7cX/?vd_source=fdb276fc298ea6fa0c6e79ca8cc45bfd
+# - https://docs.unity3d.com/Manual/com.unity.entities.html
+# - https://forum.unity.com/threads/why-ecs-make-things-faster.549739/
+
 ---
 
 
@@ -37,6 +41,10 @@ MassEntity is a gameplay-focused framework for data-oriented calculations.
 - `Processor ` 定义一个查询，仅过滤具有特定片段的实体
   - "movement" Processor : 可以查询拥有 `transform ` `velocity ` 的`entity`
 - `archetypes` 指 内存中相同`fragment `紧密排列的数组
+
+
+
+## 流程
 
 
 
@@ -112,8 +120,6 @@ EntityManager->Defer().PushCommand<FMassCommandBuildEntityWithSharedFragments>(R
 
 
 
-
-
 ## How to Query Entity
 
 
@@ -122,3 +128,4 @@ EntityManager->Defer().PushCommand<FMassCommandBuildEntityWithSharedFragments>(R
 
 
 
+## Why ECS make things faster
