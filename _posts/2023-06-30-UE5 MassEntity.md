@@ -11,6 +11,8 @@ tags: [ECS]
 # - https://www.bilibili.com/video/BV1nB4y1y7cX/?vd_source=fdb276fc298ea6fa0c6e79ca8cc45bfd
 # - https://docs.unity3d.com/Manual/com.unity.entities.html
 # - https://forum.unity.com/threads/why-ecs-make-things-faster.549739/
+# - https://github.com/Rootjhon/OnAllFronts-Public
+# - https://github.com/Rootjhon/UE5.2-MassEntityDemo
 
 ---
 
