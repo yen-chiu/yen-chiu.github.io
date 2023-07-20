@@ -13,6 +13,7 @@ tags: [ECS]
 # - https://forum.unity.com/threads/why-ecs-make-things-faster.549739/
 # - https://github.com/Rootjhon/OnAllFronts-Public
 # - https://github.com/Rootjhon/UE5.2-MassEntityDemo
+# - https://zhuanlan.zhihu.com/p/599364815
 
 ---
 
@@ -131,3 +132,11 @@ EntityManager->Defer().PushCommand<FMassCommandBuildEntityWithSharedFragments>(R
 
 
 ## Why ECS make things faster
+
+- Cache Memory > Main RAM
+
+
+
+## Replication
+
+![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202307201805955.png)
