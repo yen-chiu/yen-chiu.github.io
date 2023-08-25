@@ -18,7 +18,7 @@ tabs:
 
 # the text displayed in the search bar & search results
 search:
-  hint: 搜索
+  hint: 按下 / 激活搜索框
   cancel: 取消
   no_results: 搜索结果为空
 
