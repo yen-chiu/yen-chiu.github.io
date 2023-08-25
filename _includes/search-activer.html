@@ -1,20 +1,18 @@
 <script>
-    // 使用 jQuery 监听按键事件
     $(document).on('keydown', function(event) {
-        // 检查是否按下 / 键（键码为 191）
-        if (event.which === 191) {
-            // 取消事件的默认行为
-            event.preventDefault();
-            // 激活搜索框
-            activateSearchBox();
-        }
+        SearchBoxQuickTrigger(event);
     });
 
-    // 激活搜索框的函数
-    function activateSearchBox() {
-        // 使用 jQuery 获取搜索框元素
+    function SearchBoxQuickTrigger(event) {
         var searchBox = $('#search-input');
-        // 将焦点设置到搜索框
-        searchBox.focus();
+        if (event.which === 191) {
+            if (searchBox[0] !== document.activeElement) {
+            event.preventDefault();
+            searchBox.focus();
+            }
+        }
+        else if (event.which === 27) {
+            searchBox.blur();
+        }   
     }
 </script>
