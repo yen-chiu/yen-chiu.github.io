@@ -190,7 +190,6 @@ exclude:
   - CHANGELOG.md
   - LICENSE
   - rollup.config.js
-  - node_modules
   - package*.json
   - 'local_checker.bat'
   - 'local_start.bat'
