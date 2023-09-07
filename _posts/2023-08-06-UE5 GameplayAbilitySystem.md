@@ -149,11 +149,17 @@ Minions 没有任何预定义的`GameplayAbilities`. 红色小兵有更多的生
 
 ### 4.1 Ability System Component
 
-`AbilitySystemComponent`（`ASC`）是GAS的核心。它是处理与系统的所有交互的`UActorComponent`( )。[`UAbilitySystemComponent`](https://docs.unrealengine.com/en-US/API/Plugins/GameplayAbilities/UAbilitySystemComponent/index.html)任何`Actor`想要使用[`GameplayAbilities`](https://github.com/tranek/GASDocumentation#concepts-ga)、拥有[`Attributes`](https://github.com/tranek/GASDocumentation#concepts-a)或接收的人[`GameplayEffects`](https://github.com/tranek/GASDocumentation#concepts-ge)都必须附有一个`ASC`。这些对象都存在于 内部并由 管理和复制（除了`Attributes`由其复制的对象外[`AttributeSet`](https://github.com/tranek/GASDocumentation#concepts-as)）`ASC`。开发人员应该但不要求对其进行子类化。
+`AbilitySystemComponent`（`ASC`）是GAS的核心。
+
+它是处理与系统的所有交互的`UActorComponent`( )。
+
+任何`Actor`想要使用[`GameplayAbilities`](https://github.com/tranek/GASDocumentation#concepts-ga)、拥有[`Attributes`](https://github.com/tranek/GASDocumentation#concepts-a)或接收的人[`GameplayEffects`](https://github.com/tranek/GASDocumentation#concepts-ge)都必须附有一个`ASC`[`UAbilitySystemComponent`](https://docs.unrealengine.com/en-US/API/Plugins/GameplayAbilities/UAbilitySystemComponent/index.html)。这些对象都存在于 内部并由 管理和复制（除了`Attributes`由其复制的对象外[`AttributeSet`](https://github.com/tranek/GASDocumentation#concepts-as)）`ASC`。开发人员应该但不要求对其进行子类化。
 
 与其`Actor`相连的`ASC`被称为`OwnerActor`的`ASC`。`Actor`的物理表示`ASC`称为`AvatarActor`。和`OwnerActor`可以与 MOBA 游戏中简单 AI 小兵的情况相同`AvatarActor`。`Actor`它们也可以不同，`Actors`就像 MOBA 游戏中玩家控制的英雄一样，其中 是`OwnerActor`，`PlayerState`是`AvatarActor`英雄的`Character`职业。大多数人`Actors`都会`ASC`自己拥有。如果的`Actor`意志重生并且需要在重生时`Attributes`或`GameplayEffects`在重生之间持续存在（就像 MOBA 中的英雄），那么理想的位置是`ASC`在`PlayerState`.
 
-**注意：**如果的`ASC`位于的 上`PlayerState`，那么将需要增加`NetUpdateFrequency`的 的`PlayerState`。它默认为非常低的值，并且可能会在客户端上发生诸如和 之类`PlayerState`的事情之前导致延迟或感知滞后。一定要启用，Fortnite 使用它。`Attributes``GameplayTags`[`Adaptive Network Update Frequency`](https://docs.unrealengine.com/en-US/Gameplay/Networking/Actors/Properties/index.html#adaptivenetworkupdatefrequency)
+**注意：**
+
+> 如果的`ASC`位于的 上`PlayerState`，那么将需要增加`NetUpdateFrequency`的 的`PlayerState`。它默认为非常低的值，并且可能会在客户端上发生诸如和 之类`PlayerState`的事情之前导致延迟或感知滞后。一定要启用，Fortnite 使用它。`Attributes``GameplayTags`[`Adaptive Network Update Frequency`](https://docs.unrealengine.com/en-US/Gameplay/Networking/Actors/Properties/index.html#adaptivenetworkupdatefrequency)
 
 the`OwnerActor`和 the`AvatarActor`如果不同`Actors`，则应实施`IAbilitySystemInterface`. 该接口有一个必须重写的函数`UAbilitySystemComponent* GetAbilitySystemComponent() const`，它返回一个指向其 的指针`ASC`。`ASCs`通过寻找这个接口函数在系统内部进行交互。
 
@@ -185,7 +191,7 @@ the`OwnerActor`和 the`AvatarActor`如果不同`Actors`，则应实施`IAbilityS
 
 `ASCs`通常在构造函数中构造`OwnerActor's`并显式标记为已复制。**这必须在 C++ 中完成**。
 
-```
+```c++
 AGDPlayerState::AGDPlayerState()
 {
 	// Create ability system component, and set it to be explicitly replicated
@@ -201,7 +207,7 @@ AGDPlayerState::AGDPlayerState()
 
 `ASC`对于居住在 上的玩家控制的角色`Pawn`，我通常在函数中的服务器上进行初始化`Pawn's` `PossessedBy()`，并在函数中的客户端上进行初始化`PlayerController's` `AcknowledgePossession()`。
 
-```
+```c++
 void APACharacterBase::PossessedBy(AController * NewController)
 {
 	Super::PossessedBy(NewController);
@@ -218,7 +224,7 @@ void APACharacterBase::PossessedBy(AController * NewController)
 
 
 
-```
+```c++
 void APAPlayerControllerBase::AcknowledgePossession(APawn* P)
 {
 	Super::AcknowledgePossession(P);
@@ -237,7 +243,7 @@ void APAPlayerControllerBase::AcknowledgePossession(APawn* P)
 
 `ASC`对于居住在 上的玩家控制的角色`PlayerState`，我通常在函数中初始化服务器`Pawn's` `PossessedBy()`并在函数中在客户端上初始化`Pawn's` `OnRep_PlayerState()`。这确保了`PlayerState`客户端上存在。
 
-```
+```c++
 // Server only
 void AGDHeroCharacter::PossessedBy(AController * NewController)
 {
@@ -259,7 +265,7 @@ void AGDHeroCharacter::PossessedBy(AController * NewController)
 
 
 
-```
+```c++
 // Client only
 void AGDHeroCharacter::OnRep_PlayerState()
 {
@@ -282,8 +288,6 @@ void AGDHeroCharacter::OnRep_PlayerState()
 
 
 如果收到错误消息，`LogAbilitySystem: Warning: Can't activate LocalOnly or LocalPredicted ability %s when not local!`则说明没有`ASC`在客户端上初始化。
-
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
 
 
 
@@ -315,7 +319,7 @@ GameplayTags`存储在`FGameplayTagCountContainer`a中`TagMap`，该 a 存储该
 
 在 C++ 中获取对 a 的引用`GameplayTag`：
 
-```
+```c++
 FGameplayTag::RequestGameplayTag(FName("Your.GameplayTag.Name"))
 ```
 
@@ -331,15 +335,13 @@ FGameplayTag::RequestGameplayTag(FName("Your.GameplayTag.Name"))
 
 示例项目广泛使用`GameplayTags`.
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
-
 
 
 ### 4.2.1 响应游戏标签的变化
 
 提供了何时添加或删除的`ASC`委托。`GameplayTags`它接受一个`EGameplayTagEventType`，可以指定仅在`GameplayTag`添加/删除或 中发生任何更改时触发`GameplayTag's` `TagMapCount`。
 
-```
+```c++
 AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun")), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AGDPlayerState::StunTagChanged);
 ```
 
@@ -347,13 +349,11 @@ AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTa
 
 回调函数有一个参数`GameplayTag`和 new `TagCount`。
 
-```
+```c++
 virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 ```
 
 
-
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
 
 
 
@@ -369,8 +369,6 @@ virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 **提示：**如果不希望`Attribute`出现在 的编辑器列表中`Attributes`，可以使用`Meta = (HideInDetailsView)` `property specifier`.
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
-
 
 
 #### 4.3.2 基础值与当前值
@@ -381,7 +379,7 @@ GAS 的初学者常常会混淆`BaseValue`an 的最大值`Attribute`，并尝试
 
 对 的永久更改`BaseValue`来自`Instant` `GameplayEffects`while`Duration`并`Infinite` `GameplayEffects`更改`CurrentValue`. 定期`GameplayEffects`被视为即时`GameplayEffects`并更改`BaseValue`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -393,7 +391,7 @@ GAS 的初学者常常会混淆`BaseValue`an 的最大值`Attribute`，并尝试
 
 虽然`Meta Attributes`它们是一个很好的设计模式，但它们不是强制性的。如果你只有一个`Execution Calculation`用于所有伤害实例，并且`Attribute Set`所有角色共享一个类别，那么你可以在 内对生命值、护盾等进行伤害分配`Execution Calculation`并直接修改它们`Attributes`。只会牺牲灵活性，但这对来说可能没问题。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -401,13 +399,13 @@ GAS 的初学者常常会混淆`BaseValue`an 的最大值`Attribute`，并尝试
 
 要监听更改`Attribute`以更新 UI 或其他游戏玩法，请使用`UAbilitySystemComponent::GetGameplayAttributeValueChangeDelegate(FGameplayAttribute Attribute)`。该函数返回一个可以绑定的委托，每当发生更改时都会自动调用该委托`Attribute`。该委托提供一个`FOnAttributeChangeData`带有`NewValue`、`OldValue`和 的参数`FGameplayEffectModCallbackData`。**注意：**只能`FGameplayEffectModCallbackData`在服务器上设置。
 
-```
+```c++
 AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &AGDPlayerState::HealthChanged);
 ```
 
 
 
-```
+```c++
 virtual void HealthChanged(const FOnAttributeChangeData& Data);
 ```
 
@@ -419,7 +417,7 @@ virtual void HealthChanged(const FOnAttributeChangeData& Data);
 
 [![监听BP节点属性变化](https://github.com/tranek/GASDocumentation/raw/master/Images/attributechange.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/attributechange.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -429,7 +427,7 @@ virtual void HealthChanged(const FOnAttributeChangeData& Data);
 
 `Modifiers`a 上所有 的最终公式与`Derived Attribute`的公式相同`Modifier Aggregators`。如果需要按特定顺序进行计算，请在`MMC`.
 
-```
+```c++
 ((CurrentValue + Additive) * Multiplicitive) / Division
 ```
 
@@ -441,7 +439,7 @@ virtual void HealthChanged(const FOnAttributeChangeData& Data);
 
 [![派生属性示例](https://github.com/tranek/GASDocumentation/raw/master/Images/derivedattribute.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/derivedattribute.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -453,7 +451,7 @@ virtual void HealthChanged(const FOnAttributeChangeData& Data);
 
 定义`AttributeSet`、保存和管理对 的更改`Attributes`。开发人员应该从[`UAttributeSet`](https://docs.unrealengine.com/en-US/API/Plugins/GameplayAbilities/UAttributeSet/index.html). `AttributeSet`在构造函数中创建 an 会`OwnerActor's`自动将其注册到其`ASC`. **这必须在 C++ 中完成**。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -485,7 +483,7 @@ An`ASC`可能有一个或多个`AttributeSets`。`AttributeSets`属性集的内�
 
 将武器添加到库存中：
 
-```
+```c++
 AbilitySystemComponent->GetSpawnedAttributes_Mutable().AddUnique(WeaponAttributeSetPointer);
 AbilitySystemComponent->ForceReplication();
 ```
@@ -494,7 +492,7 @@ AbilitySystemComponent->ForceReplication();
 
 从库存中移除武器时：
 
-```
+```c++
 AbilitySystemComponent->GetSpawnedAttributes_Mutable().Remove(WeaponAttributeSetPointer);
 AbilitySystemComponent->ForceReplication();
 ```
@@ -519,7 +517,7 @@ AbilitySystemComponent->ForceReplication();
 
 为了防止枪在自动射击期间复制回弹药量并破坏本地弹药量，请在玩家拥有 in 时禁用`IsFiring` `GameplayTag`复制`PreReplication()`。实际上是在这里进行自己的本地预测。
 
-```
+```c++
 void AGSWeapon::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)
 {
 	Super::PreReplication(ChangedPropertyTracker);
@@ -548,7 +546,7 @@ void AGSWeapon::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracke
 
 当`AttributeSet`生命依赖于除武器之外的其他东西时`OwnerActor`，最初会在`AttributeSet`. 解决方法是构造`AttributeSet`in`BeginPlay()`而不是在构造函数中，并在武器上实现（将武器添加到玩家库存时`IAbilitySystemInterface`将指针设置为）。`ASC`
 
-```
+```c++
 void AGSWeapon::BeginPlay()
 {
 	if (!AttributeSet)
@@ -598,7 +596,7 @@ void AGSWeapon::BeginPlay()
 1. 工程成本未知
 2. 有可能吗？
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -606,7 +604,7 @@ void AGSWeapon::BeginPlay()
 
 **`Attributes`C++中只能**在`AttributeSet's`头文件中定义。建议将此宏块添加到每个`AttributeSet`头文件的顶部。它会自动为的`Attributes`.
 
-```
+```c++
 // Uses macros from AttributeSet.h
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -619,7 +617,7 @@ void AGSWeapon::BeginPlay()
 
 复制的健康属性将定义如下：
 
-```
+```c++
 UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
 FGameplayAttributeData Health;
 ATTRIBUTE_ACCESSORS(UGDAttributeSetBase, Health)
@@ -629,7 +627,7 @@ ATTRIBUTE_ACCESSORS(UGDAttributeSetBase, Health)
 
 `OnRep`还在标题中定义该函数：
 
-```
+```c++
 UFUNCTION()
 virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
 ```
@@ -638,7 +636,7 @@ virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
 
 的 .cpp 文件应使用预测系统使用的宏`AttributeSet`填充`OnRep`函数：`GAMEPLAYATTRIBUTE_REPNOTIFY`
 
-```
+```c++
 void UGDAttributeSetBase::OnRep_Health(const FGameplayAttributeData& OldHealth)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UGDAttributeSetBase, Health, OldHealth);
@@ -649,7 +647,7 @@ void UGDAttributeSetBase::OnRep_Health(const FGameplayAttributeData& OldHealth)
 
 最后，`Attribute`需要添加`GetLifetimeReplicatedProps`：
 
-```
+```c++
 void UGDAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -676,7 +674,7 @@ void UGDAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 如果`ATTRIBUTE_ACCESSORS`在定义 时使用了宏`Attributes`，则将自动为`AttributeSet`每个 生成一个初始化函数`Attribute`，可以在闲暇时在 C++ 中调用该函数。
 
-```
+```c++
 // InitHealth(float InitialValue) is an automatically generated function for an Attribute 'Health' defined with the `ATTRIBUTE_ACCESSORS` macro
 AttributeSet->InitHealth(100.0f);
 ```
@@ -687,7 +685,7 @@ AttributeSet->InitHealth(100.0f);
 
 **注意：** 4.24 之前，`FAttributeSetInitterDiscreteLevels`无法使用`FGameplayAttributeData`. 它是在`Attributes`原始浮动时创建的，并且会抱怨`FGameplayAttributeData`不是`Plain Old Data`( `POD`)。[此问题已在 4.24 https://issues.unrealengine.com/issue/UE-76557](https://issues.unrealengine.com/issue/UE-76557)中修复。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -699,7 +697,7 @@ PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)`是在�
 
 例如，要限制移动速度修改器，示例项目会这样做：
 
-```
+```c++
 if (Attribute == GetMoveSpeedAttribute())
 {
 	// Cannot slow less than 150 units/s and cannot boost more than 1000 units/s
@@ -717,7 +715,7 @@ if (Attribute == GetMoveSpeedAttribute())
 
 **注意：** Epic 的评论说`PreAttributeChange()`不要将其用于游戏事件，而是主要用于夹紧。更改游戏事件的推荐位置`Attribute`是`UAbilitySystemComponent::GetGameplayAttributeValueChangeDelegate(FGameplayAttribute Attribute)`（[响应属性更改](https://github.com/tranek/GASDocumentation#concepts-a-changes)）。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -733,7 +731,7 @@ PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)`仅在立
 
 **注意：**`PostGameplayEffectExecute()`调用时，对 的更改`Attribute`已经发生，但尚未复制回客户端，因此此处的限制值不会导致客户端进行两次网络更新。客户端只有在锁定后才会收到更新。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -743,13 +741,13 @@ PostGameplayEffectExecute(const FGameplayEffectModCallbackData & Data)`仅在立
 
 `Modifier`在仅允许最负面和所有正面的示例中使用 AggregatorEvaluateMetaData `Modifiers`：
 
-```
+```c++
 virtual void OnAttributeAggregatorCreated(const FGameplayAttribute& Attribute, FAggregator* NewAggregator) const override;
 ```
 
 
 
-```
+```c++
 void UGSAttributeSetBase::OnAttributeAggregatorCreated(const FGameplayAttribute& Attribute, FAggregator* NewAggregator) const
 {
 	Super::OnAttributeAggregatorCreated(Attribute, NewAggregator);
@@ -770,7 +768,7 @@ void UGSAttributeSetBase::OnAttributeAggregatorCreated(const FGameplayAttribute&
 
 `AggregatorEvaluateMetaData`对限定符的自定义应添加`FAggregatorEvaluateMetaDataLibrary`为静态变量。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -801,7 +799,7 @@ Duration`如果不满足/满足（[游戏效果标签](https://github.com/tranek
 
 如果需要手动重新计算`Modifiers`a`Duration`或 的`Infinite` `GameplayEffect`(假设有一个`MMC`使用不来自 的数据`Attributes`)，可以`UAbilitySystemComponent::ActiveGameplayEffects.SetActiveGameplayEffectLevel(FActiveGameplayEffectHandle ActiveHandle, int32 NewLevel)`使用它已经具有的相同级别进行调用`UAbilitySystemComponent::ActiveGameplayEffects.GetActiveGameplayEffect(ActiveHandle).Spec.GetLevel()`。`Modifiers`当这些支持更新时，基于支持的内容会`Attributes`自动更新`Attributes`。`SetActiveGameplayEffectLevel()`更新的主要功能`Modifiers`是：
 
-```
+```c++
 MarkItemDirty(Effect);
 Effect.Spec.CalculateModifierMagnitudes();
 // Private function otherwise we'd call these three functions without needing to set the level to what it already is
@@ -822,7 +820,7 @@ UpdateAllAggregatorModMagnitudes(Effect);
 
 可以通过绑定到其委托来侦听何时将任何`Duration`或`Infinite` `GameplayEffects`应用于 an ：`ASC`
 
-```
+```c++
 AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(this, &APACharacterBase::OnActiveGameplayEffectAddedCallback);
 ```
 
@@ -830,7 +828,7 @@ AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(thi
 
 回调函数：
 
-```
+```c++
 virtual void OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* Target, const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveHandle);
 ```
 
@@ -850,7 +848,7 @@ virtual void OnActiveGameplayEffectAddedCallback(UAbilitySystemComponent* Target
 
 可以通过绑定到其委托来侦听任何`Duration`或何时`Infinite` `GameplayEffects`从 中删除：`ASC`
 
-```
+```c++
 AbilitySystemComponent->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &APACharacterBase::OnRemoveGameplayEffectCallback);
 ```
 
@@ -858,7 +856,7 @@ AbilitySystemComponent->OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &A
 
 回调函数：
 
-```
+```c++
 virtual void OnRemoveGameplayEffectCallback(const FActiveGameplayEffect& EffectRemoved);
 ```
 
@@ -881,7 +879,7 @@ Modifiers`更改和 是[预测性](https://github.com/tranek/GASDocumentation#co
 
 an`CurrentValue`的`Attribute`是所有其`Modifiers`添加到其 的聚合结果`BaseValue`。如何聚合的公式在中`Modifiers`定义如下：`FAggregatorModChannel::EvaluateWithBase``GameplayEffectAggregator.cpp`
 
-```
+```c++
 ((InlineBaseValue + Additive) * Multiplicitive) / Division
 ```
 
@@ -908,7 +906,7 @@ an`CurrentValue`的`Attribute`是所有其`Modifiers`添加到其 的聚合结�
 
 默认情况下，所有`Multiply`和`Divide` `Modifiers`都会先相加，然后再将它们相乘或除以`Attribute`s `BaseValue`。
 
-```
+```c++
 float FAggregatorModChannel::EvaluateWithBase(float InlineBaseValue, const FAggregatorEvaluateParameters& Parameters) const
 {
 	...
@@ -923,7 +921,7 @@ float FAggregatorModChannel::EvaluateWithBase(float InlineBaseValue, const FAggr
 
 
 
-```
+```c++
 float FAggregatorModChannel::SumMods(const TArray<FAggregatorMod>& InMods, float Bias, const FAggregatorEvaluateParameters& Parameters)
 {
 	float Sum = Bias;
@@ -946,7 +944,7 @@ float FAggregatorModChannel::SumMods(const TArray<FAggregatorMod>& InMods, float
 
 在此公式中和`Multiply`的值`Divide` `Modifiers`均为（有a ）。所以它看起来像：`Bias``1``Addition``Bias``0`
 
-```
+```c++
 1 + (Mod1.Magnitude - 1) + (Mod2.Magnitude - 1) + ...
 ```
 
@@ -1042,7 +1040,7 @@ SourceTags`并且可以为每个[Modifier](https://github.com/tranek/GASDocument
 
 [![监听 GameplayEffect Stack Change BP 节点](https://github.com/tranek/GASDocumentation/raw/master/Images/gestackchange.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/gestackchange.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1076,7 +1074,7 @@ SourceTags`并且可以为每个[Modifier](https://github.com/tranek/GASDocument
 | 应用程序标签要求       | 目标上的标签确定 a 是否`GameplayEffect`可以应用于目标。如果不满足这些要求，则不`GameplayEffect`适用。 |
 | 删除带有标签的游戏效果 | `GameplayEffects`成功应用后，目标中包含任何这些标签的目标将被从`Asset Tags`目标`Granted Tags`中删除。`GameplayEffect` |
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1115,7 +1113,7 @@ GameplayEffects``GameplayEffects`可以授予豁免权，有效阻止其他基�
 - `DynamicAssetTags``GameplayEffectSpec`除了该拥有之外，该`AssetTags`还有`GameplayEffect`。
 - `SetByCaller` `TMaps`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1138,13 +1136,13 @@ SetByCallers`允许携带与 a或around`GameplayEffectSpec`相关的浮点值。
 
 要`SetByCaller`在 C++ 中赋值，请使用需要的函数版本（`GameplayTag`或`FName`）：
 
-```
+```c++
 void FGameplayEffectSpec::SetSetByCallerMagnitude(FName DataName, float Magnitude);
 ```
 
 
 
-```
+```c++
 void FGameplayEffectSpec::SetSetByCallerMagnitude(FGameplayTag DataTag, float Magnitude);
 ```
 
@@ -1152,13 +1150,13 @@ void FGameplayEffectSpec::SetSetByCallerMagnitude(FGameplayTag DataTag, float Ma
 
 要读取`SetByCaller`C++ 中的值，请使用需要的函数版本（`GameplayTag`或`FName`）：
 
-```
+```c++
 float GetSetByCallerMagnitude(FName DataName, bool WarnIfNotFound = true, float DefaultIfNotFound = 0.f) const;
 ```
 
 
 
-```
+```c++
 float GetSetByCallerMagnitude(FGameplayTag DataTag, bool WarnIfNotFound = true, float DefaultIfNotFound = 0.f) const;
 ```
 
@@ -1166,7 +1164,7 @@ float GetSetByCallerMagnitude(FGameplayTag DataTag, bool WarnIfNotFound = true, 
 
 我建议使用该`GameplayTag`版本而不是该`FName`版本。这可以防止蓝图中的拼写错误。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1210,7 +1208,7 @@ MMCs'`优势在于他们有能力捕获任意数量的值`Attributes`，并`Sour
 
 `MMC`捕获`Target's`法力的示例`Attribute`会减少中毒效果，其中减少的量根据法力的数量`Target`和可能具有的标签而变化`Target`：
 
-```
+```c++
 UPAMMC_PoisonMana::UPAMMC_PoisonMana()
 {
 
@@ -1267,7 +1265,7 @@ float UPAMMC_PoisonMana::CalculateBaseMagnitude_Implementation(const FGameplayEf
 
 如果不在构造函数中添加`FGameplayEffectAttributeCaptureDefinition`to并尝试捕获，将在捕获时收到有关缺少 Spec 的错误。如果不需要捕获，则无需向 中添加任何内容。`RelevantAttributesToCapture``MMC's``Attributes``Attributes``RelevantAttributesToCapture`
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1292,7 +1290,7 @@ float UPAMMC_PoisonMana::CalculateBaseMagnitude_Implementation(const FGameplayEf
 
 基于从`Source`和上的许多属性读取的复杂公式来计算受到的伤害`Target`是最常见的示例`ExecCalc`。包含的示例项目有一个简单的`ExecCalc`计算伤害的方法，它可以从 中读取伤害值`GameplayEffectSpec's` [`SetByCaller`](https://github.com/tranek/GASDocumentation#concepts-ge-spec-setbycaller)，然后根据`Attribute`从 中捕获的护甲来减轻该值`Target`。见`GDDamageExecCalculation.cpp/.h`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1306,7 +1304,7 @@ float UPAMMC_PoisonMana::CalculateBaseMagnitude_Implementation(const FGameplayEf
 
 上的任何[`SetByCallers`设置`GameplayEffectSpec`](https://github.com/tranek/GASDocumentation#concepts-ge-spec-setbycaller)都可以直接在 中读取`ExecutionCalculation`。
 
-```
+```c++
 const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 float Damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Damage")), false, -1.0f), 0.0f);
 ```
@@ -1325,7 +1323,7 @@ float Damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::Requ
 
 `ExecutionCalculation`当它捕获 时读取该值`Attribute`。
 
-```
+```c++
 float Damage = 0.0f;
 // Capture optional damage value set on the damage GE as a CalculationModifier under the ExecutionCalculation
 ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DamageDef, EvaluationParameters, Damage);
@@ -1345,7 +1343,7 @@ ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().Damag
 
 添加支持`Temporary Variables`到的`ExecutionCalculation`构造函数：
 
-```
+```c++
 ValidTransientAggregatorIdentifiers.AddTag(FGameplayTag::RequestGameplayTag("Data.Damage"));
 ```
 
@@ -1353,7 +1351,7 @@ ValidTransientAggregatorIdentifiers.AddTag(FGameplayTag::RequestGameplayTag("Dat
 
 `ExecutionCalculation`使用与捕获函数类似的特殊捕获函数读取该值`Attribute`。
 
-```
+```c++
 float Damage = 0.0f;
 ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(FGameplayTag::RequestGameplayTag("Data.Damage"), EvaluationParameters, Damage);
 ```
@@ -1368,7 +1366,7 @@ ExecutionParams.AttemptCalculateTransientAggregatorMagnitude(FGameplayTag::Reque
 
 在 中，`ExecutionCalculation`可以`EffectContext`从 访问`FGameplayEffectCustomExecutionParameters`。
 
-```
+```c++
 const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 FGSGameplayEffectContext* ContextHandle = static_cast<FGSGameplayEffectContext*>(Spec.GetContext().Get());
 ```
@@ -1377,7 +1375,7 @@ FGSGameplayEffectContext* ContextHandle = static_cast<FGSGameplayEffectContext*>
 
 如果需要更改`GameplayEffectSpec`或 上的某些内容`EffectContext`：
 
-```
+```c++
 FGameplayEffectSpec* MutableSpec = ExecutionParams.GetOwningSpecForPreExecuteMod();
 FGSGameplayEffectContext* ContextHandle = static_cast<FGSGameplayEffectContext*>(MutableSpec->GetContext().Get());
 ```
@@ -1386,14 +1384,14 @@ FGSGameplayEffectContext* ContextHandle = static_cast<FGSGameplayEffectContext*>
 
 `GameplayEffectSpec`如果修改中的，请小心`ExecutionCalculation`。请参阅 的评论`GetOwningSpecForPreExecuteMod()`。
 
-```
+```c++
 /** Non const access. Be careful with this, especially when modifying a spec after attribute capture. */
 FGameplayEffectSpec* GetOwningSpecForPreExecuteMod() const;
 ```
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1422,7 +1420,7 @@ FGameplayEffectSpec* GetOwningSpecForPreExecuteMod() const;
 
 1. **使用`MMC`.** 这是最简单的方法。创建一个[`MMC`](https://github.com/tranek/GASDocumentation#concepts-ge-mmc)从实例读取成本值的`GameplayAbility`实例，可以从`GameplayEffectSpec`.
 
-```
+```c++
 float UPGMMC_HeroAbilityCost::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec & Spec) const
 {
 	const UPGGameplayAbility* Ability = Cast<UPGGameplayAbility>(Spec.GetContext().GetAbilityInstance_NotReplicated());
@@ -1440,7 +1438,7 @@ float UPGMMC_HeroAbilityCost::CalculateBaseMagnitude_Implementation(const FGamep
 
 在此示例中，成本值是我添加到其中的子类的`FScalableFloat`成本值。`GameplayAbility`
 
-```
+```c++
 UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Cost")
 FScalableFloat Cost;
 ```
@@ -1451,7 +1449,7 @@ FScalableFloat Cost;
 
 1. **覆盖`UGameplayAbility::GetCostGameplayEffect()`。**重写此函数并[在运行时](https://github.com/tranek/GASDocumentation#concepts-ge-dynamic)[创建一个`GameplayEffect`](https://github.com/tranek/GASDocumentation#concepts-ge-dynamic)读取`GameplayAbility`.
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1465,7 +1463,7 @@ FScalableFloat Cost;
 
 1. **使用一个[`SetByCaller`](https://github.com/tranek/GASDocumentation#concepts-ge-spec-setbycaller).** 这是最简单的方法。将共享的持续时间设置`Cooldown GE`为。在的子类上，定义一个 float /表示持续时间， a表示 unique ，以及一个临时变量，我们将用作 our和标签联合的返回指针。`SetByCaller``GameplayTag``GameplayAbility``FScalableFloat``FGameplayTagContainer``Cooldown Tag``FGameplayTagContainer``Cooldown Tag``Cooldown GE's`
 
-```
+```c++
 UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Cooldown")
 FScalableFloat CooldownDuration;
 
@@ -1482,7 +1480,7 @@ FGameplayTagContainer TempCooldownTags;
 
 然后覆盖以返回我们和任何现有标签`UGameplayAbility::GetCooldownTags()`的并集。`Cooldown Tags``Cooldown GE's`
 
-```
+```c++
 const FGameplayTagContainer * UPGGameplayAbility::GetCooldownTags() const
 {
 	FGameplayTagContainer* MutableTags = const_cast<FGameplayTagContainer*>(&TempCooldownTags);
@@ -1501,7 +1499,7 @@ const FGameplayTagContainer * UPGGameplayAbility::GetCooldownTags() const
 
 最后，重写`UGameplayAbility::ApplyCooldown()`以注入 our`Cooldown Tags`并将 the 添加`SetByCaller`到cooldown 中`GameplayEffectSpec`。
 
-```
+```c++
 void UPGGameplayAbility::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
 	UGameplayEffect* CooldownGE = GetCooldownGameplayEffect();
@@ -1523,7 +1521,7 @@ void UPGGameplayAbility::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, 
 
 1. **使用[`MMC`](https://github.com/tranek/GASDocumentation#concepts-ge-mmc).** 除了将和 中`SetByCaller`的持续时间设置为 之外，其设置与上面相同。相反，将持续时间设置为 a并指向我们将制作的新内容。`Cooldown GE``ApplyCooldown``Custom Calculation Class``MMC`
 
-```
+```c++
 UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Cooldown")
 FScalableFloat CooldownDuration;
 
@@ -1540,7 +1538,7 @@ FGameplayTagContainer TempCooldownTags;
 
 然后覆盖以返回我们和任何现有标签`UGameplayAbility::GetCooldownTags()`的并集。`Cooldown Tags``Cooldown GE's`
 
-```
+```c++
 const FGameplayTagContainer * UPGGameplayAbility::GetCooldownTags() const
 {
 	FGameplayTagContainer* MutableTags = const_cast<FGameplayTagContainer*>(&TempCooldownTags);
@@ -1559,7 +1557,7 @@ const FGameplayTagContainer * UPGGameplayAbility::GetCooldownTags() const
 
 最后，重写`UGameplayAbility::ApplyCooldown()`将我们的注入`Cooldown Tags`到cooldown中`GameplayEffectSpec`。
 
-```
+```c++
 void UPGGameplayAbility::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
 	UGameplayEffect* CooldownGE = GetCooldownGameplayEffect();
@@ -1574,7 +1572,7 @@ void UPGGameplayAbility::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, 
 
 
 
-```
+```c++
 float UPGMMC_HeroAbilityCooldown::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec & Spec) const
 {
 	const UPGGameplayAbility* Ability = Cast<UPGGameplayAbility>(Spec.GetContext().GetAbilityInstance_NotReplicated());
@@ -1592,13 +1590,13 @@ float UPGMMC_HeroAbilityCooldown::CalculateBaseMagnitude_Implementation(const FG
 
 [![带 MMC 的冷却 GE](https://github.com/tranek/GASDocumentation/raw/master/Images/cooldownmmc.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/cooldownmmc.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
 ##### 4.5.15.1 获取游戏冷却效果的剩余时间
 
-```
+```c++
 bool APGPlayerState::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTags, float & TimeRemaining, float & CooldownDuration)
 {
 	if (AbilitySystemComponent && CooldownTags.Num() > 0)
@@ -1662,7 +1660,7 @@ bool APGPlayerState::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTa
 
 [Epic 希望有一天在GAS 的未来迭代](https://github.com/tranek/GASDocumentation#concepts-p-future)中实现真正的预测冷却时间（`GameplayAbility`当本地冷却时间到期但服务器仍处于冷却时间时，玩家可以激活冷却时间）。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1670,7 +1668,7 @@ bool APGPlayerState::GetCooldownRemainingForTag(FGameplayTagContainer CooldownTa
 
 `Cooldown GE`要更改 a或 any的剩余时间`Duration` `GameplayEffect`，我们需要更改`GameplayEffectSpec's` `Duration`、更新其`StartServerWorldTime`、更新其`CachedStartServerWorldTime`、更新其`StartWorldTime`，然后重新运行对持续时间的检查`CheckDuration()`。在服务器上执行此操作并标记为`FActiveGameplayEffect`脏会将更改复制到客户端。 **注意：**这确实涉及`const_cast`并且可能不是 Epic 改变持续时间的预期方式，但到目前为止似乎效果很好。
 
-```
+```c++
 bool UPAAbilitySystemComponent::SetGameplayEffectDurationHandle(FActiveGameplayEffectHandle Handle, float NewDuration)
 {
 	if (!Handle.IsValid())
@@ -1709,7 +1707,7 @@ bool UPAAbilitySystemComponent::SetGameplayEffectDurationHandle(FActiveGameplayE
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1725,7 +1723,7 @@ bool UPAAbilitySystemComponent::SetGameplayEffectDurationHandle(FActiveGameplayE
 
 示例项目创建了一个当角色受到致命一击时将金币和经验值发送回给角色的杀手`AttributeSet`。
 
-```
+```c++
 // Create a dynamic instant Gameplay Effect to give the bounties
 UGameplayEffect* GEBounty = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Bounty")));
 GEBounty->DurationPolicy = EGameplayEffectDurationType::Instant;
@@ -1750,7 +1748,7 @@ Source->ApplyGameplayEffectToSelf(GEBounty, 1.0f, Source->MakeEffectContext());
 
 `GameplayEffect`第二个示例显示了在本地预测中创建的运行时`GameplayAbility`。使用风险自负（请参阅代码中的注释）！
 
-```
+```c++
 UGameplayAbilityRuntimeGE::UGameplayAbilityRuntimeGE()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
@@ -1807,7 +1805,7 @@ Epic 的[Action RPG 示例项目](https://www.unrealengine.com/marketplace/en-US
 
 `GameplayEffectContainers`[还包含可选的高效瞄准](https://github.com/tranek/GASDocumentation#concepts-targeting-containers)手段。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1869,14 +1867,14 @@ Epic 的[Action RPG 示例项目](https://www.unrealengine.com/marketplace/en-US
 
 史诗评论：
 
-```
+```c++
 /** Direct Input state replication. These will be called if bReplicateInputDirectly is true on the ability and is generally not a good thing to use. (Instead, prefer to use Generic Replicated Events). */
 UAbilitySystemComponent::ServerSetInputPressed()
 ```
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -1890,7 +1888,7 @@ UAbilitySystemComponent::ServerSetInputPressed()
 
 来自示例项目：
 
-```
+```c++
 UENUM(BlueprintType)
 enum class EGDAbilityInputID : uint8
 {
@@ -1921,7 +1919,7 @@ enum class EGDAbilityInputID : uint8
 
 如果`ASC`住在 上`Character`，则`SetupPlayerInputComponent()`包含用于绑定到 的函数`ASC`：
 
-```
+```c++
 // Bind to AbilitySystemComponent
 FTopLevelAssetPath AbilityEnumAssetPath = FTopLevelAssetPath(FName("/Script/GASDocumentation"), FName("EGDAbilityInputID"));
 AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
@@ -1942,7 +1940,7 @@ AbilitySystemComponent->BindAbilityActivationToInputComponent(PlayerInputCompone
 
 如果不希望`GameplayAbilities`在按下输入时自动激活，但仍将它们绑定到输入以与 一起使用`AbilityTasks`，则可以向的`UGameplayAbility`子类添加一个新的 bool 变量`bActivateOnInput`，该变量默认为`true`并覆盖`UAbilitySystemComponent::AbilityLocalInputPressed()`。
 
-```
+```c++
 void UGSAbilitySystemComponent::AbilityLocalInputPressed(int32 InputID)
 {
 	// Consume the input if this InputID is overloaded with GenericConfirm/Cancel and the GenericConfim/Cancel callback is bound
@@ -2009,7 +2007,7 @@ void UGSAbilitySystemComponent::AbilityLocalInputPressed(int32 InputID)
 
 示例项目在游戏开始时读取并授予的类`TArray<TSubclassOf<UGDGameplayAbility>>`上存储 a ：`Character`
 
-```
+```c++
 void AGDCharacterBase::AddCharacterAbilities()
 {
 	// Grant abilities, but only on the server	
@@ -2032,7 +2030,7 @@ void AGDCharacterBase::AddCharacterAbilities()
 
 当授予这些 时`GameplayAbilities`，我们`GameplayAbilitySpecs`使用`UGameplayAbility`类、能力级别、它所绑定的输入以及将其赋予this 的`SourceObject`人或谁来创建。`GameplayAbility``ASC`
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2040,7 +2038,7 @@ void AGDCharacterBase::AddCharacterAbilities()
 
 如果a`GameplayAbility`被分配了一个输入动作，当按下输入并且满足其`GameplayTag`要求时，它将自动激活。这可能并不总是激活`GameplayAbility`. 它`ASC`提供了另外四种激活方法`GameplayAbilities`：通过`GameplayTag`、`GameplayAbility`类、`GameplayAbilitySpec`句柄和通过事件。激活`GameplayAbility`by 事件允许[随事件传入数据负载](https://github.com/tranek/GASDocumentation#concepts-ga-data)。
 
-```
+```c++
 UFUNCTION(BlueprintCallable, Category = "Abilities")
 bool TryActivateAbilitiesByTag(const FGameplayTagContainer& GameplayTagContainer, bool bAllowRemoteActivation = true);
 
@@ -2097,7 +2095,7 @@ FGameplayAbilitySpecHandle GiveAbilityAndActivateOnce(const FGameplayAbilitySpec
 
 被动`GameplayAbilities`通常有[`Net Execution Policy`](https://github.com/tranek/GASDocumentation#concepts-ga-net)一个`Server Only`。
 
-```
+```c++
 void UGDGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo * ActorInfo, const FGameplayAbilitySpec & Spec)
 {
 	Super::OnAvatarSet(ActorInfo, Spec);
@@ -2113,7 +2111,7 @@ void UGDGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo * ActorInfo
 
 Epic 将此功能描述为启动被动能力和执行`BeginPlay`类型操作的正确位置。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2123,7 +2121,7 @@ Epic 将此功能描述为启动被动能力和执行`BeginPlay`类型操作的�
 
 将这些标签（或自己的命名约定）添加到的项目中：
 
-```
+```c++
 +GameplayTagList=(Tag="Activation.Fail.BlockedByTags",DevComment="")
 +GameplayTagList=(Tag="Activation.Fail.CantAffordCost",DevComment="")
 +GameplayTagList=(Tag="Activation.Fail.IsDead",DevComment="")
@@ -2136,7 +2134,7 @@ Epic 将此功能描述为启动被动能力和执行`BeginPlay`类型操作的�
 
 然后将它们添加到[`GASDocumentation\Config\DefaultGame.ini`](https://github.com/tranek/GASDocumentation/blob/master/Config/DefaultGame.ini#L8-L13)：
 
-```
+```c++
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 ActivateFailIsDeadName=Activation.Fail.IsDead
 ActivateFailCooldownName=Activation.Fail.OnCooldown
@@ -2150,7 +2148,7 @@ ActivateFailNetworkingName=Activation.Fail.Networking
 
 现在，每当能力激活失败时，相应的 GameplayTag 将包含在输出日志消息中或在 HUD 上可见`showdebug AbilitySystem`。
 
-```
+```c++
 LogAbilitySystem: Display: InternalServerTryActivateAbility. Rejecting ClientActivation of Default__GA_FireGun_C. InternalTryActivateAbility failed: Activation.Fail.BlockedByTags
 LogAbilitySystem: Display: ClientActivateAbilityFailed_Implementation. PredictionKey :109 Ability: Default__GA_FireGun_C
 ```
@@ -2159,7 +2157,7 @@ LogAbilitySystem: Display: ClientActivateAbilityFailed_Implementation. Predictio
 
 [![showdebug 能力系统中显示激活失败标签](https://github.com/tranek/GASDocumentation/raw/master/Images/activationfailedtags.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/activationfailedtags.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2169,7 +2167,7 @@ LogAbilitySystem: Display: ClientActivateAbilityFailed_Implementation. Predictio
 
 要从外部取消`GameplayAbility`，`ASC`提供了一些功能：
 
-```
+```c++
 /** Cancels the specified ability CDO. */
 void CancelAbility(UGameplayAbility* Ability);	
 
@@ -2190,7 +2188,7 @@ virtual void DestroyActiveState();
 
 **注意：**我发现`CancelAllAbilities`如果有`Non-Instanced` `GameplayAbilities`. 似乎撞到了`Non-Instanced` `GameplayAbility`就放弃了。`CancelAbilities`可以`Non-Instanced` `GameplayAbilities`更好地处理，这就是示例项目使用的（Jump 是非实例`GameplayAbility`）。你的旅费可能会改变。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2202,7 +2200,7 @@ virtual void DestroyActiveState();
 
 还有`ASC`另一个辅助函数，它接受 a`GameplayTagContainer`作为参数来协助搜索，而不是手动迭代 的列表`GameplayAbilitySpecs`。该`bOnlyAbilitiesThatSatisfyTagRequirements`参数只会返回`GameplayAbilitySpecs`满足其`GameplayTag`要求并且可以立即激活的参数。例如，可以进行两种基本攻击`GameplayAbilities`，一种使用武器，一种使用赤手空拳，并且根据是否配备武器设置要求来激活正确的攻击`GameplayTag`。有关更多信息，请参阅 Epic 对该功能的评论。
 
-```
+```c++
 UAbilitySystemComponent::GetActivatableGameplayAbilitySpecsByAllMatchingTags(const FGameplayTagContainer& GameplayTagContainer, TArray < struct FGameplayAbilitySpec* >& MatchingGameplayAbilities, bool bOnlyAbilitiesThatSatisfyTagRequirements = true)
 ```
 
@@ -2239,7 +2237,7 @@ A`GameplayAbility's` `Net Execution Policy`决定谁运行`GameplayAbility`以�
 | `Server Only`          | 仅`GameplayAbility`在服务器上运行。被动`GameplayAbilities`通常是`Server Only`。单人游戏应该使用这个。 |
 | `Server Initiated`     | `Server Initiated` `GameplayAbilities`首先在服务器上激活，然后在拥有的客户端上激活。我个人并没有使用过这些（如果有的话）。 |
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2260,7 +2258,7 @@ A`GameplayAbility's` `Net Execution Policy`决定谁运行`GameplayAbility`以�
 | `Target Required Tags`      | 只有具备**所有**这些`GameplayAbility`才能激活此功能。仅当由事件触发时才设置。`Target``GameplayTags``Target` `GameplayTags``GameplayAbility` |
 | `Target Blocked Tags`       | 如果有其中**任何一个**`GameplayAbility`，则无法激活此功能。仅当由事件触发时才设置。`Target``GameplayTags``Target` `GameplayTags``GameplayAbility` |
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2318,7 +2316,7 @@ GameplayAbility`在调用之后，它可以选择使用which 调用和`Activate(
 
 两种方法的主要区别在于是否希望`GameplayAbilities`在升级时取消活动。很可能会使用这两种方法，具体取决于的`GameplayAbilities`. `bool`我建议在的子类中添加 a来`UGameplayAbility`指定要使用的方法。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2348,7 +2346,7 @@ GameplayAbility`在调用之后，它可以选择使用which 调用和`Activate(
 
 `Ability Batching`默认情况下在 上处于禁用状态[`ASC`](https://github.com/tranek/GASDocumentation#concepts-asc)。要启用`Ability Batching`，请覆盖`ShouldDoServerAbilityRPCBatch()`以返回 true：
 
-```
+```c++
 virtual bool ShouldDoServerAbilityRPCBatch() const override { return true; }
 ```
 
@@ -2358,7 +2356,7 @@ virtual bool ShouldDoServerAbilityRPCBatch() const override { return true; }
 
 这种机制只能在 C++ 中完成，并且只能通过它们来激活能力`FGameplayAbilitySpecHandle`。
 
-```
+```c++
 bool UGSAbilitySystemComponent::BatchRPCTryActivateAbility(FGameplayAbilitySpecHandle InAbilityHandle, bool EndAbilityImmediately)
 {
 	bool AbilityActivated = false;
@@ -2392,7 +2390,7 @@ GASShooter 公开了一个蓝图节点以允许批处理能力，上述仅限本
 
 [![激活批量能力](https://github.com/tranek/GASDocumentation/raw/master/Images/batchabilityactivate.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/batchabilityactivate.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2407,7 +2405,7 @@ A`GameplayAbility`决定`NetSecurityPolicy`了一项能力应该在网络上执�
 | `ServerOnlyTermination` | 客户端请求取消或结束此能力将被服务器忽略。客户仍然可以请求执行该功能。 |
 | `ServerOnly`            | 服务器控制该能力的执行和终止。客户端提出的任何请求都将被忽略。 |
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2430,7 +2428,7 @@ GAS 具有许多`AbilityTasks`开箱即用的功能：
 
 构造函数强制执行硬编码的游戏范围内同时运行的`UAbilityTask`最大并发数为 1000 。在设计可以同时拥有数百个角色（例如 RTS 游戏）的游戏`AbilityTasks`时，请记住这一点。`GameplayAbilities`
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2465,7 +2463,7 @@ AbilityTasks`如果在构造函数中`Tick`设置并覆盖，则可以。当需�
 
 `AbilityTask`要在 C++ 中创建并激活（来自`GDGA_FireGun.cpp`）：
 
-```
+```c++
 UGDAT_PlayMontageAndWaitForEvent* Task = UGDAT_PlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, MontageToPlay, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 Task->OnBlendOut.AddDynamic(this, &UGDGA_FireGun::OnCompleted);
 Task->OnCompleted.AddDynamic(this, &UGDGA_FireGun::OnCompleted);
@@ -2540,7 +2538,7 @@ GAS 可以随着时间的`AbilityTasks`推移进行移动`Characters`，例如�
 
 在 C++ 中，可以直接调用函数`ASC`（或将它们暴露给子`ASC`类中的蓝图）：
 
-```
+```c++
 /** GameplayCues can also come on their own. These take an optional effect context to pass through hit result, etc */
 void ExecuteGameplayCue(const FGameplayTag GameplayCueTag, FGameplayEffectContextHandle EffectContext = FGameplayEffectContextHandle());
 void ExecuteGameplayCue(const FGameplayTag GameplayCueTag, const FGameplayCueParameters& GameplayCueParameters);
@@ -2558,7 +2556,7 @@ void RemoveAllGameplayCues();
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2574,7 +2572,7 @@ void RemoveAllGameplayCues();
 
 应该添加到子类中的本地`GameplayCue`函数`ASC`：
 
-```
+```c++
 UFUNCTION(BlueprintCallable, Category = "GameplayCue", Meta = (AutoCreateRefTerm = "GameplayCueParameters", GameplayTagFilter = "GameplayCue"))
 void ExecuteGameplayCueLocal(const FGameplayTag GameplayCueTag, const FGameplayCueParameters& GameplayCueParameters);
 
@@ -2587,7 +2585,7 @@ void RemoveGameplayCueLocal(const FGameplayTag GameplayCueTag, const FGameplayCu
 
 
 
-```
+```c++
 void UPAAbilitySystemComponent::ExecuteGameplayCueLocal(const FGameplayTag GameplayCueTag, const FGameplayCueParameters & GameplayCueParameters)
 {
 	UAbilitySystemGlobals::Get().GetGameplayCueManager()->HandleGameplayCue(GetOwner(), GameplayCueTag, EGameplayCueEvent::Type::Executed, GameplayCueParameters);
@@ -2634,7 +2632,7 @@ SourceObject`结构中的变量可能是手动触发时`GameplayCueParameters`�
 
 有关详细信息，请参阅[`UAbilitySystemGlobals`](https://github.com/tranek/GASDocumentation#concepts-asg)填充结构的 3 个函数。`GameplayCueParameters`它们是虚拟的，因此可以覆盖它们以自动填充更多信息。
 
-```
+```c++
 /** Initialize GameplayCue Parameters */
 virtual void InitGameplayCueParameters(FGameplayCueParameters& CueParameters, const FGameplayEffectSpecForRPC &Spec);
 virtual void InitGameplayCueParameters_GESpec(FGameplayCueParameters& CueParameters, const FGameplayEffectSpec &Spec);
@@ -2651,7 +2649,7 @@ virtual void InitGameplayCueParameters(FGameplayCueParameters& CueParameters, co
 
 默认情况下，`GameplayCueManager`将扫描整个游戏目录并将`GameplayCueNotifies`其加载到内存中。`GameplayCueManager`我们可以通过在 .txt 文件中设置来更改扫描的路径`DefaultGame.ini`。
 
-```
+```ini
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 GameplayCueNotifyPaths="/Game/GASDocumentation/Characters"
 ```
@@ -2664,7 +2662,7 @@ GameplayCueNotifyPaths="/Game/GASDocumentation/Characters"
 
 首先，我们必须子类化`UGameplayCueManager`并告诉`AbilitySystemGlobals`该类`UGameplayCueManager`在`DefaultGame.ini`.
 
-```
+```ini
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 GlobalGameplayCueManagerClass="/Script/ParagonAssets.PBGameplayCueManager"
 ```
@@ -2673,7 +2671,7 @@ GlobalGameplayCueManagerClass="/Script/ParagonAssets.PBGameplayCueManager"
 
 在我们的`UGameplayCueManager`子类中，重写`ShouldAsyncLoadRuntimeObjectLibraries()`.
 
-```
+```c++
 virtual bool ShouldAsyncLoadRuntimeObjectLibraries() const override
 {
 	return false;
@@ -2682,7 +2680,7 @@ virtual bool ShouldAsyncLoadRuntimeObjectLibraries() const override
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2692,7 +2690,7 @@ virtual bool ShouldAsyncLoadRuntimeObjectLibraries() const override
 
 如果不想`GameplayCues`在特定的情况下触发任何事件`ASC`，可以进行设置`AbilitySystemComponent->bSuppressGameplayCues = true;`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2724,7 +2722,7 @@ https://forums.unrealengine.com/development-discussion/c-gameplay-programming/17
 GameplayCues`a 上的所有内容`GameplayEffect`均已在一个 RPC 中发送。默认情况下，将在不可靠的 NetMulticast 中`UGameplayCueManager::InvokeGameplayCueAddedAndWhileActive_FromSpec()`发送整个`GameplayEffectSpec`（但转换为），而不管 的。这可能会占用大量带宽，具体取决于. 我们可以通过设置 cvar 来优化这一点。这将转换为结构和 RPC，而不是整个. 这可能会节省带宽，但信息也会减少，具体取决于转换方式以及需要了解的内容。`FGameplayEffectSpecForRPC``ASC``Replication Mode``GameplayEffectSpec``AbilitySystem.AlwaysConvertGESpecToGCParams 1``GameplayEffectSpecs``FGameplayCueParameter``FGameplayEffectSpecForRPC``GESpec``GameplayCueParameters``GCs
 ```
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2741,7 +2739,7 @@ GameplayCues`a 上的所有内容`GameplayEffect`均已在一个 RPC 中发送�
 
 用于`OnActive``GameplayCue`在开始时发生的任何事情`GameplayCue`，但如果后来的加入者错过了也没关系。用于希望迟到的加入者看到的`WhileActive`持续效果。`GameplayCue`例如，如果有`GameplayCue`一个 MOBA 爆炸中的塔结构，可以将初始爆炸粒子系统和爆炸声音放入其中`OnActive`，并将任何残留的持续火焰粒子或声音放入 中`WhileActive`。在这种情况下，迟到的加入者重播 的初始爆炸是没有意义的`OnActive`，但希望他们看到爆炸发生后地面上持续的、循环的火焰效果`WhileActive`。`OnRemove`应该清理`OnActive`和中添加的任何内容`WhileActive`。`WhileActive`每次 Actor 进入 a 的相关范围时都会被调用`GameplayCueNotify_Actor`。`OnRemove`每次 Actor 离开 a 的相关范围时都会被调用`GameplayCueNotify_Actor`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2767,7 +2765,7 @@ GameplayCues`a 上的所有内容`GameplayEffect`均已在一个 RPC 中发送�
 
 如果需要 a 中的某些内容`GameplayCue`“可靠”，请从 a 中应用它`GameplayEffect`并用于`WhileActive`添加 FX 和`OnRemove`删除 FX。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2777,7 +2775,7 @@ GameplayCues`a 上的所有内容`GameplayEffect`均已在一个 RPC 中发送�
 
 要子类化`AbilitySystemGlobals`，请在以下位置设置类名`DefaultGame.ini`：
 
-```
+```ini
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 AbilitySystemGlobalsClassName="/Script/ParagonAssets.PAAbilitySystemGlobals"
 ```
@@ -2792,7 +2790,7 @@ AbilitySystemGlobalsClassName="/Script/ParagonAssets.PAAbilitySystemGlobals"
 
 如果在使用时遇到崩溃`AbilitySystemGlobals` `GlobalAttributeSetDefaultsTableNames`，可能需要稍后调用，`UAbilitySystemGlobals::Get().InitGlobalData()`例如 Fortnite 中的`AssetManager`或 中的`GameInstance`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2845,7 +2843,7 @@ GAS的预测实现试图解决的问题：
 
 *从`GameplayPrediction.h`*
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2866,7 +2864,7 @@ GAS 的预测基于 a 的概念`Prediction Key`，它是客户端在激活 a 时
 
 从激活预测密钥`GameplayAbilities`开始，预测密钥在指令“窗口”的原子分组期间保证是有效的。`Activation`可以认为这仅在一帧内有效。来自潜在操作的任何回调`AbilityTasks`将不再具有有效的预测密钥，除非具有生成新的[范围预测窗口的](https://github.com/tranek/GASDocumentation#concepts-p-windows)`AbilityTask`内置同步点。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2884,7 +2882,7 @@ GAS 的预测基于 a 的概念`Prediction Key`，它是客户端在激活 a 时
 
 如果的预测`GameplayEffect`在所属客户端上播放了两次，则的预测密钥已过时，并且正在遇到“重做”问题。通常可以通过在应用之前`WaitNetSync` `AbilityTask`放置一个来创建新的范围预测键来解决此问题。`OnlyServerWait``GameplayEffect`
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2894,7 +2892,7 @@ GAS 的预测基于 a 的概念`Prediction Key`，它是客户端在激活 a 时
 
 如果这`Actor`只是装饰性的或没有任何游戏目的，简单的解决方案是重写该`Actor's` `IsNetRelevantFor()`函数以限制服务器复制到拥有的客户端。拥有的客户端将拥有其本地生成的版本，而服务器和其他客户端将拥有服务器的复制版本。
 
-```
+```c++
 bool APAReplicatedActorExceptOwner::IsNetRelevantFor(const AActor * RealViewer, const AActor * ViewTarget, const FVector & SrcLocation) const
 {
 	return !IsOwnedBy(ViewTarget);
@@ -2925,7 +2923,7 @@ Epic 的新[`Network Prediction`插件](https://github.com/tranek/GASDocumentati
 
 `CharacterMovementComponent`Epic 最近发起了一项用新插件替换 的计划`Network Prediction`。该插件仍处于早期阶段，但可以在虚幻引擎 GitHub 上尽早访问。现在判断该引擎将在哪个未来版本中首次亮相还为时过早。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -2945,7 +2943,7 @@ TargetData`通常由**手动**[`Target Actors`](https://github.com/tranek/GASDoc
 
 继承自的示例`FGameplayAbilityTargetData`：
 
-```
+```c++
 USTRUCT(BlueprintType)
 struct MYGAME_API FGameplayAbilityTargetData_CustomData : public FGameplayAbilityTargetData
 {
@@ -2992,7 +2990,7 @@ struct TStructOpsTypeTraits<FGameplayAbilityTargetData_CustomData> : public TStr
 
 将目标数据添加到句柄：
 
-```
+```c++
 UFUNCTION(BlueprintPure)
 FGameplayAbilityTargetDataHandle MakeTargetDataFromCustomName(const FName CustomName)
 {
@@ -3019,7 +3017,7 @@ FGameplayAbilityTargetDataHandle MakeTargetDataFromCustomName(const FName Custom
 - 游戏标签：可以使用子类层次结构，在该子类层次结构中，知道每当某个代码架构的功能发生时，都可以转换为基本父类型并获取其游戏标签，然后与继承类的转换标签进行比较。
 - 脚本结构和静态结构：可以直接进行类比较（这可能涉及大量 IF 语句或创建一些模板函数），下面是执行此操作的示例，但基本上可以从任何（这`FGameplayAbilityTargetData`是它的一个很好的优点是 a`USTRUCT`并要求任何继承的类在 ) 中指定结构类型`GetScriptStruct`并比较它是否是正在寻找的类型。下面是使用这些函数进行类型检查的示例：
 
-```
+```c++
 UFUNCTION(BlueprintPure)
 FName GetCoolNameFromTargetData(const FGameplayAbilityTargetDataHandle& Handle, const int Index)
 {   
@@ -3047,7 +3045,7 @@ FName GetCoolNameFromTargetData(const FGameplayAbilityTargetDataHandle& Handle, 
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3084,7 +3082,7 @@ FName GetCoolNameFromTargetData(const FGameplayAbilityTargetDataHandle& Handle, 
 
 对于默认`TargetActor`类，`Actors`只有直接位于跟踪/重叠中时才是有效目标。如果它们留下痕迹/重叠（它们移动或移开视线），它们就不再有效。如果希望`TargetActor`记住最后一个有效目标，则需要将此功能添加到自定义`TargetActor`类中。我将这些称为持久目标，因为它们将持续存在`TargetActor`，直到收到确认或取消，`TargetActor`在其跟踪/重叠中找到新的有效目标，或者目标不再有效（已销毁）。GASShooter 使用持久目标作为其火箭发射器的辅助能力的寻的火箭瞄准。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3092,7 +3090,7 @@ FName GetCoolNameFromTargetData(const FGameplayAbilityTargetDataHandle& Handle, 
 
 使用 和`Make GameplayTargetDataFilter`节点`Make Filter Handle`，可以过滤掉玩家的类别`Pawn`或仅选择特定类别。如果需要更高级的过滤，可以子类化`FGameplayTargetDataFilter`并覆盖该`FilterPassesForActor`函数。
 
-```
+```c++
 USTRUCT(BlueprintType)
 struct GASDOCUMENTATION_API FGDNameTargetDataFilter : public FGameplayTargetDataFilter
 {
@@ -3107,7 +3105,7 @@ struct GASDOCUMENTATION_API FGDNameTargetDataFilter : public FGameplayTargetData
 
 但是，这不能直接在`Wait Target Data`节点中工作，因为它需要`FGameplayTargetDataFilterHandle`. `Make Filter Handle`必须创建一个新的自定义来接受子类：
 
-```
+```c++
 FGameplayTargetDataFilterHandle UGDTargetDataFilterBlueprintLibrary::MakeGDNameFilterHandle(FGDNameTargetDataFilter Filter, AActor* FilterActor)
 {
 	FGameplayTargetDataFilter* NewFilter = new FGDNameTargetDataFilter(Filter);
@@ -3121,7 +3119,7 @@ FGameplayTargetDataFilterHandle UGDTargetDataFilterBlueprintLibrary::MakeGDNameF
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3133,7 +3131,7 @@ GASShooter 用于`Reticles`显示火箭发射器辅助能力的寻的火箭的�
 
 `Reticles`为设计师提供了一些`BlueprintImplementableEvents`（它们旨在在蓝图中开发）：
 
-```
+```c++
 /** Called whenever bIsTargetValid changes value. */
 UFUNCTION(BlueprintImplementableEvent, Category = Reticle)
 void OnValidTargetChanged(bool bNewValue);
@@ -3160,7 +3158,7 @@ void SetReticleMaterialParamVector(FName ParamName, FVector value);
 
 `Reticles`只会在默认的当前有效目标上显示`TargetActors`。例如，如果使用 来`AGameplayAbilityTargetActor_SingleLineTrace`追踪目标，则`Reticle`只有当敌人直接位于追踪路径中时才会出现 。如果你把目光移开，敌人就不再是有效目标，并且意志`Reticle`也会消失。如果希望`Reticle`保留最后一个有效目标，将需要自定义`TargetActor`以记住最后一个有效目标并将其保留`Reticle`在其中。我将这些称为持久目标，因为它们将持续存在`TargetActor`，直到收到确认或取消，`TargetActor`在其跟踪/重叠中找到新的有效目标，或者目标不再有效（已销毁）。GASShooter 使用持久目标作为其火箭发射器的辅助能力的寻的火箭瞄准。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3168,7 +3166,7 @@ void SetReticleMaterialParamVector(FName ParamName, FVector value);
 
 [`GameplayEffectContainers`](https://github.com/tranek/GASDocumentation#concepts-ge-containers)配备可选的、高效的生产方式[`TargetData`](https://github.com/tranek/GASDocumentation#concepts-targeting-data)。`EffectContainer`当应用到客户端和服务器时，这种定位会立即发生。它比[`TargetActors`](https://github.com/tranek/GASDocumentation#concepts-targeting-actors)在目标对象的 CDO 上运行更高效（不会生成和销毁`Actors`），但它缺乏玩家输入，无需确认即可立即发生，无法取消，并且无法从客户端向服务器发送数据（产生两者的数据）。它非常适合即时追踪和碰撞重叠。Epic 的[动作 RPG 示例项目](https://www.unrealengine.com/marketplace/en-US/product/action-rpg)包括两种示例类型的目标及其容器 - 目标能力所有者和拉动`TargetData`来自一个事件。它还在蓝图中实现了一个功能，以在距播放器的一定偏移量（由子蓝图类设置）处进行即时球体跟踪。可以`URPGTargetType`在 C++ 或蓝图中进行子类化以创建自己的定位类型。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3186,7 +3184,7 @@ void SetReticleMaterialParamVector(FName ParamName, FVector value);
 
 为了防止被击晕时移动，我们重写该`CharacterMovementComponent's` `GetMaxSpeed()`函数，在所有者被击晕时返回 0 `GameplayTag`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3210,7 +3208,7 @@ void SetReticleMaterialParamVector(FName ParamName, FVector value);
 
 `GA_AimDownSight_BP`有关处理输入的详细信息，请参阅参考资料。瞄准目标不会消耗体力。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3218,7 +3216,7 @@ void SetReticleMaterialParamVector(FName ParamName, FVector value);
 
 我在伤害内处理吸血[`ExecutionCalculation`](https://github.com/tranek/GASDocumentation#concepts-ge-ec)。上面`GameplayEffect`会有一个`GameplayTag`类似的`Effect.CanLifesteal`。检查`ExecutionCalculation`是否`GameplayEffectSpec`有那个`Effect.CanLifesteal` `GameplayTag`。如果`GameplayTag`存在， 则`ExecutionCalculation` [创建一个动态`Instant` `GameplayEffect`](https://github.com/tranek/GASDocumentation#concepts-ge-dynamic)，将生命值作为修改器给出，并将其应用回`Source's` `ASC`。
 
-```
+```c++
 if (SpecAssetTags.HasTag(FGameplayTag::RequestGameplayTag(FName("Effect.Damage.CanLifesteal"))))
 {
 	float Lifesteal = Damage * LifestealPercent;
@@ -3239,7 +3237,7 @@ if (SpecAssetTags.HasTag(FGameplayTag::RequestGameplayTag(FName("Effect.Damage.C
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3254,7 +3252,7 @@ if (SpecAssetTags.HasTag(FGameplayTag::RequestGameplayTag(FName("Effect.Damage.C
 
 如果的随机偏差很小，大多数玩家不会注意到每个游戏的序列都是相同的，并且使用激活预测密钥应该适合`random seed`。如果正在做一些更复杂的事情，需要防黑客，那么使用 a`Server Initiated` `GameplayAbility`可能会更好，因为服务器可以创建预测密钥或生成`random seed`通过事件负载发送的密钥。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3272,7 +3270,7 @@ if (SpecAssetTags.HasTag(FGameplayTag::RequestGameplayTag(FName("Effect.Damage.C
 
 《Paragon》中的缓慢效果不会叠加。每个慢速实例都正常应用并跟踪它们的生命周期，但只有最大幅度的慢速效果实际上影响了`Character`. GAS 为这种场景提供了开箱即用的`AggregatorEvaluateMetaData`. [`AggregatorEvaluateMetaData()`](https://github.com/tranek/GASDocumentation#concepts-as-onattributeaggregatorcreated)详细信息和实施请参见。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3305,7 +3303,7 @@ GAS 提供了两种在运行时回答这些问题的技术 -[`showdebug abilitys
 
 **提示：**虚幻引擎喜欢优化 C++ 代码，这使得某些功能很难调试。当深入跟踪代码时，很少会遇到这种情况。如果将 Visual Studio 解决方案配置设置为仍阻止跟踪代码或检查变量，则可以通过使用 CoreMiscDefines.h 中定义的和宏或船舶变体`DebugGame Editor`包装优化函数来禁用所有优化。除非从源代码重建插件，否则这不能在插件代码上使用。这可能在内联函数上起作用，也可能不起作用，具体取决于它们的作用和位置。完成调试后请务必删除宏！`UE_DISABLE_OPTIMIZATION``UE_ENABLE_OPTIMIZATION`
 
-```
+```c++
 UE_DISABLE_OPTIMIZATION
 void MyClass::MyFunction(int32 MyIntParameter)
 {
@@ -3316,7 +3314,7 @@ UE_ENABLE_OPTIMIZATION
 
 
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3334,7 +3332,7 @@ UE_ENABLE_OPTIMIZATION
 
 **注意：**为了使能力系统信息根据当前选择的调试Actor进行更新，需要`bUseDebugTargetFromHud=true`在`AbilitySystemGlobals`以下位置进行如下设置`DefaultGame.ini`：
 
-```
+```ini
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 bUseDebugTargetFromHud=true
 ```
@@ -3343,7 +3341,7 @@ bUseDebugTargetFromHud=true
 
 **注意：**为了`showdebug abilitysystem`工作，必须在游戏模式中选择实际的 HUD 类。否则找不到该命令并返回“Unknown Command”。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3411,7 +3409,7 @@ log list
 
 有关详细信息，请参阅[有关日志记录的 Wiki 。](https://unrealcommunity.wiki/logging-lgpidy6i)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3451,7 +3449,7 @@ log list
 
 `AActors`Fortnite Battle Royale (FNBR)世界上有很多可损坏的物体（树木、建筑物等），每个物体都有一个[`ASC`](https://github.com/tranek/GASDocumentation#concepts-asc). 这会增加内存成本。`ASCs`FNBR通过仅在需要时（当它们第一次受到玩家伤害时）延迟加载来优化这一点。这减少了总体内存使用量，因为某些内存`AActors`可能永远不会在比赛中损坏。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3481,7 +3479,7 @@ log list
 
 [![监听 GameplayEffect Stack Change BP 节点](https://github.com/tranek/GASDocumentation/raw/master/Images/gestackchange.png)](https://github.com/tranek/GASDocumentation/raw/master/Images/gestackchange.png)
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3493,7 +3491,7 @@ log list
 
 需要[在客户端上](https://github.com/tranek/GASDocumentation#concepts-asc-setup)[初始化`ASC`](https://github.com/tranek/GASDocumentation#concepts-asc-setup)。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3517,7 +3515,7 @@ log list
 
 [虚幻引擎中](https://issues.unrealengine.com/issue/UE-81109)存在一个错误，对于从现有蓝图 Actor 类复制的蓝图 Actor 类，该错误会将`AttributeSet`类上的指针设置为 nullptr。有一些解决方法。我已经成功地不在`AttributeSet`我的类上创建定制指针（.h 中没有指针，不在`CreateDefaultSubobject`构造函数中调用），而是直接添加`AttributeSets`到`ASC`in `PostInitializeComponents()`（示例项目中未显示）。复制的`AttributeSets`仍将存在于`ASC's` `SpawnedAttributes`数组中。它看起来像这样：
 
-```
+```c++
 void AGDPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -3534,7 +3532,7 @@ void AGDPlayerState::PostInitializeComponents()
 
 `AttributeSet`在这种情况下，将使用 上的函数读取和设置值，`ASC`而不是[调用`AttributeSet`由宏创建的](https://github.com/tranek/GASDocumentation#concepts-as-attributes)函数。
 
-```
+```c++
 /** Returns current (final) value of an attribute */
 float GetNumericAttribute(const FGameplayAttribute &Attribute) const;
 
@@ -3546,7 +3544,7 @@ void SetNumericAttributeBase(const FGameplayAttribute &Attribute, float NewBaseV
 
 所以`GetHealth()`看起来像这样：
 
-```
+```c++
 float AGDPlayerState::GetHealth() const
 {
 	if (AbilitySystemComponent)
@@ -3562,7 +3560,7 @@ float AGDPlayerState::GetHealth() const
 
 设置（初始化）健康状况`Attribute`将类似于：
 
-```
+```c++
 const float NewHealth = 100.0f;
 if (AbilitySystemComponent)
 {
@@ -3590,7 +3588,7 @@ error LNK2019: unresolved external symbol "__declspec(dllimport) void __cdecl UE
 
 这是来自尝试`MarkItemDirty()`调用`FFastArraySerializer`. `ActiveGameplayEffect`我在更新冷却时间时遇到过这种情况。
 
-```
+```c++
 ActiveGameplayEffects.MarkItemDirty(*AGE);
 ```
 
@@ -3600,7 +3598,7 @@ ActiveGameplayEffects.MarkItemDirty(*AGE);
 
 解决方案是将其添加`NetCore`到的项目`PublicDependencyModuleNames`中`Build.cs`。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3618,7 +3616,7 @@ UE 5.1 已弃用`FString`在 的构造函数中使用`BindAbilityActivationToInp
 
 旧的、已弃用的方式：
 
-```
+```c++
 AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
 	FString("CancelTarget"), FString("EGDAbilityInputID"), static_cast<int32>(EGDAbilityInputID::Confirm), static_cast<int32>(EGDAbilityInputID::Cancel)));
 ```
@@ -3627,7 +3625,7 @@ AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FG
 
 新方法：
 
-```
+```c++
 FTopLevelAssetPath AbilityEnumAssetPath = FTopLevelAssetPath(FName("/Script/GASDocumentation"), FName("EGDAbilityInputID"));
 AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
 	FString("CancelTarget"), AbilityEnumAssetPath, static_cast<int32>(EGDAbilityInputID::Confirm), static_cast<int32>(EGDAbilityInputID::Cancel)));
@@ -3637,7 +3635,7 @@ AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FG
 
 请参阅`Engine\Source\Runtime\CoreUObject\Public\UObject\TopLevelAssetPath.h`获取更多信息。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3657,7 +3655,7 @@ AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FG
 | 游戏标签                                                     | 标签，GT        |
 | 修改量计算                                                   | ModMagCalc、MMC |
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3784,7 +3782,7 @@ AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FG
 
 > 这仅是我个人的意见，不代表任何人的承诺。我认为最现实的行动方案将是随着新的引擎技术计划的实施，能力系统将需要更新，这将是做此类事情的时候。这些举措可能与脚本、网络或物理/角色运动有关。不过，这一切都是非常遥远的未来，所以我无法对时间表做出承诺或估计。
 
-**[⬆回到顶部](https://github.com/tranek/GASDocumentation#table-of-contents)**
+
 
 
 
@@ -3864,186 +3862,3 @@ AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FG
 
 
 
-
-
-## 12. GAS 变更日志
-
-这是根据官方虚幻引擎升级变更日志和我遇到的未记录的更改编译的 GAS 显着更改（修复、更改和新功能）的列表。如果发现此处未列出的内容，请提出问题或拉取请求。
-
-
-
-### 5.2
-
-- 错误修复：修复了函数中的崩溃问题`UAbilitySystemBlueprintLibrary::MakeSpecHandle`。
-- 错误修复：修复了游戏能力系统中的逻辑，其中非受控 Pawn 将被视为远程，即使它是在服务器本地生成的（例如车辆）。
-- 错误修复：正确设置被服务器拒绝的预测实例能力的激活信息。
-- 错误修复：修复了可能导致 GameplayCues 卡在远程实例上的错误。
-- 错误修复：修复了链接调用 WaitGameplayEvent 时的内存占用问题。
-- `GetOwnedGameplayTags()`Bug 修复：当多次执行同一节点时，调用 Blueprint 中的 SkillSystemComponent函数不再保留上一次调用的返回值。
-- 错误修复：修复了 GameplayEffectContext 复制对永远不会复制的动态对象的引用的问题。
-  - 这使得 GameplayEffect 无法`Owner->HandleDeferredGameplayCues(this)`像`bHasMoreUnmappedReferences`往常一样调用。
-- 新功能：[游戏定位系统](https://docs.unrealengine.com/en-US/gameplay-targeting-system-in-unreal-engine/)是一种创建数据驱动的定位请求的方法。
-- 新增内容：添加了对 GameplayTag 查询的自定义序列化支持。
-- 新增内容：添加了对复制派生 FGameplayEffectContext 类型的支持。
-- 新增内容：资产中的游戏属性现在在保存时注册为可搜索名称，允许在参考查看器中查看对属性的引用。
-- 新增内容：为AbilitySystemComponent 添加了一些基本单元测试。
-- 新增内容：游戏能力系统属性现在尊重核心重定向。这意味着现在可以在代码中重命名属性集及其属性，并通过向 DefaultEngine.ini 添加重定向条目，将它们正确加载到使用旧名称保存的资源中。
-- 更改：允许从代码更改游戏效果修改器的评估通道。
-- 更改：`FGameplayModifierInfo::Magnitude`从游戏能力插件中删除了以前未使用的变量。
-- 更改：删除了能力系统组件和智能对象实例标签之间的同步逻辑。
-
-https://docs.unrealengine.com/5.2/en-US/unreal-engine-5.2-release-notes/
-
-
-
-### 5.1
-
-- 错误修复：修复了复制的松散游戏标签未复制给所有者的问题。
-- 错误修复：修复了能力任务错误，该错误可能会阻止及时进行垃圾收集。
-- 错误修复：修复了根据标签监听激活的游戏能力无法激活的问题。如果有多个游戏能力正在侦听此标签，并且列表中的第一个游戏能力无效或无权激活，就会发生这种情况。
-- 错误修复：修复了加载警告时正确使用数据注册表的 GameplayEffects，并改进了警告文本。
-- 错误修复：从 UGameplayAbility 中删除了代码，该代码错误地仅使用蓝图调试器注册最后一个实例化能力的断点。
-- 错误修复：修复了如果在 ApplyGameplayEffectSpecToTarget 内锁定期间调用 EndAbility，游戏能力系统能力会卡住的问题。
-- 新增内容：添加了对游戏效果的支持，以添加阻止的能力标签。
-- 新增内容：添加了 WaitGameplayTagQuery 节点。一种基于 UAbilityTask，另一种基于 UAbilityAsync。该节点指定一个 TagQuery，并根据配置在查询变为 true 或 false 时触发其输出引脚。
-- 新增功能：修改了控制台变量中的 SkillTask 调试，以在非发布版本中默认启用调试记录和打印（能够根据需要打开/关闭热修复功能）。
-- 新增功能：现在可以将 SkillSystem.AbilityTask.Debug.RecordingEnabled 设置为 0 来禁用，设置为 1 来在非发布版本中启用，设置为 2 来启用所有构建（包括发布）。
-- 新增内容：可以使用AbilitySystem.AbilityTask.Debug.AbilityTaskDebugPrintTopNResults 仅打印日志中的前N 个结果（以避免日志垃圾邮件）。
-- 新增功能：STAT_AbilityTaskDebugRecording 可用于测试这些默认调试更改对性能的影响。
-- 新增内容：添加了一个调试命令来过滤 GameplayCue 事件。
-- 新增内容：向游戏能力系统添加了新的调试命令AbilitySystem.DebugAbilityTags、AbilitySystem.DebugBlockedTags 和AbilitySystem.DebugAttribute。
-- 新增内容：添加了蓝图函数来获取游戏属性的调试字符串表示形式。
-- 新增内容：添加了新的游戏任务资源重叠策略以取消现有任务。
-- 更改：现在能力任务应确保仅在对能力指针执行所需操作后才调用 Super::OnDestroy，因为调用它后它将被清空。
-- 更改：将 FGameplayAbilitySpec/Def::SourceObject 转换为弱引用。
-- 更改：将能力任务中的能力系统组件引用设为弱指针，以便垃圾收集可以将其删除。
-- 更改：删除了多余的枚举 EWaitGameplayTagQueryAsyncTriggerCondition。
-- 更改：GameplayTasksComponent 和AbilitySystemComponent 现在支持注册的子对象API。
-- 更改：添加了更好的日志记录以指示游戏功能无法激活的原因。
-- 更改：删除了 SkillSystem.Debug.NextTarget 和 PrevTarget 命令，以支持全局 HUD NextDebugTarget 和 PrevDebugTarget 命令。
-
-https://docs.unrealengine.com/5.1/en-US/unreal-engine-5.1-release-notes/
-
-
-
-### 5.0
-
-https://docs.unrealengine.com/5.0/en-US/unreal-engine-5.0-release-notes/
-
-
-
-### 4.27
-
-- 崩溃修复：修复了根运动源问题，当 Actor 完成使用带有强度随时间修改器的恒力根运动任务的能力时，联网客户端可能会崩溃。
-- 错误修复：修复了使用 GameplayCues 时编辑器加载时间的回归。
-- 错误修复：如果设置相同的 EffectLevel，GameplayEffectsContainer 的`SetActiveGameplayEffectLevel`方法将不再弄脏 FastArray。
-- 错误修复：修复了 GameplayEffect 混合复制模式中的一个边缘情况，其中未明确拥有网络连接但使用该连接的 Actor`GetNetConnection`将不会收到混合复制更新。
-- 错误修复：修复了 GameplayAbility 的类方法中发生的无限递归，该方法是通过再次`EndAbility`调用来调用的。`EndAbility``K2_OnEndAbility`
-- 错误修复：如果在注册标签之前加载 GameplayTags 蓝图引脚，则它们将不再被静默清除。它们现在与 GameplayTag 变量的工作方式相同，并且可以使用项目设置中的 ClearInvalidTags 选项更改两者的行为。
-- 错误修复：改进了 GameplayTag 操作的线程安全性。
-- 新增内容：将 SourceObject 暴露给 GameplayAbility 的`K2_CanActivateAbility`方法。
-- 新内容：本机游戏标签。引入一个新的`FNativeGameplayTag`，使得在加载和卸载模块时正确注册和取消注册的一次性本机标签成为可能。
-- 新增内容：更新`GiveAbilityAndActivateOnce`为传入 FGameplayEventData 参数。
-- 新增内容：改进了 GameplayAbilities 插件中的 ScalableFloats，以支持从新的数据注册表系统动态查找曲线表。添加了 ScalableFloat 标头，以便更轻松地在功能插件之外重用通用结构。
-- 新增内容：添加了通过 GameplayTagsEditorModule 在其他编辑器自定义中使用 GameplayTag UI 的代码支持。
-- 新增内容：修改了 UGameplayAbility 的 PreActivate 方法以选择性地接收触发事件数据。
-- 新增内容：添加了更多支持，以使用特定于项目的过滤器在编辑器中过滤 GameplayTags。`OnFilterGameplayTag`提供引用属性和标签源，因此可以根据请求标签的资产来过滤标签。
-- `SetContext`新增内容：添加了在初始化后调用GameplayEffectSpec 的类方法时保留原始捕获的 SourceTags 的选项。
-- 新增内容：改进了用于从特定插件注册 GameplayTags 的 UI。新的标签 UI 现在允许为新添加的 GameplayTag 源选择磁盘上的插件位置。
-- 新增内容：Sequencer 中添加了一个新轨道，以允许触发使用 GameplayAbiltiySystem 构建的 Actor 上的通知状态。与通知一样，GameplayCueTrack 可以利用基于范围的事件或基于触发器的事件。
-- 更改：更改了 GameplayCueInterface 以通过引用传递 GameplayCueParameters 结构。
-- 优化：对加载和重新生成 GameplayTag 表进行了多项性能改进，以便优化此选项。
-
-https://docs.unrealengine.com/en-US/WhatsNew/Builds/ReleaseNotes/4_27/
-
-
-
-### 4.26
-
-- GAS 插件不再标记为测试版。
-- 崩溃修复：修复了在没有选择有效标签源的情况下添加游戏标签时发生的崩溃问题。
-- 崩溃修复：将路径字符串 arg 添加到消息中以修复 UGameplayCueManager::VerifyNotifyAssetIsInValidPath 中的崩溃。
-- 崩溃修复：修复了在使用 ptr 而不检查它时，AbilitySystemComponent_Abilities 中的访问冲突崩溃。
-- 错误修复：修复了堆叠 GE 时不会重置所应用效果的其他实例的持续时间的错误。
-- 错误修复：修复了导致 CancelAllAbilities 仅取消非实例能力的问题。
-- 新增内容：为游戏能力提交功能添加了可选标签参数。
-- 新增内容：向 PlayMontageAndWait 能力任务添加了 StartTimeSeconds 并改进了注释。
-- 新增内容：向 FGameplayAbilitySpec 添加了标签容器“DynamicAbilityTags”。这些是与规范一起复制的可选能力标签。它们还被应用的游戏效果捕获为源标签。
-- 新增内容：现在可以从蓝图调用 GameplayAbility IsLocallyControlled 和 HasAuthority 函数。
-- 新增内容：如果我们当前正在记录可视记录数据，可视记录器现在将仅收集和存储有关即时 GE 的信息。
-- 新增内容：增加了对蓝图节点中游戏属性引脚重定向器的支持。
-- 新增内容：添加了新功能，当与根运动相关的能力任务结束时，它们会将运动组件的运动模式返回到任务开始之前的运动模式。
-
-https://docs.unrealengine.com/en-US/WhatsNew/Builds/ReleaseNotes/4_26/
-
-
-
-### 4.25.1
-
-- 固定的！UE-92787 使用“获取浮动属性”节点保存蓝图时出现崩溃，且属性引脚设置为内联
-- 固定的！UE-92810 实例可编辑游戏标签属性已内联更改的崩溃生成 Actor
-
-
-
-### 4.25
-
-- 固定预测`RootMotionSource` `AbilityTasks`
-- [`GAMEPLAYATTRIBUTE_REPNOTIFY()`](https://github.com/tranek/GASDocumentation#concepts-as-attributes)现在另外接受旧`Attribute`值。我们必须将其作为可选参数提供给我们的`OnRep`函数。以前，它是读取属性值来尝试获取旧值。但是，如果从复制函数调用，则在到达 SetBaseAttributeValueFromReplication 之前旧值已被丢弃，因此我们将获得新值。
-- 添加[`NetSecurityPolicy`](https://github.com/tranek/GASDocumentation#concepts-ga-netsecuritypolicy)到`UGameplayAbility`.
-- 崩溃修复：修复了在没有选择有效标签源的情况下添加游戏标签时发生的崩溃问题。
-- 崩溃修复：删除了攻击者通过能力系统使服务器崩溃的几种方法。
-- 崩溃修复：我们现在确保在检查标签要求之前有 GameplayEffect 定义。
-- 错误修复：修复了游戏标签类别不适用于蓝图中的函数参数（如果它们是函数终止符节点的一部分）的问题。
-- 错误修复：修复了游戏效果标签未通过多个视口复制的问题。
-- 错误修复：修复了循环触发能力时，InternalTryActivateAbility 函数可能会使游戏能力规范失效的错误。
-- 错误修复：更改了我们处理更新标签计数容器内的游戏标签的方式。当推迟父标签的更新同时删除游戏标签时，我们现在将在父标签更新后调用与更改相关的委托。这确保了代表广播时标签表处于一致的状态。
-- 错误修复：我们现在在确认目标时在内部迭代之前创建生成的目标 actor 数组的副本，因为某些回调可能会修改该数组。
-- 错误修复：修复了以下错误：堆叠 GameplayEffects 不会重置正在应用的其他效果实例的持续时间，并且由调用者设置持续时间，只会为堆栈上的第一个实例正确设置持续时间。堆栈中的所有其他 GE 规范的持续时间均为 1 秒。添加了自动化测试来检测这种情况。
-- 错误修复：修复了处理游戏事件委托修改游戏事件委托列表时可能发生的错误。
-- 错误修复：修复了导致 GiveAbilityAndActivateOnce 行为不一致的错误。
-- 错误修复：重新排序 FGameplayEffectSpec::Initialize 中的一些操作以处理潜在的排序依赖性。
-- 新增内容：UGameplayAbility 现在具有 OnRemoveAbility 函数。它遵循与 OnGiveAbility 相同的模式，并且仅在能力的主实例或类默认对象上调用。
-- 新增内容：显示被阻止的能力标签时，调试文本现在包括被阻止的标签总数。
-- 新增内容：将 UAbilitySystemComponent::InternalServerTryActiveAbility 重命名为 UAbilitySystemComponent::InternalServerTryActivateAbility。调用InternalServerTryActiveAbility 的代码现在应该调用InternalServerTryActivateAbility。
-- 新增内容：添加或删除标签时，继续使用过滤文本来显示游戏标签。先前的行为清除了过滤器。
-- 新增：当我们在编辑器中添加新标签时，不要重置标签源。
-- 新增内容：添加了查询能力系统组件以获取具有一组指定标签的所有活动游戏效果的功能。新函数称为 GetActiveEffectsWithAllTags，可以通过代码或蓝图访问。
-- 新增内容：当与根运动相关的能力任务结束时，它们现在会将运动组件的运动模式返回到任务开始之前的运动模式。
-- 新增内容：使 SpawnedAttributes 变得短暂，因此它不会保存可能变得陈旧和不正确的数据。添加了空检查以防止传播任何当前保存的陈旧数据。这可以防止与存储在 SpawnedAttributes 中的不良数据相关的问题。
-- API 更改：AddDefaultSubobjectSet 已被弃用。应改用 AddAttributeSetSubobject。
-- 新增内容：游戏能力现在可以指定要在其上播放蒙太奇的动画实例。
-
-https://docs.unrealengine.com/en-US/WhatsNew/Builds/ReleaseNotes/4_25/
-
-
-
-### 4.24
-
-- 修复了编译时`Attribute`重置为蓝图节点变量的问题。`None`
-
-- 需要调用才能[`UAbilitySystemGlobals::InitGlobalData()`](https://github.com/tranek/GASDocumentation#concepts-asg-initglobaldata)使用[`TargetData`](https://github.com/tranek/GASDocumentation#concepts-targeting-data)，否则会出现`ScriptStructCache`错误并且客户端将与服务器断开连接。我的建议是现在在每个项目中始终调用它，而在 4.24 之前它是可选的。
-
-- 修复了将 setter 复制`GameplayTag`到之前没有定义变量的蓝图时发生的崩溃问题。
-
-- `UGameplayAbility::MontageStop()`函数现在可以正确使用该`OverrideBlendOutTime`参数。
-
-- 修复了`GameplayTag`编辑时组件上的查询变量未被修改的问题。
-
-- 
-
-  ```
-  GameplayEffectExecutionCalculations
-  ```
-
-  添加了针对不需要属性捕获支持的“临时变量”支持作用域修饰符的 功能。
-
-  - 实现基本上允许`GameplayTag`创建识别的聚合器，作为执行公开要使用作用域修饰符操作的临时值的一种手段；现在可以构建需要可操作值的公式，而无需从源或目标捕获这些值。
-  - 要使用，执行必须向新成员变量添加一个标记`ValidTransientAggregatorIdentifiers`；这些标签将显示在底部范围 mod 的计算修饰符数组中，标记为临时变量 - 相应地更新详细信息自定义以支持功能
-
-- 添加了有限的标签生活质量改进。删除了限制源的默认选项`GameplayTag`。添加受限标签时，我们不再重置源，以便更轻松地连续添加多个标签。
-
-- `APawn::PossessedBy()`现在将 的所有者设置`Pawn`为新的`Controller`。很有用，因为[混合复制模式](https://github.com/tranek/GASDocumentation#concepts-asc-rm)期望 的所有者是`Pawn`，`Controller`如果`ASC`存在于 上`Pawn`。
-
-- 修复了`FAttributeSetInitterDiscreteLevels`.
-
-https://docs.unrealengine.com/en-US/WhatsNew/Builds/ReleaseNotes/4_24/
