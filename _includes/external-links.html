@@ -1,6 +1,6 @@
 {% if site.data.external_links.size > 0 %}
-<div id="access-links">
-  <div class="panel-heading">{{- site.data.locales[lang].panel.external_links | default: 'External Links' -}}</div>
+<section id="access-links">
+  <h2 class="panel-heading">{{- site.data.locales[lang].panel.external_links | default: 'External Links' -}}</h2>
   <ul class="post-content pl-0 pb-1 ml-1 mt-2">
 
     {% for external_link in site.data.external_links %}
@@ -30,5 +30,5 @@
       </a></li>
     {% endfor %}
   </ul>
-</div>
+</section>
 {% endif %}
