@@ -25,4 +25,3 @@ imgPopup();
 initLocaleDatetime();
 initClipboard();
 toc();
-
