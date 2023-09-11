@@ -8,9 +8,33 @@ categories: [Uncategories, Git]
 
 
 
-- `git status` 检查本地仓库状态
-- `git fetch upstream` 拉取远端源仓库更新
-- `git checkout master` 切换到 master 分支
-- `git merge upstream/master` 合并远程的master分支
-- `git push` 推送修改至 Fork仓库
+- 检查本地仓库状态
+
+``` bash
+git status
+```
+
+- 拉取远端源仓库更新
+
+``` bash
+git fetch upstream
+```
+
+- 切换到 master 分支
+
+``` bash
+git checkout master
+```
+
+- 合并远程的master分支
+
+``` bash
+git merge upstream/master
+```
+
+- 推送修改至 Fork仓库
+
+``` bash
+git push
+```
 
