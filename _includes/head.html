@@ -40,9 +40,9 @@
 
   <title>
     {%- unless page.layout == 'home' -%}
-    {{ page.title | flatify | append: ' | '}}
+      {{ page.title | append: ' | ' }}
     {%- endunless -%}
-    {{ site.title | flatify }}
+    {{ site.title }}
   </title>
 
   {% include_cached favicons.html %}

@@ -12,11 +12,11 @@ platforms:
     link: "https://lineit.line.me/share/ui?url=URL&text=TITLE"
 
   - type: Facebook
-    icon: "iconfont icon-facebook"
+    icon: "fab fa-facebook-square"
     link: "https://www.facebook.com/sharer/sharer.php?title=TITLE&u=URL"
 
   - type: Telegram
-    icon: "iconfont icon-telegram"
+    icon: "fab fa-telegram"
     link: "https://t.me/share/url?url=URL&text=TITLE"
 
   - type: QQ
