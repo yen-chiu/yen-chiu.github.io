@@ -9,7 +9,7 @@ import {
   imgPopup,
   initLocaleDatetime,
   initClipboard,
-  toc,
+  toc
 } from './modules/plugins';
 
 basic();
