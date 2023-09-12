@@ -44,6 +44,13 @@ html {
   color: var(--highlighter-rouge-color);
   margin-top: 0.5rem;
   margin-bottom: 1.2em; /* Override BS Inline-code style */
+  position: relative;
+}
+
+.language-sh {
+  pre {
+    font-variant-ligatures: none !important;
+  }
 }
 
 .highlight {
@@ -252,6 +259,15 @@ div {
       i {
         color: white;
       }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.button-run-code {
+      position: absolute;
+      right: 2.25rem;
     }
   }
 }

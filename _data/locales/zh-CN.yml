@@ -66,6 +66,10 @@ post:
     previous: 上一篇
     copy_code:
       succeed: 已复制！
+    run:
+      output: 运行结果
+      wait: 等待运行结果。。。
+      error_prompt: "运行失败，错误："
     share_link:
       title: 分享链接
       succeed: 链接已复制！

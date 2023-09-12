@@ -25,6 +25,7 @@ search:
 panel:
   lastmod: Recently Updated
   trending_tags: Trending Tags
+  external_links: External Links
   toc: Contents
 
 copyright:
@@ -67,6 +68,10 @@ post:
     previous: Older
     copy_code:
       succeed: Copied!
+    run:
+      output: Code output
+      wait: Wait for running...
+      error_prompt: "Failed to run code, message:"
     share_link:
       title: Copy link
       succeed: Link copied successfully!
