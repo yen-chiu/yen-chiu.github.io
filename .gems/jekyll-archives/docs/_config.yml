@@ -8,3 +8,7 @@ plugins:
   - jekyll-sitemap
 
 theme: jekyll-theme-primer
+
+assets:
+  self_host:
+    enabled: true
