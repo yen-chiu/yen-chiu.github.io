@@ -61,6 +61,7 @@ export function highlightLines() {
       let pre = $('pre', $(this));
       pre = pre[pre.length - 1];
       highlightLinesInner(pre, lines);
+      $(this).removeAttr('highlight-lines');
     }
   })
 }
