@@ -7,16 +7,16 @@
   width: 150
   height: 20
 
--
-  icon: https://raw.githubusercontent.com/Rootjhon/img_note/empty/16790410035611679041003479.png
-  # 是否使用 Iconfont 的图标字体
-  use_iconfont: false
-  name: 苍白的茧
-  # 为 true 时当且仅当图片无法加载时，使用名字替代。为 false 时始终显示名字。
-  automatic_name: true
-  link: http://dreamfairy.cn/blog/
-  width: 20
-  height: 20
+# -
+#   icon: https://raw.githubusercontent.com/Rootjhon/img_note/empty/16790410035611679041003479.png
+#   # 是否使用 Iconfont 的图标字体
+#   use_iconfont: false
+#   name: 苍白的茧
+#   # 为 true 时当且仅当图片无法加载时，使用名字替代。为 false 时始终显示名字。
+#   automatic_name: true
+#   link: http://dreamfairy.cn/blog/
+#   width: 20
+#   height: 20
 
 
 # 在下面添加更多外部链接
