@@ -9,7 +9,7 @@ tags: [LightMap]
 # - http://www.ludicon.com/castano/blog/2017/10/lightmap-optimizations-ios/
 ---
 
-### 无缝
+## 无缝
 
 如果需要黑色像素来阻止图表相互渗透，那么计算出的 UV 是错误的。
 
@@ -17,7 +17,7 @@ tags: [LightMap]
 
 
 
-### 压缩同色像素
+## 压缩同色像素
 
 如果图表中的所有像素的颜色完全相同（或接近足够），则无需浪费空间来存储所有像素。
 
@@ -27,7 +27,7 @@ tags: [LightMap]
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202308221614274.png)
 
-### 共享相同的图表
+## 共享相同的图表
 
 大部分光照贴图空间可能被一千个微小的碎片占据。
 
@@ -39,7 +39,7 @@ tags: [LightMap]
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202308221618255.png)
 
-### 调整纹理使之更适应block压缩算法
+## 调整纹理使之更适应block压缩算法
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202308221619627.png)
 
