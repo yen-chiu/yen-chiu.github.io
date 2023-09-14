@@ -23,7 +23,7 @@ tags: [ECS]
 
 
 
-MassEntity is a gameplay-focused framework for data-oriented calculations.
+>  MassEntity is a gameplay-focused framework for data-oriented calculations.   ==> DOTS
 
 
 
@@ -53,7 +53,9 @@ MassEntity is a gameplay-focused framework for data-oriented calculations.
 
 ## Entity's How to 
 
-### 直接创建
+### 创建与销毁
+
+#### 直接创建
 
 ```c++
 // Get EntityManager
@@ -82,7 +84,7 @@ EntityManager->GetFragmentDataChecked<FSampleColorFragment>(NewEntity).Color = F
 
 ```
 
-### 延迟创建 <常用/CommandBuffer> 
+#### 延迟创建 <常用/CommandBuffer> 
 
 ```c++
 // We reserve an entity here, this way the system knows not to give this index out to other processors/deferred actions etc
@@ -124,6 +126,12 @@ EntityManager->Defer().PushCommand<FMassCommandBuildEntityWithSharedFragments>(R
 
 
 ## How to Query Entity
+
+
+
+## Fragment's How to 
+
+组件的添加与移除
 
 
 
