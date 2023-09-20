@@ -6,6 +6,8 @@ tags: [GAS]
 # Ref
 # - https://github.com/tranek/GASDocumentation
 # - https://github.com/tranek/GASShooter
+# - https://github.com/BillEliot/GASDocumentation_Chinese
+# - https://docs.unrealengine.com/5.1/en-US/gameplay-ability-system-for-unreal-engine/
 
 ---
 
