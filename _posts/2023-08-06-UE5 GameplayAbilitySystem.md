@@ -770,36 +770,35 @@ void UGSAttributeSetBase::OnAttributeAggregatorCreated(const FGameplayAttribute&
 
 `AggregatorEvaluateMetaData`对限定符的自定义应添加`FAggregatorEvaluateMetaDataLibrary`为静态变量。
 
+### 4.5 Gameplay Effects
 
+#### 4.5.1 Gameplay Effects定义
 
+[GameplayEffect(GE)](https://docs.unrealengine.com/en-US/API/Plugins/GameplayAbilities/UGameplayEffect/index.html)是Ability修改其自身和其他[Attribute](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-a)和[GameplayTag](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-gt)的容器, 其可以立即修改`Attribute`(像伤害或治疗)或应用长期的状态buff/debuff(像移动速度加速或眩晕). UGameplayEffect只是一个定义单一游戏效果的数据类, 不应该在其中添加额外的逻辑. 设计师一般会创建很多UGameplayEffect的子类蓝图.
 
+`GameplayEffect`通过 [Modifier](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-ge-mods) 和 [Execution(GameplayEffectExecutionCalculation)](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-ge-ec) 修改`Attribute`.
 
-### 4.5 游戏效果
+`GameplayEffect`有**三种**持续类型: 
 
+- `即刻(Instant)`
+- `持续(Duration)`
+- `无限(Infinite)`
 
+额外地, `GameplayEffect`可以添加/执行[GameplayCue](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-gc), `即刻(Instant)GameplayEffect`可以调用`GameplayCue GameplayTag`的Execute而`持续(Duration)`或`无限(Infinite)`可以调用`GameplayCue GameplayTag`的Add和Remove.
 
-#### 4.5.1 游戏效果定义
+| 持续时间类型 | GameplayCue<br>事件 | 何时使用                                                     |
+| :----------: | :-----------------: | ------------------------------------------------------------ |
+|  `Instant`   |       Execute       | 对`Attribute`中BaseValue立即进行的永久性修改. **其不会应用`GameplayTag`, 哪怕是一帧.** |
+|  `Duration`  |    Add & Remove     | 对于`Attribute`  的数值修改 以及 添加GamePlayTag 会在`GameplayEffect`过期或手动移除时，被回退. <br>持续时间是在UGameplayEffect类/蓝图中明确的. |
+|  `Infinite`  |    Add & Remove     | 对`Attribute`中CurrentValue的临时修改和当`GameplayEffect`移除时, 应用将要被移除的`GameplayTag`. <br>该类型自身永不过期且必须由某个Ability或`ASC`手动移除. |
 
-[`GameplayEffects`](https://docs.unrealengine.com/en-US/API/Plugins/GameplayAbilities/UGameplayEffect/index.html)( ) 是改变自己和他人能力`GE`的容器。它们可以引起立即的变化，例如伤害或治疗，或应用长期状态增益/减益，例如移动速度提升或眩晕。该类是一个**纯数据**类，定义单个游戏效果。不应向 中添加额外的逻辑。通常，设计者会创建许多 的蓝图子类。[`Attributes`](https://github.com/tranek/GASDocumentation#concepts-a)[`GameplayTags`](https://github.com/tranek/GASDocumentation#concepts-gt)`Attribute``UGameplayEffect``GameplayEffects``UGameplayEffect`
+持续(`Duration`)和无限(`Infinite`)GameplayEffect可以选择应用周期性的Effect, 其每过X秒(由周期定义)就应用一次`Modifier`和Execution, 当周期性的Effect修改`Attribute`的BaseValue和执行`GameplayCue`时就被视为`即刻(Instant)GameplayEffect`, 这种类型的Effect对于像随时间推移的持续伤害(damage over time, DOT)很有用.
 
-`GameplayEffects``Attributes`通过[`Modifiers`](https://github.com/tranek/GASDocumentation#concepts-ge-mods)和[`Executions`( `GameplayEffectExecutionCalculation`)](https://github.com/tranek/GASDocumentation#concepts-ge-ec)进行更改。
+> **Note**: 周期性的Effect不能被[预测](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-p).
 
-`GameplayEffects`具有三种类型的持续时间：`Instant`、`Duration`和`Infinite`。
+如果`持续(Duration)`和`无限(Infinite)GameplayEffect`的Ongoing Tag Requirements未满足/满足的话([Gameplay Effect Tags](https://github.com/BillEliot/GASDocumentation_Chinese#concepts-ge-tags)), 那么它们在应用后就可以被暂时的关闭和打开, 关闭`GameplayEffect`会移除其`Modifier`和已应用`GameplayTag`效果, 但是不会移除该`GameplayEffect`, 重新打开`GameplayEffect`会重新应用其`Modifier`和`GameplayTag`.
 
-此外，`GameplayEffects`可以添加/执行[`GameplayCues`](https://github.com/tranek/GASDocumentation#concepts-gc). An `Instant` `GameplayEffect`will 调用`Execute`，`GameplayCue` `GameplayTags`而 a`Duration`或`Infinite` `GameplayEffect`will调用`Add`and 。`Remove``GameplayCue` `GameplayTags`
-
-| 持续时间类型 | 游戏提示事件 | 何时使用                                                     |
-| ------------ | ------------ | ------------------------------------------------------------ |
-| `Instant`    | 执行         | 对于立即永久更改`Attribute's` `BaseValue`。`GameplayTags`不会被应用，即使对于一个框架也是如此。 |
-| `Duration`   | 添加和删除   | 对于临时更改`Attribute's` `CurrentValue`和应用`GameplayTags`，将在`GameplayEffect`过期时删除或手动删除。持续时间在类/蓝图中指定`UGameplayEffect`。 |
-| `Infinite`   | 添加和删除   | 对于临时更改`Attribute's` `CurrentValue`和应用`GameplayTags`，将在`GameplayEffect`删除时删除。它们永远不会自行过期，必须通过能力或 手动删除`ASC`。 |
-
-```
-Duration`并可以`Infinite` `GameplayEffects`选择应用其定义的每秒应用`Periodic Effects`它。在更改和时被视为。这些对于随时间推移造成的伤害 (DOT) 类型的效果非常有用。**注：**无法[预测](https://github.com/tranek/GASDocumentation#concepts-p)。`Modifiers``Executions``X``Period``Periodic Effects``Instant` `GameplayEffects``Attribute's` `BaseValue``Executing` `GameplayCues` `Periodic Effects
-Duration`如果不满足/满足（[游戏效果标签](https://github.com/tranek/GASDocumentation#concepts-ge-tags)） ，可以`Infinite` `GameplayEffects`在应用后暂时关闭和打开。关闭 a会消除其和的影响，但不会消除. 打开背面会重新应用其和。`Ongoing Tag Requirements``GameplayEffect``Modifiers``GameplayTags``GameplayEffect``GameplayEffect``Modifiers``GameplayTags
-```
-
-如果需要手动重新计算`Modifiers`a`Duration`或 的`Infinite` `GameplayEffect`(假设有一个`MMC`使用不来自 的数据`Attributes`)，可以`UAbilitySystemComponent::ActiveGameplayEffects.SetActiveGameplayEffectLevel(FActiveGameplayEffectHandle ActiveHandle, int32 NewLevel)`使用它已经具有的相同级别进行调用`UAbilitySystemComponent::ActiveGameplayEffects.GetActiveGameplayEffect(ActiveHandle).Spec.GetLevel()`。`Modifiers`当这些支持更新时，基于支持的内容会`Attributes`自动更新`Attributes`。`SetActiveGameplayEffectLevel()`更新的主要功能`Modifiers`是：
+如果你需要手动重新计算某个`持续(Duration)`或`无限(Infinite)GameplayEffect`的`Modifier`(假设有一个使用非`Attribute`数据的`MMC`), 可以使用和`UAbilitySystemComponent::ActiveGameplayEffect.GetActiveGameplayEffect(ActiveHandle).Spec.GetLevel()`相同的Level调用`UAbilitySystemComponent::ActiveGameplayEffect.SetActiveGameplayEffectLevel(FActiveGameplayEffectHandle ActiveHandle, int32 NewLevel)`. 当`Backing Attribute`更新时, 基于`Backing Attribute`的`Modifier`会自动更新. SetActiveGameplayEffectLevel()更新`Modifier`的关键函数是:
 
 ```c++
 MarkItemDirty(Effect);
