@@ -1,8 +1,7 @@
 import { basic, initSidebar, initTopbar } from './modules/layouts';
+import { loadImg, imgPopup, initClipboard } from './modules/plugins';
+
 import {
-  imgLazy,
-  imgPopup,
-  initClipboard,
   highlightLines,
   runCpp,
   runJavascript,
@@ -13,7 +12,7 @@ import {
 basic();
 initSidebar();
 initTopbar();
-imgLazy();
+loadImg();
 imgPopup();
 initClipboard();
 highlightLines();
