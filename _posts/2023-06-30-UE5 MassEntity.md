@@ -23,6 +23,8 @@ tags: [ECS]
 ## Data-Oriented Design - 数据导向的设计
 
 >  MassEntity is a gameplay-focused framework for data-oriented calculations.   ==> DOTS
+
+
  - 其他架构设计优先考虑开发便利性而非效率
  - 如何充分利用现代硬件性能：
    - Cache Memory 的访问效率比 主RAM的效率快几个量级
@@ -476,11 +478,54 @@ void UBoidsTrait::ValidateTemplate(FMassEntityTemplateBuildContext& BuildContext
 
 ## Mass Debugger
 
-- Processors
-- Processing Grap
+> 相对于 Unity的DebuggerWindows 提供的信息较为简陋，若架构设计中重度依赖需要扩展相关信息的展示于收集便于性能分析
+
+### Archetypes
+
+- EntitiesCount
+- EntitiesCountPerChunk 
+  - 每个Chunk可以容纳的Entity数量
+- ChunksCount
+- Allocated memory
+- Fragments、Tags、Shared Fragments
+- 总原型数量
+
+![16969113972291696911396373.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969113972291696911396373.png)
+
+### Processors
+
+- Query的相关信息
+  - 绿色表示 要求 fragment 是读写访问，灰色为只读
+- Processer 间的依赖关系
+
+![16969116132311696911612426.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969116132311696911612426.png)
+
+### Processing Graphs
+
+- Processer 运行的时机分组
+- 当前Processer的运行路径
+
+![16969114352361696911435181.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969114352361696911435181.png)
 
 
 
 ## Replication
+
+>  这部分的资料相对较少
+
+主要通过 `CalculateClientReplication` 函数传入 负责CRUD的回调函数 *（Create、Read、Update、Delete）*
+
+相关源码参照
+
+- UMassReplicatorBase
+  - UMassCrowdReplicator
+
+> ![16969108782291696910877372.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969108782291696910877372.png)
+
+
+
+![MassReplication相关文件](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969100262291696910025938.png)
+
+
 
 ![img](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202307201805955.png)
