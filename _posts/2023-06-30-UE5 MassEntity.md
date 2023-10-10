@@ -43,6 +43,22 @@ tags: [ECS]
 | Component | Fragment  |
 | System    | Processor |
 
+### Mass 关键术语
+
+| 术语   | 解释 |
+| :----: | :--- |
+| Entity | Mass的基类，持有指向所有Fragment的指针。 |
+| Fragment | 用紧凑数组存储实体的数据/状态（例如，变换、速度、当前LOD等）。  |
+| Archetype | 具有相同 Fragment 组成的实体被归为一组。<br>Entity 组成可以在运行时改变，导致 Archetype 迁移。 |
+| Trait | 将 Fragment 归为一组，通常代表 Entity 的特性（例如，移动、区域图导航、智能对象用户）。 |
+| Tags | 原型级别的、无数据的片段，可用于基于其存在或不存在来**筛选原型的查询**。 |
+| Chunk Fragment | 应用于原型中一部分实体的片段，而不是直接应用于单个实体。  |
+| Shared Fragment | 用于内存优化的多个 Entity **共享**的片段数据。 |
+| Processor | Mass中逻辑执行发生的地方。<br>Processor 可以更改 Fragment 的值以及 Entity 的组成（添加或删除）。 |
+| Entity Query | Processor 使用的基于 Fragment 、Tags 要求筛选 Archetype 的查询。<br>Entity Query 返回符合条件的所有 Entity 。 |
+| Mass Spawner | 在运行时向关卡添加 Entity 的系统。 |
+| Mass Entity Config | 定义要生成的Mass代理的资产，通过指定 Entity 的特征*(Trait)*。 |
+
 在 Mass - ECS 中，
 
 - `entity` 仅由  `fragments` 组成，`entity` 和`fragments` 都是纯数据元素，不包含任何逻辑；
@@ -62,9 +78,9 @@ tags: [ECS]
 
 
 
-## 原型 - Archetype
+## Archetype - 原型
 
->  Enity是Fragment和Tag的独特组合，这些组合称为原型
+>  Enity是Fragment和Tag的独特组合，这些组合称为 Archetype
 
 ![大众原型定义](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202310091429960.png)
 
@@ -219,9 +235,45 @@ EntityManager->Defer().DestroyEntity(Entity);
 - 过滤符合条件的数据实体
 - 同时处理这块被打包的内存 => 这块内存是连续且相同类型，避免 Cache miss 的发生
 
+### Processor 处理数据的流程
+
+<u>并不是一次性处理所有Entity，而是在原型中分块处理Entity的。</u>
+
+
+
+**执行步骤：**
+
+1. 每个 Processor 首先配置 Entity Query
+   - *配置需要的 Entity 特征， 如 Tags、Fragments、 SharedFragments、ChunkFragments 、 SubSystems。*
+2. 然后，Processor 通过调用 ForEachEntityChunk 批量更新 实体块
+3. MassEntityQuery 将要求与原型匹配，并可以根据块片段过滤器筛选匹配原型的块。
+   - *虽然要求通常是在原型上存在标签或片段，但它们也可以用于选择没有指定标签和片段的原型。*
+4. 在过滤后，Mass实体查询触发每个实体块上的一个函数，通过 FMassExecutionContext 可以访问块内的单个实体。
+   - *插件代码在执行 ForEachEntityChunk 时，大部分都使用lambda表达式。*
+
+
+
+通过这个执行流程，
+
+- Mass处理器能够高效地处理大量实体，并对实体进行逐块更新。
+- 同时确保处理器能够根据特定要求选取和操作实体。
+
+
+
 ### 如何注册 & 指定Processer的执行顺序
 
 - bAutoRegisterWithProcessingPhases
+
+  - 方式1： <KBD>Project Settings</KBD> =>  <KBD>Mass</KBD> =>  <KBD>Module Settings</KBD> 
+
+    > ![16969249382791696924937785.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969249382791696924937785.png)
+  - 方式2：<KBD>Config/**DefaultMass.ini**</KBD>
+
+    > ```ini
+    > [/Script/MassRepresentation.MassRepresentationProcessor]
+    > bAutoRegisterWithProcessingPhases=True
+    > ```
+
 - ExecutionFlags
 - ExecuteAfter、ExecuteBefore
 - ExecuteInGroup
@@ -407,17 +459,21 @@ void UBoidsBoundsProcessor::Execute(FMassEntityManager& EntitySubsystem, FMassEx
   - Spawn Data Generators
     - MassEntitySpawnDataGeneratorBase
 
-#### Trait
+### Trait
 
-**蓝图配置**
+#### 蓝图配置
 
 ![MassEntityConfigAsset](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202310091553883.jpeg)
 
-在 Mass 提供的许多内置特征中，我们可以找到该`Assorted Fragments`特征，它包含一个数组，`FInstancedStruct`可以从编辑器向该特征添加片段，而无需创建新的 C++  Trait 类。
+在 Mass 提供的许多内置特征中
+
+我们可以找到该 <KBD>**Assorted Fragments**</KBD> 特征
+
+它包含一个数组，`FInstancedStruct`可以从编辑器向该特征添加片段，而无需创建新的 C++  Trait 类。
 
 ![Assorted Fragments](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202310091554541.jpeg)
 
-**C++ 新增 Trait**
+#### C++ 新增 Trait
 
 ```c++
 // ---- .h
