@@ -111,7 +111,6 @@ tags: [ECS]
 ### Fragment 定义
 
 - FMassFragment  定义的数据是每个实体各自拥有；
-
 - FMassSharedFragment 定义的数据可以在多个实体间共享，通常用于一组实体通用的配置；
 - FMassTag 可以看成是不带数据的Fragment，仅用于 Processer的查询过滤；
 
@@ -260,14 +259,14 @@ EntityManager->Defer().DestroyEntity(Entity);
 
 
 
-### 如何注册 & 指定Processer的执行顺序
+### 如何注册 & 指定Processor的执行顺序
 
 - bAutoRegisterWithProcessingPhases
 
   - 方式1： <KBD>Project Settings</KBD> =>  <KBD>Mass</KBD> =>  <KBD>Module Settings</KBD> 
 
     > ![16969249382791696924937785.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16969249382791696924937785.png)
-  - 方式2：<KBD>Config/**DefaultMass.ini**</KBD>
+  - 方式2：<KBD>Config/DefaultMass.ini</KBD>
 
     > ```ini
     > [/Script/MassRepresentation.MassRepresentationProcessor]
@@ -446,7 +445,7 @@ void UBoidsBoundsProcessor::Execute(FMassEntityManager& EntitySubsystem, FMassEx
   - 以上说法不严谨，因为 Entity 和Trait 没有函数，只用定义
 - 一系列的Trait 组成的 Entity 被称为 Archetype *（原型）*
 - 实际的数据存放在 Fragment *（片段）* 中
-- Fragment 数据处理业务在 Processer 的函数中被执行
+- Fragment 数据处理业务在 Processor 的函数中被执行
 
 ![16884637104601688463709522.png](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16884637104601688463709522.png)
 
@@ -459,21 +458,21 @@ void UBoidsBoundsProcessor::Execute(FMassEntityManager& EntitySubsystem, FMassEx
   - Spawn Data Generators
     - MassEntitySpawnDataGeneratorBase
 
-### Trait
+#### Trait
 
-#### 蓝图配置
+##### 蓝图配置
 
 ![MassEntityConfigAsset](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202310091553883.jpeg)
 
 在 Mass 提供的许多内置特征中
 
-我们可以找到该 <KBD>**Assorted Fragments**</KBD> 特征
+我们可以找到该 <KBD>Assorted Fragments</KBD> 特征
 
 它包含一个数组，`FInstancedStruct`可以从编辑器向该特征添加片段，而无需创建新的 C++  Trait 类。
 
 ![Assorted Fragments](https://raw.githubusercontent.com/Rootjhon/img_note/empty/202310091554541.jpeg)
 
-#### C++ 新增 Trait
+##### C++ 新增 Trait
 
 ```c++
 // ---- .h
