@@ -84,8 +84,8 @@ theme_mode: # [light|dark]
 # e.g. 'https://cdn.com'
 img_cdn:
 
-# the avatar on sidebar, support local or CORS resources
-avatar: 'https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/1676013834932188d1c5a-bee0-40e6-a0a6-2973e0f343b0.jpg'
+# 侧边栏上的头像，支持本地或 CORS 资源
+avatar: 'https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/1676013834932188d1c5a-bee0-40e6-a0a6-2973e0f343b0.jpg'
 
 # boolean type, the global switch for TOC in posts.
 toc: true
@@ -101,7 +101,7 @@ comments:
     issue_term: # < url | pathname | title | ...>
   # Giscus options › https://giscus.app
   giscus:
-    repo: "Rootjhon/Blogs_giscus"           # <gh-username>/<repo>
+    repo: "XiaoWendell/Blogs_giscus"           # <gh-username>/<repo>
     repo_id: "R_kgDOI8L9Jg"
     category: "Announcements"
     category_id: "DIC_kwDOI8L9Js4CUHea"

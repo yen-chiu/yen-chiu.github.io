@@ -21,12 +21,12 @@ tags: [科学上网]
 - CentOS 7.2 64位
 - 购买完成后会收到账号等信息
 
-![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705529135921670552912900.png)
+![](https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/16705529135921670552912900.png)
 
 ## 部署腾讯云服务器
 
 - 登录云服务器
-![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705528845941670552884417.png)
+![](https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/16705528845941670552884417.png)
 - 登录成功后，在web终端逐条运行以下命令
 ```bash
 yum update
@@ -46,11 +46,11 @@ systemctl start docker
      > Mac 可以直接在 AppStore里下载
 
  - 安装Outline Manager，并运行
-    ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705527855931670552784659.png)
+    ![](https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/16705527855931670552784659.png)
 
-    ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705528176021670552817392.png)
+    ![](https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/16705528176021670552817392.png)
 
-    ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705528336041670552833459.png)
+    ![](https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/16705528336041670552833459.png)
 
 
 
