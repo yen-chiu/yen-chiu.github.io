@@ -16,7 +16,7 @@ timezone: Asia/Shanghai
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Wendell's Site                          # the main title
+title: 何文伍 's Site                          # the main title
 
 tagline: Here & Gone   # it will display as the sub-title
 
@@ -37,14 +37,17 @@ social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
   name: XiaoWendell
-  email: junqiang.mail@qq.com             # change to your email address
+  email: 2071739133@qq.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
     - https://github.com/XiaoWendell       # change to your github homepage
     # - https://twitter.com/username      # change to your twitter homepage
-    # Uncomment below to add more social links
-    - https://www.zhihu.com/people/games_engine
+    
+# Uncomment below to add more social links
+    - https://www.zhihu.com/people/xiao-feng-75-38-5
+
     # - https://www.facebook.com/username
+
     # - https://www.linkedin.com/in/username
 
 google_site_verification: "3PwulRbCal1wvD_pGnM8ew-hq3Vvzrb9MCuK8k9RP80"              # fill in to your verification string
@@ -52,6 +55,7 @@ google_site_verification: "3PwulRbCal1wvD_pGnM8ew-hq3Vvzrb9MCuK8k9RP80"         
 webmaster_verifications:
   # https://search.google.com/search-console
   google: "3PwulRbCal1wvD_pGnM8ew-hq3Vvzrb9MCuK8k9RP80"
+
   # https://ziyuan.baidu.com/linksubmit/index
   baidu: "codeva-7TczltvchL"
 # ↑ --------------------------
