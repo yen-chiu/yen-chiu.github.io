@@ -16,7 +16,7 @@ timezone: Asia/Shanghai
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: JunQiang's Site                          # the main title
+title: Wendell's Site                          # the main title
 
 tagline: Here & Gone   # it will display as the sub-title
 
@@ -36,11 +36,11 @@ github:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: JunQiang
+  name: XiaoWendell
   email: junqiang.mail@qq.com             # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://github.com/Rootjhon       # change to your github homepage
+    - https://github.com/XiaoWendell       # change to your github homepage
     # - https://twitter.com/username      # change to your twitter homepage
     # Uncomment below to add more social links
     - https://www.zhihu.com/people/games_engine
