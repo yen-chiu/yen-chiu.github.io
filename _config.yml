@@ -89,8 +89,8 @@ img_cdn:
 # avatar: 'https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/1676013834932188d1c5a-bee0-40e6-a0a6-2973e0f343b0.jpg'
 # https://raw.githubusercontent.com/用户名/项目名称/master/图片文件夹/xxx.png
 # avatar: '{{site.baseurl}}/assets/img/myimg/about-HJ.jpg'
-avatar: 'https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/assets/img/myimg/about-HJ.jpg'
-
+# avatar: 'https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/assets/img/myimg/about-HJ.jpg'
+avatar: 'https://github.com/XiaoWendell/XiaoWendell.github.io/assets/img/myimg/about-HJ.jpg'
 
 # boolean type, the global switch for TOC in posts.
 toc: true
