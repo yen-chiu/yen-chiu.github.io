@@ -101,14 +101,20 @@ comments:
     issue_term: # < url | pathname | title | ...>
   # Giscus options › https://giscus.app
   giscus:
-    repo: "XiaoWendell/Blogs_giscus"           # <gh-username>/<repo>
-    repo_id: "R_kgDOI8L9Jg"
-    category: "Announcements"
-    category_id: "DIC_kwDOI8L9Js4CUHea"
-    mapping:           # optional, default to 'pathname'
-    input_position:    # optional, default to 'bottom'
-    lang:              # optional, default to the value of `site.lang`
-    reactions_enabled: # optional, default to the value of `1`
+    repo: "XiaoWendell/XiaoWendell.github.io"           # <gh-username>/<repo>
+    repo_id: "R_kgDOKhSzCA"
+    category: "General"
+    category_id: "DIC_kwDOKhSzCM4CaNBa"
+    mapping: "title"          # optional, default to 'pathname'
+    input_position: "top"   # optional, default to 'bottom'
+    lang: "zh-CN"             # optional, default to the value of `site.lang`
+    reactions_enabled: "1" # optional, default to the value of `1`
+
+    # 我添加的部分
+    strict: "0"
+    emit-metadata: "0"
+    loading: "lazy"
+    crossorigin: "anonymous"
 
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
