@@ -91,7 +91,7 @@ img_cdn:
 # avatar: '{{site.baseurl}}/assets/img/myimg/about-HJ.jpg'
 # avatar: 'https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/assets/img/myimg/about-HJ.jpg'
 # avatar: 'https://github.com/XiaoWendell/XiaoWendell.github.io/assets/img/myimg/about-HJ.jpg'
-avatar: 'assets/img/myimg/about-HJ.jpg'
+avatar: 'assets/img/avatar/avatar.jpg'
 
 # boolean type, the global switch for TOC in posts.
 toc: true
