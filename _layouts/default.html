@@ -35,8 +35,11 @@ layout: compress
         <!-- panel -->
         <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 mb-5 text-muted">
           <div class="access">
+            {% if page.layout != "post" %}
             {% include_cached update-list.html lang=lang %}
-            {% include_cached trending-tags.html lang=lang %}
+            {% comment %} {% include_cached trending-tags.html lang=lang %} {% endcomment %}
+            {% include_cached external-links.html lang=lang %}
+            {% endif %}
           </div>
 
           {% for _include in layout.panel_includes %}
@@ -82,5 +85,6 @@ layout: compress
   {% endif %}
 
   {% include_cached search-loader.html %}
+  {% include_cached search-activer.html %}
 </body>
 </html>
