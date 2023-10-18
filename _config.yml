@@ -5,9 +5,10 @@
 # https://github.com/NichtsHsu/nichtshsu.github.io
 theme: jekyll-theme-chirpy
 
-# The language of the webpage › http://www.lingoes.net/en/translator/langcode.htm
-# If it has the same name as one of the files in folder `_data/locales`, the layout language will also be changed,
-# otherwise, the layout language will use the default value of 'en'.
+# 网页的语言 › http://www.lingoes.net/en/translator/langcode.htm
+# 如果它与文件夹 `_data/locales`中的某个文件同名，则布局语言也将改变、
+# 否则，布局语言将使用默认值 "en"。
+
 lang: zh-CN
 
 # Change to your timezone › https://kevinnovak.github.io/Time-Zone-Picker
@@ -16,9 +17,9 @@ timezone: Asia/Shanghai
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: 何文伍 's Site                          # the main title
+title: 何文伍 's Site    # the main title
 
-tagline: Here & Gone   # it will display as the sub-title
+tagline: 读书，买花，长大。   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   Time will tell.
@@ -50,7 +51,7 @@ social:
 
     # - https://www.linkedin.com/in/username
 
-google_site_verification: "3PwulRbCal1wvD_pGnM8ew-hq3Vvzrb9MCuK8k9RP80"              # fill in to your verification string
+google_site_verification: "3PwulRbCal1wvD_pGnM8ew-hq3Vvzrb9MCuK8k9RP80"    # 填入验证字符串
 
 webmaster_verifications:
   # https://search.google.com/search-console
