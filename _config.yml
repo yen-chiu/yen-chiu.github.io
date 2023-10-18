@@ -78,15 +78,16 @@ google_analytics:
 #
 theme_mode: # [light|dark]
 
-# The CDN endpoint for images.
-# Notice that once it is assigned, the CDN url
-# will be added to all image (site avatar & posts' images) paths starting with '/'
+# 图像的 CDN 端点。
+# 请注意，一旦分配了它，CDN 网址
+# 将被添加到所有以"/"开头的图片（网站头像和文章图片）路径中。
 #
 # e.g. 'https://cdn.com'
 img_cdn:
 
 # 侧边栏上的头像，支持本地或 CORS 资源
-avatar: 'https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/1676013834932188d1c5a-bee0-40e6-a0a6-2973e0f343b0.jpg'
+# avatar: 'https://fastly.jsdelivr.net/gh/XiaoWendell/img_note@empty/1676013834932188d1c5a-bee0-40e6-a0a6-2973e0f343b0.jpg'
+ avatar: '{{site.baseurl}}/assets/img/myimg/about-HJ.jpg'
 
 # boolean type, the global switch for TOC in posts.
 toc: true
