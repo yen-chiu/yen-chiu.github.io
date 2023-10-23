@@ -1,9 +1,8 @@
 # Hi there 👋  \>> [Blogs](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="Rootjhon" />
 
-
-[![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://xiaowen.xyz/)
-
+<!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://xiaowen.xyz/) -->
 <!-- ![dino](./dino.gif) -->
+![dino](./dino.gif)
 
 我的名字是Ho Wendell，我是一名业余爱好者。
 
