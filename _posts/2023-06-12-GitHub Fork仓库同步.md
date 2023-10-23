@@ -38,3 +38,6 @@ git merge upstream/master
 git push
 ```
 
+---
+**声明：本文转载自[rootjhon](https://github.com/Rootjhon/rootjhon.github.io)**
+
