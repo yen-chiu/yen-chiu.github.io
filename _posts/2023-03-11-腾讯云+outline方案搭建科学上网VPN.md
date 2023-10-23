@@ -5,6 +5,7 @@ categories: [Uncategories,网络环境]
 tags: [科学上网]
 ---
 
+转载自[rootjhon](https://github.com/Rootjhon/rootjhon.github.io)
 
 # 腾讯云+outline方案搭建科学上网VPN
 
@@ -107,3 +108,5 @@ Failed to enable unit: Unit file docker.service does not exist
    ```bash
    systemctl start docker
    ```
+---
+**声明：本文转载自[rootjhon](https://github.com/Rootjhon/rootjhon.github.io)**
