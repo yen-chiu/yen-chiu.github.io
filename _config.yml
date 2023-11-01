@@ -17,7 +17,8 @@ timezone: Asia/Shanghai
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Wendell   # the main title
+title: 彧奡 's Site   # the main title
+# title: Wendell
 
 tagline: 读书，买花，长大。   # it will display as the sub-title
 
