@@ -5,8 +5,6 @@ categories: [Uncategories,网络环境]
 tags: [科学上网]
 ---
 
-转载自[rootjhon](https://github.com/Rootjhon/rootjhon.github.io)
-
 # 腾讯云+outline方案搭建科学上网VPN
 
  - 支持多个平台：iOS/Android/Mac/PC
