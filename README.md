@@ -21,7 +21,7 @@
 
 ## &#x270d; 博客和写作
 
-除了编码，我还维护一个博客 - 您可以在我的网站 [XiaoWen.xyz（已过期）](https://XiaoWen.xyz/) 上找到我的文章.
+除了编码，我还维护一个博客 - 您可以在 [我的网站](https://XiaoWendell.github.io/) 上找到我的文章.
 
 ## &#x1f4c8; GitHub 统计信息
 
