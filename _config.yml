@@ -1,6 +1,6 @@
-# The Site Configuration
+# 网站配置
 
-# Import the theme
+# 导入主题
 # https://github.com/cotes2020/jekyll-theme-chirpy
 # https://github.com/NichtsHsu/nichtshsu.github.io
 theme: jekyll-theme-chirpy
@@ -11,13 +11,13 @@ theme: jekyll-theme-chirpy
 
 lang: zh-CN
 
-# Change to your timezone › https://kevinnovak.github.io/Time-Zone-Picker
+# 切换到您所在的时区 ' https://kevinnovak.github.io/Time-Zone-Picker
 timezone: Asia/Shanghai
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: 彧奡 's Site   # the main title
+title: Wendell's blog   # the main title
 # title: Wendell
 
 tagline: 读书，买花，长大。   # it will display as the sub-title
@@ -25,8 +25,8 @@ tagline: 读书，买花，长大。   # it will display as the sub-title
 description: >-                        # used by seo meta and the atom feed
   Time will tell.
 
-# Fill in the protocol & hostname for your site.
-# e.g. 'https://username.github.io', note that it does not end with a '/'.
+# 填写网站的协议和主机名。
+# 例如，“https://username.github.io”，注意不是以“/”结尾。
 url: 'https://XiaoWendell.github.io'
 
 github:
@@ -36,16 +36,16 @@ github:
 #   username: twitter_username            # change to your twitter username
 
 social:
-  # Change to your full name.
-  # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: XiaoWendell
+  # 更改为您的全名。
+  # 它将显示为帖子的默认作者，并在页脚显示为版权所有者
+  name: Wendell
   email: Wendell.wenwu.he@gmail.com           # change to your email address
   links:
-    # The first element serves as the copyright owner's link
-    - https://github.com/XiaoWendell       # change to your github homepage
-    # - https://twitter.com/username      # change to your twitter homepage
+    # 第一个元素作为版权所有者链接
+    - https://github.com/XiaoWendell      # 更改为你的 Github 主页
+    # - https://twitter.com/username      # 更改为你的 twitter 主页
     
-# Uncomment below to add more social links
+# 取消下面的注释，添加更多社交链接
     - https://www.zhihu.com/people/xiao-feng-75-38-5
 
     # - https://www.facebook.com/username
@@ -61,18 +61,18 @@ webmaster_verifications:
   # https://ziyuan.baidu.com/linksubmit/index
   baidu: "codeva-7TczltvchL"
 # ↑ --------------------------
-# The end of `jekyll-seo-tag` settings
+# `jekyll-seo-tag` 设置的结尾
 
 google_analytics:
   id: # fill in your Google Analytics ID
 
-# Prefer color scheme setting.
+# 首选配色方案设置。
 #
-# Note: Keep empty will follow the system prefer color by default,
-# and there will be a toggle to switch the theme between dark and light
-# on the bottom left of the sidebar.
+# 注意：默认情况下，保持为空将遵循系统首选颜色、
+# 在侧边栏左下方会有一个在深色和浅色之间切换主题的开关。
+# 在侧边栏左下方。
 #
-# Available options:
+# 可用选项：
 #
 #     light  - Use the light color scheme
 #     dark   - Use the dark color scheme
@@ -94,19 +94,19 @@ img_cdn:
 # avatar: 'https://github.com/XiaoWendell/XiaoWendell.github.io/assets/img/myimg/about-HJ.jpg'
 avatar: 'assets/img/avatar/avatar.jpg'
 
-# boolean type, the global switch for TOC in posts.
+# 布尔类型，是帖子中 TOC 的全局开关。
 toc: true
 
 comments:
-  active: 'giscus'        # The global switch for posts comments, e.g., 'disqus'.  Keep it empty means disable
-  # The active options are as follows:
+  active: 'giscus'        # 用于帖子评论的全局开关，例如 “disqus”。 留空表示禁用
+  # 激活的选项如下
   disqus:
     shortname: # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
   # utterances settings › https://utteranc.es/
   utterances:
     repo: # <gh-username>/<repo>
     issue_term: # < url | pathname | title | ...>
-  # Giscus options › https://giscus.app
+  # Giscus 选项 ' https://giscus.app
   giscus:
     repo: "XiaoWendell/XiaoWendell.github.io"           # <gh-username>/<repo>
     repo_id: "R_kgDOKhSzCA"
@@ -136,10 +136,10 @@ pwa:
 
 paginate: 10
 
-# The base URL of your site
+# 网站的基本 URL
 baseurl: ""
 
-# ------------ The following options are not recommended to be modified ------------------
+# ------------ 以下选项不建议修改 ------------------
 
 kramdown:
   syntax_highlighter: rouge
@@ -159,14 +159,15 @@ collections:
 
 defaults:
   - scope:
-      path: "" # An empty string here means all files in the project
+      path: "" # 这里的空字符串表示项目中的所有文件
       type: posts
     values:
       layout: post
       comments: true # Enable comments in posts.
       toc: true # Display TOC column in posts.
-      # DO NOT modify the following parameter unless you are confident enough
-      # to update the code of all other post links in this project.
+
+      # 除非您有足够的信心，否则切勿修改以下参数
+      # 更新本项目中所有其他帖子链接的代码。
       permalink: /posts/:title/
   - scope:
       path: _drafts
