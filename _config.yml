@@ -33,7 +33,7 @@ github:
   username: XiaoWendell             # change to your github username
 
 # twitter:
-username: Xiao_Bard            # change to your twitter username
+# username:            # change to your twitter username
 
 social:
   # 更改为您的全名。
@@ -43,7 +43,7 @@ social:
   links:
     # 第一个元素作为版权所有者链接
     - https://github.com/XiaoWendell      # 更改为你的 Github 主页
-    - https://x.com/Xiao_Bard      # 更改为你的 twitter主页
+    # - https://x.com/-     # 更改为你的 twitter主页
     
 # 取消下面的注释，添加更多社交链接
     - https://www.zhihu.com/people/xiao-feng-75-38-5

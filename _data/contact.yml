@@ -16,17 +16,17 @@
   noblank: true
   
 # 取消注释并填写下面的网址，以启用更多联系选项
--
-  type: twitter
-  icon: 'iconfont icon-twitter'
+# -
+#   type: twitter
+#   icon: 'iconfont icon-twitter'
 # -
 #   type: mastodon
 #   icon: 'iconfont icon-mastodon'   # icons powered by <https://fontawesome.com/>
 #   url:  ''                  # Fill with your Mastodon account page, rel="me" will be applied for verification
 # -
-#   type: linkedin
-#   icon: 'iconfont icon-linkedin'   # icons powered by <https://fontawesome.com/>
-#   url:  ''                  # Fill with your Linkedin homepage
+  type: linkedin
+  icon: 'iconfont icon-linkedin'   # icons powered by <https://fontawesome.com/>
+  url:  'https://XiaoWendell.github.io/2024'                  # Fill with your Linkedin homepage
 # -
 #   type: stack-overflow
 #   icon: 'iconfont icon-stack-overflow'
