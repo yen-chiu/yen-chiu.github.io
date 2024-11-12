@@ -17,8 +17,8 @@
   
 # 取消注释并填写下面的网址，以启用更多联系选项
 # -
-  type: twitter
-  icon: 'iconfont icon-twitter'
+  # type: twitter
+  # icon: 'iconfont icon-twitter'
 # -
 #   type: mastodon
 #   icon: 'iconfont icon-mastodon'   # icons powered by <https://fontawesome.com/>
