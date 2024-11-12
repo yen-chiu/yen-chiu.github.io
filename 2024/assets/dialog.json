@@ -57,8 +57,8 @@
             ]
         ],
         "responses": [{
-            "content": "你的职业是？",
-            "nextXianzhe": ["0023"]
+            "content": "你的爱好是？（0023）",
+            "nextXianzhe": ["0007"]
         }, {
             "content": "真有意思~",
             "nextXianzhe": ["0026"]
