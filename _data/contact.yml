@@ -3,6 +3,10 @@
 - type: github
   icon: "fab fa-github"
 
+- type: linkedin
+  icon: 'iconfont icon-linkedin'   # icons powered by <https://fontawesome.com/>
+  url:  'https://XiaoWendell.github.io/2024'                  # Fill with your Linkedin homepage
+  
 - type: zhihu
   icon: "fa-brands fa-zhihu"
   url: 'https://www.zhihu.com/people/xiao-feng-75-38-5'
@@ -11,10 +15,6 @@
   icon: "fas fa-envelope"
   noblank: true # 在当前标签页中打开链接
 
-- type: linkedin
-  icon: 'iconfont icon-linkedin'   # icons powered by <https://fontawesome.com/>
-  url:  'https://XiaoWendell.github.io/2024'                  # Fill with your Linkedin homepage
-  
 # - type: rss
 #   icon: "fas fa-rss"
 #   noblank: true
