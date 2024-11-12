@@ -9,15 +9,16 @@
 
 - type: email
   icon: "fas fa-envelope"
-  noblank: true # open link in current tab
+  noblank: true # 在当前标签页中打开链接
 
-- type: rss
-  icon: "fas fa-rss"
-  noblank: true
-# Uncomment and complete the url below to enable more contact options
+# - type: rss
+#   icon: "fas fa-rss"
+#   noblank: true
+  
+# 取消注释并填写下面的网址，以启用更多联系选项
 # -
-#   type: twitter
-#   icon: 'iconfont icon-twitter'
+  type: twitter
+  icon: 'iconfont icon-twitter'
 # -
 #   type: mastodon
 #   icon: 'iconfont icon-mastodon'   # icons powered by <https://fontawesome.com/>
