@@ -2,9 +2,9 @@
 
 <!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
-<!-- ![dino](./img-post/.gif) -->
+<!-- ![dino](./images/.gif) -->
 
-![dino](./img-post/dino.gif)
+![dino](./images/dino.gif)
 
 我的名字是Ho Wendell，我是一名业余爱好者。
 
