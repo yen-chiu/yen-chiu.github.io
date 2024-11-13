@@ -1,9 +1,10 @@
-# Hi there 👋  \>> [Blogs](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="Rootjhon" />
+# Hi there 👋  \>> [Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="Rootjhon" />
 
-<!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://xiaowen.xyz/) -->
-<!-- ![dino](./dino.gif) -->
+<!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
-![dino](./dino.gif)
+<!-- ![dino](./img-post/.gif) -->
+
+![dino](./img-post/dino.gif)
 
 我的名字是Ho Wendell，我是一名业余爱好者。
 
@@ -53,7 +54,7 @@
 
 <!-- 链接到您的社交媒体账户 -->
 
-[1]: https://twitter.com/Wendell74316708
+[1]: https://x.com
 [2]: https://github.com/XiaoWendell
 
 <!-- 资源 -->
