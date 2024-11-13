@@ -7,7 +7,7 @@ math: true
 mermaid: true
 ---
 
-本篇文章主要展示 Markdown 语法在 [**Chirpy**]（https://github.com/cotes2020/jekyll-theme-chirpy/fork ）上的呈现，你也可以将其作为写作范例。现在，让我们开始看看文本和排版。
+本篇文章主要展示 Markdown 语法在 [**Chirpy**](https://github.com/cotes2020/jekyll-theme-chirpy/fork )上的呈现，你也可以将其作为写作范例。现在，让我们开始看看文本和排版。
 
 ## Headings
 
