@@ -1,8 +1,8 @@
 ---
 title: Text and Typography
 date: 2023-08-08 11:33:00 +0800
-categories: [Blogging, Demo]
-tags: [typography]
+categories: [Blog, Demo]
+tags: [Typography]
 pin: true
 math: true
 mermaid: true

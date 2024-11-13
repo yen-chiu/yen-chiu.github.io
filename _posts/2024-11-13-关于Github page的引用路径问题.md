@@ -1,7 +1,7 @@
 ---
 title: 关于Github page的引用路径问题
 date: 2024-11-13 18:57:46 +0800
-categories: [Blog,路径]
+categories: [Blog, Markdown]
 tags: [Bug]
 ---
 

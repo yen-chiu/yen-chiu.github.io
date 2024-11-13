@@ -1,7 +1,7 @@
 ---
 title: 腾讯云+outline方案搭建科学上网VPN
 date: 2023-03-11 16:10:46 +0800
-categories: [Uncategories,网络环境]
+categories: [Uncategories, 网络环境]
 tags: [科学上网]
 ---
 

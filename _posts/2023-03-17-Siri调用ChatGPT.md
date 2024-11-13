@@ -1,7 +1,7 @@
 ---
 title: Siri调用ChatGPT
 date: 2023-03-17 21:10:47 +0800
-categories: [AIGC,工具集]
+categories: [AIGC, 工具集]
 tags: []
 # Ref
 # - https://aircode.cool/828668wg5a
