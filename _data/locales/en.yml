@@ -76,7 +76,8 @@ post:
       succeed: Link copied successfully!
 
 # 日期时间格式。
-# 参见： <http://strftime.net/>, <https://day.js.org/docs/en/display/format>df:
+# 参见： <http://strftime.net/>, <https://day.js.org/docs/en/display/format>df:    
+df:
   post:
     strftime: "%b %e, %Y"
     dayjs: "ll"

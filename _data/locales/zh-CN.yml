@@ -24,6 +24,7 @@ search:
 panel:
   lastmod: 最近更新
   trending_tags: 热门标签
+  external_links: 外部链接
   toc: 文章内容
 
 copyright:
@@ -57,7 +58,7 @@ post:
   pageview_measure: 次浏览
   read_time:
     unit: 分钟
-    prompt: 阅读
+    prompt: 预计阅读时间
   relate_posts: 相关文章
   share: 分享
   button:
