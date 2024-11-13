@@ -42,7 +42,28 @@ copyright:
 meta: 本站采用 :PLATFORM 主题 :THEME
 
 not_found:
-  statment: 抱歉，我们放错了该 URL，或者它指向了不存在的内容。
+  # statment: 抱歉，我们放错了该 URL，或者它指向了不存在的内容。
+  statment: |
+    <div class="poem">
+      <p>
+        笑问迷路的你<br />
+        今日可否如意<br />
+        然则何故至此<br />
+        冤家路窄是你
+      </p>
+      <p>
+        筚路蓝缕如你<br />
+        今生会否得意<br />
+        生前身后名利<br />
+        痴儿不悟是你
+      </p>
+      <p>
+        耗尽百年运气<br />
+        今朝邂逅与你<br />
+        唯有丹心遥寄<br />
+        头也不回是你
+      </p>
+    </div>
 
 notification:
   update_found: 发现新版本的内容。
@@ -58,7 +79,7 @@ post:
   pageview_measure: 次浏览
   read_time:
     unit: 分钟
-    prompt: 预计阅读时间
+    prompt: " 预计阅读时间"
   relate_posts: 相关文章
   share: 分享
   button:
@@ -68,7 +89,7 @@ post:
       succeed: 已复制！
     run:
       output: 运行结果
-      wait: 等待运行结果。。。
+      wait: 等待运行结果...
       error_prompt: "运行失败，错误："
     share_link:
       title: 分享链接
@@ -82,7 +103,7 @@ df:
     strftime: "%Y/%m/%d"
     dayjs: "YYYY/MM/DD"
 
-# categories page
+# 类别页面
 categories:
   category_measure: 个分类
   post_measure: 篇文章
