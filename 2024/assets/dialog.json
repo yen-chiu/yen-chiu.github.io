@@ -295,9 +295,9 @@
     }, {
         "id": "0028",
         "details": [
-            ["<img src='img/dawei_star.jpg'>"],
             ["这是在大围山国家森林公园拍的"],
-            ["当时只有手机，拍出来的效果还不错吧？"]
+            ["当时只有手机，拍出来的效果还不错吧？"],
+            ["<img src='img/dawei_star.jpg'>"]
         ],
         "responses": [{
             "content": "这是你最满意的作品吗？",
