@@ -55,7 +55,7 @@ tags: [Bug]
 将视频嵌入到网页中，可以这样写：
 
 ```html
-<video width="640" height="360" controls>
+<video width="1024" height="576" controls>
   <source src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4" type="video/mp4">
 </video>
 ```
@@ -73,7 +73,7 @@ tags: [Bug]
 <!-- [视频下载](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")  -->
 
 <!-- ```html
-<video width="640" height="360" controls>
+<video width="1024" height="576" controls>
   <source src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4" type="video/mp4">
 </video>
 ``` -->
