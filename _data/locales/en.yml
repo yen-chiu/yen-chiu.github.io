@@ -1,5 +1,4 @@
-# The layout text of site
-
+# 网站的布局文本
 # ----- Commons label -----
 
 layout:
@@ -7,16 +6,16 @@ layout:
   category: Category
   tag: Tag
 
-# The tabs of sidebar
+# 侧边栏的标签
 tabs:
-  # format: <filename_without_extension>: <value>
+# 格式： <filename_without_extension>： < 值 >
   home: Home
   categories: Categories
   tags: Tags
   archives: Archives
   about: About
 
-# the text displayed in the search bar & search results
+# 搜索栏和搜索结果中显示的文本
 search:
   hint: search
   cancel: Cancel
@@ -29,13 +28,13 @@ panel:
   toc: Contents
 
 copyright:
-  # Shown at the bottom of the post
+  # 显示在帖子底部
   license:
     template: This post is licensed under :LICENSE_NAME by the author.
     name: CC BY 4.0
     link: https://creativecommons.org/licenses/by/4.0/
 
-  # Displayed in the footer
+  # 显示在页脚
   brief: Some rights reserved.
   verbose: >-
     Except where otherwise noted, the blog posts on this site are licensed
@@ -50,7 +49,7 @@ notification:
   update_found: A new version of content is available.
   update: Update
 
-# ----- Posts related labels -----
+# ----- 相关标签的帖子 -----
 
 post:
   written_by: By
@@ -76,9 +75,8 @@ post:
       title: Copy link
       succeed: Link copied successfully!
 
-# Date time format.
-# See: <http://strftime.net/>, <https://day.js.org/docs/en/display/format>
-df:
+# 日期时间格式。
+# 参见： <http://strftime.net/>, <https://day.js.org/docs/en/display/format>df:
   post:
     strftime: "%b %e, %Y"
     dayjs: "ll"
@@ -86,7 +84,7 @@ df:
     strftime: "%b"
     dayjs: "MMM"
 
-# categories page
+# 类别页面
 categories:
   category_measure:
     singular: category

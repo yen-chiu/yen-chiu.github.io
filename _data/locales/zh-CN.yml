@@ -1,5 +1,4 @@
-# The layout text of site
-
+# 网站的布局文本
 # ----- Commons label -----
 
 layout:
@@ -7,16 +6,16 @@ layout:
   category: 分类
   tag: 标签
 
-# The tabs of sidebar
+# 侧边栏的标签
 tabs:
-  # format: <filename_without_extension>: <value>
+# 格式： <filename_without_extension>： < 值 >
   home: 首页
   categories: 分类
   tags: 标签
   archives: 归档
   about: 关于
 
-# the text displayed in the search bar & search results
+# 搜索栏和搜索结果中显示的文本
 search:
   hint: 按下 / 激活搜索框
   cancel: 取消
@@ -28,13 +27,13 @@ panel:
   toc: 文章内容
 
 copyright:
-  # Shown at the bottom of the post
+  # 显示在帖子底部
   license:
     template: 本文由作者按照 :LICENSE_NAME 进行授权
     name: CC BY 4.0
     link: https://creativecommons.org/licenses/by/4.0/
 
-  # Displayed in the footer
+  # 显示在页脚
   brief: 保留部分权利。
   verbose: >-
     除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。
@@ -48,7 +47,7 @@ notification:
   update_found: 发现新版本的内容。
   update: 更新
 
-# ----- Posts related labels -----
+# ----- 相关标签的帖子 -----
 
 post:
   written_by: 作者
@@ -74,8 +73,9 @@ post:
       title: 分享链接
       succeed: 链接已复制！
 
-# Date time format.
-# See: <http://strftime.net/>, <https://day.js.org/docs/en/display/format>
+# 日期时间格式。
+# 参见： <http://strftime.net/>, <https://day.js.org/docs/en/display/format>df:
+  
 df:
   post:
     strftime: "%Y/%m/%d"
