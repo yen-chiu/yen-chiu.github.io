@@ -3,12 +3,11 @@ title: Text and Typography
 date: 2023-08-08 11:33:00 +0800
 categories: [Blog, Demo]
 tags: [Typography]
-pin: true
 math: true
 mermaid: true
 ---
 
-This post is to show Markdown syntax rendering on [**Chirpy**](https://github.com/cotes2020/jekyll-theme-chirpy/fork), you can also use it as an example of writing. Now, let's start looking at text and typography.
+本篇文章主要展示 Markdown 语法在 [**Chirpy**]（https://github.com/cotes2020/jekyll-theme-chirpy/fork ）上的呈现，你也可以将其作为写作范例。现在，让我们开始看看文本和排版。
 
 ## Headings
 
@@ -24,99 +23,94 @@ This post is to show Markdown syntax rendering on [**Chirpy**](https://github.co
 #### H4 - heading
 {: data-toc-skip='' .mt-4 }
 
-## Paragraph
+## 段落
 
-Quisque egestas convallis ipsum, ut sollicitudin risus tincidunt a. Maecenas interdum malesuada egestas. Duis consectetur porta risus, sit amet vulputate urna facilisis ac. Phasellus semper dui non purus ultrices sodales. Aliquam ante lorem, ornare a feugiat ac, finibus nec mauris. Vivamus ut tristique nisi. Sed vel leo vulputate, efficitur risus non, posuere mi. Nullam tincidunt bibendum rutrum. Proin commodo ornare sapien. Vivamus interdum diam sed sapien blandit, sit amet aliquam risus mattis. Nullam arcu turpis, mollis quis laoreet at, placerat id nibh. Suspendisse venenatis eros eros.
+任何时候的进步都能提升自己，挑战自己的极限。使用机遇是成功的关键。保持乐观，面对任何困难都要坚持不懈。善待他人，才能赢得他人的尊重和支持。应对变化，适应新环境，才能在竞争中立于不败之地。坚持努力，尽管有时会有挫折，但最终会取得成功。热爱生活，珍惜每一个美好的瞬间。相信自己，无论遇到什么困难，都要继续前进。保持谦逊，虚心学习，才能不断进步。每一个微小的努力，都会为未来打下坚实的基础。
 
-## Lists
+### 列表
+### 排序列表
+ 
+1. 首先
+2. 其次
+3. 第三次
 
-### Ordered list
+### 无序列表
+- 章节
+  + 节
+    * 段落
 
-1. Firstly
-2. Secondly
-3. Thirdly
+### 待办事项列表
+- [ ] 工作
+  + [x] 步骤 1
+  + [x] 步骤 2
+  + [ ] 步骤 3
+#### 说明列表
 
-### Unordered list
+太阳
+: 围绕地球运行的恒星
 
-- Chapter
-  + Section
-    * Paragraph
-
-### ToDo list
-
-- [ ] Job
-  + [x] Step 1
-  + [x] Step 2
-  + [ ] Step 3
-
-### Description list
-
-Sun
-: the star around which the earth orbits
-
-Moon
-: the natural satellite of the earth, visible by reflected light from the sun
+月亮
+: 地球的天然卫星，通过太阳的反射光可见
 
 ## Block Quote
+> 这一行显示 _block quote_ 。
+## 提示
 
-> This line shows the _block quote_.
 
-## Prompts
-
-> An example showing the `tip` type prompt.
+> 一个显示 `提示` 类型提示的示例。
 {: .prompt-tip }
 
-> An example showing the `info` type prompt.
+> 一个显示 `信息` 类型提示的示例。
 {: .prompt-info }
 
-> An example showing the `warning` type prompt.
+> 一个显示 `警告` 类型提示的示例。
 {: .prompt-warning }
 
-> An example showing the `danger` type prompt.
+> 一个显示 `危险` 类型提示的示例。
 {: .prompt-danger }
 
-## Tables
+## 表格
 
-| Company                      | Contact          | Country |
+| 公司                          | 联系人           | 国家   |
 |:-----------------------------|:-----------------|--------:|
-| Alfreds Futterkiste          | Maria Anders     | Germany |
-| Island Trading               | Helen Bennett    | UK      |
-| Magazzini Alimentari Riuniti | Giovanni Rovelli | Italy   |
+| Alfreds Futterkiste          | Maria Anders     | 德国   |
+| Island Trading               | Helen Bennett    | 英国   |
+| Magazzini Alimentari Riuniti | Giovanni Rovelli | 意大利 |
 
-## Links
+## 链接
 
 <http://127.0.0.1:4000>
 
-## Footnote
+## 脚注
 
-Click the hook will locate the footnote[^footnote], and here is another footnote[^fn-nth-2].
+点击将定位到脚注[^footnote]，这里是另一个脚注[^fn-nth-2]。
 
-## Inline code
+## 行内代码
 
-This is an example of `Inline Code`.
+这是一个 `行内代码` 的例子。
 
-## Filepath
+## 文件路径
 
-Here is the `/path/to/the/file.extend`{: .filepath}.
+这里是 `/path/to/the/file.extend`{: .filepath}。
 
-## Code blocks
+## 代码块
 
-### Common
+### 通用
 
 ```
-This is a common code snippet, without syntax highlight and line number.
+这是一个通用代码片段，没有语法高亮和行号。
 ```
 
-### Specific Language
+### 特定语言
 
 ```bash
 if [ $? -ne 0 ]; then
-  echo "The command was not successful.";
-  #do the needful / exit
+  echo "命令未成功执行。";
+  #执行必要操作 / 退出
 fi;
 ```
 
-### Specific filename
+### 特定文件名
 
 ```sass
 @import
@@ -125,13 +119,13 @@ fi;
 ```
 {: file='_sass/jekyll-theme-chirpy.scss'}
 
-## Mathematics
+## 数学
 
-The mathematics powered by [**MathJax**](https://www.mathjax.org/):
+由 [**MathJax**](https://www.mathjax.org/) 提供支持的数学公式：
 
 $$ \sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6} $$
 
-When $a \ne 0$, there are two solutions to $ax^2 + bx + c = 0$ and they are
+当 $a \ne 0$ 时，$ax^2 + bx + c = 0$ 有两个解，它们是
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
@@ -139,39 +133,33 @@ $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
 ```mermaid
  gantt
-  title  Adding GANTT diagram functionality to mermaid
+  title  添加 GANTT 图表功能到 mermaid
   apple :a, 2017-07-20, 1w
   banana :crit, b, 2017-07-23, 1d
   cherry :active, c, after b a, 1d
 ```
 
-## Images
+### 图片
+### 默认（带标题）
 
-### Default (with caption)
+### 左对齐
 
-
-### Left aligned
-
-
-### Float to left
+### 向左浮动
 
 Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
 
-### Float to right
+### 漂向右边
 
 Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
 
-### Dark/Light mode & Shadow
+### 暗/亮模式和阴影
+下图将根据主题偏好切换深色/浅色模式，注意它有阴影。
 
-The image below will toggle dark/light mode based on theme preference, notice it has shadows.
-
-
-
-## Video
+## 视频
 
 {% include embed/youtube.html id='Balreaj8Yqs' %}
 
-## Reverse Footnote
+## 反向脚注
 
-[^footnote]: The footnote source
-[^fn-nth-2]: The 2nd footnote source
+[^footnote]: 脚注源
+[^fn-nth-2]: 第二个脚注源
