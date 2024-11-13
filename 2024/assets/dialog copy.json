@@ -233,24 +233,22 @@
             ]
         ]
     }, 
-    
-    
     {
         "id": "0023",
         "details": [
-            ["唔，我是一个程序媛", "准确地说，是在百度工作的前端工程师"]
+            ["唔，我是一个程序猿", "准确地说，是业余的程序猿"]
         ],
         "responses": [{
-            "content": "嗯哼~ 百度？",
+            "content": "嗯哼~ 业余程序猿？",
             "nextXianzhe": ["0024"]
         }, {
-            "content": "你想跳槽吗？",
+            "content": "你想入坑吗？",
             "nextXianzhe": ["0033"]
         }]
     }, {
         "id": "0024",
         "details": [
-            ["是的", "我在百度 ECharts 团队做可视化相关的工作"]
+            ["是的", "我平时喜欢捣鼓一些小项目"]
         ],
         "responses": [{
             "content": "听起来很有意思~ 可以具体跟我说说你做了什么吗？",
@@ -265,13 +263,7 @@
         "id": "0025",
         "details": [
             [
-                "<a href='http://echarts.baidu.com/theme-builder/'>ECharts 主题编辑器</a>",
-                "<img src='img/echarts-theme-editor.png'>",
-                "<a href='https://github.com/ecomfe/echarts-liquidfill'>水球图</a>",
-                "<img src='img/echarts-liquidfill.jpg'>",
-                "极坐标系下的柱状图",
-                "<img src='img/echarts-polar-bar.png'>",
-                "等等"
+                "就不告诉你，哼~"
             ]
         ]
     }, {
@@ -303,33 +295,38 @@
     }, {
         "id": "0028",
         "details": [
-            ["<img src='img/photo-1.jpg'>", "交大闵行校区的图书馆楼梯"]
+            ["<img src='img/dawei_star.jpg'>"],
+            ["这是在大围山国家森林公园拍的"],
+            ["当时只有手机，拍出来的效果还不错吧？"]
         ],
         "responses": [{
             "content": "这是你最满意的作品吗？",
             "nextXianzhe": ["0029"]
+        }, {
+            "content": "还有其他作品吗？",
+            "nextXianzhe": ["0030"]
         }]
     }, {
         "id": "0029",
         "details": [
-            ["不，最满意的是这张", "<img src='img/yumao-smile.jpg'>"]
+            ["不，最好的永远都在下一张"]
         ],
         "responses": [{
             "content": "……"
         }, {
-            "content": "不就是狗粮费么？！拿去就是！",
+            "content": "不就是要小费么？！拿去就是！",
             "nextXianzhe": ["0037"]
         }]
     }, {
         "id": "0030",
         "details": [
-            ["我美吗？"]
+            ["我帅吗？"]
         ],
         "responses": [{
             "content": "还没看呢",
             "nextXianzhe": ["0031"]
         }, {
-            "content": "念真当然最美啦！",
+            "content": "念真当然最帅啦！",
             "nextXianzhe": ["0032"]
         }]
     }, {
@@ -344,16 +341,29 @@
     }, {
         "id": "0032",
         "details": [
-            ["嘻嘻，哪里哪里~", "<img src='img/xianzhe.jpg'>"]
+            [
+                "嘻嘻，哪里哪里~ (≧▽≦)",
+                "<img src='img/ai_self.jpg'>"
+            ]
+        ],
+        "responses": [
+            {
+                "content": "呃，这是你吗？ (⊙_☉)"
+            },
+            {
+                "content": "喂！ 这明明是AI啊 (¬_¬)"
+            },
+            {
+                "content": "…… (￣ー￣)"
+            }
         ]
     }, {
         "id": "0033",
         "details": [
             [
-                "虽然目前没有换工作的打算，不过对于有趣的工作机会保持开放态度",
-                "我的简历可以在 <a href='http://www.linkedin.com/in/wenlizhang/'>LinkedIn</a> 查看",
-                "如果能在意我的想法，发挥我的脑洞和技术特长，欢迎邮件至 <a href='mailto:me@zhangwenli.com'>me@zhangwenli.com</a> 勾搭~",
-                "其实不是程序员的职位，也挺不错的嘛~"
+                "虽然目前没有其他的打算，不过对于有趣的工作机会保持开放态度",
+                "如果能在意我的想法，发挥我的脑洞和技术特长，欢迎发邮件to  <a href='mailto:wendell.wenwu.he@gmail.com'>me</a> 勾搭~",
+                "其实不是程序猿的职位，也挺不错的嘛~"
             ]
         ],
         "responses": [{
@@ -379,10 +389,10 @@
     }, {
         "id": "0035",
         "details": [
-            ["对了，本站的动画效果都是<del>男朋友</del><ins>老公</ins>帮我写的", "<a href='https://github.com/devyumao'>GitHub</a> 和<a href='http://weibo.com/u/2769530531'>微博</a> ID 都是 devyumao"]
+            ["对了，本站的框架都是<ins>羡辙(Ovilia)</ins>写的", "<a href='https://github.com/Ovilia'>GitHub</a> 和<a href='https://weibo.com/plainjane'>微博</a> ID 都是 Ovilia"]
         ],
         "responses": [{
-            "content": "这恩爱秀得……行行行，狗粮费拿去就是！",
+            "content": "行行行……，打赏拿去就是！",
             "nextXianzhe": ["0037"]
         }, {
             "content": "我要围观代码！",
@@ -391,16 +401,21 @@
     }, {
         "id": "0036",
         "details": [
-            ["代码在 GitHub 上开源", "<a href='https://github.com/Ovilia/ovilia.github.io'>https://github.com/Ovilia/ovilia.github.io</a>", "欢迎围观点赞"]
+            [
+            "我的代码在 GitHub 上开源", 
+            "<a href='https://github.com/XiaoWendell/XiaoWendell.github.io'>点击这个</a>", 
+            "这是<a href='https://github.com/Ovilia/ovilia.github.io'>Ovilia</a>的源码",
+            "欢迎围观点赞"
+        ]
         ]
     }, {
         "id": "0037",
         "details": [
             [
                 "嘿嘿嘿，这是我想读的书",
-                "<a href='https://book.douban.com/people/ovilia1024/wish'>https://book.douban.com/people/ovilia1024/wish</a>",
-                "如果愿意的话，可以给我支付宝转账打赏，多少随意哈！",
-                "<img src='img/zhifu.png'>"
+                "<a href='https://weread.qq.com/misc/booklist/17052412_7SMIHwl56'>https://weread.qq.com/misc/booklist/17052412_7SMIHwl56</a>",
+                "如果愿意的话，可以给我扫赞赏码打赏，多少随意哈！",
+                "<img src='img/zanshangma.png'>"
             ]
         ],
         "responses": [{
@@ -416,7 +431,7 @@
     }, {
         "id": "0038",
         "details": [
-            ["比如……", "会让你意外遇到的这个小姑娘变得更有趣？", "嘿嘿，圣诞节我会寄来自制明信片，打赏后可以发邮件告诉我你的收信地址"]
+            ["比如……", "会让你意外遇到的这个小姑娘变得更有趣？"]
         ],
         "responses": [{
             "content": "好哒！"
@@ -426,7 +441,7 @@
     }, {
         "id": "0039",
         "details": [
-            ["谢主隆恩！！！", "嘿嘿，圣诞节我会寄来自制明信片，打赏后可以发邮件告诉我你的收信地址", "<a href='mailto:me@zhangwenli.com'>me@zhangwenli.com</a>"]
+            ["谢主隆恩！！！"]
         ],
         "responses": [{
             "content": "好哒！"
@@ -438,49 +453,6 @@
         ],
         "responses": [{
             "content": "O(∩_∩)O哈哈~"
-        }]
-    }, {
-        "id": "0041",
-        "details": [
-            [
-                "我最近做了一个名叫“牙哈哈心情日记”的 iOS 应用，可以用来记录每天的心情~",
-                "<img src='img/gooday.jpg'>",
-                "很可爱吧？\\(^o^)/~"
-            ]
-        ],
-        "responses": [{
-            "content": "哇，有意思！哪里可以下载？",
-            "nextXianzhe": ["0042"]
-        }, {
-            "content": "没有安卓？差评啊~",
-            "nextXianzhe": ["0043"]
-        }, {
-            "content": "……",
-            "nextXianzhe": ["0003"]
-        }]
-    }, {
-        "id": "0042",
-        "details": [
-            [
-                "可以在苹果商店搜索“牙哈哈”，或是扫下面的二维码。谢谢支持！",
-                "<img src='img/gooday-qr.png'>"
-            ]
-        ],
-        "nextXianzhe": ["0003"]
-    }, {
-        "id": "0043",
-        "details": [
-            [
-                "如果 iOS 下载量达到我付的年费的话，我也会出安卓版的。暂时打算先把 iOS 版做好！",
-                "如果你实在想支持我，可以送书给我~"
-            ]
-        ],
-        "responses": [{
-            "content": "好哇！我最喜欢爱读书的女孩子了~",
-            "nextXianzhe": ["0037"]
-        }, {
-            "content": "……",
-            "nextXianzhe": ["0003"]
         }]
     }],
     "fromUser": [{
@@ -504,7 +476,7 @@
         "brief": "恋爱",
         "details": [
             "可以八卦一下念真的感情生活吗？嘿嘿……",
-            "念真有男朋友嘛？"
+            "念真有对象嘛？"
         ],
         "nextXianzhe": ["0009"]
     }, {
@@ -517,9 +489,9 @@
         "nextXianzhe": ["0019"]
     }, {
         "id": "1005",
-        "brief": "设计",
+        "brief": "手工",
         "details": [
-            "可以看看你的设计作品吗？"
+            "可以看看你的作品吗？"
         ],
         "nextXianzhe": ["0022"]
     }, {
