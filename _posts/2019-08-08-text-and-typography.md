@@ -146,11 +146,11 @@ $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
 ### 向左浮动
 
-Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
+展示最大的平衡感。即使是在痛苦中，也要保持坚定。梅西纳的灯塔，犹如半开的窗户，穿透了黑暗。无论是在何种环境下，总能找到出路。坚持自己的信念，才能在充满挑战的世界中立足。无论遇到什么困难，都要勇敢面对。保持谦逊，虚心学习，不断进步。即使是在最艰难的时刻，也要保持乐观。相信自己，未来会更加美好。团结一致，才能克服一切困难。
 
 ### 漂向右边
 
-Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
+展示最大的平衡感。即使是在痛苦中，也要保持坚定。梅西纳的灯塔，犹如半开的窗户，穿透了黑暗。无论是在何种环境下，总能找到出路。坚持自己的信念，才能在充满挑战的世界中立足。无论遇到什么困难，都要勇敢面对。保持谦逊，虚心学习，不断进步。即使是在最艰难的时刻，也要保持乐观。相信自己，未来会更加美好。团结一致，才能克服一切困难。
 
 ### 暗/亮模式和阴影
 下图将根据主题偏好切换深色/浅色模式，注意它有阴影。
