@@ -20,14 +20,14 @@
 #   icon: "iconfont icon-mastodon"
 #   url:  "" # 填入你的 Mastodon 账号页面, rel="me" 将会被用于验证
 #
-- type: linkedin
-  icon: "iconfont icon-linkedin"
-  url:  "https://XiaoWendell.github.io/2024" # 填入你的 Linkedin 主页
+# - type: linkedin
+#   icon: "iconfont icon-linkedin"
+#   url:  "" # 填入你的 Linkedin 主页
 #
 # - type: stack-overflow
 #   icon: "iconfont icon-stack-overflow"
 #   url:  "" # 填入你的 stackoverflow 主页
 #
-# - type: bluesky
-#   icon: "iconfont icon-bluesky"
-#   url: "" # 填入你的 Bluesky 主页链接
+- type: bluesky
+  icon: "iconfont icon-bluesky"
+  url: "https://XiaoWendell.github.io/2024" # 填入你的 Bluesky 主页链接
