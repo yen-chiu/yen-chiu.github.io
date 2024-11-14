@@ -139,16 +139,14 @@ tail_includes:
       "
     >
       <div class="license-wrapper">
-        {% if page.license %}
-          {% if site.data.locales[lang].copyright.license.template %}
-            {% capture _replacement %}
-              <a href="{{ site.data.locales[lang].copyright.license.link }}">
-                {{ site.data.locales[lang].copyright.license.name }}
-              </a>
-            {% endcapture %}
+        {% if site.data.locales[lang].copyright.license.template %}
+          {% capture _replacement %}
+        <a href="{{ site.data.locales[lang].copyright.license.link }}">
+          {{ site.data.locales[lang].copyright.license.name }}
+        </a>
+        {% endcapture %}
 
-            {{ site.data.locales[lang].copyright.license.template | replace: ':LICENSE_NAME', _replacement }}
-          {% endif %}
+          {{ site.data.locales[lang].copyright.license.template | replace: ':LICENSE_NAME', _replacement }}
         {% endif %}
       </div>
 
