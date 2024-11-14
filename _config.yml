@@ -30,7 +30,7 @@ github:
   username: XiaoWendell # Github 用户名
 
 twitter:
-  username: NichtsHsu # 推特用户名
+  username: Xiao_Bard # 推特用户名
 
 social:
   # 改为你的全名。
@@ -40,7 +40,7 @@ social:
   links:
     # 第一个链接将会作为版权所有者的链接
     - https://github.com/XiaoWendell
-    - https://x.com # 推特主页
+    - https://x.com/Xiao_Bard # 推特主页
     - https://github.com/XiaoWendell # Github 主页
     
     # 取消注释以添加更多链接
@@ -130,7 +130,7 @@ panel:
     # 最近更新
     lastmod: true
     # 热门标签
-    trending_tags: false
+    trending_tags: true
     # 外部链接
     external_links: true
     # 目录
