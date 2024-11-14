@@ -10,12 +10,17 @@
   icon: icon-nihil-github
   use_iconfont: true
   name: 此博客的 Github 仓库
-  link: https://github.com/NichtsHsu/nichtshsu.github.io
+  link: https://github.com/XiaoWendell/XiaoWendell.github.io
 -
-  icon: icon-nihil-blog
-  use_iconfont: true
-  name: Olimi 的个人博客
-  link: https://olimi.icu/
+  icon: https://profile-counter.glitch.me/XiaoWendell/count.svg
+  use_iconfont: false
+  name: 
+  automatic_name: true
+  link: https://XiaoWendell.github.io/
+  width: 150
+  height: 20
+
+
 # 在下面添加更多外部链接
 # -
 #   icon: 
