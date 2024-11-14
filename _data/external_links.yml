@@ -7,9 +7,10 @@
   width: 150
   height: 20
 -
-  icon: assets\img\external_links\github-mark\github-mark\github-mark-white.png
+  # icon: https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/assets/img/external_links/github-mark/github-mark/github-mark-white.svg
+  icon: assets/img/external_links/github-mark/github-mark/github-mark-white.svg
   use_iconfont: true
-  name: 此博客的 Github 仓库
+  name: Github 仓库
   link: https://github.com/XiaoWendell/XiaoWendell.github.io
 -
   icon: https://img.shields.io/badge/link-996.icu-red.svg
