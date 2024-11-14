@@ -44,7 +44,7 @@ meta: 本站采用 :PLATFORM 主题 :THEME
 not_found:
   # statment: 抱歉，我们放错了该 URL，或者它指向了不存在的内容。
   statment: |
-    <div class="poem">
+    <div class="poem" style="text-align: center;">
       <p>
         笑问迷路的你<br />
         今日可否如意<br />
@@ -78,8 +78,10 @@ post:
   words: 字
   pageview_measure: 次浏览
   read_time:
-    unit: 分钟
-    prompt: " 预计阅读时间"
+    unit: min
+    prompt: read
+    # unit: 分钟
+    # prompt: " 预计阅读时间"
   relate_posts: 相关文章
   share: 分享
   button:
