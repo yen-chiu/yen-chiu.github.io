@@ -9,7 +9,7 @@
 -
   icon: https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/assets/img/external_links/github-mark/github-mark/github-mark-white.svg
   # icon: assets/img/external_links/github-mark/github-mark/github-mark-white.svg
-  use_iconfont: false
+  use_iconfont: true
   name: Github 仓库
   link: https://github.com/XiaoWendell/XiaoWendell.github.io
 -
