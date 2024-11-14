@@ -1,4 +1,4 @@
-# Hi there 👋  \>> [Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="Rootjhon" />
+# Hi there 👋  \>> [Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
 
 <!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
