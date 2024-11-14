@@ -1,26 +1,45 @@
 ---
-# the default layout is 'page'
-icon: fas fa-info-circle
-order: 4
+title: 关于
+icon: icon-info
+order: 5
 ---
 
-<div class="zh post-container">
+## 个人状态
 
-    <!--copied from markdown -->
-    <blockquote><p>冰冻三尺 非一日之寒<br>
-    积土成山 非斯须之作</p></blockquote>
+毕业于华南理工大学软件工程专业，目前主要从事基于高通平台（主要是 Android）的 OS 开发。
 
-    <p>Hi，我是<strong>Dr. Wendell</strong>，现旅居中国长沙。</p>
-    
-    <p>这个博客，是我在喧嚣中寻找静谧的一片净土。在这个快节奏的时代，人们总是被各种琐事和压力所包围，很难找到片刻的宁静。我也深受其扰，总觉得自己在追逐着某种虚幻的成功，却忽略了内心真正的需求。</p>
+主要使用 C/C++ 开发，最喜欢的语言是 Rust。
 
-    <p>我的目标是以简洁清晰的语言、实用的建议和深入的分析，为读者提供有价值的信息和观点。我的文章将从不同角度审视问题，引导读者思考并拓宽视野。</p>
+## 许可说明
 
-    <p>谢谢你的光临！如果你喜欢这个博客的内容，记得订阅并分享给你的朋友们。我非常期待听到你们的反馈和建议。</p>
+1. 所有**原创文章**均以 **[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可证**授权，您可以：
 
-    <a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=utiIioiLiomKi4uIjfrJzs_U2dnJz5Tf3s_U2dQ" style="text-decoration:none;"><img src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png" /></a>
-  
-    <p></p>
-    
-</div>
+    * 以任何媒介与形式复制、重新分发文章
+    * 出于任何目的（甚至是商业目的）地重新混合、转换文章内容
 
+    只要您遵守以下条款：
+
+    * 必须提供创作者的署名，版权和许可声明，免责声明以及文章链接
+    * 必须说明是否对原文进行修改，并指示出该修改
+    * 不得以任何形式暗示创作者认可您或您的使用
+    * 不得以法律条款或技术手段来限制他人做出本许可证所允许的行为
+
+    注：CC BY 4.0 许可证不具有传染性，您无需为您的分发使用相同的许可证。
+
+2. 所有**翻译类文章**均不享受任何著作权利，不用于任何商业目的，**不以任何许可证进行授权**，不对任何转载行为尤其是商业转载行为负责，一切权利由原创作者保有。
+3. 文章中贴出的**代码片段**，如果是从 Github 或其他来源复制而来，则应当遵守**代码原始出处的许可证**。否则，一律采用 [**WTFPL 许可证**](https://zh.m.wikipedia.org/zh-hans/WTFPL)，许可证内容如下：
+
+    ```text
+            你他妈的想干嘛就干嘛公共许可证
+                第二版，2004年12月
+
+        版权所有(C) 2021~2024 Nichts Hsu<NichtsVonChaos@gmail.com>
+
+        任何人都有复制与发布本协议的原始或修改过的版本的权利。
+        若本协议被修改，须修改协议名称。
+
+                你他妈的想干嘛就干嘛公共许可证
+                    复制、发布和修改条款
+
+        1. 你只要他妈的想干嘛就干嘛。
+    ```

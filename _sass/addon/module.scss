@@ -6,7 +6,7 @@
 
 %heading {
   color: var(--heading-color);
-  font-weight: 400;
+  font-weight: 600;
   font-family: $font-family-heading;
 }
 
@@ -187,14 +187,14 @@
   transform: translateX(-50%);
 }
 
-@mixin prompt($type, $fa-content, $fa-style: 'solid') {
+@mixin prompt($type, $iconfont-content, $icon-weight: 400) {
   &.prompt-#{$type} {
     background-color: var(--prompt-#{$type}-bg);
 
     &::before {
-      content: $fa-content;
+      content: $iconfont-content;
       color: var(--prompt-#{$type}-icon-color);
-      font: var(--fa-font-#{$fa-style});
+      font-weight: $icon-weight;
     }
   }
 }

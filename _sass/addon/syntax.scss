@@ -65,6 +65,8 @@ html {
   padding-bottom: 0.75rem;
 
   pre {
+    font-family: "Fira Code", "Microsoft Yahei", monospace;
+    font-variant-ligatures: normal;
     margin-bottom: 0;
     font-size: $code-font-size;
     line-height: 1.4rem;
@@ -105,10 +107,12 @@ code {
   -webkit-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
+  font-family: "Fira Code", "Microsoft Yahei", monospace;
+  font-variant-ligatures: none;
   color: var(--code-color);
 
   &.highlighter-rouge {
-    font-size: $code-font-size;
+    // font-size: $code-font-size;
     padding: 3px 5px;
     word-break: break-word;
     border-radius: 4px;
@@ -260,7 +264,11 @@ div {
         color: white;
       }
     }
-    
+
+    &:focus {
+      outline: none;
+    }
+
     &.button-run-code {
       position: absolute;
       right: 2.25rem;
