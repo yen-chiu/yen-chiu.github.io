@@ -45,7 +45,27 @@ meta: 本站采用 :PLATFORM 主题 :THEME
 
 not_found:
   title: "404: 页面无法访问"
-  statment: 你似乎来到了没有知识存在的荒原
+  statment: |
+    <div class="poem" style="text-align: center;">
+      <p>
+        笑问迷路的你<br />
+        今日可否如意<br />
+        然则何故至此<br />
+        冤家路窄是你
+      </p>
+      <p>
+        筚路蓝缕如你<br />
+        今生会否得意<br />
+        生前身后名利<br />
+        痴儿不悟是你
+      </p>
+      <p>
+        耗尽百年运气<br />
+        今朝邂逅与你<br />
+        唯有丹心遥寄<br />
+        头也不回是你
+      </p>
+    </div>
   head_back: 去往首页
   or: 或者
   previous_page: 返回上页
