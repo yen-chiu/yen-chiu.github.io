@@ -62,7 +62,7 @@ webmaster_verifications:
 # 网页分析设置
 analytics:
   google:
-    id: # 填入你的 Google Analytics ID
+    id: G-0JYNN6DS4J # 填入你的 Google Analytics ID
   goatcounter:
     id: # 填入你的 GoatCounter ID
   umami:
