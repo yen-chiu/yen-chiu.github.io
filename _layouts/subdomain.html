@@ -6,7 +6,7 @@ layout: page
 <div id="post-list">
   {% for subdomain in site.data.subdomain %}
   <article class="card-wrapper">
-    <a href="{{ subdomain.link }}" class="card post-preview flex-md-row-reverse">
+    <a href="{{ subdomain.link }}" class="card post-preview flex-md-row-reverse" target="_blank" rel="noopener">
       <div class="card-body d-flex flex-column">
         <h1 class="card-title my-2 mt-md-0">
           {% if subdomain.icon %}

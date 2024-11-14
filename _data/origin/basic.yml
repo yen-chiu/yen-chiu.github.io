@@ -60,4 +60,4 @@ iconfont:
     # 此 css 包含以 'icon-' 为前缀的图标，为模板的核心图标，请勿删除。
     - /assets/lib/iconfont/font_2440352_7u0gpzzgjk5/iconfont.css
     # 添加你的 Iconfont 图标链接
-    - /assets/lib/iconfont/font_2451185_mj3aklm9b7o/iconfont.css
+    # - 
