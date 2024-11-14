@@ -14,8 +14,9 @@
   --text-muted-hightlight-color: #aeaeae;
   --heading-color: #cccccc;
   --label-color: #a7a7a7;
-  --blockquote-border-color: rgb(66, 66, 66);
+  --blockquote-border-color: rgb(105, 105, 105);
   --blockquote-text-color: #868686;
+  --blockquote-background-color: #292929;
   --link-color: rgb(138, 180, 248);
   --link-underline-color: rgb(82, 108, 150);
   --button-bg: #1e1e1e;
@@ -64,6 +65,7 @@
   --tb-odd-bg: #252526; /* odd rows of the posts' table */
   --tb-even-bg: rgb(31, 31, 34); /* even rows of the posts' table */
   --tb-border-color: var(--tb-odd-bg);
+  --tb-shade-color: 255, 255, 255;
   --footnote-target-bg: rgb(63, 81, 181);
   --btn-share-color: #6c757d;
   --btn-share-hover-color: #bfc1ca;
@@ -102,10 +104,6 @@
 
   .light {
     display: none;
-  }
-
-  hr {
-    border-color: var(--main-border-color);
   }
 
   /* categories */
@@ -147,5 +145,34 @@
   /* stylelint-disable-next-line selector-id-pattern */
   #disqus_thread {
     color-scheme: none;
+  }
+
+  #core-wrapper {
+    strong {
+      text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.1rem var(--text-muted-color);
+      code {
+        text-shadow: none;
+      }
+    }
+
+    h1 {
+      text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.7rem var(--text-muted-color);
+    }
+
+    h2 {
+      text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.7rem var(--text-muted-color);
+    }
+
+    h3 {
+      text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.5rem var(--text-muted-color);
+    }
+
+    h4 {
+      text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.3rem var(--text-muted-color);
+    }
+
+    h5 {
+      text-shadow: 0 0 0.1rem var(--text-color), 0 0 0.2rem var(--text-muted-color);
+    }
   }
 } /* dark-scheme */

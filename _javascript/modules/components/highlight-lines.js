@@ -39,8 +39,9 @@ function highlightLinesInner(codeBlock, highlight_lines) {
 };
 
 export function highlightLines() {
-  $('.highlighter-rouge').each(function () {
-    const attr_highlight_lines = $(this).attr('highlight-lines');
+  let blocks = document.getElementsByClassName('highlighter-rouge');
+  [...blocks].forEach((elem) => {
+    const attr_highlight_lines = elem.getAttribute('highlight-lines');
     if (attr_highlight_lines && attr_highlight_lines.length > 0) {
       let lines = [];
       let scopes = (',' + attr_highlight_lines).match(/(?<=\s|,)\d+(-\d+)?/g)
@@ -58,10 +59,10 @@ export function highlightLines() {
           lines.push(start);
         }
       })
-      let pre = $('pre', $(this));
-      pre = pre[pre.length - 1];
+      let pres = elem.getElementsByTagName('pre');
+      let pre = pres[pres.length - 1];
       highlightLinesInner(pre, lines);
-      $(this).removeAttr('highlight-lines');
+      elem.removeAttribute('highlight-lines');
     }
   })
 }
