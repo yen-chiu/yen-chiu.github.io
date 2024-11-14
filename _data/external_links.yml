@@ -7,7 +7,7 @@
   width: 150
   height: 20
 -
-  icon: icon-nihil-github
+  icon: assets\img\external_links\github-mark\github-mark\github-mark-white.png
   use_iconfont: true
   name: 此博客的 Github 仓库
   link: https://github.com/XiaoWendell/XiaoWendell.github.io
