@@ -7,7 +7,6 @@ author: cotes
 date: 2019-08-09 20:55:00 +0800
 categories: [Blogging, Tutorial]
 tags: [getting started]
-pin: true
 media_subpath: '/posts/20180809'
 ---
 
@@ -121,8 +120,10 @@ Prepare the following:
 Next, configure the _Pages_ service:
 
 1. Go to your repository on GitHub. Select the _Settings_ tab, then click _Pages_ in the left navigation bar. In the **Source** section (under _Build and deployment_), select [**GitHub Actions**][pages-workflow-src] from the dropdown menu.  
-   ![Build source](https://chirpy-img.netlify.app/posts/20180809/pages-source-light.png){: .light .border .normal w='375' h='140' }
-   ![Build source](https://chirpy-img.netlify.app/posts/20180809/pages-source-dark.png){: .dark .normal w='375' h='140' }
+   ![Build source](https://chirpy-img.netlify.app/posts/20180809/pages-source-light.png){: .light .border .normal w='365' h='130' }
+
+
+   ![Build source](https://chirpy-img.netlify.app/posts/20180809/pages-source-dark.png){: .dark .normal w='365' h='130' }
 
 2. Push any commits to GitHub to trigger the _Actions_ workflow. In the _Actions_ tab of your repository, you should see the workflow _Build and Deploy_ running. Once the build is complete and successful, the site will be deployed automatically.
 
