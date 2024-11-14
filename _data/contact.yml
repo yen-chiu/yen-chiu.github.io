@@ -28,6 +28,6 @@
 #   icon: "iconfont icon-stack-overflow"
 #   url:  "" # 填入你的 stackoverflow 主页
 #
-- type: bluesky
-  icon: "iconfont icon-bluesky"
-  url: "https://XiaoWendell.github.io/2024" # 填入你的 Bluesky 主页链接
+# - type: bluesky
+#   icon: "iconfont icon-bluesky"
+#   url: "" # 填入你的 Bluesky 主页链接
