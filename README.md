@@ -1,4 +1,4 @@
-# Hi there 👋  \>> [Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
+# Hi there 👋  \>> 欢迎访问我的[Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
 
 <!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
@@ -6,7 +6,7 @@
 
 ![dino](./images/dino.gif)
 
-我的名字是Ho Wendell，我是一名业余爱好者。
+我是 Wendell，一名业余编程爱好者，这是我的[个人平台](https://XiaoWendell.github.io/)。
 
 ## 🔧 技术 & 工具
 ![](https://img.shields.io/badge/OS-Linux-informational?style=flat&logo=linux&logoColor=white&color=2bbc8a)
@@ -19,10 +19,6 @@
 ![](https://img.shields.io/badge/Tools-PyCharm-informational?style=flat&logo=docker&logoColor=white&color=2bbc8a)
 ![](https://img.shields.io/badge/Tools-Matlab-informational?style=flat&logo=kubernetes&logoColor=white&color=2bbc8a)
 ![](https://img.shields.io/badge/Cloud-Digital_Ocean-informational?style=flat&logo=digitalocean&logoColor=white&color=2bbc8a)
-
-## &#x270d; 博客和写作
-
-除了编码，我还维护一个博客 - 您可以在 [我的网站](https://XiaoWendell.github.io/) 上找到我的文章.
 
 ## &#x1f4c8; GitHub 统计信息
 
@@ -66,7 +62,8 @@
 <!-- 优秀的 GitHub 个人资料 README：https://github.com/abhisheknaiidu/awesome-github-profile-readme -->
 
 # 致谢
-感谢 Jekyll、Github Pages!
+
+特别感谢 [cotes2020](https://github.com/cotes2020)、[Ovilia](https://github.com/Ovilia)、[NichtsHsu](https://github.com/NichtsHsu) 和 [Rootjhon](https://github.com/Rootjhon) 在本博客的搭建过程中提供的支持与参考。
 
 # License
 
