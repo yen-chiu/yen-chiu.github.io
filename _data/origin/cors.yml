@@ -1,4 +1,4 @@
-# Resource Hints
+# 资源提示
 resource_hints:
   - url: https://fonts.googleapis.com
     links:
@@ -14,11 +14,10 @@ resource_hints:
       - rel: preconnect
       - rel: dns-prefetch
 
-# Web Fonts
+# 网络字体
 webfonts: https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Source+Sans+Pro:wght@400;600;700;900&display=swap
 
-# Libraries
-
+# Libraries（图书馆）
 toc:
   css: https://cdn.jsdelivr.net/npm/tocbot@4.27.20/dist/tocbot.min.css
   js: https://cdn.jsdelivr.net/npm/tocbot@4.27.20/dist/tocbot.min.js
