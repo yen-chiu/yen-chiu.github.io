@@ -15,7 +15,7 @@
 
 # 取消注释并完善下列链接以启用更多联系方式
 - type: mastodon
-  icon: "icon-wendell-duihua1"
+  icon: "iconfont icon_wendell-duihua1"
   # icon: "iconfont icon-mastodon"
   url:  "https://XiaoWendell.github.io/2024" # 填入你的 Mastodon 账号页面, rel="me" 将会被用于验证
 #
