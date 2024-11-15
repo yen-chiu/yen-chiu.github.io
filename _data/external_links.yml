@@ -7,7 +7,7 @@
   width: 150
   height: 20
 # -
-#   icon: icon-wendell-github
+#   icon: icon_wendell-github
 #   use_iconfont: true
 #   name: Github 仓库
 #   link: https://github.com/XiaoWendell/XiaoWendell.github.io
@@ -19,7 +19,7 @@
   # 为 true 时当且仅当图片无法加载时，使用名字替代。为 false 时始终显示名字。
   automatic_name: true
   link: https://996.icu
-  
+
 # 在下面添加更多外部链接
 # -
 #   icon: 
