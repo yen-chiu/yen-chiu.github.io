@@ -11,8 +11,8 @@
   noblank: true # 在当前页面打开链接
 
 - type: me
-  icon: "iconfont icon-mastodon"
-  # icon: "iconfont wendell_icon-duihua1"
+  # icon: "iconfont icon-mastodon"
+  icon: "iconfont wendell_icon-duihua1"
   url:  "https://XiaoWendell.github.io/2024"
 
 # - type: rss
