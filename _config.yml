@@ -173,7 +173,7 @@ comments:
 # <script src="https://giscus.app/client.js"
 #         data-repo="XiaoWendell/XiaoWendell.github.io"
 #         data-repo-id="R_kgDOKhSzCA"
-#         data-category="Announcements"
+#         data-category="General" # "Announcements"的评论发不了
 #         data-category-id="DIC_kwDOKhSzCM4CaNBZ"
 #         data-mapping="title"
 #         data-strict="0"
