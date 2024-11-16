@@ -9,3 +9,6 @@ group :test do
 end
 
 gem "jekyll-archives", path: ".gems/jekyll-archives"
+
+gem 'tzinfo'
+gem 'tzinfo-data'
