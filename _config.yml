@@ -157,7 +157,7 @@ comments:
   giscus:
     repo: "XiaoWendell/XiaoWendell.github.io"   # <Github 用户名>/<仓库名>
     repo_id: "R_kgDOKhSzCA"
-    category: "Announcements"
+    category: "General"
     category_id: "DIC_kwDOKhSzCM4CaNBa"
     mapping: "title"   # 可选项，默认为 'pathname'
     strict: # 可选项，默认为 '0'
