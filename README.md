@@ -65,9 +65,6 @@
 <!-- Shields：https://shields.io/ -->
 <!-- 优秀的 GitHub 个人资料 README：https://github.com/abhisheknaiidu/awesome-github-profile-readme -->
 
-# 致谢
-感谢 Jekyll、Github Pages!
-
 # License
 
 遵循 MIT 许可证。有关详细,请参阅 [LICENSE](https://github.com/XiaoWendell/XiaoWendell.github.io/blob/master/LICENSE)。
