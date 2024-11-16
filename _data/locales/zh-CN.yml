@@ -42,9 +42,9 @@ copyright:
     除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。
 
 meta: 本站采用 :PLATFORM 主题 :THEME
-
+# 404 页面标题, title: "{{ site.data.locales[site.lang].not_found.title }}",手机端这一表达式没有被正确解析，而是直接显示为文本。
 not_found:
-  title: "404：You seemed to be lost..." # 404 页面标题, title: "{{ site.data.locales[site.lang].not_found.title }}",手机端这一表达式没有被正确解析，而是直接显示为文本。
+  title: "404:You seemed to be lost..." 
   statment: |
     <div class="poem" style="text-align: center;">
       <p>
