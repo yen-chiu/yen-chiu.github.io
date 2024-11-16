@@ -157,8 +157,8 @@ comments:
   giscus:
     repo: "XiaoWendell/XiaoWendell.github.io"   # <Github 用户名>/<仓库名>
     repo_id: "R_kgDOKhSzCA"
-    category: "General"
-    category_id: "DIC_kwDOKhSzCM4CaNBa"
+    category: "Announcements" # 这个主要是识别分类，可以自定义，但是要和下面的category一起改
+    category_id: "DIC_kwDOKhSzCM4CaNBZ" # 这个主要是按照确定的分类来显示评论
     mapping: "title"   # 可选项，默认为 'pathname'
     strict: # 可选项，默认为 '0'
     reactions_enabled: "1" # 可选项，默认为 1
@@ -173,7 +173,7 @@ comments:
 # <script src="https://giscus.app/client.js"
 #         data-repo="XiaoWendell/XiaoWendell.github.io"
 #         data-repo-id="R_kgDOKhSzCA"
-#         data-category="General" # "Announcements"的评论发不了
+#         data-category="General"
 #         data-category-id="DIC_kwDOKhSzCM4CaNBZ"
 #         data-mapping="title"
 #         data-strict="0"
