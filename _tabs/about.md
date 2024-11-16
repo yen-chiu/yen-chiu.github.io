@@ -23,7 +23,7 @@ order: 5
 <script src="https://giscus.app/client.js"
          data-repo="XiaoWendell/XiaoWendell.github.io"
          data-repo-id="R_kgDOKhSzCA"
-         data-category="General"  
+         data-category="Announcements"  
          data-category-id="DIC_kwDOKhSzCM4CaNBZ"
          data-mapping="title"
          data-strict="0"
