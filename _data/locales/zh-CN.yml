@@ -44,7 +44,7 @@ copyright:
 meta: 本站采用 :PLATFORM 主题 :THEME
 
 not_found:
-  title: "404: 页面无法访问"
+  title: "404"
   statment: |
     <div class="poem" style="text-align: center;">
       <p>
