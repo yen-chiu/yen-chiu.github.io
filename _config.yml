@@ -153,16 +153,40 @@ comments:
     placeholder: 说点什么吧！ # 空白评论框时显示的文字
     avatar: mp # 默认头像  › https://waline.js.org/guide/client/avatar.html
   # Giscus 选项 › https://giscus.app
+
   giscus:
     repo: "XiaoWendell/XiaoWendell.github.io"   # <Github 用户名>/<仓库名>
     repo_id: "R_kgDOKhSzCA"
-    category: "General"
+    category: "Announcements"
     category_id: "DIC_kwDOKhSzCM4CaNBa"
     mapping: "title"   # 可选项，默认为 'pathname'
     strict: # 可选项，默认为 '0'
-    input_position: "top" # 可选项，默认为 'bottom'
-    lang: "zh-CN"  # 可选项，默认为 `site.lang` 的值
     reactions_enabled: "1" # 可选项，默认为 1
+    emit_metadata: "0" # Wendell写入，可选项，默认为 0
+    input_position: "top" # 可选项，默认为 'bottom'
+    theme: "preferred_color_scheme" # Wendell写入，可选项
+    lang: "zh-CN"  # 可选项，默认为 `site.lang` 的值
+    loading: "lazy" # Wendell写入，可选项
+    crossorigin: "anonymous" # Wendell写入，可选项
+    
+# 评论系统导出数据
+# <script src="https://giscus.app/client.js"
+#         data-repo="XiaoWendell/XiaoWendell.github.io"
+#         data-repo-id="R_kgDOKhSzCA"
+#         data-category="Announcements"
+#         data-category-id="DIC_kwDOKhSzCM4CaNBZ"
+#         data-mapping="title"
+#         data-strict="0"
+#         data-reactions-enabled="1"
+#         data-emit-metadata="0"
+#         data-input-position="top"
+#         data-theme="preferred_color_scheme"
+#         data-lang="zh-CN"
+#         data-loading="lazy"
+#         crossorigin="anonymous"
+#         async>
+# </script>
+
 
 # 自托管静态资产，可选 › https://github.com/cotes2020/chirpy-static-assets
 assets:
