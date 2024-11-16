@@ -162,12 +162,12 @@ comments:
     mapping: "title"   # 可选项，默认为 'pathname'
     strict: # 可选项，默认为 '0'
     reactions_enabled: "1" # 可选项，默认为 1
-    emit_metadata: "0" # Wendell写入，可选项，默认为 0
+    # emit_metadata: "0" # Wendell写入，可选项，默认为 0 ,_includes\comments\giscus.html已经配置
     input_position: "top" # 可选项，默认为 'bottom'
-    theme: "preferred_color_scheme" # Wendell写入，可选项
+    # theme: "preferred_color_scheme" # Wendell写入，可选项 ,_includes\comments\giscus.html已经配置
     lang: "zh-CN"  # 可选项，默认为 `site.lang` 的值
-    loading: "lazy" # Wendell写入，可选项
-    crossorigin: "anonymous" # Wendell写入，可选项
+    # loading: "lazy" # Wendell写入，可选项 ,_includes\comments\giscus.html已经配置
+    # crossorigin: "anonymous" # Wendell写入，可选项 ,_includes\comments\giscus.html已经配置
     
 # 评论系统导出数据
 # <script src="https://giscus.app/client.js"
