@@ -2,9 +2,7 @@
 
 <!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
-<!-- ![dino](./images/.gif) -->
-
-![dino](./images/dino.gif)
+![dino](assets\img\readme\dino.gif)
 
 我是 Wendell，一名业余编程爱好者，这是我的[个人平台](https://XiaoWendell.github.io/)。
 
