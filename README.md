@@ -1,8 +1,9 @@
-# Hi there 👋  \>> 欢迎访问我的[Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
+# Hi there <img src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/images/wave.gif" width="30px" height="30px" />  \>> 欢迎访问我的[Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
 
 <!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
-![dino](assets\img\readme\dino.gif)
+![dino](https://raw.githubusercontent.com/XiaoWendell/MyProject/master/images/GIF/dino.gif "dino")
+<!-- ![dino](assets\img\readme\dino.gif) -->
 
 我是 Wendell，一名业余编程爱好者，这是我的[个人平台](https://XiaoWendell.github.io/)。
 
