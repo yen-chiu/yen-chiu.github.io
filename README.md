@@ -1,13 +1,15 @@
-# Hi there <img src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/images/wave.gif" width="30px" height="30px" />  \>> 欢迎访问我的[Blog](https://XiaoWendell.github.io/)  <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
+# Hi there <img src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/images/wave.gif" width="30px" height="30px" /> \>> 欢迎访问我的[Blog](https://XiaoWendell.github.io/) <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
 
 <!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
 
-![dino](https://raw.githubusercontent.com/XiaoWendell/MyProject/master/images/GIF/dino.gif "dino")
+![dino](https://raw.githubusercontent.com/XiaoWendell/ProjectAssets/master/images/GIF/dino.gif "dino")
+
 <!-- ![dino](assets\img\readme\dino.gif) -->
 
 我是 Wendell，一名业余编程爱好者，这是我的[个人平台](https://XiaoWendell.github.io/)。
 
 ## 🔧 技术 & 工具
+
 ![](https://img.shields.io/badge/OS-Linux-informational?style=flat&logo=linux&logoColor=white&color=2bbc8a)
 ![](https://img.shields.io/badge/Editor-Rstudio_IDEA-informational?style=flat&logo=intellij-idea&logoColor=white&color=2bbc8a)
 ![](https://img.shields.io/badge/Code-Python-informational?style=flat&logo=python&logoColor=white&color=2bbc8a)
@@ -39,13 +41,13 @@
 
 <!-- 带有填充的图标 -->
 
-[1.1]: http://i.imgur.com/tXSoThF.png (带填充的 Twitter 图标)
-[2.1]: http://i.imgur.com/0o48UoR.png (带填充的 GitHub 图标)
+[1.1]: http://i.imgur.com/tXSoThF.png "带填充的 Twitter 图标"
+[2.1]: http://i.imgur.com/0o48UoR.png "带填充的 GitHub 图标"
 
 <!-- 不带填充的图标 -->
 
-[1.2]: http://i.imgur.com/wWzX9uB.png (不带填充的 Twitter 图标)
-[2.2]: http://i.imgur.com/9I6NRUm.png (不带填充的 GitHub 图标)
+[1.2]: http://i.imgur.com/wWzX9uB.png "不带填充的 Twitter 图标"
+[2.2]: http://i.imgur.com/9I6NRUm.png "不带填充的 GitHub 图标"
 
 <!-- 链接到您的社交媒体账户 -->
 
