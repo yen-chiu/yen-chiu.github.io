@@ -1,7 +1,5 @@
 # Hi there <img src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/images/wave.gif" width="30px" height="30px" /> \>> 欢迎访问我的[Blog](https://XiaoWendell.github.io/) <img align="right" src="https://profile-counter.glitch.me/XiaoWendell/count.svg" alt="XiaoWendell" />
 
-<!-- [![Header](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell/master/readme_header.png "Header")](https://XiaoWendell.github.io/) -->
-
 ![dino](https://raw.githubusercontent.com/XiaoWendell/ProjectAssets/master/images/GIF/dino.gif "dino")
 
 <!-- ![dino](assets\img\readme\dino.gif) -->
@@ -37,21 +35,26 @@
 </a>
 -->
 
+# 致谢
+
+特别感谢 [cotes2020](https://github.com/cotes2020)、[Ovilia](https://github.com/Ovilia)、[NichtsHsu](https://github.com/NichtsHsu) 和 [Rootjhon](https://github.com/Rootjhon) 在本博客的搭建过程中提供的支持与参考。
+
+# License
+
+遵循 MIT 许可证。有关详细,请参阅 [LICENSE](https://github.com/XiaoWendell/XiaoWendell.github.io/blob/master/LICENSE)。
+
 <!-- 社交媒体图标链接 -->
 
 <!-- 带有填充的图标 -->
 
-[1.1]: http://i.imgur.com/tXSoThF.png "带填充的 Twitter 图标"
 [2.1]: http://i.imgur.com/0o48UoR.png "带填充的 GitHub 图标"
 
 <!-- 不带填充的图标 -->
 
-[1.2]: http://i.imgur.com/wWzX9uB.png "不带填充的 Twitter 图标"
 [2.2]: http://i.imgur.com/9I6NRUm.png "不带填充的 GitHub 图标"
 
-<!-- 链接到您的社交媒体账户 -->
+<!-- 链接到社交媒体账户 -->
 
-[1]: https://x.com
 [2]: https://github.com/XiaoWendell
 
 <!-- 资源 -->
@@ -61,11 +64,3 @@
 <!-- HTML Emoji：https://www.fileformat.info/index.htm -->
 <!-- Shields：https://shields.io/ -->
 <!-- 优秀的 GitHub 个人资料 README：https://github.com/abhisheknaiidu/awesome-github-profile-readme -->
-
-# 致谢
-
-特别感谢 [cotes2020](https://github.com/cotes2020)、[Ovilia](https://github.com/Ovilia)、[NichtsHsu](https://github.com/NichtsHsu) 和 [Rootjhon](https://github.com/Rootjhon) 在本博客的搭建过程中提供的支持与参考。
-
-# License
-
-遵循 MIT 许可证。有关详细,请参阅 [LICENSE](https://github.com/XiaoWendell/XiaoWendell.github.io/blob/master/LICENSE)。
