@@ -1,0 +1,12 @@
+{
+  // 图片粘贴配置
+
+  // 若只想在当前文件夹下的.md文件中对Paste Image进行相关设置，
+  // 可以在当前目录下的.vscode文件夹内创建settings.json文件，
+  // 局部设置的优先级高于全局设置。
+  "pasteImage.showFilePathConfirmInputBox": true,
+  "pasteImage.path": "${projectRoot}/_posts/images/2024/${currentFileNameWithoutExt}",
+  "pasteImage.basePath": "${projectRoot}",
+  "pasteImage.forceUnixStyleSeparator": true,
+  "pasteImage.prefix": "/"
+}
