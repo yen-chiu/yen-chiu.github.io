@@ -5,7 +5,10 @@
   // 可以在当前目录下的.vscode文件夹内创建settings.json文件，
   // 局部设置的优先级高于全局设置。
   "pasteImage.showFilePathConfirmInputBox": true,
+
   "pasteImage.path": "${projectRoot}/_posts/images/2024/${currentFileNameWithoutExt}",
+  // "https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/_posts/images/2023/",
+
   "pasteImage.basePath": "${projectRoot}",
   "pasteImage.forceUnixStyleSeparator": true,
   "pasteImage.prefix": "/"
