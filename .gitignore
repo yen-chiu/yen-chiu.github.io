@@ -13,7 +13,7 @@
 # vendor 目录是 Go 语言中用于存放项目依赖包的本地副本的目录。它的主要作用是确保项目在不同环境中构建和运行时使用一致的依赖版本，从而避免由于外部依赖变化导致的问题。
 vendor
 # Gemfile.lock 文件记录了确切的依赖版本，确保在不同环境中安装相同的依赖版本。
-!Gemfile.lock  
+Gemfile.lock  
 
 # Jekyll cache，忽略 Jekyll 生成的缓存和站点目录。
 .jekyll-cache
