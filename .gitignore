@@ -28,7 +28,11 @@ node_modules
 
 # IDE configurations
 .idea
-.vscode/*
+
+# 保留
+!.vscode/*   
+
+# .vscode/* 的子文件
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/*.md
