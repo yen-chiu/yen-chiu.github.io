@@ -11,7 +11,7 @@
 # Bundler cache
 .bundle
 vendor
-Gemfile.lock
+!Gemfile.lock  # Gemfile.lock 文件记录了确切的依赖版本，确保在不同环境中安装相同的依赖版本。
 
 # Jekyll cache
 .jekyll-cache
@@ -24,14 +24,15 @@ _app
 
 # NPM dependencies
 node_modules
-# package-lock.json # 保留
+# 保留
+!package-lock.json
 
 # IDE configurations
 .idea
 
+
 # 保留
 !.vscode/*   
-
 # .vscode/* 的子文件
 !.vscode/settings.json
 !.vscode/extensions.json

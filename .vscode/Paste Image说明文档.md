@@ -1,8 +1,11 @@
 # 粘贴图片
 
 直接从剪贴板粘贴图片到 markdown/asciidoc（或其他文件）！
-**支持 Mac/Windows/Linux！**并支持配置目标文件夹。
+
+- **支持 Mac/Windows/Linux！**并支持配置目标文件夹。
+
 ![粘贴图片](https://raw.githubusercontent.com/mushanshitiancai/vscode-paste-image/master/res/vscode-paste-image.gif)
+
 现在可以启用 `pasteImage.showFilePathConfirmInputBox` 来在保存前修改文件路径：
 [confirm-inputbox](https://raw.githubusercontent.com/mushanshitiancai/vscode-paste-image/master/res/confirm-inputbox.png)
 
@@ -19,15 +22,18 @@
 - 图片默认名称
   默认图像文件名。
   此配置的值将传递给 moment 库（一个 js 时间处理库）的'format'函数，你可以阅读文档 https://momentjs.com/docs/#/displaying/format/ 了解高级用法。
+
   您还可以使用变量
+
   - `${currentFileName}`：当前文件名，带扩展名。
   - `${currentFileNameWithoutExt}`：当前文件名，不带扩展名。
     默认值为 `Y-MM-DD-HH-mm-ss`。
+
 - 图片粘贴路径
   保存图像文件的路径。
   可以使用变量：
-  - ${currentFileDir}：包含当前编辑文件的目录路径。
-  - ${projectRoot}`： 在 vscode 中打开的项目路径。
+  - `${currentFileDir}`：包含当前编辑文件的目录路径。
+  - `${projectRoot}`： 在 vscode 中打开的项目路径。
   - `${currentFileName}`：当前文件名，带扩展名。
   - `${currentFileNameWithoutExt}`：当前文件名，不含扩展名。
     默认值为 `${currentFileDir}`。
