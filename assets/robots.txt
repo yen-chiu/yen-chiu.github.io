@@ -7,5 +7,6 @@ User-agent: *
 
 Disallow: /norobots/
 Disallow: /assets/lib/*.html
+Disallow: /_posts
 
 Sitemap: {{ '/sitemap.xml' | absolute_url }}
