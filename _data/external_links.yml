@@ -6,19 +6,20 @@
   link: https://XiaoWendell.github.io/
   width: 150
   height: 20
-
 # -
-#   icon: https://raw.githubusercontent.com/XiaoWendell/img_note/empty/16790410035611679041003479.png
-#   # 是否使用 Iconfont 的图标字体
-#   use_iconfont: false
-#   name: 苍白的茧
-#   # 为 true 时当且仅当图片无法加载时，使用名字替代。为 false 时始终显示名字。
-#   automatic_name: true
-#   link: http://dreamfairy.cn/blog/
-#   width: 20
-#   height: 20
-
-
+#   icon: icon-github
+#   icon: wendell_icon-github
+#   use_iconfont: true
+#   name: Github 仓库
+#   link: https://github.com/XiaoWendell/XiaoWendell.github.io
+-
+  icon: https://img.shields.io/badge/link-996.icu-red.svg
+  # 是否使用 Iconfont 的图标字体
+  use_iconfont: false
+  name: 996.icu
+  # 为 true 时当且仅当图片无法加载时，使用名字替代。为 false 时始终显示名字。
+  automatic_name: true
+  link: https://996.icu
 
 # 在下面添加更多外部链接
 # -
@@ -27,6 +28,3 @@
 #   name:
 #   automatic_name:
 #   link: 
-#   width: 20
-#   height: 20
-

@@ -1,0 +1,28 @@
+{
+  // 以下是我自己的配置
+  // 配置自动格式化，统一代码规范
+  "editor.formatOnSave": true, // 每次保存的时候自动格式化
+  "prettier.tabWidth": 4, // prettier设置 4空格缩进
+  "prettier.semi": false, // 语句末尾去掉分号
+  "prettier.singleQuote": true, // 双引号变成单引号
+  "prettier.bracketSameLine": true, // 多行 HTML元素放在最后一行的末尾 而不是单独放在下一行
+  "prettier.printWidth": 100, // 宽度多少换行
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // 为所有语言设置prettier
+
+  // 图片粘贴配置（https://github.com/mushanshitiancai/vscode-paste-image）
+
+  // 若只想在当前文件夹下的.md文件中对Paste Image进行相关设置，
+  // 可以在当前目录下的.vscode文件夹内创建settings.json文件，
+  // 局部设置的优先级高于全局设置。
+  // 粘贴图片快捷键（粘贴 Markdown 格式图片代码）Windows: Alt + Ctrl + V
+
+  "pasteImage.showFilePathConfirmInputBox": true, // 是否显示输入框让用户输入文件路径
+
+  "pasteImage.path": "${projectRoot}/_posts/images/${currentFileNameWithoutExt}", // 图片保存的路径，相对于项目根目录
+
+  "pasteImage.basePath": "${projectRoot}", // 图片url的基本路径，生成链接会去除这一段
+  "pasteImage.forceUnixStyleSeparator": true, // 强制使用 Unix 风格路径分隔符
+
+  // "https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/_posts/images/"
+  "pasteImage.prefix": "https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/" // 图片url的前缀，pasteImage.prefix + imagePath => 完整的图片链接
+}

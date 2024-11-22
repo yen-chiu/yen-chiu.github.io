@@ -1,22 +1,41 @@
+# hidden files
+!.git*
+!.editorconfig
+!.nojekyll
+!.husky
+!.commitlintrc.json
+!.versionrc.json
+!.stylelintrc.json
+!.gems/
+
 # Bundler cache
 .bundle
+# vendor 目录是 Go 语言中用于存放项目依赖包的本地副本的目录。它的主要作用是确保项目在不同环境中构建和运行时使用一致的依赖版本，从而避免由于外部依赖变化导致的问题。
 vendor
-Gemfile.lock
+# Gemfile.lock 文件记录了确切的依赖版本，确保在不同环境中安装相同的依赖版本。
+Gemfile.lock  
 
-# Jekyll cache
+# Jekyll cache，忽略 Jekyll 生成的缓存和站点目录。
 .jekyll-cache
+.jekyll-metadata
 _site
+_app
 
 # RubyGems
 *.gem
 
 # NPM dependencies
+# node_modules 是 Node.js 项目中一个非常重要的目录，它包含了项目运行所需的所有依赖包。通常不建议将 node_modules 目录纳入版本控制系统（如 Git）。相反，你应该在 .gitignore 文件中添加一行来忽略这个目录。这有助于保持代码库的整洁和避免不必要的文件冗余。
 node_modules
-package-lock.json
+# 保留，package-lock.json 文件是 npm（Node Package Manager）用来记录项目中所有依赖包的确切版本信息和来源的文件。这个文件确保了在不同环境中安装依赖时，能够使用一致的版本，从而避免因为不同版本的依赖导致的问题。
+!package-lock.json
 
 # IDE configurations
 .idea
-.vscode
 
-# Misc
-assets/js/dist
+# 保留
+!.vscode/*   
+# .vscode/* 的子文件
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/*.md
