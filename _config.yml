@@ -53,7 +53,7 @@ webmaster_verifications:
   bing: # 填入你的 Bing 认证代码
   alexa: # 填入你的 Alexa 认证代码
   yandex: # 填入你的 Yandex 认证代码
-  baidu: # 填入你的百度认证代码
+  baidu: codeva-lXlmT2VRb0 # 填入你的百度认证代码
   facebook: # 填入你的 Facebook 认证代码
 
 # ↑ --------------------------
