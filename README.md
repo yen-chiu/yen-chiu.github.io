@@ -5,6 +5,9 @@
 <!-- ![dino](assets\img\readme\dino.gif) -->
 
 我是 Wendell，一名业余编程爱好者，这是我的[个人平台](https://XiaoWendell.github.io/)。
+''' 
+一代 Blog 见[这里](https://github.com/XiaoWendell/OldBlog/releases/tag/v1.0.1)
+'''
 
 ## 🔧 技术 & 工具
 
