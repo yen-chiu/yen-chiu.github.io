@@ -1,5 +1,5 @@
 // 工作区建议安装的扩展列表
-// 详细文档：https://code.visualstudio.com/docs/editor/extension-gallery#_workspace-recommended-extensions
+// 详细文档: https://code.visualstudio.com/docs/editor/extension-gallery#_workspace-recommended-extensions
 // 值对应插件的标识符
 {
   "recommendations": [

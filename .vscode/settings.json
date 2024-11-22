@@ -14,7 +14,7 @@
   // 若只想在当前文件夹下的.md文件中对Paste Image进行相关设置，
   // 可以在当前目录下的.vscode文件夹内创建settings.json文件，
   // 局部设置的优先级高于全局设置。
-  // 粘贴图片快捷键（粘贴 Markdown 格式图片代码）Windows：Alt + Ctrl + V
+  // 粘贴图片快捷键（粘贴 Markdown 格式图片代码）Windows: Alt + Ctrl + V
 
   "pasteImage.showFilePathConfirmInputBox": true, // 是否显示输入框让用户输入文件路径
 

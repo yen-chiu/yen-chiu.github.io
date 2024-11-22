@@ -6,14 +6,14 @@
 
 ![粘贴图片](https://raw.githubusercontent.com/mushanshitiancai/vscode-paste-image/master/res/vscode-paste-image.gif)
 
-现在可以启用 `pasteImage.showFilePathConfirmInputBox` 来在保存前修改文件路径：
+现在可以启用 `pasteImage.showFilePathConfirmInputBox` 来在保存前修改文件路径:
 [confirm-inputbox](https://raw.githubusercontent.com/mushanshitiancai/vscode-paste-image/master/res/confirm-inputbox.png)
 
 ## 使用方法
 
 1. 截取屏幕到剪贴板
-2. 打开命令调板： `Ctrl+Shift+P` (Mac 上为 `Cmd+Shift+P`)
-3. 输入 “粘贴图像 "或使用默认键盘绑定： `Ctrl+Alt+V` （Mac 上为 `Cmd+Alt+V`）。
+2. 打开命令调板: `Ctrl+Shift+P` (Mac 上为 `Cmd+Shift+P`)
+3. 输入 “粘贴图像 "或使用默认键盘绑定: `Ctrl+Alt+V` （Mac 上为 `Cmd+Alt+V`）。
 4. 图像将保存在包含当前编辑文件的文件夹中
 5. 相对路径将粘贴到当前编辑文件
 
@@ -25,27 +25,27 @@
 
   您还可以使用变量
 
-  - `${currentFileName}`：当前文件名，带扩展名。
-  - `${currentFileNameWithoutExt}`：当前文件名，不带扩展名。
+  - `${currentFileName}`: 当前文件名，带扩展名。
+  - `${currentFileNameWithoutExt}`: 当前文件名，不带扩展名。
     默认值为 `Y-MM-DD-HH-mm-ss`。
 
 - 图片粘贴路径
   保存图像文件的路径。
-  可以使用变量：
-  - `${currentFileDir}`：包含当前编辑文件的目录路径。
-  - `${projectRoot}`： 在 vscode 中打开的项目路径。
-  - `${currentFileName}`：当前文件名，带扩展名。
-  - `${currentFileNameWithoutExt}`：当前文件名，不含扩展名。
+  可以使用变量:
+  - `${currentFileDir}`: 包含当前编辑文件的目录路径。
+  - `${projectRoot}`: 在 vscode 中打开的项目路径。
+  - `${currentFileName}`: 当前文件名，带扩展名。
+  - `${currentFileNameWithoutExt}`: 当前文件名，不含扩展名。
     默认值为 `${currentFileDir}`。
 - `pasteImage.basePath`（粘贴图片的基本路径
   图片 url 的基本路径。
   可以使用变量
-  - `${currentFileDir}`：当前编辑文件所在目录的路径。
-  - `${projectRoot}`：在 vscode 中打开的项目路径。
-  - `${currentFileName}`：当前文件名，带扩展名。
-  - `${currentFileNameWithoutExt}`：当前文件名，不含扩展名。
+  - `${currentFileDir}`: 当前编辑文件所在目录的路径。
+  - `${projectRoot}`: 在 vscode 中打开的项目路径。
+  - `${currentFileName}`: 当前文件名，带扩展名。
+  - `${currentFileNameWithoutExt}`: 当前文件名，不含扩展名。
     默认值为 `${currentFileDir}`。
-- `pasteImage.forceUnixStyleSeparator`：强制设置文件分隔符样式为 “取消”。
+- `pasteImage.forceUnixStyleSeparator`: 强制设置文件分隔符样式为 “取消”。
   强制设置文件分隔符为 unix 风格。如果设置为 false，分隔符样式将沿用系统样式。
   默认为 `true`。
 - `pasteImage.prefix`前缀
@@ -55,34 +55,34 @@
   粘贴前添加到已解析图像路径的字符串。
   默认为`“”`。
 - `pasteImage.encodePath` 在粘贴前对已解析的图像路径进行编码的字符串。
-  插入编辑器前对图片路径的编码方式。支持选项：
-  - `none`：什么也不做，只插入图像路径到文本中
-  - `urlEncode`：对整个图像路径进行 url 编码
-  - `urlEncodeSpace`：url 只编码空格字符（空格至 %20）
+  插入编辑器前对图片路径的编码方式。支持选项:
+  - `none`: 什么也不做，只插入图像路径到文本中
+  - `urlEncode`: 对整个图像路径进行 url 编码
+  - `urlEncodeSpace`: url 只编码空格字符（空格至 %20）
     默认为 `urlEncodeSpace`.
 - `pasteImage.namePrefix`名称前缀
   图像文件名的前缀字符串。
   可以使用变量
 
-  - `${currentFileDir}`：包含当前编辑文件的目录路径。
-  - `${projectRoot}`：在 vscode 中打开的项目路径。
-  - `${currentFileName}`：当前文件名，带扩展名。
-  - `${currentFileNameWithoutExt}`：当前文件名，不含扩展名。
+  - `${currentFileDir}`: 包含当前编辑文件的目录路径。
+  - `${projectRoot}`: 在 vscode 中打开的项目路径。
+  - `${currentFileName}`: 当前文件名，带扩展名。
+  - `${currentFileNameWithoutExt}`: 当前文件名，不含扩展名。
     默认为 `“”`。
 
 - `pasteImage.nameSuffix`
 
 附加到图像名称的字符串。
 
-您可以使用变量：
+您可以使用变量:
 
-- `${currentFileDir}`：包含当前编辑文件的目录的路径。
+- `${currentFileDir}`: 包含当前编辑文件的目录的路径。
 
-- `${projectRoot}`：在 vscode 中打开的项目的路径。
+- `${projectRoot}`: 在 vscode 中打开的项目的路径。
 
-- `${currentFileName}`：带扩展名的当前文件名。
+- `${currentFileName}`: 带扩展名的当前文件名。
 
-- `${currentFileNameWithoutExt}`：不带扩展名的当前文件名。
+- `${currentFileNameWithoutExt}`: 不带扩展名的当前文件名。
 
 默认值为 `""`。
 
@@ -94,16 +94,16 @@
 
 例如，`![${imageFileNameWithoutExt}](${imageFilePath})` 将添加文件名作为替代文本，而不是默认值（空白）。
 
-您可以使用以下变量：
+您可以使用以下变量:
 
-- `${imageFilePath}`：图片文件路径，带有 `pasteImage.prefix`、`pasteImage.suffix` 和 url 编码。
-- `${imageOriginalFilePath}`：图片文件路径。
-- `${imageFileName}`：带扩展名的图片文件名。
-- `${imageFileNameWithoutExt}`：不带扩展名的图片文件名。
-- `${currentFileDir}`：包含当前编辑文件的目录路径。
-- `${projectRoot}`：在 vscode 中打开的项目路径。
-- `${currentFileName}`：带扩展名的当前文件名。
-- `${currentFileNameWithoutExt}`：不带扩展名的当前文件名。
+- `${imageFilePath}`: 图片文件路径，带有 `pasteImage.prefix`、`pasteImage.suffix` 和 url 编码。
+- `${imageOriginalFilePath}`: 图片文件路径。
+- `${imageFileName}`: 带扩展名的图片文件名。
+- `${imageFileNameWithoutExt}`: 不带扩展名的图片文件名。
+- `${currentFileDir}`: 包含当前编辑文件的目录路径。
+- `${projectRoot}`: 在 vscode 中打开的项目路径。
+- `${currentFileName}`: 带扩展名的当前文件名。
+- `${currentFileNameWithoutExt}`: 不带扩展名的当前文件名。
 - `${imageSyntaxPrefix}`: 在 markdown 文件中为 <code>![](</code>，在 asciidoc 文件中为 <code>image::</code>，在其他文件中为空字符串
 - `${imageSyntaxSuffix}`: 在 markdown 文件中为 <code>)</code>，在 asciidoc 文件中为 <code>[]</code>，在其他文件中为空字符串
 
@@ -120,14 +120,14 @@
 
 ## 配置示例
 
-我使用 vscode 编辑我的 hexo 博客。文件夹结构如下：
+我使用 vscode 编辑我的 hexo 博客。文件夹结构如下:
 
 ```
 blog/source/_posts (文章)
 blog/source/img (图片)
 ```
 
-我想将所有图片保存在 `blog/source/img` 中，并将图片网址插入文章。而 hexo 会生成 `blog/source/` 作为网站根目录，因此图片网址应该是 `/img/xxx.png`。因此，我可以像这样在`blog/.vscode/setting.json`中配置 pasteImage：
+我想将所有图片保存在 `blog/source/img` 中，并将图片网址插入文章。而 hexo 会生成 `blog/source/` 作为网站根目录，因此图片网址应该是 `/img/xxx.png`。因此，我可以像这样在`blog/.vscode/setting.json`中配置 pasteImage:
 
 ```
 "pasteImage.path": "${projectRoot}/source/img",
@@ -136,7 +136,7 @@ blog/source/img (图片)
 "pasteImage.prefix": "/"
 ```
 
-如果您想将图像保存在单独的目录中：
+如果您想将图像保存在单独的目录中:
 
 ```
 "pasteImage.path": "${projectRoot}/source/img/${currentFileNameWithoutExt}",
@@ -145,7 +145,7 @@ blog/source/img (图片)
 "pasteImage.prefix": "/"
 ```
 
-如果您想以文章名称作为前缀保存图像：
+如果您想以文章名称作为前缀保存图像:
 
 ```
 "pasteImage.namePrefix": "${currentFileNameWithoutExt}_",
@@ -155,7 +155,7 @@ blog/source/img (图片)
 "pasteImage.prefix": "/"
 ```
 
-如果您想在 markdown 中使用 html：
+如果您想在 markdown 中使用 html:
 
 ```
 "pasteImage.insertPattern": "<img>${imageFileName}</img>"
@@ -171,7 +171,7 @@ blog/source/img (图片)
 
 如果您在编辑器中选择了一些文本，则扩展程序将使用它作为图像文件名。 **选定的文本可以是子路径，如 `subFolder/subFolder2/nameYouWant`。**
 
-如果不是，图像将以以下格式保存：“Y-MM-DD-HH-mm-ss.png”。您可以通过 `pasteImage.defaultName` 配置默认图像文件名。
+如果不是，图像将以以下格式保存: “Y-MM-DD-HH-mm-ss.png”。您可以通过 `pasteImage.defaultName` 配置默认图像文件名。
 
 ### 文件链接格式
 
