@@ -40,6 +40,8 @@
 
         color: var(--heading-color) !important;
         font-size: 1.25rem;
+        display: flex;
+        align-items: center;
       }
 
       %muted {

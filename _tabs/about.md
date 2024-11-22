@@ -1,7 +1,7 @@
 ---
-# the default layout is 'page'
-icon: fas fa-info-circle
-order: 4
+title: 关于
+icon: icon-info
+order: 5
 ---
 
 <div class="zh post-container">
@@ -17,10 +17,24 @@ order: 4
     <p>我的目标是以简洁清晰的语言、实用的建议和深入的分析，为读者提供有价值的信息和观点。我的文章将从不同角度审视问题，引导读者思考并拓宽视野。</p>
 
     <p>谢谢你的光临！如果你喜欢这个博客的内容，记得订阅并分享给你的朋友们。我非常期待听到你们的反馈和建议。</p>
-
-    <a target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=utiIioiLiomKi4uIjfrJzs_U2dnJz5Tf3s_U2dQ" style="text-decoration:none;"><img src="http://rescdn.qqmail.com/zh_CN/htmledition/images/function/qm_open/ico_mailme_01.png" /></a>
-  
-    <p></p>
     
 </div>
 
+<!-- giscus评论系统 -->
+<!-- data-theme:   RStudio Cobalt:"cobalt"、"transparent_dark"  -->
+<script src="https://giscus.app/client.js"
+         data-repo="XiaoWendell/XiaoWendell.github.io"
+         data-repo-id="R_kgDOKhSzCA"
+         data-category="Announcements"  
+         data-category-id="DIC_kwDOKhSzCM4CaNBZ"
+         data-mapping="title"
+         data-strict="0"
+         data-reactions-enabled="1"
+         data-emit-metadata="0"
+         data-input-position="top"
+         data-theme="transparent_dark" 
+         data-lang="zh-CN"
+         data-loading="lazy"
+         crossorigin="anonymous"
+         async>
+ </script>

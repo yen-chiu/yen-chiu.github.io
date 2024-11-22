@@ -1,7 +1,8 @@
 import { basic, initSidebar, initTopbar } from './modules/layouts';
-import { loadImg, imgPopup, initClipboard } from './modules/plugins';
-
 import {
+  loadImg,
+  imgPopup,
+  initClipboard,
   highlightLines,
   runCpp,
   runJavascript,
@@ -9,12 +10,12 @@ import {
   runRust
 } from './modules/plugins';
 
-basic();
-initSidebar();
-initTopbar();
 loadImg();
 imgPopup();
+initSidebar();
+initTopbar();
 initClipboard();
+basic();
 highlightLines();
 runCpp();
 runJavascript();

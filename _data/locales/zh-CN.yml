@@ -1,23 +1,25 @@
-# 网站的布局文本
-# ----- Commons label -----
+# 站点布局文字
+
+# ----- 通用标签 -----
 
 layout:
   post: 文章
   category: 分类
   tag: 标签
 
-# 侧边栏的标签
+# 侧边栏标签页
 tabs:
-# 格式： <filename_without_extension>： < 值 >
+  # 格式: <无尾缀文件名>: <值>
   home: 首页
+  subdomain: 子域
   categories: 分类
   tags: 标签
   archives: 归档
   about: 关于
 
-# 搜索栏和搜索结果中显示的文本
+# 搜索栏和搜索结果显示的文字
 search:
-  hint: 按下 / 激活搜索框
+  hint: 搜索
   cancel: 取消
   no_results: 搜索结果为空
 
@@ -28,7 +30,7 @@ panel:
   toc: 文章内容
 
 copyright:
-  # 显示在帖子底部
+  # 显示在文章底部
   license:
     template: 本文由作者按照 :LICENSE_NAME 进行授权
     name: CC BY 4.0
@@ -40,9 +42,9 @@ copyright:
     除非另有说明，本网站上的博客文章均由作者按照知识共享署名 4.0 国际 (CC BY 4.0) 许可协议进行授权。
 
 meta: 本站采用 :PLATFORM 主题 :THEME
-
+# 404 页面标题, title: "{{ site.data.locales[site.lang].not_found.title }}",手机端这一表达式没有被正确解析，而是直接显示为文本。
 not_found:
-  # statment: 抱歉，我们放错了该 URL，或者它指向了不存在的内容。
+  title: "404:You seemed to be lost..."
   statment: |
     <div class="poem" style="text-align: center;">
       <p>
@@ -51,12 +53,22 @@ not_found:
         然则何故至此<br />
         冤家路窄是你
       </p>
+
+      <p>
+        <br>
+      </p>
+      
       <p>
         筚路蓝缕如你<br />
         今生会否得意<br />
         生前身后名利<br />
         痴儿不悟是你
       </p>
+
+      <p>
+        <br>
+      </p>
+
       <p>
         耗尽百年运气<br />
         今朝邂逅与你<br />
@@ -64,12 +76,15 @@ not_found:
         头也不回是你
       </p>
     </div>
+  head_back: 去往首页
+  or: or
+  previous_page: 回头是岸
 
 notification:
   update_found: 发现新版本的内容。
   update: 更新
 
-# ----- 相关标签的帖子 -----
+# ----- 帖子相关标签 -----
 
 post:
   written_by: 作者
@@ -78,10 +93,8 @@ post:
   words: 字
   pageview_measure: 次浏览
   read_time:
-    unit: min
-    prompt: read
-    # unit: 分钟
-    # prompt: " 预计阅读时间"
+    unit: 分钟
+    prompt: 阅读
   relate_posts: 相关文章
   share: 分享
   button:
@@ -91,21 +104,20 @@ post:
       succeed: 已复制！
     run:
       output: 运行结果
-      wait: 等待运行结果...
-      error_prompt: "运行失败，错误："
+      wait: 等待运行结果……
+      error_prompt: "运行失败，错误: "
     share_link:
       title: 分享链接
       succeed: 链接已复制！
 
-# 日期时间格式。
-# 参见： <http://strftime.net/>, <https://day.js.org/docs/en/display/format>df:
-  
+# 日期格式
+# 参见: <http://strftime.net/>, <https://day.js.org/docs/en/display/format>
 df:
   post:
     strftime: "%Y/%m/%d"
     dayjs: "YYYY/MM/DD"
 
-# 类别页面
+# 分类页面
 categories:
   category_measure: 个分类
   post_measure: 篇文章

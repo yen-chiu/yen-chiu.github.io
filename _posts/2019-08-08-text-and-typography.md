@@ -1,116 +1,132 @@
 ---
 title: Text and Typography
-date: 2023-08-08 11:33:00 +0800
-categories: [Blog, Demo]
-tags: [Typography]
+description: Examples of text, typography, math equations, diagrams, flowcharts, pictures, videos, and more.
+author: cotes
+date: 2019-08-08 11:33:00 +0800
+categories: [Blogging, Demo]
+tags: [typography]
+pin: true
 math: true
 mermaid: true
+image:
+  path: https://chirpy-img.netlify.app/commons/devices-mockup.png
+  lqip: data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA
+  alt: 在多种设备上对 Chirpy 主题进行响应式渲染。
 ---
-
-本篇文章主要展示 Markdown 语法在 [**Chirpy**](https://github.com/cotes2020/jekyll-theme-chirpy/fork )上的呈现，你也可以将其作为写作范例。现在，让我们开始看看文本和排版。
 
 ## Headings
 
-# H1 - heading
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable -->
+# H1 — heading
 {: .mt-4 .mb-0 }
 
-## H2 - heading
+## H2 — heading
 {: data-toc-skip='' .mt-4 .mb-0 }
 
-### H3 - heading
+### H3 — heading
 {: data-toc-skip='' .mt-4 .mb-0 }
 
-#### H4 - heading
+#### H4 — heading
 {: data-toc-skip='' .mt-4 }
+<!-- markdownlint-restore -->
 
-## 段落
+## Paragraph
 
-任何时候的进步都能提升自己，挑战自己的极限。使用机遇是成功的关键。保持乐观，面对任何困难都要坚持不懈。善待他人，才能赢得他人的尊重和支持。应对变化，适应新环境，才能在竞争中立于不败之地。坚持努力，尽管有时会有挫折，但最终会取得成功。热爱生活，珍惜每一个美好的瞬间。相信自己，无论遇到什么困难，都要继续前进。保持谦逊，虚心学习，才能不断进步。每一个微小的努力，都会为未来打下坚实的基础。
+Quisque egestas convallis ipsum, ut sollicitudin risus tincidunt a. Maecenas interdum malesuada egestas. Duis consectetur porta risus, sit amet vulputate urna facilisis ac. Phasellus semper dui non purus ultrices sodales. Aliquam ante lorem, ornare a feugiat ac, finibus nec mauris. Vivamus ut tristique nisi. Sed vel leo vulputate, efficitur risus non, posuere mi. Nullam tincidunt bibendum rutrum. Proin commodo ornare sapien. Vivamus interdum diam sed sapien blandit, sit amet aliquam risus mattis. Nullam arcu turpis, mollis quis laoreet at, placerat id nibh. Suspendisse venenatis eros eros.
 
-### 列表
-### 排序列表
- 
-1. 首先
-2. 其次
-3. 第三次
+## Lists
 
-### 无序列表
-- 章节
-  + 节
-    * 段落
+### Ordered list
 
-### 待办事项列表
-- [ ] 工作
-  + [x] 步骤 1
-  + [x] 步骤 2
-  + [ ] 步骤 3
-#### 说明列表
+1. Firstly
+2. Secondly
+3. Thirdly
 
-太阳
-: 围绕地球运行的恒星
+### Unordered list
 
-月亮
-: 地球的天然卫星，通过太阳的反射光可见
+- Chapter
+  - Section
+    - Paragraph
+
+### ToDo list
+
+- [ ] Job
+  - [x] Step 1
+  - [x] Step 2
+  - [ ] Step 3
+
+### Description list
+
+Sun
+: the star around which the earth orbits
+
+Moon
+: the natural satellite of the earth, visible by reflected light from the sun
 
 ## Block Quote
-> 这一行显示 _block quote_ 。
-## 提示
 
+> This line shows the _block quote_.
 
-> 一个显示 `提示` 类型提示的示例。
+## Prompts
+
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable -->
+> An example showing the `tip` type prompt.
 {: .prompt-tip }
 
-> 一个显示 `信息` 类型提示的示例。
+> An example showing the `info` type prompt.
 {: .prompt-info }
 
-> 一个显示 `警告` 类型提示的示例。
+> An example showing the `warning` type prompt.
 {: .prompt-warning }
 
-> 一个显示 `危险` 类型提示的示例。
+> An example showing the `danger` type prompt.
 {: .prompt-danger }
+<!-- markdownlint-restore -->
 
-## 表格
+## Tables
 
-| 公司                          | 联系人           | 国家   |
-|:-----------------------------|:-----------------|--------:|
-| Alfreds Futterkiste          | Maria Anders     | 德国   |
-| Island Trading               | Helen Bennett    | 英国   |
-| Magazzini Alimentari Riuniti | Giovanni Rovelli | 意大利 |
+| Company                      | Contact          | Country |
+| :--------------------------- | :--------------- | ------: |
+| Alfreds Futterkiste          | Maria Anders     | Germany |
+| Island Trading               | Helen Bennett    |      UK |
+| Magazzini Alimentari Riuniti | Giovanni Rovelli |   Italy |
 
-## 链接
+## Links
 
 <http://127.0.0.1:4000>
 
-## 脚注
+## Footnote
 
-点击将定位到脚注[^footnote]，这里是另一个脚注[^fn-nth-2]。
+Click the hook will locate the footnote[^footnote], and here is another footnote[^fn-nth-2].
 
-## 行内代码
+## Inline code
 
-这是一个 `行内代码` 的例子。
+This is an example of `Inline Code`.
 
-## 文件路径
+## Filepath
 
-这里是 `/path/to/the/file.extend`{: .filepath}。
+Here is the `/path/to/the/file.extend`{: .filepath}.
 
-## 代码块
+## Code blocks
 
-### 通用
+### Common
 
+```text
+This is a common code snippet, without syntax highlight and line number.
 ```
-这是一个通用代码片段，没有语法高亮和行号。
-```
 
-### 特定语言
+### Specific Language
 
 ```bash
 if [ $? -ne 0 ]; then
-  echo "命令未成功执行。";
-  #执行必要操作 / 退出
+  echo "The command was not successful.";
+  #do the needful / exit
 fi;
 ```
 
-### 特定文件名
+### Specific filename
 
 ```sass
 @import
@@ -119,13 +135,20 @@ fi;
 ```
 {: file='_sass/jekyll-theme-chirpy.scss'}
 
-## 数学
+## Mathematics
 
-由 [**MathJax**](https://www.mathjax.org/) 提供支持的数学公式：
+The mathematics powered by [**MathJax**](https://www.mathjax.org/):
 
-$$ \sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6} $$
+$$
+\begin{equation}
+  \sum_{n=1}^\infty 1/n^2 = \frac{\pi^2}{6}
+  \label{eq:series}
+\end{equation}
+$$
 
-当 $a \ne 0$ 时，$ax^2 + bx + c = 0$ 有两个解，它们是
+We can reference the equation as \eqref{eq:series}.
+
+When $a \ne 0$, there are two solutions to $ax^2 + bx + c = 0$ and they are
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
@@ -133,33 +156,45 @@ $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
 ```mermaid
  gantt
-  title  添加 GANTT 图表功能到 mermaid
+  title  Adding GANTT diagram functionality to mermaid
   apple :a, 2017-07-20, 1w
   banana :crit, b, 2017-07-23, 1d
   cherry :active, c, after b a, 1d
 ```
 
-### 图片
-### 默认（带标题）
+## Images
 
-### 左对齐
+### Default (with caption)
 
-### 向左浮动
+![Desktop View](https://chirpy-img.netlify.app/posts/20190808/mockup.png){: width="972" height="589" }
+_Full screen width and center alignment_
 
-展示最大的平衡感。即使是在痛苦中，也要保持坚定。梅西纳的灯塔，犹如半开的窗户，穿透了黑暗。无论是在何种环境下，总能找到出路。坚持自己的信念，才能在充满挑战的世界中立足。无论遇到什么困难，都要勇敢面对。保持谦逊，虚心学习，不断进步。即使是在最艰难的时刻，也要保持乐观。相信自己，未来会更加美好。团结一致，才能克服一切困难。
+### Left aligned
 
-### 漂向右边
+![Desktop View](https://chirpy-img.netlify.app/posts/20190808/mockup.png){: width="972" height="589" .w-75 .normal}
 
-展示最大的平衡感。即使是在痛苦中，也要保持坚定。梅西纳的灯塔，犹如半开的窗户，穿透了黑暗。无论是在何种环境下，总能找到出路。坚持自己的信念，才能在充满挑战的世界中立足。无论遇到什么困难，都要勇敢面对。保持谦逊，虚心学习，不断进步。即使是在最艰难的时刻，也要保持乐观。相信自己，未来会更加美好。团结一致，才能克服一切困难。
+### Float to left
 
-### 暗/亮模式和阴影
-下图将根据主题偏好切换深色/浅色模式，注意它有阴影。
+![Desktop View](https://chirpy-img.netlify.app/posts/20190808/mockup.png){: width="972" height="589" .w-50 .left}
+Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
 
-## 视频
+### Float to right
+
+![Desktop View](https://chirpy-img.netlify.app/posts/20190808/mockup.png){: width="972" height="589" .w-50 .right}
+Praesent maximus aliquam sapien. Sed vel neque in dolor pulvinar auctor. Maecenas pharetra, sem sit amet interdum posuere, tellus lacus eleifend magna, ac lobortis felis ipsum id sapien. Proin ornare rutrum metus, ac convallis diam volutpat sit amet. Phasellus volutpat, elit sit amet tincidunt mollis, felis mi scelerisque mauris, ut facilisis leo magna accumsan sapien. In rutrum vehicula nisl eget tempor. Nullam maximus ullamcorper libero non maximus. Integer ultricies velit id convallis varius. Praesent eu nisl eu urna finibus ultrices id nec ex. Mauris ac mattis quam. Fusce aliquam est nec sapien bibendum, vitae malesuada ligula condimentum.
+
+### Dark/Light mode & Shadow
+
+The image below will toggle dark/light mode based on theme preference, notice it has shadows.
+
+![light mode only](https://chirpy-img.netlify.app/posts/20190808/devtools-light.png){: .light .w-75 .shadow .rounded-10 w='1212' h='668' }
+![dark mode only](https://chirpy-img.netlify.app/posts/20190808/devtools-dark.png){: .dark .w-75 .shadow .rounded-10 w='1212' h='668' }
+
+## Video
 
 {% include embed/youtube.html id='Balreaj8Yqs' %}
 
-## 反向脚注
+## Reverse Footnote
 
-[^footnote]: 脚注源
-[^fn-nth-2]: 第二个脚注源
+[^footnote]: The footnote source
+[^fn-nth-2]: The 2nd footnote source

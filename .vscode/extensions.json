@@ -1,0 +1,28 @@
+// 工作区建议安装的扩展列表
+// 详细文档: https://code.visualstudio.com/docs/editor/extension-gallery#_workspace-recommended-extensions
+// 值对应插件的标识符
+{
+  "recommendations": [
+    "MS-CEINTL.vscode-language-pack-zh-hans", // 中文语言包
+    "GitHub.copilot", // 代码提示
+    "GitHub.copilot-chat", // 代码提示
+
+    "tomoki1207.pdf", // pdf预览
+    "yzane.markdown-pdf", // markdown转pdf
+
+    "bierner.markdown-mermaid", // markdown转流程图
+    "gera2ld.markmap-vscode", // markdown转思维导图
+
+    "kisstkondoros.vscode-gutter-preview", // 预览图片
+    "shd101wyy.markdown-preview-enhanced", // markdown预览增强
+
+    "goessner.mdmath", // markdown数学公式
+
+    "mushan.vscode-paste-image", // 粘贴图片到markdown
+
+    // 配置自动格式化，统一代码规范
+    "yoyo930021.vuter", // Vuter 提供vue代码片段、语法支持、代码高亮等
+    "dbaeumer.vscode-eslint", // ESlint 检查javascript语法检查和代码规范
+    "esbenp.prettier-vscode" // Prettier - Code formatter 各种代码格式化
+  ]
+}

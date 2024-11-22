@@ -1,0 +1,14 @@
+{
+  // 参见 https://go.microsoft.com/fwlink/?LinkId=733558
+  // 有关 tasks.json 格式的文档
+
+  "version": "2.0.0", // 指定 tasks.json 文件的版本
+  "tasks": [
+    // 定义一个任务数组
+    {
+      "label": "echo", // 任务的标签，显示在 VSCode 的任务列表中
+      "type": "shell", // 任务的类型，这里是 shell 表示使用命令行
+      "command": "echo Hello" // 要执行的命令
+    }
+  ]
+}

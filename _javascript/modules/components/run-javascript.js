@@ -9,9 +9,12 @@ const btnSelector = '.code-header button.button-run-javascript';
 const LOCK = 'lock';
 const TIMEOUT = 20000; // in milliseconds
 
+/**
+ * @param {HTMLButtonElement} node 
+ */
 function isLocked(node) {
-  if ($(node)[0].hasAttribute(LOCK)) {
-    let timeout = $(node).attr(LOCK);
+  if (node.hasAttribute(LOCK)) {
+    let timeout = node.getAttribute(LOCK);
     if (Number(timeout) + 5000 > Date.now()) {
       return true;
     }
@@ -19,24 +22,37 @@ function isLocked(node) {
   return false;
 }
 
+/**
+ * @param {HTMLButtonElement} node 
+ */
 function lock(node) {
-  $(node).attr(LOCK, Date.now() + TIMEOUT);
-  $('i', node).removeClass('icon-playfill').addClass('icon-loading1');
+  node.setAttribute(LOCK, Date.now() + TIMEOUT);
+  node.getElementsByTagName('i')[0].classList.replace('icon-playfill', 'icon-loading1');
 }
 
+/**
+ * @param {HTMLButtonElement} node 
+ */
 function unlock(node) {
-  $(node).removeAttr(LOCK);
-  $('i', node).removeClass('icon-loading1').addClass('icon-playfill');
+  node.removeAttribute(LOCK);
+  node.getElementsByTagName('i')[0].classList.replace('icon-loading1', 'icon-playfill');
 }
 
+/**
+ * @param {HTMLButtonElement} btn 
+ * @return {HTMLDetailsElement}
+ */
 function getOutputFrame(btn) {
+  /**
+   * @type {HTMLDetailsElement}
+   */
   let outputFrame = btn.parentNode.parentNode.nextElementSibling;
   if (outputFrame == undefined || !(outputFrame.tagName == 'DETAILS' && outputFrame.className == 'run-output')) {
     let referElement = outputFrame;
     outputFrame = document.createElement('details');
     outputFrame.className = 'run-output';
     let summary = document.createElement('summary');
-    summary.textContent = btn.attributes['output-title'].value;
+    summary.textContent = btn.getAttribute('output-title');
     outputFrame.appendChild(summary);
     if (referElement == undefined) {
       btn.parentNode.parentNode.parentNode.appendChild(outputFrame);
@@ -45,7 +61,7 @@ function getOutputFrame(btn) {
     }
   }
 
-  $(outputFrame).attr('open', 'open');
+  outputFrame.setAttribute('open', 'open');
   return outputFrame;
 }
 
@@ -55,36 +71,44 @@ function log() {
 }
 
 export function runJavascript() {
-  $(btnSelector).click(function (e) {
-    if (isLocked($(this))) {
-      return;
-    }
+  /**
+   * @type {NodeListOf<HTMLButtonElement>}
+   */
+  let buttons = document.querySelectorAll(btnSelector);
+  [...buttons].forEach((btn) => {
+    btn.onclick = () => {
+      if (isLocked(btn)) {
+        return;
+      }
 
-    lock($(this));
-    let outputFrame = getOutputFrame(this);
-    $('p', $(outputFrame)).remove();
-    let p = document.createElement('p');
-    p.innerText = this.attributes['wait-message'].value;
-    outputFrame.appendChild(p);
-    const codeBlock = this.parentNode.nextElementSibling;
-    const preBlock = $(codeBlock).find('pre');
-    let text;
-    if (preBlock.length == 2) {
-      text = preBlock.get(1).innerText;
-    } else if (preBlock.length == 1) {
-      text = preBlock.get(0).innerText;
-    } else {
-      unlock($(this));
-      return;
+      lock(btn);
+      let outputFrame = getOutputFrame(btn);
+      for (let p of outputFrame.getElementsByTagName('p')) {
+        outputFrame.removeChild(p)
+      }
+      let p = document.createElement('p');
+      p.innerText = btn.getAttribute('wait-message');
+      outputFrame.appendChild(p);
+      let codeBlock = btn.parentNode.nextElementSibling;
+      let preBlock = codeBlock.getElementsByTagName('pre');
+      let text;
+      if (preBlock.length == 2) {
+        text = preBlock[1].innerText;
+      } else if (preBlock.length == 1) {
+        text = preBlock[0].innerText;
+      } else {
+        unlock(btn);
+        return;
+      }
+      let F = new Function(text);
+      if (console.log != log) {
+        console.stdlog = console.log.bind(console);
+        console.log = log;
+      }
+      console.logs = [];
+      F();
+      p.innerText = console.logs.join('\n');
+      unlock(btn);
     }
-    var F = new Function(text);
-    if (console.log != log) {
-      console.stdlog = console.log.bind(console);
-      console.log = log;
-    }
-    console.logs = [];
-    F();
-    p.innerText = console.logs.join('\n');
-    unlock($(this));
   })
 }
