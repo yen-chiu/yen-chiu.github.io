@@ -6,7 +6,8 @@ permalink: /robots.txt
 User-agent: *
 
 Disallow: /norobots/
-Disallow: /assets/lib/*.html
+Disallow: /assets
 Disallow: /_posts
+Disallow: https://wendell.website/posts/
 
 Sitemap: {{ '/sitemap.xml' | absolute_url }}
