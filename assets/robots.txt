@@ -5,9 +5,23 @@ permalink: /robots.txt
 
 User-agent: *
 
-Disallow: /norobots/
-Disallow: /assets
-Disallow: /_posts
-Disallow: https://wendell.website/posts/
+# Disallow certain paths
+Disallow: /assets/           # 阻止访问静态文件
+Disallow: /_posts/            # 阻止访问博客文章目录
+Disallow: /private/          # 添加可能的私密目录（如果有）
+Disallow: /search            # 如果网站有搜索功能，可以禁止访问搜索结果
 
+# Disallow Googlebot-Image from crawling images
+User-agent: Googlebot-Image
+Disallow: /assets/img/    # 不允许爬虫访问图片目录
+
+# Allow all crawlers to index the main content
+Allow: /                      # 允许爬虫访问主页和其他页面
+
+# Noindex certain pages if necessary (you can add more as needed)
+# User-agent: *
+# Disallow: /contact-us         # 阻止爬虫访问联系页面
+# Disallow: /login              # 阻止爬虫访问登录页面
+
+# Sitemap location
 Sitemap: {{ '/sitemap.xml' | absolute_url }}
