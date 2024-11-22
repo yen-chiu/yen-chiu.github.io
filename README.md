@@ -58,9 +58,9 @@
 [2]: https://github.com/XiaoWendell
 
 <!-- 资源 -->
-<!-- 图标：https://simpleicons.org/ -->
-<!-- GitHub 统计信息：https://github.com/anuraghazra/github-readme-stats -->
-<!-- Emoji：https://emojipedia.org/emoji/ -->
-<!-- HTML Emoji：https://www.fileformat.info/index.htm -->
-<!-- Shields：https://shields.io/ -->
-<!-- 优秀的 GitHub 个人资料 README：https://github.com/abhisheknaiidu/awesome-github-profile-readme -->
+<!-- 图标:  https://simpleicons.org/ -->
+<!-- GitHub 统计信息: https://github.com/anuraghazra/github-readme-stats -->
+<!-- Emoji: https://emojipedia.org/emoji/ -->
+<!-- HTML Emoji: https://www.fileformat.info/index.htm -->
+<!-- Shields: https://shields.io/ -->
+<!-- 优秀的 GitHub 个人资料 README: https://github.com/abhisheknaiidu/awesome-github-profile-readme -->

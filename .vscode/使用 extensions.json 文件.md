@@ -6,7 +6,7 @@
 
 ## 文件结构
 
-一个典型的 `extensions.json` 文件包含以下字段：
+一个典型的 `extensions.json` 文件包含以下字段:
 
 - `recommendations`: 推荐的扩展列表。
 - `unwantedRecommendations`: 不希望推荐的扩展列表。
@@ -38,7 +38,7 @@
 
 ### 2. 添加推荐扩展
 
-在 `recommendations` 数组中添加你想要推荐的扩展 ID。例如：
+在 `recommendations` 数组中添加你想要推荐的扩展 ID。例如:
 
 ```json
 "recommendations": [
@@ -50,7 +50,7 @@
 
 ### 3. 添加不希望推荐的扩展
 
-在 `unwantedRecommendations` 数组中添加你不希望推荐的扩展 ID。例如：
+在 `unwantedRecommendations` 数组中添加你不希望推荐的扩展 ID。例如:
 
 ```json
 "unwantedRecommendations": [
@@ -60,7 +60,7 @@
 
 ### 4. 配置扩展市场（可选）
 
-如果你需要自定义扩展市场的 URL，可以在 `extensionsGallery` 对象中进行配置。例如：
+如果你需要自定义扩展市场的 URL，可以在 `extensionsGallery` 对象中进行配置。例如:
 
 ```json
 "extensionsGallery": {
