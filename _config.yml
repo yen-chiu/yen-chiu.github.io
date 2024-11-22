@@ -49,7 +49,8 @@ social:
 
 # 网站认证设置
 webmaster_verifications:
-  google: tOhFZ67UnZRE_FGU_dxUcTRgszHNhdbUBSLIQiJZl1w # 填入你的 Google 认证代码
+  # google: tOhFZ67UnZRE_FGU_dxUcTRgszHNhdbUBSLIQiJZl1w # 填入你的 Google 认证代码(.io)
+  google: A0Lo5Cv2sqUrAcAEttc-LppAvaYjSXqLKazpHEl3eAA # 填入你的 Google 认证代码
   bing: # 填入你的 Bing 认证代码
   alexa: # 填入你的 Alexa 认证代码
   yandex: # 填入你的 Yandex 认证代码
