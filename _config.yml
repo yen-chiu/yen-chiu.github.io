@@ -1,7 +1,9 @@
-# 网站设置
-
 # 导入主题
 theme: jekyll-theme-chirpy
+
+# 插件设置
+# plugins:
+#   - jekyll-last-modified-at
 
 # 站点的语言 › https://www.w3.org/International/questions/qa-choosing-language-tags
 # 如果在文件夹 `_data/locales` 下存在同名文件，则布局语言也会改变，
