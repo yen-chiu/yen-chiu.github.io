@@ -33,6 +33,7 @@ tail_includes:
       </span>
       {% endif %}
 
+      <!-- 预览图 -->
       {% if page.image %}
       {% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
       {% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
@@ -51,7 +52,7 @@ tail_includes:
       {% endif %}
 
       <div class="d-flex justify-content-between">
-        <!-- author(s) -->
+        <!-- author(s)，显示作者（page.author 或 page.authors），并根据 site.data.authors 提供的配置自动生成链接 -->
         <span>
           {% if page.author %}
           {% assign authors = page.author %}
@@ -78,7 +79,7 @@ tail_includes:
         </span>
 
         <div>
-          <!-- pageviews -->
+          <!-- pageviews,页面浏览量 -->
           {% if site.pageviews.provider and site.analytics[site.pageviews.provider].id %}
           <span>
             <em id="pageviews">
