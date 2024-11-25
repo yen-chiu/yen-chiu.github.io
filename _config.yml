@@ -67,7 +67,7 @@ analytics:
   google:
     id: G-0JYNN6DS4J # 填入你的 Google Analytics ID
   goatcounter:
-    id: # 填入你的 GoatCounter ID
+    id: wendell # 填入你的 GoatCounter ID
   umami:
     id: # 填入你的 Umami ID
     domain: # 填入你的 Umami 域名
