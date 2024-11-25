@@ -33,15 +33,6 @@ tail_includes:
       </span>
       {% endif %}
 
-      <!-- 这行代码会动态获取当前文章文件的最后修改时间。file_modified_time 是一个 Liquid 过滤器，可以直接从文件的元信息中提取修改时间。 -->
-      <!-- {% assign file_modified_at = page.path | file_modified_time %}
-      {% if file_modified_at and file_modified_at != page.date %}
-      <span>
-        {{ site.data.locales[lang].post.updated }}
-        {% include datetime.html date=file_modified_at tooltip=true lang=lang %}
-      </span>
-      {% endif %} -->
-
       <!-- 预览图 -->
       {% if page.image %}
       {% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
