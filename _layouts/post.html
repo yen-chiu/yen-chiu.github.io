@@ -26,14 +26,12 @@ tail_includes:
       </span>
 
       <!-- lastmod date; 最后修改日期 -->
-      {% assign file_modified_at = page.path | file_modified_time %}
-      {% if file_modified_at != page.date %}
+      {% if page.last_modified_at and page.last_modified_at != page.date %}
       <span>
         {{ site.data.locales[lang].post.updated }}
-        {% include datetime.html date=file_modified_at tooltip=true lang=lang %}
+        {% include datetime.html date=page.last_modified_at tooltip=true lang=lang %}
       </span>
       {% endif %}
-
 
       <!-- 预览图 -->
       {% if page.image %}
