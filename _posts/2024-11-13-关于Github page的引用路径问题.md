@@ -34,7 +34,7 @@ tags: [Bug]
 5. 使用 GitHub 仓库中的图片链接
 
 - 将图片上传到 GitHub 仓库的某个文件夹中，并获取该图片的链接地址。然后，在博客文章中使用以下代码引用该图片: `![图片描述](https://raw.githubusercontent.com/用户名/仓库名/分支名/文件夹名/图片文件名.jpg)`。
-<!-- ![](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/_posts/images/维纳斯.jpg "维纳斯") -->
+<!-- ![](https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/_posts/images/维纳斯.jpg "维纳斯") -->
 
 6. 使用第三方图床服务
 
@@ -49,7 +49,7 @@ tags: [Bug]
 如果仅希望提供一个视频下载或打开链接，可以直接在 Markdown 中这样写:
 
 ```markdown
-[视频下载](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")
+[视频下载](https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")
 ```
 
 这种方式会在用户点击链接时打开或下载视频文件。
@@ -65,7 +65,7 @@ tags: [Bug]
 ```html
 <video width="1024" height="576" controls>
   <source
-    src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4"
+    src="https://raw.githubusercontent.com/yen-chiu/yen-chiuthub.io/master/files/2023/Wendell_理论微课.mp4"
     type="video/mp4"
   />
 </video>
@@ -81,10 +81,10 @@ tags: [Bug]
 
 <!-- [视频点击这里]({{site.baseurl}}/files/2023/Wendell_理论微课.mp4) -->
 
-<!-- [视频下载](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")  -->
+<!-- [视频下载](https://raw.githubusercontent.com/yen-chiuaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")  -->
 
 <!-- ```html
 <video width="1024" height="576" controls>
-  <source src="https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/files/2023/Wendell_理论微课.mp4" type="video/mp4">
 </video>
 ``` -->
