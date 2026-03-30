@@ -23,6 +23,6 @@
   "pasteImage.basePath": "${projectRoot}", // 图片url的基本路径，生成链接会去除这一段
   "pasteImage.forceUnixStyleSeparator": true, // 强制使用 Unix 风格路径分隔符
 
-  // "https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/_posts/images/"
-  "pasteImage.prefix": "https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/" // 图片url的前缀，pasteImage.prefix + imagePath => 完整的图片链接
+  // "https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/_posts/images/"
+  "pasteImage.prefix": "https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/" // 图片url的前缀，pasteImage.prefix + imagePath => 完整的图片链接
 }

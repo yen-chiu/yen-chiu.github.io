@@ -74,7 +74,7 @@
 
 保存 `extensions.json` 文件后，VSCode 会自动读取和应用这些配置。你可以在 VSCode 的扩展视图中查看和管理这些扩展。
 
-![](https://raw.githubusercontent.com/XiaoWendell/XiaoWendell.github.io/master/_posts/images/使用%20extensions.json%20文件/2024-11-21-11-04-04.png)
+![](https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/_posts/images/使用%20extensions.json%20文件/2024-11-21-11-04-04.png)
 
 ```
 团队其他成员拉代码后, 打开vscode, 依次点击1,2,3, 会自动输入@recommended,
