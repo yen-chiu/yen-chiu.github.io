@@ -39,3 +39,7 @@ node_modules
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/*.md
+
+# SSL 证书与私钥（私钥绝不可提交到版本库，证书随部署流程管理）
+yenchiu.com.key
+yenchiu.com.pem
