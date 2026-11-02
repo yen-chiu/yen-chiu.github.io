@@ -47,6 +47,12 @@
     {{ site.data.locales[include.lang].meta | replace: ':PLATFORM', _platform | replace: ':THEME', _theme }}
   </p>
 
+  <p class="wx-foot-links">
+    <a href="{{ '/admin/' | relative_url }}" rel="nofollow">写作台</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+  </p>
+
 <!-- 站点运行时长（渲染脚本见 _includes/ui-enhance.html） -->
 <p class="wx-uptime">
   <span class="wx-uptime-dot" aria-hidden="true"></span>

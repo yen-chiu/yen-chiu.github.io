@@ -71,6 +71,18 @@ footer {
     letter-spacing: 0.02em;
   }
 
+  .wx-foot-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+
+    span {
+      opacity: 0.45;
+    }
+  }
+
   .wx-uptime-dot {
     width: 6px;
     height: 6px;
