@@ -588,6 +588,13 @@
       .catch(function (err) {
         if (err.status === 409) {
           toast('保存冲突：远端文件已被修改。请点「重载」后再改。', true, 8000);
+        } else if (err.status === 403) {
+          toast(
+            '权限不足（403）：令牌需要本仓库的 <b>Contents: Read and write</b>，当前可能只有 Read-only。<br>' +
+              '到 GitHub → Settings → Developer settings → Fine-grained tokens 修改后重新连接。',
+            true,
+            12000
+          );
         } else {
           toast('保存失败：' + escapeHtml(err.message), true, 8000);
         }
@@ -799,7 +806,15 @@
       })
       .catch(function (err) {
         status('上传失败：' + err.message);
-        toast('上传失败：' + escapeHtml(err.message), true, 7000);
+        if (err.status === 403) {
+          toast(
+            '权限不足（403）：上传图片同样需要 <b>Contents: Read and write</b>。',
+            true,
+            10000
+          );
+        } else {
+          toast('上传失败：' + escapeHtml(err.message), true, 7000);
+        }
       });
   }
 
