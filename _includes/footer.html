@@ -47,9 +47,10 @@
     {{ site.data.locales[include.lang].meta | replace: ':PLATFORM', _platform | replace: ':THEME', _theme }}
   </p>
 
-<!--Wendell添加的time，另一部分在head.html-->
-<center>
-  <span id="runtime_span"></span>
-</center>
+<!-- 站点运行时长（渲染脚本见 _includes/ui-enhance.html） -->
+<p class="wx-uptime">
+  <span class="wx-uptime-dot" aria-hidden="true"></span>
+  <span id="runtime_span" data-since="{{ site.uptime_since | default: '2023-05-20T13:14:00+08:00' }}"></span>
+</p>
 
 </footer>

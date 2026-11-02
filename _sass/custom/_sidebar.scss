@@ -1,0 +1,157 @@
+/* ==========================================================================
+   侧边栏：头像光环、渐变标题、导航微交互
+   ========================================================================== */
+
+#sidebar {
+  border-right: 1px solid var(--main-border-color);
+
+  .profile-wrapper {
+    padding-top: 0.5rem;
+
+    #avatar {
+      position: relative;
+      display: inline-block;
+      border-radius: 50%;
+      isolation: isolate;
+    }
+
+    /* 旋转的渐变光环 */
+    #avatar::before {
+      position: absolute;
+      z-index: -1;
+      inset: -5px;
+      border-radius: 50%;
+      content: '';
+      background: conic-gradient(
+        from 0deg,
+        var(--wx-accent),
+        var(--wx-accent-2),
+        var(--wx-accent-3),
+        var(--wx-accent)
+      );
+      opacity: 0.55;
+      filter: blur(1px);
+      transition: opacity var(--wx-dur) var(--wx-ease);
+      animation: wx-ring-spin 9s linear infinite;
+    }
+
+    #avatar::after {
+      position: absolute;
+      z-index: -1;
+      inset: -14px;
+      border-radius: 50%;
+      content: '';
+      background: radial-gradient(circle, var(--wx-glow) 0%, transparent 72%);
+      opacity: 0.7;
+    }
+
+    #avatar:hover::before {
+      opacity: 1;
+    }
+
+    #avatar img {
+      display: block;
+      width: 6.5rem;
+      height: 6.5rem;
+      border: 3px solid var(--sidebar-bg);
+      border-radius: 50%;
+      background-color: var(--sidebar-bg);
+      object-fit: cover;
+      transition: transform var(--wx-dur) var(--wx-ease);
+    }
+
+    #avatar:hover img {
+      transform: scale(1.04) rotate(-1.5deg);
+    }
+
+    .site-title {
+      margin-top: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+
+      a {
+        background: var(--wx-gradient);
+        background-size: 220% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: wx-gradient-move 12s linear infinite alternate;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+
+    .site-subtitle {
+      color: var(--site-subtitle-color);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  .nav {
+    gap: 0.15rem;
+    padding-top: 0.35rem;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    position: relative;
+    border-radius: 12px;
+    padding: 0.55rem 0.85rem;
+    color: var(--sidebar-muted-color);
+    transition: color var(--wx-dur) var(--wx-ease),
+      background-color var(--wx-dur) var(--wx-ease), transform var(--wx-dur) var(--wx-ease);
+
+    i[class^='iconfont'] {
+      transition: transform var(--wx-dur) var(--wx-ease), color var(--wx-dur) var(--wx-ease);
+    }
+
+    &:hover {
+      color: var(--wx-accent);
+      background: var(--wx-gradient-soft);
+      transform: translateX(3px);
+      text-decoration: none;
+
+      i[class^='iconfont'] {
+        transform: scale(1.12) rotate(-4deg);
+      }
+    }
+
+    &.active {
+      color: var(--sidebar-active-color);
+      background: var(--wx-gradient-soft);
+      font-weight: 600;
+
+      &::before {
+        position: absolute;
+        top: 22%;
+        bottom: 22%;
+        left: 0.15rem;
+        width: 3px;
+        border-radius: 3px;
+        content: '';
+        background: var(--wx-gradient);
+      }
+    }
+  }
+}
+
+@keyframes wx-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 移动端：抽屉里的侧边栏稍微收一点内边距 */
+@media (max-width: 991.98px) {
+  #sidebar {
+    .profile-wrapper #avatar img {
+      width: 5.5rem;
+      height: 5.5rem;
+    }
+  }
+}

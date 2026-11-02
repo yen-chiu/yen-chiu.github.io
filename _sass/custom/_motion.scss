@@ -1,0 +1,178 @@
+/* ==========================================================================
+   动效层：极光背景、入场动画、阅读进度条、焦点环、降级处理
+   ========================================================================== */
+
+/* ---------- 极光背景 ---------- */
+
+/* 放在 #main-wrapper 的固定伪元素里，避免影响正文对比度与可点击区域 */
+#main-wrapper::before {
+  position: fixed;
+  z-index: -1;
+  inset: -30vh -20vw;
+  content: '';
+  pointer-events: none;
+  background:
+    radial-gradient(38% 34% at 16% 10%, var(--wx-aurora-1) 0%, transparent 68%),
+    radial-gradient(32% 30% at 84% 6%, var(--wx-aurora-2) 0%, transparent 66%),
+    radial-gradient(42% 38% at 76% 92%, var(--wx-aurora-3) 0%, transparent 70%);
+  filter: blur(8px);
+  animation: wx-aurora-drift 28s ease-in-out infinite alternate;
+}
+
+@keyframes wx-aurora-drift {
+  0% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.04);
+  }
+
+  100% {
+    transform: translate3d(-0.5%, 2%, 0) scale(1.02);
+  }
+}
+
+/* ---------- 入场动画 ---------- */
+
+@keyframes wx-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wx-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wx-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes wx-gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+#main-wrapper > .container {
+  animation: wx-fade var(--wx-dur-slow) var(--wx-ease) both;
+}
+
+#panel-wrapper .access > * {
+  animation: wx-fade-up var(--wx-dur-slow) var(--wx-ease) both;
+  animation-delay: 0.12s;
+}
+
+#panel-wrapper .access > *:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+#panel-wrapper .access > *:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+/* ---------- 阅读进度条（文章页） ---------- */
+
+#wx-progress {
+  position: fixed;
+  z-index: 1080;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#wx-progress.is-active {
+  opacity: 1;
+}
+
+#wx-progress > span {
+  display: block;
+  width: var(--wx-progress, 0%);
+  height: 100%;
+  background: var(--wx-gradient);
+  background-size: 200% 100%;
+  box-shadow: 0 0 12px var(--wx-glow);
+  transition: width 0.12s linear;
+}
+
+/* ---------- 焦点可见性与可访问性 ---------- */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--wx-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* 跳到正文（给键盘与读屏用户） */
+.wx-skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 1200;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 10px 10px;
+  background: var(--wx-accent);
+  color: #fff;
+  font-size: 0.9rem;
+  transition: top 0.2s ease;
+}
+
+.wx-skip-link:focus {
+  top: 0;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ---------- 尊重系统「减少动态效果」 ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  #main-wrapper::before,
+  #main-wrapper > .container,
+  #panel-wrapper .access > *,
+  #post-list .card-wrapper,
+  #sidebar .profile-wrapper > * {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

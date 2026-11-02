@@ -40,6 +40,21 @@ refactor: true
   {% endfor %}
 {% endif %}
 
+{% if paginator.page == 1 %}
+  <section class="wx-hero" aria-label="欢迎">
+    <p class="wx-hero-kicker">Welcome</p>
+    <h1>你好，我是 <span class="wx-grad">Wendell</span></h1>
+    <p class="wx-hero-desc">
+      读书，买花，长大。这里记录代码、阅读与生活里那些值得留下的片段。
+    </p>
+    <div class="wx-hero-links">
+      <a href="{{ '/about/' | relative_url }}"><i class="iconfont icon-info"></i><span>关于我</span></a>
+      <a href="{{ '/archives/' | relative_url }}"><i class="iconfont icon-archive"></i><span>全部文章</span></a>
+      <a href="{{ '/feed.xml' | relative_url }}"><i class="iconfont icon-stream"></i><span>订阅 RSS</span></a>
+    </div>
+  </section>
+{% endif %}
+
 <div id="post-list" class="flex-grow-1 px-xl-1">
   {% for post in posts %}
     <article class="card-wrapper card">
@@ -69,7 +84,10 @@ refactor: true
 
         <div class="col-md-{{ card_body_col }}">
           <div class="card-body d-flex flex-column">
-            <h1 class="card-title my-2 mt-md-0">{{ post.title }}</h1>
+            <h1 class="card-title my-2 mt-md-0">
+              {{- post.title -}}
+              <span class="wx-card-arrow" aria-hidden="true">→</span>
+            </h1>
 
             <div class="card-text content mt-0 mb-3">
               <p>{% include post-description.html %}</p>
