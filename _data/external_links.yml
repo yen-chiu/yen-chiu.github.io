@@ -1,10 +1,8 @@
-- icon: https://profile-counter.glitch.me/yen-chiu/count.svg
-  use_iconfont: false
-  name:
-  automatic_name: true
-  link: https://yen-chiu.github.io/
-  width: 150
-  height: 20
+- icon: icon-github
+  use_iconfont: true
+  name: 本站源码
+  automatic_name: false
+  link: https://github.com/yen-chiu/yen-chiu.github.io
 # -
 #   icon: icon-github
 #   icon: wendell_icon-github

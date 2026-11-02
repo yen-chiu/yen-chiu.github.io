@@ -94,7 +94,10 @@ pageviews:
 theme_mode: # [light | dark]
 
 # 启用动画背景特效
-backgroud_animation: true
+background_animation: true
+
+# 页脚「本站已运行」计时起点（可留空则使用默认值）
+uptime_since: "2023-05-20T13:14:00+08:00"
 
 # 启用鼠标点击特效
 mouse_click_effect: true
@@ -111,7 +114,7 @@ avatar: /avatar.png
 
 # SEO `og:image` 元标记中使用的全站社交预览图像的 URL。
 # 可以在帖子的 Front Matter 中使用 `page.image` 覆盖。
-social_preview_image: # 字符串，本地或跨域资源
+social_preview_image: /assets/img/og-default.png # 字符串，本地或跨域资源
 
 # 设置显示右侧边栏的内容
 panel:
@@ -283,6 +286,9 @@ exclude:
   - LICENSE
   - "*.config.js"
   - package*.json
+  # 证书与私钥仅用于部署侧配置，绝不发布到站点
+  - yenchiu.com.key
+  - yenchiu.com.pem
 
 jekyll-archives:
   enabled: [categories, tags]
