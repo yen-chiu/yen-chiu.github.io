@@ -151,4 +151,10 @@ class CursorSpecialEffects {
 }
 
 const cursorSpecialEffects = new CursorSpecialEffects();
-cursorSpecialEffects.init();
+
+// 脚本以 async 方式加载，可能在 <body> 解析完成前执行，需等待 DOM 就绪
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => cursorSpecialEffects.init());
+} else {
+    cursorSpecialEffects.init();
+}

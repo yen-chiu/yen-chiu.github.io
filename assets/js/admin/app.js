@@ -1,0 +1,1139 @@
+/*!
+ * 写作台 —— 在浏览器里直接编辑 / 上传 / 发布博客文章
+ * ---------------------------------------------------------------------------
+ * 纯前端实现：所有请求直连 GitHub REST API，令牌只保存在本机浏览器。
+ * 不依赖构建工具，直接以普通 script 加载。
+ */
+(function () {
+  'use strict';
+
+  var API_DEFAULT = 'https://api.github.com';
+  var LS_KEY = 'wx-admin-config';
+  var DRAFT_PREFIX = 'wx-admin-draft:';
+  var MAX_IMAGE = 1600;
+  var JPEG_QUALITY = 0.86;
+
+  /* ------------------------------------------------------------------ *
+   * 状态
+   * ------------------------------------------------------------------ */
+
+  var state = {
+    token: '',
+    owner: '',
+    repo: '',
+    branch: '',
+    draftMode: false,
+    apiBase: API_DEFAULT,
+    files: [],
+    filter: '',
+    current: null, // { path, sha, isNew }
+    original: '', // 载入时的完整文本，用于 dirty 判断
+    saving: false
+  };
+
+  /* ------------------------------------------------------------------ *
+   * 小工具
+   * ------------------------------------------------------------------ */
+
+  function $(sel) {
+    return document.querySelector(sel);
+  }
+
+  function echo(el, text) {
+    if (el) el.textContent = text == null ? '' : String(text);
+  }
+
+  function b64encode(str) {
+    var bytes = new TextEncoder().encode(str);
+    var bin = '';
+    for (var i = 0; i < bytes.length; i += 1) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+
+  function b64decode(b64) {
+    var bin = atob(String(b64).replace(/\s/g, ''));
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function pad(n) {
+    return n < 10 ? '0' + n : String(n);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function slugify(title) {
+    return String(title || '')
+      .trim()
+      .replace(/[\\/:*?"<>|#%{}^~[\]`]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 60) || 'untitled';
+  }
+
+  var toastTimer = null;
+  function toast(html, isError, ms) {
+    var el = $('#adm-toast');
+    if (!el) return;
+    el.innerHTML = html;
+    el.classList.toggle('is-error', !!isError);
+    el.hidden = false;
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () {
+      el.hidden = true;
+    }, ms || 4200);
+  }
+
+  function status(text) {
+    echo($('#adm-status'), text);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 配置持久化
+   * ------------------------------------------------------------------ */
+
+  function isLocalHost() {
+    return /^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+  }
+
+  function resolveApiBase() {
+    var fromQuery = new URLSearchParams(location.search).get('api');
+    if (isLocalHost() && fromQuery && /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(fromQuery)) {
+      return fromQuery;
+    }
+    if (isLocalHost()) {
+      var stored = localStorage.getItem('wx-admin-api');
+      if (stored && /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(stored)) return stored;
+    }
+    return API_DEFAULT;
+  }
+
+  function loadConfig() {
+    var cfg = null;
+    try {
+      cfg = JSON.parse(localStorage.getItem(LS_KEY) || sessionStorage.getItem(LS_KEY) || 'null');
+    } catch (e) {
+      cfg = null;
+    }
+    state.apiBase = resolveApiBase();
+    if (!cfg) return false;
+    state.token = cfg.token || '';
+    state.owner = cfg.owner || '';
+    state.repo = cfg.repo || '';
+    state.branch = cfg.branch || '';
+    return !!(state.token && state.owner && state.repo);
+  }
+
+  function saveConfig(token, owner, repo, branch, remember) {
+    var cfg = { token: token, owner: owner, repo: repo, branch: branch };
+    try {
+      if (remember) {
+        localStorage.setItem(LS_KEY, JSON.stringify(cfg));
+        sessionStorage.removeItem(LS_KEY);
+      } else {
+        sessionStorage.setItem(LS_KEY, JSON.stringify(cfg));
+        localStorage.removeItem(LS_KEY);
+      }
+    } catch (e) {
+      /* 隐私模式下可能写不进去，忽略 */
+    }
+  }
+
+  function clearConfig() {
+    try {
+      localStorage.removeItem(LS_KEY);
+      sessionStorage.removeItem(LS_KEY);
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * GitHub API
+   * ------------------------------------------------------------------ */
+
+  function api(path, options) {
+    options = options || {};
+    var headers = {
+      Accept: 'application/vnd.github+json',
+      Authorization: 'Bearer ' + state.token,
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+    if (options.body) headers['Content-Type'] = 'application/json';
+
+    return fetch(state.apiBase + path, {
+      method: options.method || 'GET',
+      headers: headers,
+      body: options.body
+    }).then(function (res) {
+      var parse = res.status === 204 ? Promise.resolve(null) : res.json().catch(function () {
+        return null;
+      });
+      return parse.then(function (data) {
+        if (!res.ok) {
+          var err = new Error((data && data.message) || '请求失败（' + res.status + '）');
+          err.status = res.status;
+          err.data = data;
+          throw err;
+        }
+        return data;
+      });
+    });
+  }
+
+  function repoPath(p) {
+    return p.split('/').map(encodeURIComponent).join('/');
+  }
+
+  function refQuery() {
+    return state.branch ? '?ref=' + encodeURIComponent(state.branch) : '';
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Front matter
+   * ------------------------------------------------------------------ */
+
+  function parseFrontMatter(text) {
+    var m = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n?/.exec(text);
+    if (!m) return { raw: '', body: text, data: {} };
+    return { raw: m[1], body: text.slice(m[0].length), data: parseYamlLite(m[1]) };
+  }
+
+  function parseYamlLite(raw) {
+    var data = {};
+    var lines = raw.split(/\r?\n/);
+    var parent = null;
+    for (var i = 0; i < lines.length; i += 1) {
+      var line = lines[i];
+      if (!line.trim() || /^\s*#/.test(line)) continue;
+      var indented = /^\s+/.test(line);
+      var kv = /^\s*([A-Za-z0-9_-]+)\s*:\s*(.*)$/.exec(line);
+      if (!kv) continue;
+      var key = kv[1];
+      var value = kv[2];
+
+      if (!indented) parent = null;
+      if (!value) {
+        if (!indented) {
+          parent = key;
+          data[key] = data[key] || {};
+        }
+        continue;
+      }
+      var parsed = parseYamlValue(value);
+      if (indented && parent) {
+        if (typeof data[parent] !== 'object' || data[parent] === null) data[parent] = {};
+        data[parent][key] = parsed;
+      } else {
+        data[key] = parsed;
+      }
+    }
+    return data;
+  }
+
+  function parseYamlValue(value) {
+    var v = value.trim();
+    if (/^\[.*\]$/.test(v)) {
+      var inner = v.slice(1, -1).trim();
+      if (!inner) return [];
+      return inner.split(',').map(function (s) {
+        return unquote(s.trim());
+      });
+    }
+    if (/^(true|false)$/i.test(v)) return /^true$/i.test(v);
+    return unquote(v);
+  }
+
+  function unquote(v) {
+    if (/^".*"$/.test(v)) {
+      return v.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+    }
+    if (/^'.*'$/.test(v)) return v.slice(1, -1).replace(/''/g, "'");
+    return v;
+  }
+
+  function yamlString(value) {
+    var v = String(value == null ? '' : value);
+    if (!v) return '""';
+    if (/^[\s>|&*!%@`{}\[\]#-]/.test(v) || /: |\s#|["'\n]/.test(v) || /^(true|false|null|~|\d+(\.\d+)?)$/i.test(v)) {
+      return '"' + v.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+    }
+    return v;
+  }
+
+  function yamlList(list) {
+    var items = list.filter(function (s) {
+      return String(s).trim() !== '';
+    });
+    if (!items.length) return '';
+    return '[' + items.map(yamlString).join(', ') + ']';
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 文档模型
+   * ------------------------------------------------------------------ */
+
+  function toDateTimeLocal(dateStr) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/.exec(String(dateStr || ''));
+    if (!m) {
+      var now = new Date();
+      return (
+        now.getFullYear() +
+        '-' +
+        pad(now.getMonth() + 1) +
+        '-' +
+        pad(now.getDate()) +
+        'T' +
+        pad(now.getHours()) +
+        ':' +
+        pad(now.getMinutes()) +
+        ':' +
+        pad(now.getSeconds())
+      );
+    }
+    return m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + (m[6] || '00');
+  }
+
+  function fromDateTimeLocal(value) {
+    var base = String(value || '').replace('T', ' ');
+    if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/.test(base)) {
+      base = toDateTimeLocal('').replace('T', ' ');
+    }
+    if (base.length === 16) base += ':00';
+    return base + ' +0800';
+  }
+
+  function setForm(data) {
+    $('#adm-title').value = data.title || '';
+    $('#adm-date').value = toDateTimeLocal(data.date);
+    $('#adm-categories').value = toList(data.categories).join(', ');
+    $('#adm-tags').value = toList(data.tags).join(', ');
+    $('#adm-pin').checked = data.pin === true || data.pin === 'true';
+    $('#adm-description').value = typeof data.description === 'string' ? data.description : '';
+    var cover = data.image && (data.image.path || data.image);
+    $('#adm-cover').value = typeof cover === 'string' ? cover : '';
+    $('#adm-cover').dataset.alt = (data.image && data.image.alt) || '';
+  }
+
+  function toList(value) {
+    if (Array.isArray(value)) return value.map(String);
+    if (value == null || value === '') return [];
+    return String(value)
+      .split(',')
+      .map(function (s) {
+        return s.trim();
+      })
+      .filter(Boolean);
+  }
+
+  function composeDocument(body) {
+    var title = $('#adm-title').value.trim() || '无标题';
+    var date = fromDateTimeLocal($('#adm-date').value);
+    var categories = toList($('#adm-categories').value);
+    var tags = toList($('#adm-tags').value);
+    var pin = $('#adm-pin').checked;
+    var description = $('#adm-description').value.trim();
+    var cover = $('#adm-cover').value.trim();
+    var coverAlt = ($('#adm-cover').dataset.alt || '').trim();
+
+    var lines = ['---'];
+    lines.push('title: ' + yamlString(title));
+    lines.push('date: ' + date);
+    if (categories.length) lines.push('categories: ' + yamlList(categories));
+    if (tags.length) lines.push('tags: ' + yamlList(tags));
+    if (pin) lines.push('pin: true');
+    if (description) lines.push('description: ' + yamlString(description));
+    if (cover) {
+      lines.push('image:');
+      lines.push('  path: ' + yamlString(cover));
+      if (coverAlt) lines.push('  alt: ' + yamlString(coverAlt));
+    }
+    lines.push('---');
+    lines.push('');
+    return lines.join('\n') + body.replace(/^\n+/, '');
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 列表
+   * ------------------------------------------------------------------ */
+
+  function loadFiles() {
+    status('正在读取文章列表…');
+    return api('/repos/' + state.owner + '/' + state.repo + '/git/trees/' + encodeURIComponent(state.branch || 'HEAD') + '?recursive=1')
+      .then(function (tree) {
+        state.files = (tree.tree || [])
+          .filter(function (node) {
+            return node.type === 'blob' && /^_posts\/.+\.(md|markdown)$/i.test(node.path);
+          })
+          .map(function (node) {
+            return { path: node.path, sha: node.sha, size: node.size };
+          })
+          .sort(function (a, b) {
+            return b.path.localeCompare(a.path);
+          });
+        renderList();
+        status('共 ' + state.files.length + ' 篇文章');
+        var empty = $('#adm-list-empty');
+        if (empty) empty.hidden = state.files.length > 0;
+      })
+      .catch(function (err) {
+        status('列表加载失败：' + err.message);
+        toast(escapeHtml(err.message), true);
+      });
+  }
+
+  function displayTitle(path) {
+    var name = path.split('/').pop().replace(/\.(md|markdown)$/i, '');
+    return name.replace(/^\d{4}-\d{2}-\d{2}-/, '');
+  }
+
+  function renderList() {
+    var list = $('#adm-list');
+    if (!list) return;
+    var filter = state.filter.toLowerCase();
+    list.innerHTML = '';
+    state.files
+      .filter(function (file) {
+        return !filter || file.path.toLowerCase().indexOf(filter) >= 0;
+      })
+      .forEach(function (file) {
+        var li = document.createElement('li');
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.path = file.path;
+        if (state.current && state.current.path === file.path) btn.classList.add('is-active');
+
+        var title = document.createElement('span');
+        title.className = 'adm-item-title';
+        title.textContent = file.path.indexOf('_drafts/') === 0 ? '［草稿］' + displayTitle(file.path) : displayTitle(file.path);
+
+        var meta = document.createElement('span');
+        meta.className = 'adm-item-meta';
+        var dateMatch = /(\d{4}-\d{2}-\d{2})/.exec(file.path);
+        meta.textContent = (dateMatch ? dateMatch[1] + ' · ' : '') + Math.max(1, Math.round((file.size || 0) / 1024)) + ' KB';
+
+        btn.appendChild(title);
+        btn.appendChild(meta);
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 打开 / 新建
+   * ------------------------------------------------------------------ */
+
+  function openFile(path) {
+    status('正在载入…');
+    return api('/repos/' + state.owner + '/' + state.repo + '/contents/' + repoPath(path) + refQuery())
+      .then(function (data) {
+        var text = b64decode(data.content || '');
+        var parsed = parseFrontMatter(text);
+        setForm(parsed.data);
+        $('#adm-content').value = parsed.body;
+        state.current = { path: path, sha: data.sha, isNew: false };
+        state.original = text;
+        $('#adm-workbench').hidden = false;
+        $('#adm-dirty').hidden = true;
+        renderList();
+        renderPreview();
+        updateCounter();
+        status('已载入 ' + path.split('/').pop());
+        maybeOfferDraft(path, text);
+        $('#adm-side').classList.remove('is-open');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch(function (err) {
+        status('载入失败：' + err.message);
+        toast(escapeHtml(err.message), true);
+      });
+  }
+
+  function newPost() {
+    var now = new Date();
+    var stamp = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+    var path = '_posts/' + stamp + '-draft.md';
+    var template = ['## 小标题', '', '在这里开始写你的正文。', '', '> 提示：可以直接把图片拖进编辑器上传。', ''].join('\n');
+    state.current = { path: path, sha: null, isNew: true };
+    setForm({
+      title: '',
+      date: stamp + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':00',
+      categories: [],
+      tags: []
+    });
+    $('#adm-content').value = template;
+    state.original = '';
+    $('#adm-workbench').hidden = false;
+    renderList();
+    renderPreview();
+    updateCounter();
+    $('#adm-dirty').hidden = false;
+    $('#adm-title').focus();
+    status('新建文章：' + path);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 保存
+   * ------------------------------------------------------------------ */
+
+  function currentText() {
+    return composeDocument($('#adm-content').value);
+  }
+
+  function ensureDraftBranch() {
+    var base = '/repos/' + state.owner + '/' + state.repo;
+    return api(base + '/git/ref/heads/drafts')
+      .then(function () {
+        return 'drafts';
+      })
+      .catch(function () {
+        return api(base + '/git/ref/heads/' + encodeURIComponent(state.branch || 'master'))
+          .then(function (ref) {
+            return api(base + '/git/refs', {
+              method: 'POST',
+              body: JSON.stringify({ ref: 'refs/heads/drafts', sha: ref.object.sha })
+            }).then(function () {
+              return 'drafts';
+            });
+          });
+      });
+  }
+
+  function save() {
+    if (state.saving) return;
+    if (!state.current) {
+      toast('请先打开或新建一篇文章', true);
+      return;
+    }
+
+    var content = currentText();
+    var path = state.current.path;
+    var title = $('#adm-title').value.trim();
+
+    // 新文章按标题重命名
+    if (state.current.isNew) {
+      var dir = path.indexOf('_drafts/') === 0 ? '_drafts/' : '_posts/';
+      var datePrefix = /\d{4}-\d{2}-\d{2}/.exec(path);
+      var name = (datePrefix ? datePrefix[0] + '-' : '') + slugify(title) + '.md';
+      path = dir + name;
+    }
+
+    state.saving = true;
+    status('正在保存…');
+    $('#adm-save').disabled = true;
+
+    var branchPromise = state.draftMode ? ensureDraftBranch() : Promise.resolve(state.branch);
+    branchPromise
+      .then(function (branch) {
+        var body = {
+          message: (state.current.isNew ? 'post: 新增 ' : 'post: 更新 ') + (title || path.split('/').pop()) + '（写作台）',
+          content: b64encode(content)
+        };
+        if (state.current.sha) body.sha = state.current.sha;
+        // 重命名时：新路径 + 旧 sha 无法直接 PUT，改为先写新文件再删除旧文件
+        if (path !== state.current.path && state.current.sha) {
+          delete body.sha;
+          return api('/repos/' + state.owner + '/' + state.repo + '/contents/' + repoPath(path), {
+            method: 'PUT',
+            body: JSON.stringify(Object.assign({ branch: branch || undefined }, body))
+          }).then(function (res) {
+            return api(
+              '/repos/' + state.owner + '/' + state.repo + '/contents/' + repoPath(state.current.path),
+              {
+                method: 'DELETE',
+                body: JSON.stringify({
+                  message: body.message + '：删除旧文件',
+                  sha: state.current.sha,
+                  branch: branch || undefined
+                })
+              }
+            ).then(function () {
+              return res;
+            });
+          });
+        }
+        return api('/repos/' + state.owner + '/' + state.repo + '/contents/' + repoPath(path), {
+          method: 'PUT',
+          body: JSON.stringify(Object.assign({ branch: branch || undefined }, body))
+        });
+      })
+      .then(function (res) {
+        state.current = { path: path, sha: res.content.sha, isNew: false };
+        state.original = content;
+        $('#adm-dirty').hidden = true;
+        clearDraft(path);
+        status('已保存到 ' + (state.draftMode ? 'drafts 分支' : state.branch || '默认分支'));
+        var url = res.content.html_url;
+        toast(
+          '保存成功 · <a href="' +
+            url +
+            '" target="_blank" rel="noopener">查看文件</a>' +
+            (state.draftMode
+              ? ' · 已提交到 drafts 分支'
+              : ' · 站点构建约 1-2 分钟后生效'),
+          false,
+          6000
+        );
+        loadFiles();
+      })
+      .catch(function (err) {
+        if (err.status === 409) {
+          toast('保存冲突：远端文件已被修改。请点「重载」后再改。', true, 8000);
+        } else {
+          toast('保存失败：' + escapeHtml(err.message), true, 8000);
+        }
+        status('保存失败：' + err.message);
+      })
+      .then(function () {
+        state.saving = false;
+        $('#adm-save').disabled = false;
+      });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 本地草稿
+   * ------------------------------------------------------------------ */
+
+  function draftKey(path) {
+    return DRAFT_PREFIX + path;
+  }
+
+  function clearDraft(path) {
+    try {
+      localStorage.removeItem(draftKey(path));
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  function maybeOfferDraft(path, serverText) {
+    var saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(draftKey(path)) || 'null');
+    } catch (e) {
+      saved = null;
+    }
+    if (!saved || !saved.body || saved.body === serverText) return;
+    toast(
+      '发现本地草稿（' +
+        new Date(saved.ts).toLocaleString() +
+        '） <button type="button" id="adm-restore" class="adm-btn adm-btn-sm adm-btn-ghost" style="margin-left:.4rem">恢复</button>',
+      false,
+      10000
+    );
+    window.setTimeout(function () {
+      var btn = document.getElementById('adm-restore');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var parsed = parseFrontMatter(saved.body);
+        setForm(parsed.data);
+        $('#adm-content').value = parsed.body;
+        updateCounter();
+        $('#adm-dirty').hidden = false;
+        toast('已恢复本地草稿', false);
+      });
+    }, 0);
+  }
+
+  function stashDraft() {
+    if (!state.current) return;
+    try {
+      localStorage.setItem(
+        draftKey(state.current.path),
+        JSON.stringify({ body: currentText(), ts: Date.now() })
+      );
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 预览
+   * ------------------------------------------------------------------ */
+
+  var ALLOWED_TAGS = {
+    P: 1, BR: 1, HR: 1, H1: 1, H2: 1, H3: 1, H4: 1, H5: 1, H6: 1, UL: 1, OL: 1, LI: 1,
+    BLOCKQUOTE: 1, PRE: 1, CODE: 1, TABLE: 1, THEAD: 1, TBODY: 1, TR: 1, TH: 1, TD: 1,
+    A: 1, IMG: 1, STRONG: 1, EM: 1, DEL: 1, SPAN: 1, DIV: 1, FIGCAPTION: 1, FIGURE: 1,
+    SUP: 1, SUB: 1, KBD: 1, MARK: 1, INPUT: 1, VIDEO: 1, SOURCE: 1
+  };
+
+  function sanitize(html) {
+    var tpl = document.createElement('template');
+    tpl.innerHTML = html;
+
+    var walk = function (node) {
+      var children = Array.prototype.slice.call(node.childNodes || []);
+      children.forEach(function (child) {
+        if (child.nodeType === 3) return; // text
+        if (child.nodeType !== 1) {
+          child.remove();
+          return;
+        }
+        var tag = child.tagName;
+        if (!ALLOWED_TAGS[tag]) {
+          child.remove();
+          return;
+        }
+        Array.prototype.slice.call(child.attributes).forEach(function (attr) {
+          var name = attr.name.toLowerCase();
+          var value = attr.value || '';
+          if (name.indexOf('on') === 0 || name === 'srcdoc' || name === 'style') {
+            child.removeAttribute(attr.name);
+            return;
+          }
+          if ((name === 'href' || name === 'src' || name === 'poster') && /^\s*(javascript|data|vbscript):/i.test(value) && !(name === 'src' && /^data:image\//i.test(value))) {
+            child.removeAttribute(attr.name);
+          }
+        });
+        walk(child);
+      });
+    };
+
+    walk(tpl.content);
+    return tpl.innerHTML;
+  }
+
+  function renderPreview() {
+    var target = $('#adm-preview-inner');
+    if (!target) return;
+    var body = $('#adm-content').value;
+    var html = '';
+    try {
+      if (window.marked) {
+        html = window.marked.parse(body, { gfm: true, breaks: false, headerIds: false, mangle: false });
+      } else {
+        html = '<pre>' + escapeHtml(body) + '</pre>';
+      }
+    } catch (e) {
+      html = '<pre>' + escapeHtml(body) + '</pre>';
+    }
+    target.innerHTML = sanitize(html);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 图片上传
+   * ------------------------------------------------------------------ */
+
+  function loadImageElement(src) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        resolve(img);
+      };
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  function prepareImage(file) {
+    var objectUrl = URL.createObjectURL(file);
+    return loadImageElement(objectUrl)
+      .then(function (img) {
+        var w = img.naturalWidth || img.width;
+        var h = img.naturalHeight || img.height;
+        var scale = Math.min(1, MAX_IMAGE / Math.max(w, h));
+        var tw = Math.max(1, Math.round(w * scale));
+        var th = Math.max(1, Math.round(h * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = tw;
+        canvas.height = th;
+        canvas.getContext('2d').drawImage(img, 0, 0, tw, th);
+        URL.revokeObjectURL(objectUrl);
+
+        var mime = file.type === 'image/png' || /\.png$/i.test(file.name) ? 'image/png' : 'image/jpeg';
+        var dataUrl = canvas.toDataURL(mime, JPEG_QUALITY);
+        return {
+          base64: dataUrl.split(',')[1],
+          ext: mime === 'image/png' ? 'png' : 'jpg',
+          name: file.name || 'image',
+          width: tw,
+          height: th
+        };
+      })
+      .catch(function (err) {
+        URL.revokeObjectURL(objectUrl);
+        throw err;
+      });
+  }
+
+  function uploadFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList || []);
+    if (!files.length) return;
+    var now = new Date();
+    var dir = 'assets/img/uploads/' + now.getFullYear() + '/' + pad(now.getMonth() + 1) + '/';
+
+    status('正在上传 ' + files.length + ' 张图片…');
+    files.reduce(function (chain, file) {
+      return chain.then(function () {
+        return prepareImage(file).then(function (prepared) {
+          var base = slugify(prepared.name.replace(/\.[^.]+$/, '')) || 'image';
+          var path = dir + base + '-' + Date.now() + '.' + prepared.ext;
+          return api('/repos/' + state.owner + '/' + state.repo + '/contents/' + repoPath(path), {
+            method: 'PUT',
+            body: JSON.stringify({
+              message: 'assets: 上传图片 ' + path.split('/').pop() + '（写作台）',
+              content: prepared.base64,
+              branch: state.draftMode ? undefined : state.branch || undefined
+            })
+          }).then(function (res) {
+            var rel = '/' + String(res.content.path).replace(/^\/+/, '');
+            insertAtCursor('![](' + rel + ')' + '\n');
+            toast('图片已上传：' + rel.split('/').pop(), false, 3000);
+          });
+        });
+      });
+    }, Promise.resolve())
+      .then(function () {
+        status('图片上传完成');
+        renderPreview();
+      })
+      .catch(function (err) {
+        status('上传失败：' + err.message);
+        toast('上传失败：' + escapeHtml(err.message), true, 7000);
+      });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 编辑器交互
+   * ------------------------------------------------------------------ */
+
+  function insertAtCursor(text) {
+    var area = $('#adm-content');
+    var start = area.selectionStart || 0;
+    var end = area.selectionEnd || 0;
+    var value = area.value;
+    area.value = value.slice(0, start) + text + value.slice(end);
+    var pos = start + text.length;
+    area.focus();
+    area.setSelectionRange(pos, pos);
+    onContentChanged();
+  }
+
+  function wrapSelection(before, after, placeholder) {
+    var area = $('#adm-content');
+    var start = area.selectionStart || 0;
+    var end = area.selectionEnd || 0;
+    var value = area.value;
+    var selected = value.slice(start, end) || placeholder || '';
+    area.value = value.slice(0, start) + before + selected + after + value.slice(end);
+    var pos = start + before.length + selected.length;
+    area.focus();
+    area.setSelectionRange(pos - after.length, pos);
+    onContentChanged();
+  }
+
+  function prefixLines(prefix) {
+    var area = $('#adm-content');
+    var start = area.selectionStart || 0;
+    var end = area.selectionEnd || 0;
+    var value = area.value;
+    var lineStart = value.lastIndexOf('\n', start - 1) + 1;
+    var block = value.slice(lineStart, end) || '';
+    var updated = block
+      .split('\n')
+      .map(function (line) {
+        return prefix + line;
+      })
+      .join('\n');
+    area.value = value.slice(0, lineStart) + updated + value.slice(end);
+    area.focus();
+    area.setSelectionRange(lineStart, lineStart + updated.length);
+    onContentChanged();
+  }
+
+  function applyToolbar(action) {
+    switch (action) {
+      case 'h2':
+        prefixLines('## ');
+        break;
+      case 'bold':
+        wrapSelection('**', '**', '加粗文字');
+        break;
+      case 'italic':
+        wrapSelection('*', '*', '斜体文字');
+        break;
+      case 'link':
+        wrapSelection('[', '](https://)', '链接文字');
+        break;
+      case 'code':
+        wrapSelection('`', '`', 'code');
+        break;
+      case 'quote':
+        prefixLines('> ');
+        break;
+      case 'list':
+        prefixLines('- ');
+        break;
+      case 'image':
+        insertAtCursor('![](/assets/img/uploads/)');
+        break;
+      case 'upload':
+        $('#adm-file').click();
+        break;
+      default:
+        break;
+    }
+  }
+
+  function updateCounter() {
+    var text = $('#adm-content').value;
+    echo($('#adm-counter'), text.length + ' 字');
+  }
+
+  function onContentChanged() {
+    renderPreview();
+    updateCounter();
+    $('#adm-dirty').hidden = false;
+    stashDraft();
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 登录流程
+   * ------------------------------------------------------------------ */
+
+  function connect(owner, repo, branch, token, remember) {
+    state.token = token;
+    state.owner = owner;
+    state.repo = repo;
+    state.branch = branch;
+    echo($('#adm-login-msg'), '正在验证令牌…');
+
+    return api('/repos/' + owner + '/' + repo)
+      .then(function (data) {
+        state.branch = state.branch || data.default_branch;
+        saveConfig(token, owner, repo, state.branch, remember);
+        $('#adm-login').hidden = true;
+        $('#adm-workbench').hidden = false;
+        echo($('#adm-repo-label'), owner + '/' + repo);
+        echo($('#adm-branch-label'), state.branch);
+        return api('/user').then(function (user) {
+          echo($('#adm-user-label'), '@' + user.login);
+          toast('已连接 ' + owner + '/' + repo, false);
+          return loadFiles();
+        });
+      })
+      .catch(function (err) {
+        echo($('#adm-login-msg'), '');
+        var msg = $('#adm-login-msg');
+        msg.textContent =
+          err.status === 401
+            ? '令牌无效或已过期（401）。'
+            : err.status === 404
+              ? '找不到仓库，或令牌没有该仓库的访问权限（404）。'
+              : '连接失败：' + err.message;
+        msg.classList.add('is-error');
+      });
+  }
+
+  function logout() {
+    clearConfig();
+    state.token = '';
+    state.current = null;
+    $('#adm-login').hidden = false;
+    $('#adm-workbench').hidden = true;
+    $('#adm-token').value = '';
+    toast('已退出，本机令牌已清除', false);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * 初始化
+   * ------------------------------------------------------------------ */
+
+  function bindEvents() {
+    var loginForm = $('#adm-login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var owner = $('#adm-owner').value.trim();
+        var repo = $('#adm-repo').value.trim();
+        var branch = $('#adm-branch').value.trim();
+        var token = $('#adm-token').value.trim();
+        if (!owner || !repo || !token) {
+          echo($('#adm-login-msg'), '请填写仓库与令牌。');
+          $('#adm-login-msg').classList.add('is-error');
+          return;
+        }
+        connect(owner, repo, branch, token, $('#adm-remember').checked);
+      });
+    }
+
+    var toggle = $('#adm-token-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        var input = $('#adm-token');
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        toggle.textContent = show ? '隐藏' : '显示';
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      var btn = event.target.closest ? event.target.closest('#adm-list button') : null;
+      if (btn) openFile(btn.dataset.path);
+    });
+
+    var search = $('#adm-search');
+    if (search) {
+      search.addEventListener('input', function () {
+        state.filter = search.value.trim();
+        renderList();
+      });
+    }
+
+    var on = function (id, type, handler) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener(type, handler);
+    };
+
+    on('adm-new', 'click', newPost);
+    on('adm-save', 'click', save);
+    on('adm-logout', 'click', logout);
+    on('adm-toggle-list', 'click', function () {
+      $('#adm-side').classList.toggle('is-open');
+    });
+    on('adm-reload', 'click', function () {
+      if (state.current && state.current.sha) openFile(state.current.path);
+    });
+
+    var draftMode = $('#adm-draft-mode');
+    if (draftMode) {
+      draftMode.addEventListener('change', function () {
+        state.draftMode = draftMode.checked;
+        status(state.draftMode ? '保存目标：drafts 分支' : '保存目标：' + (state.branch || '默认分支'));
+      });
+    }
+
+    Array.prototype.slice.call(document.querySelectorAll('.adm-tab')).forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        Array.prototype.slice.call(document.querySelectorAll('.adm-tab')).forEach(function (t) {
+          t.classList.toggle('is-active', t === tab);
+        });
+        var view = tab.dataset.view;
+        $('#adm-body').dataset.view = view;
+        if (view === 'preview') renderPreview();
+      });
+    });
+
+    var toolbar = $('#adm-md-toolbar');
+    if (toolbar) {
+      toolbar.addEventListener('click', function (event) {
+        var btn = event.target.closest('button[data-md]');
+        if (btn) applyToolbar(btn.dataset.md);
+      });
+    }
+
+    var content = $('#adm-content');
+    if (content) {
+      content.addEventListener('input', onContentChanged);
+      content.addEventListener('keydown', function (event) {
+        if (event.key === 'Tab') {
+          event.preventDefault();
+          insertAtCursor('  ');
+        }
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
+          event.preventDefault();
+          save();
+        }
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'b') {
+          event.preventDefault();
+          wrapSelection('**', '**', '加粗文字');
+        }
+      });
+      content.addEventListener('paste', function (event) {
+        var items = (event.clipboardData && event.clipboardData.files) || [];
+        if (items.length && /^image\//.test(items[0].type)) {
+          event.preventDefault();
+          uploadFiles(items);
+        }
+      });
+    }
+
+    ['#adm-title', '#adm-date', '#adm-categories', '#adm-tags', '#adm-pin', '#adm-description', '#adm-cover'].forEach(
+      function (sel) {
+        var el = $(sel);
+        if (el) {
+          el.addEventListener('input', function () {
+            $('#adm-dirty').hidden = false;
+            stashDraft();
+          });
+          el.addEventListener('change', function () {
+            $('#adm-dirty').hidden = false;
+          });
+        }
+      }
+    );
+
+    var fileInput = $('#adm-file');
+    if (fileInput) {
+      fileInput.addEventListener('change', function () {
+        uploadFiles(fileInput.files);
+        fileInput.value = '';
+      });
+    }
+
+    var editorWrap = $('#adm-editor-wrap');
+    var drop = $('#adm-drop');
+    var area = $('#adm-content');
+    if (area && drop) {
+      ['dragenter', 'dragover'].forEach(function (type) {
+        area.addEventListener(type, function (event) {
+          event.preventDefault();
+          drop.hidden = false;
+        });
+      });
+      ['dragleave', 'drop'].forEach(function (type) {
+        area.addEventListener(type, function (event) {
+          event.preventDefault();
+          if (type === 'drop' && event.dataTransfer && event.dataTransfer.files.length) {
+            uploadFiles(event.dataTransfer.files);
+          }
+          drop.hidden = true;
+        });
+      });
+    }
+
+    window.addEventListener('beforeunload', function (event) {
+      if (!$('#adm-dirty').hidden) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    });
+  }
+
+  function init() {
+    var root = $('#wx-admin');
+    if (!root) return;
+    state.apiBase = resolveApiBase();
+    bindEvents();
+
+    // 移动端默认收起「文章信息」，让正文编辑区直接可见
+    var details = document.getElementById('adm-details');
+    if (details && window.matchMedia('(max-width: 991.98px)').matches) {
+      details.open = false;
+    }
+
+    if (loadConfig()) {
+      $('#adm-owner').value = state.owner;
+      $('#adm-repo').value = state.repo;
+      $('#adm-branch').value = state.branch;
+      $('#adm-login-msg').textContent = '本机已保存令牌，正在自动连接…';
+      connect(state.owner, state.repo, state.branch, state.token, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
