@@ -19,7 +19,8 @@ Gemfile.lock
 .jekyll-cache
 .jekyll-metadata
 _site
-_app
+# PWA 产物（_app/app.min.js、_app/sw.min.js）由 rollup 构建后需要入库，
+# 因为线上部署只执行 jekyll build，不会执行 npm run build。
 
 # RubyGems
 *.gem

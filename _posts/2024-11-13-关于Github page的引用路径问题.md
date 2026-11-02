@@ -49,7 +49,7 @@ tags: [Bug]
 如果仅希望提供一个视频下载或打开链接，可以直接在 Markdown 中这样写:
 
 ```markdown
-[视频下载](https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")
+[视频下载](/assets/media/marxism-micro-lesson.mp4 "理论微课")
 ```
 
 这种方式会在用户点击链接时打开或下载视频文件。
@@ -65,7 +65,7 @@ tags: [Bug]
 ```html
 <video width="1024" height="576" controls>
   <source
-    src="https://raw.githubusercontent.com/yen-chiu/yen-chiuthub.io/master/files/2023/Wendell_理论微课.mp4"
+    src="/assets/media/marxism-micro-lesson.mp4"
     type="video/mp4"
   />
 </video>
@@ -79,12 +79,12 @@ tags: [Bug]
 
 通过这些方法，可以在 GitHub Pages 上实现视频的展示和播放。如果有更多的自定义需求，比如使用第三方视频库（如 Video.js），也可以按照类似的方式进行扩展。
 
-<!-- [视频点击这里]({{site.baseurl}}/files/2023/Wendell_理论微课.mp4) -->
+<!-- [视频点击这里](/assets/media/marxism-micro-lesson.mp4) -->
 
-<!-- [视频下载](https://raw.githubusercontent.com/yen-chiuaoWendell.github.io/master/files/2023/Wendell_理论微课.mp4 "理论微课")  -->
+<!-- [视频下载](/assets/media/marxism-micro-lesson.mp4 "理论微课")  -->
 
 <!-- ```html
 <video width="1024" height="576" controls>
-  <source src="https://raw.githubusercontent.com/yen-chiu/yen-chiu.github.io/master/files/2023/Wendell_理论微课.mp4" type="video/mp4">
+  <source src="/assets/media/marxism-micro-lesson.mp4" type="video/mp4">
 </video>
 ``` -->
