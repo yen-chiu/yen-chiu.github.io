@@ -23,7 +23,8 @@ sitemap: false
 
   <div class="nf-text">
     <p class="nf-code">404</p>
-    <h1 class="nf-title">{{ site.data.locales[site.lang].not_found.statment | default: "这个页面似乎走丢了。" }}</h1>
+    <h1 class="nf-title">这个页面似乎走丢了</h1>
+    <p class="nf-poem">{{ site.data.locales[site.lang].not_found.statment }}</p>
     <p class="nf-desc">链接可能已经变更，或是这篇内容还在路上。</p>
     <div class="nf-actions">
       <a class="nf-btn nf-btn-primary" href="{{ site.baseurl }}/">
@@ -98,9 +99,20 @@ sitemap: false
   }
 
   .nf-title {
-    margin: 0.5rem 0 0.75rem;
-    font-size: 1.25rem;
-    font-weight: 600;
+    margin: 0.5rem 0 0.35rem;
+    font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+    font-weight: 700;
+  }
+
+  /* 主题自带的「迷路诗」：作为小号引文呈现，不再抢标题层级 */
+  .nf-poem {
+    margin: 0 0 1rem;
+    max-width: 24rem;
+    color: var(--text-muted-color, #6c757d);
+    font-size: 0.88rem;
+    line-height: 1.9;
+    white-space: pre-line;
+    opacity: 0.9;
   }
 
   .nf-desc {
@@ -114,7 +126,7 @@ sitemap: false
     gap: 0.75rem;
   }
 
-  .nf-btn {
+  .nf .nf-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -128,13 +140,13 @@ sitemap: false
     transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
   }
 
-  .nf-btn:hover {
+  .nf .nf-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.18);
     text-decoration: none;
   }
 
-  .nf-btn-primary {
+  .nf .nf-btn-primary {
     border-color: transparent;
     color: #ffffff;
     background: linear-gradient(120deg, #6366f1, #a855f7);
