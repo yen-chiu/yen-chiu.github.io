@@ -1,0 +1,67 @@
+/* ==========================================================================
+   自定义设计令牌（design tokens）
+   --------------------------------------------------------------------------
+   仅新增变量，不覆盖主题原有变量；所有增强样式都基于这里的令牌，
+   方便以后整体调色 / 关掉动效。
+   ========================================================================== */
+
+:root {
+  /* 品牌色：靛蓝 → violet → pink 渐变 */
+  --wx-accent: #6366f1;
+  --wx-accent-2: #a855f7;
+  --wx-accent-3: #ec4899;
+  --wx-gradient: linear-gradient(120deg, #6366f1 0%, #a855f7 48%, #ec4899 100%);
+  --wx-gradient-soft: linear-gradient(
+    120deg,
+    rgb(99 102 241 / 14%) 0%,
+    rgb(168 85 247 / 12%) 50%,
+    rgb(236 72 153 / 10%) 100%
+  );
+
+  /* 形状与阴影 */
+  --wx-radius-sm: 10px;
+  --wx-radius: 16px;
+  --wx-radius-lg: 22px;
+  --wx-shadow-sm: 0 1px 2px rgb(16 24 40 / 6%), 0 6px 16px -8px rgb(16 24 40 / 10%);
+  --wx-shadow: 0 8px 30px -12px rgb(16 24 40 / 18%), 0 2px 8px -4px rgb(16 24 40 / 8%);
+  --wx-shadow-hover: 0 18px 48px -20px rgb(79 70 229 / 35%), 0 4px 12px -6px rgb(16 24 40 / 12%);
+
+  /* 边框、光晕、背景 */
+  --wx-border: rgb(99 102 241 / 14%);
+  --wx-border-strong: rgb(99 102 241 / 26%);
+  --wx-glow: rgb(99 102 241 / 18%);
+  --wx-surface: #fff;
+  --wx-surface-2: #f8f9ff;
+  --wx-aurora-1: rgb(99 102 241 / 16%);
+  --wx-aurora-2: rgb(236 72 153 / 12%);
+  --wx-aurora-3: rgb(56 189 248 / 13%);
+
+  /* 动效 */
+  --wx-ease: cubic-bezier(0.22, 0.82, 0.24, 1);
+  --wx-dur: 0.32s;
+  --wx-dur-slow: 0.6s;
+}
+
+html[data-mode='dark'] {
+  --wx-accent: #818cf8;
+  --wx-accent-2: #c084fc;
+  --wx-accent-3: #f472b6;
+  --wx-gradient: linear-gradient(120deg, #818cf8 0%, #c084fc 48%, #f472b6 100%);
+  --wx-gradient-soft: linear-gradient(
+    120deg,
+    rgb(129 140 248 / 18%) 0%,
+    rgb(192 132 252 / 14%) 50%,
+    rgb(244 114 182 / 12%) 100%
+  );
+  --wx-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%), 0 6px 16px -8px rgb(0 0 0 / 50%);
+  --wx-shadow: 0 10px 34px -14px rgb(0 0 0 / 70%), 0 2px 10px -6px rgb(0 0 0 / 60%);
+  --wx-shadow-hover: 0 20px 50px -22px rgb(129 140 248 / 45%), 0 4px 14px -8px rgb(0 0 0 / 60%);
+  --wx-border: rgb(129 140 248 / 20%);
+  --wx-border-strong: rgb(129 140 248 / 34%);
+  --wx-glow: rgb(129 140 248 / 26%);
+  --wx-surface: #1e1e22;
+  --wx-surface-2: #23232a;
+  --wx-aurora-1: rgb(99 102 241 / 26%);
+  --wx-aurora-2: rgb(236 72 153 / 18%);
+  --wx-aurora-3: rgb(56 189 248 / 16%);
+}

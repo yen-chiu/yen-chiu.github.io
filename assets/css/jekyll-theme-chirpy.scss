@@ -7,4 +7,5 @@
 {%- endif -%}
 ';
 
-/* append your custom style below */
+/* 自定义样式（位于 _sass/custom/，可按需整体移除） */
+@import 'custom';

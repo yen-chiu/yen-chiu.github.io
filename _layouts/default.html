@@ -17,6 +17,8 @@ layout: compress
   {% include head.html %}
 
   <body>
+    <a class="wx-skip-link" href="#main-content">跳到正文</a>
+
     {% include sidebar.html lang=lang %}
 
     <div id="main-wrapper" class="d-flex justify-content-center">
@@ -24,7 +26,7 @@ layout: compress
         {% include topbar.html lang=lang %}
 
         <div class="row flex-grow-1">
-          <main aria-label="Main Content" class="col-12 col-lg-11 col-xl-9 px-md-4">
+          <main aria-label="Main Content" id="main-content" class="col-12 col-lg-11 col-xl-9 px-md-4">
             {% if layout.refactor or layout.layout == 'default' and page.permalink != '/404.html' %}
               {% include refactor-content.html content=content lang=lang %}
             {% else %}
@@ -81,11 +83,13 @@ layout: compress
       {% include_cached notification.html lang=lang %}
     {% endif %}
 
-    {% if site.backgroud_animation %}
+    {% if site.background_animation %}
       {% include animated-background.html %}
     {% endif %}
     <!-- JavaScripts -->
     {% include js-selector.html lang=lang %}
+
+    {% include ui-enhance.html %}
 
     {% include_cached search-loader.html lang=lang %}
   </body>

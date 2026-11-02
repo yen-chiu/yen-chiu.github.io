@@ -1,0 +1,56 @@
+<!-- 阅读进度条（仅文章页） -->
+{% if page.layout == 'post' %}
+  <div id="wx-progress" aria-hidden="true"><span></span></div>
+{% endif %}
+
+<script>
+  (function () {
+    var bar = document.getElementById('wx-progress');
+    if (!bar) return;
+    var fill = bar.firstElementChild;
+    var ticking = false;
+
+    function update() {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - doc.clientHeight;
+      var pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+      fill.style.width = pct.toFixed(2) + '%';
+      bar.classList.toggle('is-active', doc.scrollTop > 120);
+      ticking = false;
+    }
+
+    window.addEventListener(
+      'scroll',
+      function () {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+
+    update();
+  })();
+
+  /* 页脚：站点运行时长 */
+  (function () {
+    var el = document.getElementById('runtime_span');
+    if (!el) return;
+
+    var since = Date.parse(el.getAttribute('data-since') || '');
+    if (isNaN(since)) return;
+
+    function render() {
+      var diff = Math.max(0, Date.now() - since);
+      var days = Math.floor(diff / 86400000);
+      var hours = Math.floor((diff / 3600000) % 24);
+      var minutes = Math.floor((diff / 60000) % 60);
+      var seconds = Math.floor((diff / 1000) % 60);
+      el.textContent = '本站已运行 ' + days + ' 天 ' + hours + ' 小时 ' + minutes + ' 分 ' + seconds + ' 秒';
+    }
+
+    render();
+    window.setInterval(render, 1000);
+  })();
+</script>
