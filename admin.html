@@ -1,0 +1,179 @@
+---
+layout: page
+title: 写作台
+permalink: /admin/
+no_title: true
+sitemap: false
+body_class: admin-page
+---
+
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}">
+
+<div id="wx-admin" class="adm" data-owner="yen-chiu" data-repo="yen-chiu.github.io" data-branch="master">
+  <!-- ============ 登录 ============ -->
+  <section id="adm-login" class="adm-card adm-login">
+    <div class="adm-login-head">
+      <h1>写作台</h1>
+      <p class="adm-muted">在手机或电脑上直接编辑、上传、发布文章。所有请求由浏览器直连 GitHub API，令牌只保存在本机。</p>
+    </div>
+
+    <form id="adm-login-form" class="adm-form" autocomplete="off">
+      <label class="adm-field">
+        <span>仓库</span>
+        <div class="adm-inline">
+          <input id="adm-owner" type="text" inputmode="latin" placeholder="owner" value="yen-chiu" required>
+          <span class="adm-slash">/</span>
+          <input id="adm-repo" type="text" inputmode="latin" placeholder="repo" value="yen-chiu.github.io" required>
+        </div>
+      </label>
+
+      <label class="adm-field">
+        <span>分支</span>
+        <input id="adm-branch" type="text" inputmode="latin" value="master">
+        <small class="adm-muted">留空则使用仓库默认分支。</small>
+      </label>
+
+      <label class="adm-field">
+        <span>Personal Access Token</span>
+        <div class="adm-inline">
+          <input id="adm-token" type="password" placeholder="github_pat_… 或 ghp_…" spellcheck="false" required>
+          <button type="button" class="adm-btn adm-btn-ghost" id="adm-token-toggle" aria-label="显示令牌">显示</button>
+        </div>
+        <small class="adm-muted">
+          需要一个 <strong>Fine-grained token</strong>，只授予本仓库的
+          <code>Contents: Read and write</code>（必需）与 <code>Metadata: Read</code>。
+          令牌仅存于本机浏览器，不会上传到任何服务器。
+        </small>
+      </label>
+
+      <label class="adm-check">
+        <input id="adm-remember" type="checkbox" checked>
+        <span>在本机记住令牌（关闭后仅当前标签页有效）</span>
+      </label>
+
+      <div class="adm-actions">
+        <button type="submit" class="adm-btn adm-btn-primary" id="adm-login-btn">连接仓库</button>
+        <a class="adm-btn adm-btn-ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">创建令牌</a>
+      </div>
+      <p id="adm-login-msg" class="adm-msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <!-- ============ 工作台 ============ -->
+  <section id="adm-workbench" class="adm-workbench" hidden>
+    <aside class="adm-side" id="adm-side">
+      <div class="adm-side-head">
+        <div>
+          <strong id="adm-repo-label">yen-chiu/yen-chiu.github.io</strong>
+          <div class="adm-muted adm-tiny"><span id="adm-branch-label">master</span> · <span id="adm-user-label">已连接</span></div>
+        </div>
+        <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-logout">退出</button>
+      </div>
+
+      <div class="adm-search-row">
+        <input id="adm-search" type="search" placeholder="搜索标题或文件名…" autocomplete="off">
+        <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="adm-new">新建</button>
+      </div>
+
+      <ul id="adm-list" class="adm-list" aria-label="文章列表"></ul>
+      <p id="adm-list-empty" class="adm-muted adm-tiny" hidden>还没有文章，点「新建」开始吧。</p>
+    </aside>
+
+    <section class="adm-main" id="adm-main">
+      <header class="adm-toolbar">
+        <div class="adm-toolbar-left">
+          <a class="adm-btn adm-btn-ghost adm-btn-sm" href="{{ '/' | relative_url }}" title="返回博客" aria-label="返回博客">←</a>
+          <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-toggle-list" aria-label="文章列表">☰</button>
+          <div class="adm-tabs" role="tablist">
+            <button type="button" class="adm-tab is-active" data-view="edit" role="tab">编辑</button>
+            <button type="button" class="adm-tab" data-view="preview" role="tab">预览</button>
+          </div>
+        </div>
+        <div class="adm-toolbar-right">
+          <span id="adm-dirty" class="adm-dirty" hidden>未保存</span>
+          <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-reload" title="放弃修改并重新载入">重载</button>
+          <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="adm-save">保存</button>
+        </div>
+      </header>
+
+      <div class="adm-body" id="adm-body" data-view="edit">
+        <!-- 元信息（移动端默认收起，桌面端展开） -->
+        <details class="adm-details" id="adm-details" open>
+          <summary>文章信息 · 标题 / 日期 / 分类 / 封面</summary>
+          <div class="adm-meta" id="adm-meta">
+          <label class="adm-field adm-field-full">
+            <span>标题</span>
+            <input id="adm-title" type="text" placeholder="文章标题">
+          </label>
+          <label class="adm-field">
+            <span>日期</span>
+            <input id="adm-date" type="datetime-local" step="1">
+          </label>
+          <label class="adm-field">
+            <span>分类（逗号分隔）</span>
+            <input id="adm-categories" type="text" placeholder="杂记, Reading">
+          </label>
+          <label class="adm-field">
+            <span>标签（逗号分隔）</span>
+            <input id="adm-tags" type="text" placeholder="随笔, 工具">
+          </label>
+          <label class="adm-field">
+            <span>封面图路径（可选）</span>
+            <input id="adm-cover" type="text" placeholder="/assets/img/uploads/…">
+          </label>
+          <label class="adm-check adm-check-inline">
+            <input id="adm-pin" type="checkbox">
+            <span>置顶</span>
+          </label>
+          <label class="adm-field adm-field-full">
+            <span>摘要（可选）</span>
+            <input id="adm-description" type="text" placeholder="一句话摘要，用于列表与 SEO">
+          </label>
+          </div>
+        </details>
+
+        <!-- 编辑器 -->
+        <div class="adm-editor-wrap">
+          <div class="adm-md-toolbar" id="adm-md-toolbar" role="toolbar" aria-label="Markdown 工具栏">
+            <button type="button" data-md="h2" title="二级标题">H2</button>
+            <button type="button" data-md="bold" title="加粗"><b>B</b></button>
+            <button type="button" data-md="italic" title="斜体"><i>I</i></button>
+            <button type="button" data-md="link" title="链接">链接</button>
+            <button type="button" data-md="code" title="行内代码">代码</button>
+            <button type="button" data-md="quote" title="引用">引用</button>
+            <button type="button" data-md="list" title="列表">列表</button>
+            <button type="button" data-md="image" title="插入图片">图片</button>
+            <span class="adm-md-spacer"></span>
+            <button type="button" data-md="upload" class="adm-md-upload" title="上传图片">上传图片</button>
+          </div>
+          <textarea id="adm-content" class="adm-textarea" placeholder="开始写点什么…（支持 Markdown，可直接粘贴或拖入图片）" spellcheck="false"></textarea>
+          <div class="adm-drop" id="adm-drop" hidden>把图片拖到这里上传</div>
+        </div>
+
+        <!-- 预览 -->
+        <div class="adm-preview" id="adm-preview">
+          <article class="adm-preview-inner" id="adm-preview-inner"></article>
+        </div>
+      </div>
+
+      <footer class="adm-statusbar">
+        <span id="adm-status">就绪</span>
+        <span class="adm-spacer"></span>
+        <label class="adm-check adm-check-inline adm-tiny">
+          <input id="adm-draft-mode" type="checkbox">
+          <span>提交到草稿分支 drafts</span>
+        </label>
+        <span class="adm-tiny" id="adm-counter">0 字</span>
+      </footer>
+    </section>
+  </section>
+
+  <div id="adm-toast" class="adm-toast" role="status" aria-live="polite" hidden></div>
+
+  <input type="file" id="adm-file" accept="image/*" hidden multiple>
+</div>
+
+<script src="{{ '/assets/js/lib/marked.min.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/admin/app.js' | relative_url }}" defer></script>

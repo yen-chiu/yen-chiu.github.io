@@ -109,7 +109,7 @@
 
   <!-- JavaScript -->
 
-  {% if site.mouse_click_effect %}
+  {% if site.mouse_click_effect and page.body_class != 'admin-page' %}
     <script async src="/assets/js/lib/fireworks.js"></script>
   {% endif %}
 
