@@ -8,6 +8,9 @@
   border-right: 1px solid var(--main-border-color);
 
   .profile-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
     margin: clamp(1.4rem, 4.2vh, 3.5rem) 0 clamp(1rem, 2.5vh, 2.5rem);
     padding: 0.5rem 0 0;
@@ -15,7 +18,10 @@
 
     #avatar {
       position: relative;
-      display: inline-block;
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
       width: var(--wx-avatar-size);
       height: var(--wx-avatar-size);
       border-radius: 50%;
@@ -182,6 +188,14 @@
 
   .sidebar-bottom {
     margin-bottom: clamp(0.8rem, 1.8vh, 1.5rem);
+  }
+}
+
+/* 桌面固定合成层，减少缩放时的亚像素位置抖动 */
+@media (min-width: 850px) {
+  #sidebar {
+    backface-visibility: hidden;
+    transform: translateZ(0);
   }
 }
 
