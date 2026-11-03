@@ -70,35 +70,6 @@
     color: var(--text-muted-color);
     font-size: 0.95rem;
   }
-
-  .wx-hero-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-
-    a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.4rem 0.85rem;
-      border: 1px solid var(--wx-border);
-      border-radius: 999px;
-      color: var(--text-color);
-      font-size: 0.85rem;
-      text-decoration: none;
-      transition: transform var(--wx-dur) var(--wx-ease),
-        border-color var(--wx-dur) var(--wx-ease),
-        color var(--wx-dur) var(--wx-ease), background-color var(--wx-dur) var(--wx-ease);
-
-      &:hover {
-        border-color: transparent;
-        background: var(--wx-gradient);
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 24px -12px var(--wx-glow);
-      }
-    }
-  }
 }
 
 .wx-hero-main {
