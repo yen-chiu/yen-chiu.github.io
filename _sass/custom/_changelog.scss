@@ -301,3 +301,12 @@ html[data-mode='dark'] .wx-changelog .wx-kind-infra {
     align-items: center;
   }
 }
+
+.wx-changelog-back {
+  margin: 2rem 0 0;
+  font-size: 0.82rem;
+
+  a {
+    color: var(--wx-accent);
+  }
+}

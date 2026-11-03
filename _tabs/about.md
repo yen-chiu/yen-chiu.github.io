@@ -8,7 +8,6 @@ description: 关于 Wendell：数据分析、代码、阅读与生活，以及�
 {% assign post_count = site.posts.size %}
 {% assign category_count = site.categories.size %}
 {% assign tag_count = site.tags.size %}
-{% assign changelog_count = site.data.changelog.size %}
 {% assign now_ts = site.time | date: '%s' | plus: 0 %}
 {% assign start_ts = site.uptime_since | date: '%s' | plus: 0 %}
 {% assign uptime_days = now_ts | minus: start_ts | divided_by: 86400 %}
@@ -181,92 +180,82 @@ description: 关于 Wendell：数据分析、代码、阅读与生活，以及�
     </div>
   </section>
 
-  <!-- 03 · 最近在写 -->
-  <section class="wx-about-section" id="writing" aria-labelledby="wx-about-writing-title">
-    <header class="wx-about-section-head">
-      <div>
-        <p class="wx-about-kicker">02 / Writing</p>
-        <h2 class="wx-about-section-title" id="wx-about-writing-title">最近在写</h2>
+  <!-- 03 · 最近在写 + 时间点；桌面端并排，减少竖向占用 -->
+  <div class="wx-about-split">
+    <section class="wx-about-panel" id="writing" aria-labelledby="wx-about-writing-title">
+      <header class="wx-about-section-head">
+        <div>
+          <p class="wx-about-kicker">02 / Writing</p>
+          <h2 class="wx-about-section-title" id="wx-about-writing-title">最近在写</h2>
+        </div>
+        <a class="wx-about-head-link" href="{{ '/archives/' | relative_url }}">全部文章 <span aria-hidden="true">→</span></a>
+      </header>
+
+      <div class="wx-about-posts-list" data-wx-reveal>
+        {% assign about_shown = 0 %}
+        {% for post in site.posts %}
+          {% if about_shown < 3 %}
+            {% unless post.title contains '测试' %}
+              {% assign desc = post.description | default: post.content | strip_html | strip_newlines | truncate: 42 %}
+              <a class="wx-about-post-row" href="{{ post.url | relative_url }}">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+                <span class="wx-about-post-row-main">
+                  <strong>{{ post.title }}</strong>
+                  <span>{% if post.categories.size > 0 %}{{ post.categories | first }} · {% endif %}{{ desc | strip }}</span>
+                </span>
+                <span class="wx-about-post-arrow" aria-hidden="true">→</span>
+              </a>
+              {% assign about_shown = about_shown | plus: 1 %}
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
       </div>
-      <a class="wx-about-head-link" href="{{ '/archives/' | relative_url }}">全部文章 <span aria-hidden="true">→</span></a>
-    </header>
+    </section>
 
-    <div class="wx-about-posts">
-      {% for post in site.posts limit: 3 %}
-        {% assign desc = post.description | default: post.content | strip_html | strip_newlines | truncate: 92 %}
-        <a class="wx-about-post" href="{{ post.url | relative_url }}" data-wx-reveal>
-          <div class="wx-about-post-top">
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
-            {% if post.categories.size > 0 %}<span>{{ post.categories | first }}</span>{% endif %}
-          </div>
-          <h3>{{ post.title }}</h3>
-          <p>{{ desc | strip }}</p>
-          <span class="wx-about-post-more">阅读 <span aria-hidden="true">→</span></span>
-        </a>
-      {% endfor %}
-    </div>
-  </section>
+    <section class="wx-about-panel" id="journey" aria-labelledby="wx-about-journey-title">
+      <header class="wx-about-section-head">
+        <div>
+          <p class="wx-about-kicker">03 / Journey</p>
+          <h2 class="wx-about-section-title" id="wx-about-journey-title">一些时间点</h2>
+        </div>
+        <p class="wx-about-head-note">不着急，慢慢来。</p>
+      </header>
 
-  <!-- 04 · 时间线 -->
-  <section class="wx-about-section" id="journey" aria-labelledby="wx-about-journey-title">
-    <header class="wx-about-section-head">
-      <div>
-        <p class="wx-about-kicker">03 / Journey</p>
-        <h2 class="wx-about-section-title" id="wx-about-journey-title">一些时间点</h2>
+      <div class="wx-about-milestones" data-wx-reveal>
+        <div class="wx-about-milestone">
+          <time datetime="{{ site.uptime_since | date_to_xmlschema }}">{{ site.uptime_since | date: '%Y.%m' }}</time>
+          <h3>站点开始运行</h3>
+          <p>从一台 Ubuntu 虚拟机开始，这个博客有了自己的地址。</p>
+        </div>
+        <div class="wx-about-milestone">
+          <time datetime="2023-10-11">2023.10</time>
+          <h3>写下《MyBlog》</h3>
+          <p>写下「我希望在这里的世界是豁达平静的」。</p>
+        </div>
+        <div class="wx-about-milestone">
+          <time datetime="2024-11-13">2024.11</time>
+          <h3>继续折腾，也开始记录</h3>
+          <p>解决 GitHub Pages 的引用路径问题，把踩过的坑写成笔记。</p>
+        </div>
+        <div class="wx-about-milestone">
+          <time datetime="2026-11-03">2026.11</time>
+          <h3>一次集中改版</h3>
+          <p>设计令牌、动效、更新日志、写作台、R2 迁移。</p>
+        </div>
       </div>
-      <p class="wx-about-head-note">不着急，慢慢来。</p>
-    </header>
+    </section>
+  </div>
 
-    <ol class="wx-about-timeline">
-      <li>
-        <time datetime="{{ site.uptime_since | date_to_xmlschema }}">{{ site.uptime_since | date: '%Y.%m' }}</time>
-        <h3>站点开始运行</h3>
-        <p>从一台 Ubuntu 虚拟机开始，这个博客有了自己的地址。</p>
-      </li>
-      <li>
-        <time datetime="2023-10-11">2023.10</time>
-        <h3>写下《MyBlog》</h3>
-        <p>写为什么想搭一个自己的网站，也写下「我希望在这里的世界是豁达平静的」。</p>
-      </li>
-      <li>
-        <time datetime="2024-11-13">2024.11</time>
-        <h3>继续折腾，也开始记录</h3>
-        <p>解决 GitHub Pages 的引用路径问题，把踩过的坑写成笔记。</p>
-      </li>
-      <li>
-        <time datetime="2026-11-03">2026.11</time>
-        <h3>一次集中改版</h3>
-        <p>设计令牌、动效、更新日志、写作台、R2 迁移，还有你现在看到的这一页。</p>
-      </li>
-    </ol>
-  </section>
+  <!-- 04 · 从首页挪过来的「最近 3 条更新」 -->
+  <div class="wx-about-recent" id="changelog" data-wx-reveal>
+    {% include changelog-strip.html %}
+  </div>
 
-  <!-- 05 · 更新日志 -->
-  <section class="wx-about-section" id="changelog" aria-labelledby="wx-about-changelog-title">
-    <header class="wx-about-section-head">
-      <div>
-        <p class="wx-about-kicker">04 / Changelog</p>
-        <h2 class="wx-about-section-title" id="wx-about-changelog-title">更新日志</h2>
-      </div>
-      <p class="wx-about-head-note">{{ changelog_count }} 条记录 · 最后更新 {{ site.data.changelog.first.date | date: '%Y.%m.%d' }}</p>
-    </header>
-
-    <div class="wx-about-changelog-card" data-wx-reveal>
-      <p class="wx-about-changelog-intro">这个站最近在发生什么。一次发布记一条，不按 commit。</p>
-      {% include changelog-list.html %}
-    </div>
-
-    <p class="wx-about-changelog-foot">
-      <span>更早的改动都留在这条时间线里。</span>
-      <a href="{{ '/feed.xml' | relative_url }}">订阅 RSS <span aria-hidden="true">→</span></a>
-    </p>
-  </section>
-
-  <!-- 06 · 留言 -->
+  <!-- 05 · 留言 -->
   <section class="wx-about-section wx-about-comments" id="comments" aria-labelledby="wx-about-comments-title">
     <header class="wx-about-section-head">
       <div>
-        <p class="wx-about-kicker">05 / Say hi</p>
+        <p class="wx-about-kicker">04 / Say hi</p>
         <h2 class="wx-about-section-title" id="wx-about-comments-title">说点什么</h2>
       </div>
       <p class="wx-about-head-note">留言会同步到 GitHub Discussions。</p>

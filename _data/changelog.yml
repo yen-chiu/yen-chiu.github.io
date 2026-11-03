@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: style
+  scope: 主站
+  title: 关于页收紧排版，更新日志只露最近三条
+  note: 首页那条搬到关于页底部，完整记录仍在 /changelog/。
+
+- date: 2026-11-03
   kind: feature
   scope: 主站
   title: 关于页重做，更新日志搬了进来
