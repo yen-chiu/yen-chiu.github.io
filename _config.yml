@@ -99,6 +99,10 @@ background_animation: true
 # 页脚「本站已运行」计时起点（可留空则使用默认值）
 uptime_since: "2023-05-20T13:14:00+08:00"
 
+# 写作台（/admin/）的 GitHub 登录代理地址，例如 https://wendell-auth.xxx.workers.dev
+# 留空则写作台只显示「访问令牌」登录方式
+admin_auth_endpoint: ""
+
 # 启用鼠标点击特效
 mouse_click_effect: true
 

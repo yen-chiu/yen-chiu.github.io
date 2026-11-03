@@ -19,6 +19,10 @@
 
   var state = {
     token: '',
+    tokenSource: 'pat', // 'pat' | 'oauth'
+    tokenExpiresAt: 0,
+    refreshToken: '',
+    authBase: '',
     owner: '',
     repo: '',
     branch: '',
@@ -117,6 +121,17 @@
     return API_DEFAULT;
   }
 
+  /** 解析登录代理地址：优先 ?auth=（仅本机调试），其次 data-auth 属性 */
+  function resolveAuthBase() {
+    var fromQuery = new URLSearchParams(location.search).get('auth');
+    if (isLocalHost() && fromQuery && /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(fromQuery)) {
+      return fromQuery.replace(/\/$/, '');
+    }
+    var root = document.getElementById('wx-admin');
+    var attr = root && root.dataset ? root.dataset.auth : '';
+    return attr ? String(attr).replace(/\/$/, '') : '';
+  }
+
   function loadConfig() {
     var cfg = null;
     try {
@@ -125,16 +140,33 @@
       cfg = null;
     }
     state.apiBase = resolveApiBase();
+    state.authBase = resolveAuthBase();
     if (!cfg) return false;
     state.token = cfg.token || '';
     state.owner = cfg.owner || '';
     state.repo = cfg.repo || '';
     state.branch = cfg.branch || '';
+    state.tokenSource = cfg.source || 'pat';
+    state.tokenExpiresAt = cfg.expires_at || 0;
+    state.refreshToken = cfg.refresh_token || '';
+    // OAuth 令牌过期则视为未登录
+    if (state.tokenExpiresAt && Date.now() > state.tokenExpiresAt) {
+      state.token = '';
+      return false;
+    }
     return !!(state.token && state.owner && state.repo);
   }
 
   function saveConfig(token, owner, repo, branch, remember) {
-    var cfg = { token: token, owner: owner, repo: repo, branch: branch };
+    var cfg = {
+      token: token,
+      owner: owner,
+      repo: repo,
+      branch: branch,
+      source: state.tokenSource || 'pat',
+      expires_at: state.tokenExpiresAt || 0,
+      refresh_token: state.refreshToken || ''
+    };
     try {
       if (remember) {
         localStorage.setItem(LS_KEY, JSON.stringify(cfg));
@@ -180,6 +212,7 @@
       });
       return parse.then(function (data) {
         if (!res.ok) {
+          if (res.status === 401 && state.tokenSource === 'oauth') onAuthExpired();
           var err = new Error((data && data.message) || '请求失败（' + res.status + '）');
           err.status = res.status;
           err.data = data;
@@ -188,6 +221,20 @@
         return data;
       });
     });
+  }
+
+  /** GitHub 登录到期：清掉本地登录态，回到登录页 */
+  function onAuthExpired() {
+    if (state.tokenSource !== 'oauth') return;
+    state.token = '';
+    state.tokenExpiresAt = 0;
+    state.refreshToken = '';
+    clearConfig();
+    var login = $('#adm-login');
+    var bench = $('#adm-workbench');
+    if (login) login.hidden = false;
+    if (bench) bench.hidden = true;
+    toast('GitHub 登录已过期（约 8 小时），重新点「使用 GitHub 登录」即可', true, 9000);
   }
 
   function repoPath(p) {
@@ -916,6 +963,157 @@
    * 登录流程
    * ------------------------------------------------------------------ */
 
+  /* ---------- GitHub 设备码登录（经 Cloudflare Worker 代理） ---------- */
+
+  var device = { polling: false, timer: null, code: '', interval: 5, startedAt: 0 };
+
+  function setDeviceStatus(text) {
+    echo($('#adm-device-status'), text);
+  }
+
+  function stopDevice(text) {
+    device.polling = false;
+    window.clearTimeout(device.timer);
+    if (text) setDeviceStatus(text);
+    var btn = $('#adm-gh-login');
+    if (btn) btn.disabled = false;
+  }
+
+  function copyText(text) {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) return Promise.resolve(false);
+    return navigator.clipboard.writeText(text).then(
+      function () {
+        return true;
+      },
+      function () {
+        return false;
+      }
+    );
+  }
+
+  function startDeviceLogin() {
+    if (!state.authBase) {
+      toast('还没有配置 GitHub 登录代理，请先使用访问令牌', true);
+      return;
+    }
+
+    // 在用户手势里同步打开授权页，避免被浏览器拦截弹窗
+    try {
+      window.open('https://github.com/login/device', '_blank', 'noopener');
+    } catch (e) {
+      /* ignore */
+    }
+
+    var btn = $('#adm-gh-login');
+    if (btn) btn.disabled = true;
+    var box = $('#adm-device');
+    if (box) box.hidden = false;
+    echo($('#adm-user-code'), '······');
+    setDeviceStatus('正在向 GitHub 申请验证码…');
+
+    fetch(state.authBase + '/device/code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    })
+      .then(function (res) {
+        return res.json().then(function (data) {
+          if (!res.ok || !data.device_code) {
+            throw new Error(data.error_description || data.error || '代理返回 ' + res.status);
+          }
+          return data;
+        });
+      })
+      .then(function (data) {
+        device.code = data.device_code;
+        device.interval = Math.max(5, Number(data.interval) || 5);
+        device.startedAt = Date.now();
+        echo($('#adm-user-code'), data.user_code || '----');
+        var link = $('#adm-device-link');
+        if (link && data.verification_uri) link.href = data.verification_uri;
+        setDeviceStatus('等待你在 GitHub 上确认…');
+        copyText(data.user_code || '').then(function (ok) {
+          if (ok) setDeviceStatus('验证码已复制，去 GitHub 粘贴确认…');
+        });
+        pollDeviceToken();
+      })
+      .catch(function (err) {
+        stopDevice('获取验证码失败：' + err.message);
+      });
+  }
+
+  function pollDeviceToken() {
+    device.polling = true;
+
+    var schedule = function () {
+      if (!device.polling) return;
+      device.timer = window.setTimeout(tick, device.interval * 1000);
+    };
+
+    var tick = function () {
+      if (!device.polling) return;
+      if (Date.now() - device.startedAt > 15 * 60 * 1000) {
+        stopDevice('验证码已过期，请重新点「使用 GitHub 登录」');
+        return;
+      }
+
+      fetch(state.authBase + '/device/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ device_code: device.code })
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          if (data && data.access_token) {
+            stopDevice('授权成功，正在连接仓库…');
+            applyOAuthToken(data);
+            return;
+          }
+          var err = data && data.error;
+          if (err === 'authorization_pending') {
+            setDeviceStatus('等待你在 GitHub 上确认…');
+            schedule();
+            return;
+          }
+          if (err === 'slow_down') {
+            device.interval += 5;
+            schedule();
+            return;
+          }
+          if (err === 'expired_token') {
+            stopDevice('验证码已过期，请重新点「使用 GitHub 登录」');
+            return;
+          }
+          if (err === 'access_denied') {
+            stopDevice('你取消了授权');
+            return;
+          }
+          stopDevice('登录失败：' + ((data && data.error_description) || err || '未知错误'));
+        })
+        .catch(function () {
+          schedule();
+        });
+    };
+
+    tick();
+  }
+
+  function applyOAuthToken(data) {
+    state.token = data.access_token;
+    state.tokenSource = 'oauth';
+    state.tokenExpiresAt = data.expires_in ? Date.now() + Number(data.expires_in) * 1000 : 0;
+    state.refreshToken = data.refresh_token || '';
+    connect(
+      $('#adm-owner').value.trim(),
+      $('#adm-repo').value.trim(),
+      $('#adm-branch').value.trim(),
+      state.token,
+      $('#adm-remember').checked
+    );
+  }
+
   function connect(owner, repo, branch, token, remember) {
     state.token = token;
     state.owner = owner;
@@ -989,6 +1187,21 @@
         var show = input.type === 'password';
         input.type = show ? 'text' : 'password';
         toggle.textContent = show ? '隐藏' : '显示';
+      });
+    }
+
+    var ghLogin = $('#adm-gh-login');
+    if (ghLogin) {
+      ghLogin.addEventListener('click', startDeviceLogin);
+    }
+
+    var copyBtn = $('#adm-copy-code');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var code = ($('#adm-user-code') || {}).textContent || '';
+        copyText(code).then(function (ok) {
+          setDeviceStatus(ok ? '已复制，去 GitHub 粘贴确认' : '复制失败，请手动选中复制');
+        });
       });
     }
 
@@ -1129,7 +1342,12 @@
     var root = $('#wx-admin');
     if (!root) return;
     state.apiBase = resolveApiBase();
+    state.authBase = resolveAuthBase();
     bindEvents();
+
+    // 配置了登录代理才显示「使用 GitHub 登录」
+    var ghBlock = $('#adm-gh-block');
+    if (ghBlock) ghBlock.hidden = !state.authBase;
 
     // 移动端默认收起「文章信息」，让正文编辑区直接可见
     var details = document.getElementById('adm-details');
