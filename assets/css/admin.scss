@@ -876,6 +876,16 @@ html[data-mode='dark'] .adm-dirty {
 /* ---------- 超窄屏（≤ 576px）：工具栏换行，避免按钮被裁掉 ---------- */
 
 @media (max-width: 575.98px) {
+  /* 搜索栏：输入框略窄一点，新建按钮跟着左移，右边留一点空 */
+  .adm-search-row {
+    padding-right: 0.9rem;
+  }
+
+  .adm-search-row input {
+    /* 默认 min-width:auto 会按输入框的 min-content 撑住，导致收不窄 */
+    min-width: 0;
+  }
+
   .adm {
     /* 兜底：任何子元素都不允许把页面撑出横向滚动条。
        只裁 .adm-main，避免影响抽屉（.adm-side 是 fixed 定位） */
