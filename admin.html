@@ -11,7 +11,7 @@ body_class: admin-page
 
 <link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}">
 
-<div id="wx-admin" class="adm" data-owner="yen-chiu" data-repo="yen-chiu.github.io" data-branch="master">
+<div id="wx-admin" class="adm" data-owner="yen-chiu" data-repo="yen-chiu.github.io" data-branch="master" data-auth="{{ site.admin_auth_endpoint | default: '' }}">
   <!-- ============ 登录 ============ -->
   <section id="adm-login" class="adm-card adm-login">
     <div class="adm-login-head">
@@ -34,6 +34,31 @@ body_class: admin-page
         <input id="adm-branch" type="text" inputmode="latin" value="master">
         <small class="adm-muted">留空则使用仓库默认分支。</small>
       </label>
+
+      <div id="adm-gh-block" class="adm-gh-block" hidden>
+        <button type="button" id="adm-gh-login" class="adm-btn adm-btn-primary adm-btn-block">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          <span>使用 GitHub 登录</span>
+        </button>
+
+        <p class="adm-muted adm-tiny">
+          点一下会打开 GitHub 授权页并显示 8 位验证码，粘贴确认即可。<br>
+          手机上同样可用，不用再手动创建令牌。
+        </p>
+
+        <div id="adm-device" class="adm-device" hidden>
+          <div class="adm-device-code">
+            <code id="adm-user-code">······</code>
+            <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-copy-code">复制</button>
+          </div>
+          <p class="adm-muted adm-tiny" id="adm-device-status">等待授权…</p>
+          <p class="adm-tiny">
+            <a id="adm-device-link" href="https://github.com/login/device" target="_blank" rel="noopener">打开 GitHub 授权页 →</a>
+          </p>
+        </div>
+
+        <div class="adm-or"><span>或使用访问令牌</span></div>
+      </div>
 
       <label class="adm-field">
         <span>Personal Access Token</span>

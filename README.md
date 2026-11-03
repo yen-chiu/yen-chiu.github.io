@@ -81,13 +81,18 @@ bundle exec jekyll serve --livereload
 
 1. **本地写**：在 `_posts/` 新建 `YYYY-MM-DD-标题.md`，写好 front matter 后 `git push`。
 2. **网页写**：GitHub 网页端直接编辑 Markdown 文件。
-3. **在线写作台**：打开 `/admin/`，填入只授予本仓库 `Contents: Read and write` 权限的 Fine-grained Token，即可：
+3. **在线写作台**：打开 `/admin/`，两种登录方式：
+   - **GitHub 登录**（配置了 `admin_auth_endpoint` 后可用）：点一下 → 在 GitHub 输入 8 位验证码即可，令牌 8 小时有效
+   - **访问令牌**：填一个只授予本仓库 `Contents: Read and write` 权限的 Fine-grained Token
+
+   登录后可以：
    - 浏览 / 搜索 / 新建 / 编辑文章
    - 拖拽、粘贴或从相册选择图片，自动压缩到 1600px 后上传到 `assets/img/uploads/YYYY/MM/`
    - 实时预览，可选提交到 `drafts` 草稿分支，不影响线上
    - 断网或误关页面后从本地草稿恢复
 
-> 令牌只保存在浏览器本地，不会经过任何第三方服务器。写作台页面已加入 `noindex` 与 `robots` 屏蔽。
+> 令牌/登录态只保存在浏览器本地，不会经过任何第三方服务器。写作台页面已加入 `noindex` 与 `robots` 屏蔽。
+> GitHub 登录需要一个 Cloudflare Worker 做 CORS 代理，搭建步骤见 [`tools/worker/README.md`](tools/worker/README.md)。
 
 ## 部署
 

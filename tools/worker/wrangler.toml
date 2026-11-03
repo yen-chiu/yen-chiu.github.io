@@ -1,0 +1,11 @@
+name = "wendell-auth"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# 允许调用这个代理的站点（逗号分隔可写多个；本地调试时可临时加 http://127.0.0.1:4010）
+[vars]
+GITHUB_CLIENT_ID = "请替换成你 GitHub App 的 Client ID"
+ALLOWED_ORIGIN = "https://yenchiu.com"
+
+# 可选：只有想「静默续期」时才需要下面这条（不配也能用，只是令牌 8 小时后要重新登录）
+# npx wrangler secret put GITHUB_CLIENT_SECRET
