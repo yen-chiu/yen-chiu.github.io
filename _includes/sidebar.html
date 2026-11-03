@@ -44,11 +44,69 @@
 
   <div class="sidebar-bottom d-flex flex-wrap  align-items-center w-100">
     {% unless site.theme_mode %}
-      <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle">
-        <!-- 自己添加图标后，"Switch Mode"会变成"github"的图标，这里一起更换了。 -->
-        <!-- <i class="iconfont icon-adjust1"></i> -->
-        <i class="iconfont wendell_icon-zf_switch_mode"></i> 
-      </button>
+      <div class="dropdown wx-theme-dropdown">
+        <button
+          type="button"
+          class="btn btn-link nav-link wx-theme-toggle"
+          id="theme-mode-toggle"
+          aria-label="切换主题"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span class="wx-theme-indicator" data-mode-icon="light" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+            </svg>
+          </span>
+          <span class="wx-theme-indicator" data-mode-icon="dark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </span>
+          <span class="wx-theme-indicator" data-mode-icon="system" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+              <path d="M8 20h8M12 16v4"></path>
+            </svg>
+          </span>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end wx-theme-menu" aria-labelledby="theme-mode-toggle">
+          <li>
+            <button type="button" class="dropdown-item" data-theme-mode="light">
+              <span class="wx-theme-menu-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                </svg>
+              </span>
+              <span>浅色</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" data-theme-mode="dark">
+              <span class="wx-theme-menu-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              </span>
+              <span>深色</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" data-theme-mode="system">
+              <span class="wx-theme-menu-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                  <path d="M8 20h8M12 16v4"></path>
+                </svg>
+              </span>
+              <span>跟随系统</span>
+            </button>
+          </li>
+        </ul>
+      </div>
 
       {% if site.data.contact.size > 0 %}
         <span class="icon-border"></span>
