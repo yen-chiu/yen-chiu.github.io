@@ -898,21 +898,49 @@ html[data-mode='dark'] .adm-dirty {
     overflow-x: hidden;
   }
 
+  /*
+   * 工具栏重新排版（固定两行，不随宽度跳）：
+   *   第一行  ←  ☰  编辑/预览           保存
+   *   第二行  未保存                      重载
+   * 用网格而不是 flex-wrap：flex-wrap 下换行点取决于内容宽度，
+   * 320 和 360 会排成两种样子（保存甚至会跑到重载左边）。
+   */
   .adm-toolbar {
-    flex-wrap: wrap;
-    row-gap: 0.45rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.4rem 0.5rem;
     padding: 0.55rem 0.65rem;
   }
 
-  .adm-toolbar-left,
-  .adm-toolbar-right {
+  .adm-toolbar-left {
+    grid-row: 1;
+    grid-column: 1;
     flex-wrap: wrap;
     min-width: 0;
   }
 
-  /* 右组换行后仍然贴右，而不是漂到中间 */
+  /* 右组摊平，让保存 / 重载 / 未保存各自落到网格里 */
   .adm-toolbar-right {
-    margin-left: auto;
+    display: contents;
+  }
+
+  #adm-save {
+    grid-row: 1;
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  #adm-reload {
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  #adm-dirty {
+    grid-row: 2;
+    grid-column: 1;
+    justify-self: start;
   }
 
   .adm-tabs {
