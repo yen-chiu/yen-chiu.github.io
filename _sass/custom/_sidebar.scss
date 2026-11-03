@@ -114,15 +114,15 @@
 
         &:hover,
         &:focus-visible {
-          animation: wx-title-jitter 6.5s steps(2, end) infinite;
+          animation: wx-title-jitter 5.6s steps(2, end) infinite;
 
           &::before,
           &::after {
-            animation: wx-title-glitch 6.5s steps(1, end) infinite both;
+            animation: wx-title-glitch 5.6s steps(1, end) infinite both;
           }
 
           &::after {
-            animation-delay: 0.025s;
+            animation-delay: 0.015s;
           }
         }
 
@@ -246,47 +246,47 @@
     transform: translate(-1px, 0);
   }
 
-  2% {
+  1.5% {
     transform: translate(1px, 1px);
   }
 
-  4.6% {
+  2.14% {
     transform: translate(0);
   }
 
-  6.15% {
+  2.86% {
     transform: translate(-1px, -0.5px);
   }
 
-  8% {
+  4% {
     transform: translate(1px, 0.5px);
   }
 
-  10.77% {
+  5% {
     transform: translate(0);
   }
 
-  12.3% {
+  5.71% {
     transform: translate(-1px, 0);
   }
 
-  14.5% {
+  7% {
     transform: translate(1px, 0);
   }
 
-  16.9% {
+  7.86% {
     transform: translate(0);
   }
 
-  18.5% {
+  8.57% {
     transform: translate(-1px, 0);
   }
 
-  20.5% {
+  10% {
     transform: translate(1px, 0);
   }
 
-  23.1%,
+  10.71%,
   100% {
     transform: translate(0);
   }
@@ -299,43 +299,43 @@
     transform: translate(-3px, -1px);
   }
 
-  4.6% {
+  2.14% {
     opacity: 0;
     clip-path: inset(50% 0 50% 0);
     transform: translate(0);
   }
 
-  6.15% {
+  2.86% {
     opacity: 0.8;
     clip-path: inset(55% 0 12% 0);
     transform: translate(3px, 1px);
   }
 
-  10.77% {
+  5% {
     opacity: 0;
     clip-path: inset(50% 0 50% 0);
     transform: translate(0);
   }
 
-  12.3% {
+  5.71% {
     opacity: 0.75;
     clip-path: inset(25% 0 45% 0);
     transform: translate(-2px, 0);
   }
 
-  16.9% {
+  7.86% {
     opacity: 0;
     clip-path: inset(50% 0 50% 0);
     transform: translate(0);
   }
 
-  18.5% {
+  8.57% {
     opacity: 0.7;
     clip-path: inset(70% 0 5% 0);
     transform: translate(2px, 0);
   }
 
-  23.1%,
+  10.71%,
   100% {
     opacity: 0;
     clip-path: inset(50% 0 50% 0);
