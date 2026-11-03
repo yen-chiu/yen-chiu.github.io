@@ -90,6 +90,7 @@ test('同一 IP 频繁申请设备码会被限流', async (t) => {
   assert.equal(second.status, 200);
   assert.equal(third.status, 429);
   assert.equal((await third.json()).error, 'rate_limited');
+  assert.equal(third.headers.get('Retry-After'), '60');
 });
 
 test('/refresh 已下线', async () => {
