@@ -18,9 +18,10 @@
    * ------------------------------------------------------------------ */
 
   // 本次会话上传过的图片：路径 → 上传时间戳。
-  // 预览时给这些路径加 ?t=，绕开边缘缓存里可能残留的 404
-  // （上传提交后 Pages 还要构建一两分钟，期间预览会先拿到一次 404）。
+  // 预览时给 uploads 目录下的图片统一切版本参数，绕开浏览器/边缘缓存里
+  // 可能残留的 404（上传提交后 Pages 还要构建一两分钟，期间预览会先拿到一次 404）。
   var uploadStamps = {};
+  var PREVIEW_TS = Date.now();
 
   var state = {
     token: '',
@@ -973,12 +974,14 @@
     }
     target.innerHTML = sanitize(html);
 
-    // 本次会话刚上传的图片，补一个版本参数，避免预览被缓存的 404 卡住
+    // uploads 下的图片一律补版本参数（本次上传用上传时间，其它用页面加载时间），
+    // 避免预览被缓存里的旧 404 卡住
     Array.prototype.slice.call(target.querySelectorAll('img')).forEach(function (img) {
       var src = img.getAttribute('src') || '';
       if (src.indexOf('?') !== -1) return;
       var key = src.replace(/^\//, '');
-      if (uploadStamps[key]) img.setAttribute('src', src + '?t=' + uploadStamps[key]);
+      if (key.indexOf('assets/img/uploads/') !== 0) return;
+      img.setAttribute('src', src + '?t=' + (uploadStamps[key] || PREVIEW_TS));
     });
   }
 
