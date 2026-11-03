@@ -135,7 +135,7 @@
 }
 
 .wx-hero-now-list {
-  margin: 0.45rem 0 0.8rem;
+  margin: 0.45rem 0 0;
   padding: 0;
   color: var(--text-muted-color);
   font-size: 0.78rem;
@@ -160,24 +160,6 @@
     + li {
       margin-top: 0.35rem;
     }
-  }
-}
-
-.wx-hero-now-link {
-  display: inline-flex;
-  gap: 0.3rem;
-  align-items: center;
-  margin-top: auto;
-  color: var(--wx-accent);
-  font-size: 0.78rem;
-  text-decoration: none;
-
-  span {
-    transition: transform var(--wx-dur) var(--wx-ease);
-  }
-
-  &:hover span {
-    transform: translateX(3px);
   }
 }
 
