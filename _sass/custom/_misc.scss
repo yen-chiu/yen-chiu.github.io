@@ -83,6 +83,30 @@ footer {
     }
   }
 
+  /* 「刷新缓存」：看起来像页脚链接，但实际是个按钮 */
+  .wx-cache-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color var(--wx-dur) var(--wx-ease);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--wx-accent);
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: progress;
+    }
+  }
+
   .wx-uptime-dot {
     width: 6px;
     height: 6px;

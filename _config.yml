@@ -213,6 +213,7 @@ pwa:
     # 通常其值是使用和当前网站相同域名的其他网站的 `baseurl`。
     deny_paths:
       - "/admin" # 写作台（含令牌）不参与离线缓存
+      - "/refresh" # 刷新缓存页本身也要实时获取
       # - "/example"  # 符合 `<SITE_URL>/example/*` 的 URL 不会被 PWA 缓存
 
 # 大文件（视频等）走 Cloudflare R2，不要放回仓库
