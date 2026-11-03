@@ -1,6 +1,7 @@
 ---
 title: 腾讯云+outline方案搭建科学上网VPN
 date: 2023-03-11 16:10:46 +0800
+description: 用腾讯云 + Outline 自建科学上网服务的完整记录：购买服务器、部署 Docker、生成访问密钥、配置客户端。
 categories: [Uncategories, 网络环境]
 tags: [科学上网]
 ---
