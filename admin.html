@@ -181,11 +181,34 @@ body_class: admin-page
             <span class="adm-md-spacer"></span>
             <button type="button" data-md="upload" class="adm-md-upload" title="上传图片">上传图片</button>
           </div>
-          <p class="adm-image-hint">
-            <span class="adm-image-hint-label">调图片大小</span>
-            <code>&lt;img src="…" width="360"&gt;</code>
-            <a class="adm-image-hint-link" href="https://yenchiu.com/WendellManual/docs/blog-guide/studio/images/" target="_blank" rel="noopener">手册 →</a>
-          </p>
+          <div class="adm-tips" id="adm-tips">
+            <div class="adm-tips-viewport" aria-live="off">
+              <div class="adm-tip is-active" data-tip>
+                <span class="adm-tip-label">调图片大小</span>
+                <code>&lt;img src="…" width="360"&gt;</code>
+                <span class="adm-tip-alt">用 img 的 width 指定宽度</span>
+                <a class="adm-tip-link" href="https://yenchiu.com/WendellManual/docs/blog-guide/studio/images/" target="_blank" rel="noopener">手册 →</a>
+              </div>
+              <div class="adm-tip" data-tip>
+                <span class="adm-tip-label">自动压缩</span>
+                <span class="adm-tip-text">最长边缩到 1600px，PNG 保留透明</span>
+              </div>
+              <div class="adm-tip" data-tip>
+                <span class="adm-tip-label">大文件</span>
+                <span class="adm-tip-text">视频、PDF 放 R2，别塞进仓库</span>
+                <a class="adm-tip-link" href="https://yenchiu.com/WendellManual/docs/blog-guide/studio/images/" target="_blank" rel="noopener">手册 →</a>
+              </div>
+              <div class="adm-tip" data-tip>
+                <span class="adm-tip-label">快捷键</span>
+                <span class="adm-tip-text">Ctrl/⌘ + S 保存，Tab 缩进</span>
+              </div>
+              <div class="adm-tip" data-tip>
+                <span class="adm-tip-label">拖图</span>
+                <span class="adm-tip-text">图片直接拖进编辑区或粘贴即可上传</span>
+              </div>
+            </div>
+            <div class="adm-tips-dots" id="adm-tips-dots"></div>
+          </div>
           <textarea id="adm-content" class="adm-textarea" placeholder="开始写点什么…（支持 Markdown，可直接粘贴或拖入图片）" spellcheck="false"></textarea>
           <div class="adm-drop" id="adm-drop" hidden>把图片拖到这里上传</div>
         </div>

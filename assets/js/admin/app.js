@@ -1642,12 +1642,80 @@
     });
   }
 
+  /* 工具栏提示轮播：自动轮换，悬停/聚焦暂停，减少动效时静止 */
+  function initTips() {
+    var box = $('#adm-tips');
+    if (!box) return;
+    var tips = Array.prototype.slice.call(box.querySelectorAll('[data-tip]'));
+    if (tips.length < 2) return;
+
+    var dotBox = $('#adm-tips-dots');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    var index = 0;
+    var timer = null;
+
+    var dots = tips.map(function (tip, i) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'adm-tips-dot';
+      dot.setAttribute('aria-label', '提示 ' + (i + 1));
+      dot.addEventListener('click', function () {
+        show(i);
+        restart();
+      });
+      if (dotBox) dotBox.appendChild(dot);
+      return dot;
+    });
+
+    function show(i) {
+      index = i;
+      tips.forEach(function (tip, j) {
+        tip.classList.toggle('is-active', i === j);
+      });
+      dots.forEach(function (dot, j) {
+        dot.classList.toggle('is-active', i === j);
+        dot.setAttribute('aria-current', i === j ? 'true' : 'false');
+      });
+    }
+
+    function stop() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function start() {
+      stop();
+      if (reduce && reduce.matches) return;
+      timer = window.setInterval(function () {
+        show((index + 1) % tips.length);
+      }, 6000);
+    }
+
+    function restart() {
+      start();
+    }
+
+    show(0);
+    start();
+    box.addEventListener('mouseenter', stop);
+    box.addEventListener('mouseleave', start);
+    box.addEventListener('focusin', stop);
+    box.addEventListener('focusout', start);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop();
+      else start();
+    });
+  }
+
   function init() {
     var root = $('#wx-admin');
     if (!root) return;
     state.apiBase = resolveApiBase();
     state.authBase = resolveAuthBase();
     bindEvents();
+    initTips();
 
     // 配置了登录代理才显示「使用 GitHub 登录」
     var ghBlock = $('#adm-gh-block');
