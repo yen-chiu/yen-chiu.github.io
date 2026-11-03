@@ -1,0 +1,18 @@
+<!-- 首页：最近三条更新（只在第一页、且在文章列表上方出现一次） -->
+{% assign recent = site.data.changelog %}
+{% if recent.size > 0 %}
+  <section class="wx-changelog-strip" aria-label="更新日志">
+    <div class="wx-changelog-strip-head">
+      <span class="wx-changelog-kicker">更新日志</span>
+      <a class="wx-changelog-more" href="{{ '/changelog/' | relative_url }}">全部</a>
+    </div>
+    <ul>
+      {% for entry in recent limit: 3 %}
+        <li>
+          <time datetime="{{ entry.date | date_to_xmlschema }}">{{ entry.date | date: '%m-%d' }}</time>
+          <span class="wx-changelog-strip-title">{{ entry.title }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endif %}

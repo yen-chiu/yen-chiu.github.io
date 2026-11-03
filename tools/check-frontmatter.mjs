@@ -155,6 +155,42 @@ for (const dir of DIRS) {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * 更新日志（_data/changelog.yml）的轻量校验
+ * 只认 kind/scope 的枚举，以及 date 必须是 YYYY-MM-DD，防止手滑写错标签
+ * ------------------------------------------------------------------------- */
+
+const KINDS = ['feature', 'fix', 'content', 'style', 'infra'];
+const SCOPES = ['主站', '写作台', '子站'];
+
+const changelogPath = path.join(ROOT, '_data', 'changelog.yml');
+if (fs.existsSync(changelogPath)) {
+  const raw = fs.readFileSync(changelogPath, 'utf8');
+  const blocks = raw.split(/\n(?=- date:)/).filter((b) => b.includes('date:'));
+
+  blocks.forEach((block, i) => {
+    const field = (name) => {
+      const m = new RegExp('^\\s*(?:-\\s*)?' + name + ':\\s*(.+)$', 'm').exec(block);
+      return m ? m[1].trim().replace(/^['"]|['"]$/g, '') : '';
+    };
+    const date = field('date');
+    const kind = field('kind');
+    const scope = field('scope');
+    const title = field('title');
+    const label = `_data/changelog.yml 第 ${i + 1} 条`;
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) err(label, `date 必须是 YYYY-MM-DD，现在是「${date}」`);
+    if (!KINDS.includes(kind)) err(label, `kind 只能是 ${KINDS.join('/')}，现在是「${kind}」`);
+    if (scope && !SCOPES.includes(scope)) warn(label, `scope 建议用 ${SCOPES.join('/')}，现在是「${scope}」`);
+    if (!title) err(label, '缺少 title');
+    if (title.length > 40) warn(label, 'title 偏长（建议 ≤ 40 字），写不下可以考虑写成文章');
+    const note = field('note');
+    if (note.length > 60) warn(label, 'note 偏长，建议一句话说完');
+  });
+
+  console.log(`另外检查了 ${blocks.length} 条更新日志`);
+}
+
 const show = (list, label) => {
   if (!list.length) return;
   console.log(`\n${label}（${list.length}）：`);
