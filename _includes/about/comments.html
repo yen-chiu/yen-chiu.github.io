@@ -1,0 +1,31 @@
+<section class="wx-about-section wx-about-comments" id="comments" aria-labelledby="wx-about-comments-title">
+  <header class="wx-about-section-head">
+    <div>
+      <p class="wx-about-kicker">04 / Say hi</p>
+      <h2 class="wx-about-section-title" id="wx-about-comments-title">说点什么</h2>
+    </div>
+    <p class="wx-about-head-note">留言会同步到 GitHub Discussions。</p>
+  </header>
+
+  <p class="wx-about-comments-lede">
+    如果你也在做类似的事，或者只是想打个招呼，欢迎留句话。也可以
+    <a href="mailto:{{ site.social.email }}">写信给我</a>。
+  </p>
+
+  <details class="wx-about-comments-details" id="wx-about-comments">
+    <summary>
+      <span class="wx-about-comments-summary">展开留言</span>
+      <span class="wx-about-comments-hint">Giscus · 按需加载</span>
+    </summary>
+
+    <div
+      class="wx-about-giscus"
+      id="wx-about-giscus"
+      data-repo="{{ site.comments.giscus.repo }}"
+      data-repo-id="{{ site.comments.giscus.repo_id }}"
+      data-category="{{ site.comments.giscus.category }}"
+      data-category-id="{{ site.comments.giscus.category_id }}"
+      data-mapping="{{ site.comments.giscus.mapping | default: 'pathname' }}"
+    ></div>
+  </details>
+</section>

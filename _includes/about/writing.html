@@ -1,0 +1,46 @@
+<div class="wx-about-split">
+  <section class="wx-about-panel" id="writing" aria-labelledby="wx-about-writing-title">
+    <header class="wx-about-section-head">
+      <div>
+        <p class="wx-about-kicker">02 / Writing</p>
+        <h2 class="wx-about-section-title" id="wx-about-writing-title">最近在写</h2>
+      </div>
+      <a class="wx-about-head-link" href="{{ '/archives/' | relative_url }}">全部文章 <span aria-hidden="true">→</span></a>
+    </header>
+
+    <div class="wx-about-posts-list" data-wx-reveal>
+      {% assign about_posts = site.posts | where_exp: 'post', 'post.hidden != true' %}
+      {% for post in about_posts limit: 3 %}
+        {% assign desc = post.description | default: post.content | strip_html | strip_newlines | truncate: 42 %}
+        <a class="wx-about-post-row" href="{{ post.url | relative_url }}">
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+          <span class="wx-about-post-row-main">
+            <strong>{{ post.title }}</strong>
+            <span>{% if post.categories.size > 0 %}{{ post.categories | first }} · {% endif %}{{ desc | strip }}</span>
+          </span>
+          <span class="wx-about-post-arrow" aria-hidden="true">→</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="wx-about-panel" id="journey" aria-labelledby="wx-about-journey-title">
+    <header class="wx-about-section-head">
+      <div>
+        <p class="wx-about-kicker">03 / Journey</p>
+        <h2 class="wx-about-section-title" id="wx-about-journey-title">一些时间点</h2>
+      </div>
+      <p class="wx-about-head-note">不着急，慢慢来。</p>
+    </header>
+
+    <div class="wx-about-milestones" data-wx-reveal>
+      {% for item in site.data.about.milestones %}
+        <div class="wx-about-milestone">
+          <time datetime="{{ item.datetime }}">{{ item.datetime | date: '%Y.%m' }}</time>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.text }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
