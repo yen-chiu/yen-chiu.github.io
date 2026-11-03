@@ -87,13 +87,17 @@ body_class: admin-page
 
   <!-- ============ 工作台 ============ -->
   <section id="adm-workbench" class="adm-workbench" hidden>
+    <div class="adm-backdrop" id="adm-backdrop" hidden></div>
     <aside class="adm-side" id="adm-side">
       <div class="adm-side-head">
-        <div>
+        <div class="adm-side-title">
           <strong id="adm-repo-label">yen-chiu/yen-chiu.github.io</strong>
           <div class="adm-muted adm-tiny"><span id="adm-branch-label">master</span> · <span id="adm-user-label">已连接</span></div>
         </div>
-        <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-logout">退出</button>
+        <div class="adm-side-actions">
+          <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-logout">退出</button>
+          <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm" id="adm-close-list" aria-label="关闭列表，返回编辑" title="返回编辑">✕</button>
+        </div>
       </div>
 
       <div class="adm-search-row">

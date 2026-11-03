@@ -189,6 +189,21 @@
     }
   }
 
+  /**
+   * 文章列表抽屉的统一开关。
+   * 窄屏下抽屉是覆盖层：必须同时控制遮罩，并提供明确的关闭路径
+   * （右上角 ✕ / 点遮罩 / Esc / 新建或载入后自动收起）。
+   */
+  function setSideOpen(open) {
+    var side = $('#adm-side');
+    var backdrop = $('#adm-backdrop');
+    var toggle = $('#adm-toggle-list');
+    if (side) side.classList.toggle('is-open', !!open);
+    if (backdrop) backdrop.hidden = !open;
+    if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.classList.toggle('adm-drawer-open', !!open);
+  }
+
   function clearConfig() {
     try {
       localStorage.removeItem(LS_KEY);
@@ -523,7 +538,7 @@
         updateCounter();
         status('已载入 ' + path.split('/').pop());
         maybeOfferDraft(path, text);
-        $('#adm-side').classList.remove('is-open');
+        setSideOpen(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch(function (err) {
@@ -551,6 +566,10 @@
     renderPreview();
     updateCounter();
     $('#adm-dirty').hidden = false;
+    setSideOpen(false);
+    // 移动端「文章信息」默认收起，新建立即展开并聚焦标题，省一次点击
+    var details = $('#adm-details');
+    if (details) details.open = true;
     $('#adm-title').focus();
     status('新建文章：' + path);
   }
@@ -1335,7 +1354,26 @@
     on('adm-save', 'click', save);
     on('adm-logout', 'click', logout);
     on('adm-toggle-list', 'click', function () {
-      $('#adm-side').classList.toggle('is-open');
+      var side = $('#adm-side');
+      setSideOpen(!(side && side.classList.contains('is-open')));
+    });
+    on('adm-close-list', 'click', function () {
+      setSideOpen(false);
+    });
+    var backdrop = $('#adm-backdrop');
+    if (backdrop) {
+      backdrop.addEventListener('click', function () {
+        setSideOpen(false);
+      });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && $('#adm-side') && $('#adm-side').classList.contains('is-open')) {
+        setSideOpen(false);
+      }
+    });
+    // 视口变宽（>=992px）时抽屉不再需要，避免残留遮罩挡住桌面端
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 992) setSideOpen(false);
     });
     on('adm-reload', 'click', function () {
       if (state.current && state.current.sha) openFile(state.current.path);

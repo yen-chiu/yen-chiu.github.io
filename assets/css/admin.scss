@@ -376,6 +376,32 @@ html[data-mode='dark'] {
   gap: 0.5rem;
 }
 
+.adm-side-title {
+  min-width: 0;
+
+  strong {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.adm-side-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.35rem;
+}
+
+/* 抽屉关闭按钮只在窄屏出现 */
+#adm-close-list {
+  display: none;
+}
+
+.adm-backdrop {
+  display: none;
+}
+
 .adm-search-row {
   display: flex;
   gap: 0.4rem;
@@ -737,11 +763,37 @@ html[data-mode='dark'] .adm-dirty {
   }
 }
 
+@keyframes adm-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 /* ---------- 响应式 ---------- */
 
 @media (max-width: 991.98px) {
   .adm-workbench {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* 抽屉遮罩：点空白处即可返回编辑器，避免「进去出不来」 */
+  .adm-backdrop {
+    position: fixed;
+    z-index: 1040;
+    inset: 0;
+    display: block;
+    background: rgb(0 0 0 / 45%);
+    backdrop-filter: blur(2px);
+    animation: adm-fade-in 0.2s ease both;
+  }
+
+  #adm-close-list {
+    display: inline-flex;
+  }
+
+  /* 抽屉打开时锁住背景滚动，手指不会误滚编辑器 */
+  body.adm-drawer-open {
+    overflow: hidden;
   }
 
   .adm-side {
