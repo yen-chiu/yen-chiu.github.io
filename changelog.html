@@ -1,22 +1,13 @@
 ---
-layout: null
+layout: page
+title: 更新日志
 permalink: /changelog/
-sitemap: false
+description: 这个站最近在发生什么。一次发布记一条，不按 commit。
+no_title: false
 ---
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <title>更新日志已移到关于页</title>
-    <link rel="canonical" href="{{ '/about/#changelog' | absolute_url }}" />
-    <meta http-equiv="refresh" content="0; url={{ '/about/#changelog' | relative_url }}" />
-    <script>
-      location.replace('{{ '/about/#changelog' | relative_url }}');
-    </script>
-  </head>
-  <body>
-    <p>更新日志已移到 <a href="{{ '/about/#changelog' | relative_url }}">关于页</a>。</p>
-  </body>
-</html>
+
+<p class="wx-changelog-intro">这个站最近在发生什么。一次发布记一条，不按 commit。</p>
+
+{% include changelog-list.html %}
+
+<p class="wx-changelog-back"><a href="{{ '/about/#changelog' | relative_url }}">← 回到关于页</a></p>

@@ -9,7 +9,7 @@
 .wx-about {
   display: flex;
   flex-direction: column;
-  gap: 3.25rem;
+  gap: 2.25rem;
   margin-top: 0.35rem;
 
   /* 正文排版会给 h2 加左侧渐变线，这里收回，章节标题用自己的节奏 */
@@ -38,7 +38,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(270px, 0.8fr);
   gap: clamp(1.25rem, 3vw, 2.6rem);
-  padding: clamp(1.35rem, 3.2vw, 2.6rem);
+  padding: clamp(1.2rem, 2.8vw, 2.2rem);
   overflow: hidden;
   border: 1px solid var(--wx-border);
   border-radius: calc(var(--wx-radius-lg) + 4px);
@@ -234,7 +234,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 1.25rem 1.3rem;
+  padding: 1.35rem 1.15rem 1.15rem;
   overflow: hidden;
   border: 1px solid var(--wx-border);
   border-radius: var(--wx-radius-lg);
@@ -370,7 +370,7 @@
   gap: 0.65rem 1rem;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 1.15rem;
+  margin-bottom: 0.95rem;
 }
 
 .wx-about-kicker {
@@ -421,7 +421,7 @@
 .wx-about-bento {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .wx-about-card {
@@ -429,7 +429,7 @@
   display: flex;
   flex-direction: column;
   grid-column: span 4;
-  padding: 1.35rem 1.4rem;
+  padding: 1.15rem 1.2rem;
   overflow: hidden;
   border: 1px solid var(--wx-border);
   border-radius: var(--wx-radius);
@@ -736,66 +736,165 @@
   font-weight: 600;
 }
 
-/* ---------- 04 · 时间线 ---------- */
+/* ---------- 04 · 双栏：最近在写 + 时间点 ---------- */
 
-.wx-about-timeline {
+.wx-about-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.wx-about-panel {
+  min-width: 0;
+  scroll-margin-top: 5.5rem;
+
+  .wx-about-section-head {
+    margin-bottom: 0.8rem;
+  }
+
+  .wx-about-section-title {
+    font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  }
+}
+
+.wx-about-posts-list {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--wx-border);
+  border-radius: var(--wx-radius);
+  background: var(--wx-surface);
+  box-shadow: var(--wx-shadow-sm);
+}
+
+.wx-about .wx-about-posts-list a.wx-about-post-row {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.78rem 0.95rem;
+  border-bottom: 1px solid var(--wx-border);
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background-color var(--wx-dur) var(--wx-ease);
+
+  time {
+    color: var(--wx-accent);
+    font-family: var(--wx-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.02em;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover {
+    border-bottom-color: var(--wx-border);
+    background: var(--wx-gradient-soft);
+    color: inherit !important;
+    text-decoration: none;
+  }
+
+  &:hover strong {
+    color: var(--wx-accent);
+  }
+}
+
+.wx-about-post-row-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  strong {
+    overflow: hidden;
+    color: var(--text-color);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span {
+    overflow: hidden;
+    margin-top: 0.1rem;
+    color: var(--text-muted-color);
+    font-size: 0.73rem;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.wx-about-post-arrow {
+  color: var(--wx-accent);
+  opacity: 0.45;
+  transition:
+    opacity var(--wx-dur) var(--wx-ease),
+    transform var(--wx-dur) var(--wx-ease);
+}
+
+.wx-about a.wx-about-post-row:hover .wx-about-post-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+.wx-about-milestones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.wx-about-milestone {
   position: relative;
-  margin: 0;
-  padding: 0.25rem 0 0.25rem 1.5rem;
-  list-style: none;
+  padding: 0.8rem 0.9rem;
+  overflow: hidden;
+  border: 1px solid var(--wx-border);
+  border-radius: var(--wx-radius-sm);
+  background: var(--wx-surface);
+  box-shadow: var(--wx-shadow-sm);
 
   &::before {
     position: absolute;
-    top: 0.4rem;
-    bottom: 0.4rem;
-    left: 0.3rem;
-    width: 1px;
+    top: 0;
+    left: 0.9rem;
+    width: 1.8rem;
+    height: 2px;
+    border-radius: 2px;
     content: '';
-    background: linear-gradient(to bottom, var(--wx-border-strong), transparent);
-  }
-
-  li {
-    position: relative;
-    padding-bottom: 1.6rem;
-
-    &::before {
-      position: absolute;
-      top: 0.35rem;
-      left: -1.25rem;
-      width: 10px;
-      height: 10px;
-      border: 2px solid var(--wx-accent);
-      border-radius: 50%;
-      content: '';
-      background: var(--wx-surface);
-      box-shadow: 0 0 0 4px var(--wx-glow);
-    }
-
-    &:last-child {
-      padding-bottom: 0;
-    }
+    background: var(--wx-gradient);
   }
 
   time {
     color: var(--wx-accent);
     font-family: var(--wx-mono);
-    font-size: 0.74rem;
-    letter-spacing: 0.04em;
+    font-size: 0.66rem;
+    letter-spacing: 0.02em;
   }
 
   h3 {
-    margin: 0.15rem 0 0.25rem;
+    margin: 0.2rem 0 0.25rem;
     color: var(--text-color);
-    font-size: 1.02rem;
+    font-size: 0.88rem;
     font-weight: 700;
-    line-height: 1.5;
+    line-height: 1.4;
   }
 
   p {
     margin: 0;
     color: var(--text-muted-color);
-    font-size: 0.9rem;
-    line-height: 1.75;
+    font-size: 0.75rem;
+    line-height: 1.65;
+  }
+}
+
+.wx-about-recent {
+  scroll-margin-top: 5.5rem;
+
+  .wx-changelog-strip {
+    margin: 0;
   }
 }
 
@@ -1046,11 +1145,15 @@ html.wx-reveal-ready [data-wx-reveal].is-in {
   .wx-about-posts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .wx-about-split {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 767.98px) {
   .wx-about {
-    gap: 2.5rem;
+    gap: 2rem;
   }
 
   .wx-about-posts {
@@ -1064,16 +1167,6 @@ html.wx-reveal-ready [data-wx-reveal].is-in {
     border-radius: var(--wx-radius);
   }
 
-  .wx-about-bento {
-    grid-template-columns: 1fr;
-  }
-
-  .wx-about-span-7,
-  .wx-about-span-5,
-  .wx-about-span-4 {
-    grid-column: auto;
-  }
-
   .wx-about-changelog-card {
     padding: 1.1rem 1rem;
   }
@@ -1085,6 +1178,26 @@ html.wx-reveal-ready [data-wx-reveal].is-in {
   .wx-about-avatar {
     width: 5.6rem;
     height: 5.6rem;
+  }
+
+  .wx-about .wx-about-posts-list a.wx-about-post-row {
+    grid-template-columns: 4.2rem minmax(0, 1fr) auto;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .wx-about-bento {
+    grid-template-columns: 1fr;
+  }
+
+  .wx-about-span-7,
+  .wx-about-span-5,
+  .wx-about-span-4 {
+    grid-column: auto;
+  }
+
+  .wx-about-milestones {
+    grid-template-columns: 1fr;
   }
 }
 
