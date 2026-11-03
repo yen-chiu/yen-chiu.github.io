@@ -44,3 +44,16 @@ node_modules
 # SSL 证书与私钥（私钥绝不可提交到版本库，证书随部署流程管理）
 yenchiu.com.key
 yenchiu.com.pem
+
+# 设计源文件不进仓库（PSD/PSB/AI 体积大且无法在网页展示）
+*.psd
+*.psb
+*.ai
+*.sketch
+*.xcf
+*.blend
+
+# 草稿性质的素材原图目录（只保留站点实际用到的 favicon）
+assets/img/favicons/一版/
+assets/img/favicons/二版/
+assets/img/favicons/其他素材/
