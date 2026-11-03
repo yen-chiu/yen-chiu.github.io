@@ -8,6 +8,14 @@
 #   - links 可选，用「相关文章 / 提交」这类短标签
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
+- date: 2026-11-04
+  kind: infra
+  scope: 主站
+  title: 发布站点快照 2026-11-04
+  note: 写作台登录、提示轮播与图片缓存修复随此版本上线。
+  links:
+    - { label: 发布页, url: https://github.com/yen-chiu/yen-chiu.github.io/releases/tag/2026-11-04 }
+
 - date: 2026-11-03
   kind: infra
   scope: 主站
