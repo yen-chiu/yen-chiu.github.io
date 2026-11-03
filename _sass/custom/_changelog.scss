@@ -6,15 +6,23 @@
   font-size: 0.92rem;
 }
 
+.wx-changelog-empty {
+  color: var(--text-muted-color);
+  font-size: 0.9rem;
+}
+
 .wx-changelog {
   margin: 0;
   padding: 0;
   list-style: none;
 
   .wx-changelog-day {
-    margin: 1.75rem 0 0.75rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 1px dashed var(--main-border-color);
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin: 1.85rem 0 0.45rem;
+    padding: 0.2rem 0 0;
+    border-bottom: 0;
     color: var(--text-muted-color);
     font-family: var(--wx-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
     font-size: 0.8rem;
@@ -23,13 +31,62 @@
     &:first-child {
       margin-top: 0;
     }
+
+    &::after {
+      flex: 1;
+      height: 1px;
+      content: '';
+      background: linear-gradient(90deg, var(--wx-border-strong), transparent);
+    }
+  }
+
+  .wx-changelog-day-label {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    white-space: nowrap;
+
+    &::before {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      content: '';
+      background: var(--wx-gradient);
+      box-shadow: 0 0 0 3px var(--wx-glow);
+    }
   }
 
   .wx-changelog-item {
+    position: relative;
     display: flex;
     gap: 1rem;
-    padding: 0.7rem 0;
+    padding: 0.7rem 0.65rem 0.7rem 1.1rem;
     border-bottom: 1px solid var(--main-border-color);
+    border-radius: 10px;
+    transition: background-color var(--wx-dur) var(--wx-ease);
+
+    &::before {
+      position: absolute;
+      top: 1.08rem;
+      left: 0.15rem;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      content: '';
+      background: var(--wx-border-strong);
+      transition:
+        background-color var(--wx-dur) var(--wx-ease),
+        box-shadow var(--wx-dur) var(--wx-ease);
+    }
+
+    &:hover {
+      background: var(--wx-gradient-soft);
+
+      &::before {
+        background: var(--wx-accent);
+        box-shadow: 0 0 0 3px var(--wx-glow);
+      }
+    }
 
     &:last-child {
       border-bottom: 0;
@@ -70,6 +127,18 @@
 
     a {
       color: var(--wx-accent);
+    }
+  }
+
+  .wx-changelog-commit {
+    margin: 0.35rem 0 0;
+
+    code {
+      padding: 0.05rem 0.35rem;
+      border-radius: 6px;
+      background: var(--wx-surface-2);
+      color: var(--text-muted-color);
+      font-size: 0.72rem;
     }
   }
 
