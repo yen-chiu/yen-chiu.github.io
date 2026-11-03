@@ -12,7 +12,7 @@
   kind: style
   scope: 主站
   title: 侧边栏标题改为 hover 故障特效
-  note: 0.6s 内闪 4 次，随后停 5s 循环。
+  note: 0.6s 内闪 4 次，随后停 3s 循环。
 
 - date: 2026-11-03
   kind: style
