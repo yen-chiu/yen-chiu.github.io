@@ -12,7 +12,7 @@
   kind: style
   scope: 主站
   title: 侧边栏标题改为 hover 故障特效
-  note: 默认干净，悬停触发一次 RGB 切片抖动。
+  note: 默认干净，hover 时 4 次切片闪烁、停 5s 循环。
 
 - date: 2026-11-03
   kind: style
