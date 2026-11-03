@@ -267,13 +267,13 @@
     gap: 0.45rem;
     align-items: center;
     margin: 0;
-    padding: 0.45rem 0.75rem;
+    padding: 0.4rem 0.7rem;
     border: 1px solid var(--wx-border) !important;
     border-radius: 999px;
     background: var(--wx-surface);
     box-shadow: var(--wx-shadow-sm);
     color: var(--text-color);
-    font-size: 0.84rem;
+    font-size: 0.8rem;
     letter-spacing: 0;
     line-height: 1.2;
     transition:
@@ -286,8 +286,8 @@
 
     &:hover {
       border-color: transparent !important;
-      background: var(--wx-gradient);
-      box-shadow: 0 10px 24px -14px var(--wx-glow);
+      background: var(--wx-data);
+      box-shadow: 0 10px 24px -14px var(--wx-data-border-strong);
       color: #ffffff !important;
       transform: translateY(-2px);
 
@@ -303,8 +303,8 @@
       min-width: 1.5rem;
       padding: 0.05rem 0.35rem;
       border-radius: 999px;
-      background: var(--wx-surface-2);
-      color: var(--wx-accent);
+      background: var(--wx-data-soft);
+      color: var(--wx-data-strong);
       font-family: var(--wx-mono);
       font-size: 0.66rem;
       line-height: 1.4;
@@ -312,15 +312,36 @@
   }
 }
 
-#tags .tag.wx-tag-md {
-  padding: 0.55rem 0.9rem;
-  font-size: 0.92rem;
+#tags .tag.wx-tag-heat-1 {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.7rem;
 }
 
-#tags .tag.wx-tag-lg {
-  padding: 0.62rem 1.02rem;
+#tags .tag.wx-tag-heat-2 {
+  padding: 0.48rem 0.85rem;
+  border-color: var(--wx-data-border) !important;
   font-size: 1rem;
+}
+
+#tags .tag.wx-tag-heat-3 {
+  padding: 0.56rem 1rem;
+  border-color: var(--wx-data-border-strong) !important;
+  font-size: 1.26rem;
   font-weight: 600;
+}
+
+#tags .tag.wx-tag-heat-4 {
+  padding: 0.65rem 1.15rem;
+  border-color: var(--wx-data) !important;
+  font-size: 1.52rem;
+  font-weight: 700;
+}
+
+#tags .tag.wx-tag-heat-5 {
+  padding: 0.72rem 1.3rem;
+  border-color: var(--wx-data) !important;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 .wx-taxonomy-tag-hint {
@@ -330,9 +351,9 @@
 }
 
 #tags .tag.is-related {
-  border-color: var(--wx-border-strong) !important;
-  background: var(--wx-gradient-soft);
-  color: var(--wx-accent) !important;
+  border-color: var(--wx-data-border-strong) !important;
+  background: var(--wx-data-soft);
+  color: var(--wx-data-strong) !important;
   transform: translateY(-1px);
 }
 
@@ -683,7 +704,7 @@
   border: 1px solid var(--wx-border);
   border-radius: var(--wx-radius);
   background:
-    radial-gradient(70% 70% at 50% 45%, var(--wx-gradient-soft) 0%, transparent 70%),
+    radial-gradient(70% 70% at 50% 45%, var(--wx-data-soft) 0%, transparent 70%),
     var(--wx-surface);
   box-shadow: var(--wx-shadow-sm);
 
@@ -696,7 +717,7 @@
 }
 
 .wx-graph-edge {
-  stroke: var(--wx-accent);
+  stroke: var(--wx-data);
   stroke-width: var(--wx-edge-width, 1px);
   stroke-linecap: round;
   opacity: var(--wx-edge-opacity, 0.2);
@@ -706,7 +727,7 @@
     stroke-width var(--wx-dur) var(--wx-ease);
 
   &.is-active {
-    stroke: var(--wx-accent-2);
+    stroke: var(--wx-accent-3);
     stroke-width: calc(var(--wx-edge-width, 1px) + 1px);
     opacity: 0.9;
   }
@@ -761,7 +782,7 @@
 
   &.is-active {
     circle {
-      fill: var(--wx-accent);
+      fill: var(--wx-accent-3);
       fill-opacity: 1;
       stroke: var(--wx-surface);
       stroke-width: 2;
@@ -769,16 +790,16 @@
     }
 
     text {
-      fill: var(--wx-accent);
+      fill: var(--wx-accent-3);
       font-weight: 700;
     }
   }
 
   &.is-related {
     circle {
-      fill: var(--wx-surface-2);
+      fill: var(--wx-data-soft);
       fill-opacity: 1;
-      stroke: var(--wx-accent-2);
+      stroke: var(--wx-data);
     }
 
     text {
@@ -830,13 +851,13 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--wx-accent);
+  background: var(--wx-data);
 }
 
 .wx-graph-line {
   width: 18px;
   height: 2px;
-  background: var(--wx-accent);
+  background: var(--wx-data);
   opacity: 0.5;
 }
 
@@ -851,5 +872,13 @@
 
   .wx-graph-node text {
     font-size: 20px;
+  }
+
+  #tags .tag.wx-tag-heat-4 {
+    font-size: 1.35rem;
+  }
+
+  #tags .tag.wx-tag-heat-5 {
+    font-size: 1.55rem;
   }
 }

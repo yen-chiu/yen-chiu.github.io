@@ -9,6 +9,18 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: style
+  scope: 主站
+  title: 侧边栏标题改为 hover 故障特效
+  note: 默认干净，悬停触发一次 RGB 切片抖动。
+
+- date: 2026-11-03
+  kind: style
+  scope: 主站
+  title: 词云按热度放大并拆分数据色
+  note: 指数字号阶梯，墨色文字 + 青绿数据/靛蓝节点。
+
+- date: 2026-11-03
   kind: fix
   scope: 主站
   title: 恢复头像月牙渐变环

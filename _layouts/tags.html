@@ -57,8 +57,15 @@ layout: page
 
       {% for t in sorted_tags %}
         {% assign tag_size = site.tags[t].size %}
+        {% case tag_size %}
+          {% when 1 %}{% assign tag_heat = 1 %}
+          {% when 2 %}{% assign tag_heat = 2 %}
+          {% when 3 %}{% assign tag_heat = 3 %}
+          {% when 4 %}{% assign tag_heat = 4 %}
+          {% else %}{% assign tag_heat = 5 %}
+        {% endcase %}
         <div>
-          <a class="tag{% if tag_size >= 3 %} wx-tag-lg{% elsif tag_size == 2 %} wx-tag-md{% endif %}" data-tag="{{ t | escape }}" href="{{ t | slugify | url_encode | prepend: '/tags/' | append: '/' | relative_url }}">
+          <a class="tag wx-tag-heat-{{ tag_heat }}" data-tag="{{ t | escape }}" href="{{ t | slugify | url_encode | prepend: '/tags/' | append: '/' | relative_url }}">
             {{ t -}}
             <span class="text-muted">{{ tag_size }}</span>
           </a>
