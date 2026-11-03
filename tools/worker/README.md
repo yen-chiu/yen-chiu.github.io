@@ -25,7 +25,7 @@
    - 找到 **Enable Device Flow** → **勾选并保存**（这一步不做，登录会一直失败）
 7. 左侧 **Install App** → 安装到自己账号 → **Only select repositories** → 只勾 `yen-chiu/yen-chiu.github.io`
 
-> Client secret 只有想「静默续期（8 小时后不用重新登录）」时才需要，可先不配。
+> **不需要** Client secret：本 Worker 不配置它，也就不存在长期密钥泄露面（详见第四节）。
 
 ## 二、部署 Worker（约 2 分钟）
 
@@ -44,7 +44,7 @@ npx wrangler deploy
 https://wendell-auth.<你的账号>.workers.dev
 ```
 
-打开 `https://wendell-auth.<账号>.workers.dev/health` 应返回 `{"ok":true,"refresh":false,...}`。
+打开 `https://wendell-auth.<账号>.workers.dev/health` 应返回 `{"ok":true}`。
 
 > 也可以在 Cloudflare 控制台 → Workers & Pages → Create Worker，把 `src/index.js` 整个粘进去，
 > 然后在 Settings → Variables 里加 `GITHUB_CLIENT_ID`、`ALLOWED_ORIGIN=https://yenchiu.com`。
@@ -59,16 +59,13 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 
 推送后 `/admin/` 就会出现「使用 GitHub 登录」按钮；留空则只显示令牌登录。
 
-## 四、（可选）静默续期
+## 四、关于「静默续期」
 
-```bash
-cd tools/worker
-npx wrangler secret put GITHUB_CLIENT_SECRET   # 粘贴 App 的 Client Secret
-npx wrangler deploy
-```
+**没有做。** GitHub App 的用户令牌 8 小时过期，要静默续期必须把 Client Secret 放进服务端。
+为了少一个长期密钥，这里主动放弃了续期：过期后重新点一次「使用 GitHub 登录」（约 15 秒）即可。
+写作台会在令牌过期时自动回到登录页并提示，不会留下半死不活的状态。
 
-配了之后 `/health` 会返回 `"refresh":true`，写作台可以在令牌过期时自动续期。
-如果不配，令牌 8 小时后过期，重新点一次「使用 GitHub 登录」（约 15 秒）即可。
+同理，`/refresh` 端点已下线——它只会扩大攻击面，而没有任何调用方。
 
 ## 本地开发
 
@@ -86,11 +83,16 @@ cd tools/worker
 node --test test/worker.test.mjs
 ```
 
-覆盖：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、refresh 未配置/已配置、404。
+覆盖：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404。
 
 ## 安全说明
 
-- Worker 不存令牌，日志里也没有敏感信息；`/device/token` 只是把 GitHub 的响应原样返回。
-- 来源白名单默认只允许 `https://yenchiu.com`，其它站点调用会 403。
+- Worker 不存令牌、不存 Client Secret，日志里也没有敏感信息；`/device/token` 只是把 GitHub 的响应原样返回。
+- 来源白名单默认只允许 `https://yenchiu.com`，其它网站的前端调用会 403。
+  注意 `Origin` 是客户端自填的，白名单挡不住 curl/脚本——防滥用靠限流。
+- 按 IP 的滑动窗口限流（`RATE_LIMIT_CODE` 默认 10 次/分、`RATE_LIMIT_TOKEN` 默认 120 次/分）是
+  Worker 实例内的近似值。**生产环境请在 Cloudflare 控制台给这个 Worker 加 Rate limiting 规则**
+  （例如：`/device/code` 每 IP 每分钟 5 次），那才是全局生效的。
+- `/health` 只返回 `{"ok":true}`，不回显白名单或任何配置。
 - 权限边界由 GitHub App 决定：只能访问被安装的那个仓库，且只有 Contents 读写。
 - 想彻底停用：Cloudflare 里删掉 Worker，或把 `admin_auth_endpoint` 清空。

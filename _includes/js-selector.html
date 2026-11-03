@@ -95,12 +95,14 @@
     <script defer src="{{ '/app.min.js' | relative_url }}"></script>
   {% endif %}
 
-  <!-- Web Analytics -->
-  {% for analytics in site.analytics %}
-    {% capture str %}{{ analytics }}{% endcapture %}
-    {% assign type = str | split: '{' | first %}
-    {% if site.analytics[type].id and site.analytics[type].id != empty %}
-      {% include analytics/{{ type }}.html %}
-    {% endif %}
-  {% endfor %}
+  <!-- Web Analytics：写作台里有 GitHub 令牌，不加载任何统计脚本 -->
+  {% unless page.body_class == 'admin-page' %}
+    {% for analytics in site.analytics %}
+      {% capture str %}{{ analytics }}{% endcapture %}
+      {% assign type = str | split: '{' | first %}
+      {% if site.analytics[type].id and site.analytics[type].id != empty %}
+        {% include analytics/{{ type }}.html %}
+      {% endif %}
+    {% endfor %}
+  {% endunless %}
 {% endif %}
