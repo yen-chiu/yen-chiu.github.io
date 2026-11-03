@@ -923,7 +923,6 @@
 /* ---------- 聚光与顶部亮线 ---------- */
 
 .wx-about-card::before,
-.wx-about-post::before,
 .wx-about-profile::before {
   position: absolute;
   z-index: 0;
@@ -940,13 +939,11 @@
 }
 
 .wx-about-card:hover::before,
-.wx-about-post:hover::before,
 .wx-about-profile:hover::before {
   opacity: 0.8;
 }
 
 .wx-about-card::after,
-.wx-about-post::after,
 .wx-about-profile::after {
   position: absolute;
   top: 0;
@@ -961,7 +958,6 @@
 }
 
 .wx-about-card:hover::after,
-.wx-about-post:hover::after,
 .wx-about-profile:hover::after {
   opacity: 1;
 }
@@ -1025,15 +1021,6 @@ html.wx-reveal-ready [data-wx-reveal].is-in {
 
 .wx-about a:not(.img-link) {
   border-bottom: 0;
-}
-
-.wx-about a.wx-about-post {
-  border-bottom: 1px solid var(--wx-border);
-}
-
-.wx-about a.wx-about-post:hover {
-  border-bottom-color: var(--wx-border-strong) !important;
-  color: inherit !important;
 }
 
 .wx-about a.wx-about-btn {
@@ -1266,7 +1253,6 @@ html.wx-reveal-ready [data-wx-reveal].is-in {
   }
 
   .wx-about-card:hover,
-  .wx-about-post:hover,
   .wx-about-btn:hover {
     transform: none;
   }
