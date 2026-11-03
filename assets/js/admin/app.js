@@ -17,6 +17,11 @@
    * 状态
    * ------------------------------------------------------------------ */
 
+  // 本次会话上传过的图片：路径 → 上传时间戳。
+  // 预览时给这些路径加 ?t=，绕开边缘缓存里可能残留的 404
+  // （上传提交后 Pages 还要构建一两分钟，期间预览会先拿到一次 404）。
+  var uploadStamps = {};
+
   var state = {
     token: '',
     tokenSource: 'pat', // 'pat' | 'oauth'
@@ -967,6 +972,14 @@
       html = '<pre>' + escapeHtml(body) + '</pre>';
     }
     target.innerHTML = sanitize(html);
+
+    // 本次会话刚上传的图片，补一个版本参数，避免预览被缓存的 404 卡住
+    Array.prototype.slice.call(target.querySelectorAll('img')).forEach(function (img) {
+      var src = img.getAttribute('src') || '';
+      if (src.indexOf('?') !== -1) return;
+      var key = src.replace(/^\//, '');
+      if (uploadStamps[key]) img.setAttribute('src', src + '?t=' + uploadStamps[key]);
+    });
   }
 
   /* ------------------------------------------------------------------ *
@@ -1036,6 +1049,7 @@
             })
           }).then(function (res) {
             var rel = '/' + String(res.content.path).replace(/^\/+/, '');
+            uploadStamps[rel.replace(/^\//, '')] = Date.now();
             insertAtCursor('![](' + rel + ')' + '\n');
             toast('图片已上传：' + escapeHtml(rel.split('/').pop()), false, 3000);
           });
