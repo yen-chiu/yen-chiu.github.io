@@ -29,6 +29,13 @@ const check = (n, ok, d) => {
   console.log(`${ok ? 'PASS' : 'FAIL'} · ${n}${d ? ' :: ' + d : ''}`);
 };
 
+// 每个用例开始前重置 mock，避免上一次写入的内容干扰断言
+try {
+  await fetch(API + '/__reset');
+} catch (e) {
+  /* mock 没有 __reset 就忽略 */
+}
+
 const browser = await puppeteer.launch({
   executablePath: EDGE,
   headless: true,

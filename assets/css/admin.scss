@@ -86,6 +86,13 @@ html[data-mode='dark'] {
   #main-wrapper > .container {
     max-width: 100%;
   }
+
+  /* 站点的汉堡按钮和搜索框依赖主题 JS，而写作台为安全不加载主题/第三方脚本，
+     留着就是两个点不动的死按钮——直接隐藏（写作台有自己的文章列表按钮） */
+  #sidebar-trigger,
+  #search-trigger {
+    display: none !important;
+  }
 }
 
 .adm {
@@ -629,6 +636,18 @@ html[data-mode='dark'] .adm-dirty {
     border-color: var(--adm-border);
     color: var(--adm-accent);
     font-weight: 600;
+  }
+}
+
+/* 撤销 / 重做：比普通工具按钮更窄，禁用时变淡 */
+.adm-md-history {
+  min-width: 2.1rem !important;
+  font-size: 0.95rem !important;
+  line-height: 1;
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
   }
 }
 
