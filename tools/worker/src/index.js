@@ -68,6 +68,38 @@ async function githubPost(path, form) {
   return { status: res.status, body };
 }
 
+/* ---------------------------------------------------------------------------
+ * 简易限流：Worker 实例内的滑动窗口计数。
+ * 单个 isolate 内的近似值，只用于挡住脚本批量申请 device code / 轮询，
+ * 真正的全局限流请在 Cloudflare 控制台给这个 Worker 配 Rate limiting 规则。
+ * ------------------------------------------------------------------------- */
+
+const RATE_BUCKETS = new Map();
+
+function clientIp(request) {
+  return (
+    request.headers.get('CF-Connecting-IP') ||
+    request.headers.get('X-Forwarded-For') ||
+    'unknown'
+  );
+}
+
+function rateLimited(ip, limit) {
+  if (!Number.isFinite(limit) || limit <= 0) return false;
+  const now = Date.now();
+  const windowMs = 60_000;
+  const hits = (RATE_BUCKETS.get(ip) || []).filter((t) => now - t < windowMs);
+  if (hits.length >= limit) {
+    RATE_BUCKETS.set(ip, hits);
+    return true;
+  }
+  hits.push(now);
+  RATE_BUCKETS.set(ip, hits);
+  // 防止 Map 无限增长
+  if (RATE_BUCKETS.size > 5000) RATE_BUCKETS.clear();
+  return false;
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
@@ -88,15 +120,14 @@ export default {
     }
 
     if (url.pathname === '/health') {
-      return json(
-        { ok: true, refresh: Boolean(env.GITHUB_CLIENT_SECRET), origins: list },
-        200,
-        origin,
-        env
-      );
+      // 只报告「能用/不能用」，不回显来源白名单或任何配置细节
+      return json({ ok: true }, 200, origin, env);
     }
 
     if (url.pathname === '/device/code' && request.method === 'POST') {
+      if (rateLimited(clientIp(request), Number(env.RATE_LIMIT_CODE || 10))) {
+        return json({ error: 'rate_limited' }, 429, origin, env);
+      }
       const { status, body } = await githubPost('/login/device/code', {
         client_id: env.GITHUB_CLIENT_ID
       });
@@ -104,6 +135,9 @@ export default {
     }
 
     if (url.pathname === '/device/token' && request.method === 'POST') {
+      if (rateLimited(clientIp(request), Number(env.RATE_LIMIT_TOKEN || 120))) {
+        return json({ error: 'rate_limited' }, 429, origin, env);
+      }
       let payload = {};
       try {
         payload = await request.json();
@@ -117,28 +151,6 @@ export default {
         client_id: env.GITHUB_CLIENT_ID,
         device_code: payload.device_code,
         grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-      });
-      return json(body, status, origin, env);
-    }
-
-    if (url.pathname === '/refresh' && request.method === 'POST') {
-      if (!env.GITHUB_CLIENT_SECRET) {
-        return json({ error: 'refresh_not_configured' }, 501, origin, env);
-      }
-      let payload = {};
-      try {
-        payload = await request.json();
-      } catch (e) {
-        payload = {};
-      }
-      if (!payload.refresh_token) {
-        return json({ error: 'missing_refresh_token' }, 400, origin, env);
-      }
-      const { status, body } = await githubPost('/login/oauth/access_token', {
-        client_id: env.GITHUB_CLIENT_ID,
-        client_secret: env.GITHUB_CLIENT_SECRET,
-        grant_type: 'refresh_token',
-        refresh_token: payload.refresh_token
       });
       return json(body, status, origin, env);
     }

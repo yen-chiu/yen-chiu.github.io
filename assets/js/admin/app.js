@@ -148,7 +148,7 @@
     state.branch = cfg.branch || '';
     state.tokenSource = cfg.source || 'pat';
     state.tokenExpiresAt = cfg.expires_at || 0;
-    state.refreshToken = cfg.refresh_token || '';
+    state.refreshToken = ''; // refresh_token 不再持久化
     // OAuth 令牌过期则视为未登录
     if (state.tokenExpiresAt && Date.now() > state.tokenExpiresAt) {
       state.token = '';
@@ -164,8 +164,7 @@
       repo: repo,
       branch: branch,
       source: state.tokenSource || 'pat',
-      expires_at: state.tokenExpiresAt || 0,
-      refresh_token: state.refreshToken || ''
+      expires_at: state.tokenExpiresAt || 0
     };
     try {
       if (remember) {
@@ -184,6 +183,17 @@
     try {
       localStorage.removeItem(LS_KEY);
       sessionStorage.removeItem(LS_KEY);
+      // 一并清掉本地草稿：里面是未发布的文章正文
+      [localStorage, sessionStorage].forEach(function (store) {
+        var doomed = [];
+        for (var i = 0; i < store.length; i += 1) {
+          var key = store.key(i);
+          if (key && key.indexOf(DRAFT_PREFIX) === 0) doomed.push(key);
+        }
+        doomed.forEach(function (key) {
+          store.removeItem(key);
+        });
+      });
     } catch (e) {
       /* ignore */
     }
@@ -622,8 +632,8 @@
         var url = res.content.html_url;
         toast(
           '保存成功 · <a href="' +
-            url +
-            '" target="_blank" rel="noopener">查看文件</a>' +
+            escapeHtml(url) +
+            '" target="_blank" rel="noopener noreferrer">查看文件</a>' +
             (state.draftMode
               ? ' · 已提交到 drafts 分支'
               : ' · 站点构建约 1-2 分钟后生效'),
@@ -718,8 +728,46 @@
     P: 1, BR: 1, HR: 1, H1: 1, H2: 1, H3: 1, H4: 1, H5: 1, H6: 1, UL: 1, OL: 1, LI: 1,
     BLOCKQUOTE: 1, PRE: 1, CODE: 1, TABLE: 1, THEAD: 1, TBODY: 1, TR: 1, TH: 1, TD: 1,
     A: 1, IMG: 1, STRONG: 1, EM: 1, DEL: 1, SPAN: 1, DIV: 1, FIGCAPTION: 1, FIGURE: 1,
-    SUP: 1, SUB: 1, KBD: 1, MARK: 1, INPUT: 1, VIDEO: 1, SOURCE: 1
+    SUP: 1, SUB: 1, KBD: 1, MARK: 1, VIDEO: 1, SOURCE: 1
   };
+
+  // 需要校验取值的 URL 类属性
+  var URL_ATTRS = { href: 1, src: 1, poster: 1 };
+  // 允许的协议（其余一律拒绝）
+  var SAFE_SCHEME = /^(https?|mailto|tel):/i;
+  var IMAGE_DATA_URL = /^data:image\/(png|jpe?g|gif|webp|avif);base64,/i;
+
+  /**
+   * 判断 URL 是否安全：
+   * 先去掉所有控制字符与空白（`java\tscript:` 这类绕过的根因），
+   * 再用「有协议则必须在白名单内」的正向规则，而不是黑名单匹配。
+   */
+  function isSafeUrl(value, allowImageData) {
+    var v = String(value == null ? '' : value).replace(
+      /[\u0000-\u0020\u007f\u00a0\u2000-\u200f\u2028\u2029\ufeff]+/g,
+      ''
+    );
+    if (!v) return true; // 空属性无害
+    if (/^(#|\/|\?|\.{1,2}\/)/.test(v)) return true; // 锚点 / 站内绝对 / 相对
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) return true; // 无协议，按相对路径处理
+    if (SAFE_SCHEME.test(v)) return true;
+    if (allowImageData && IMAGE_DATA_URL.test(v)) return true;
+    return false;
+  }
+
+  /** srcset 是逗号分隔的候选列表，逐个校验，保留安全的候选 */
+  function cleanSrcset(value) {
+    return String(value || '')
+      .split(',')
+      .map(function (part) {
+        var trimmed = part.trim();
+        if (!trimmed) return '';
+        var url = trimmed.split(/\s+/)[0];
+        return isSafeUrl(url, true) ? trimmed : '';
+      })
+      .filter(Boolean)
+      .join(', ');
+  }
 
   function sanitize(html) {
     var tpl = document.createElement('template');
@@ -741,12 +789,35 @@
         Array.prototype.slice.call(child.attributes).forEach(function (attr) {
           var name = attr.name.toLowerCase();
           var value = attr.value || '';
+
+          // 事件处理器、内联样式、内嵌文档一律剥离
           if (name.indexOf('on') === 0 || name === 'srcdoc' || name === 'style') {
             child.removeAttribute(attr.name);
             return;
           }
-          if ((name === 'href' || name === 'src' || name === 'poster') && /^\s*(javascript|data|vbscript):/i.test(value) && !(name === 'src' && /^data:image\//i.test(value))) {
+
+          // id / name 会造成 DOM clobbering 与锚点劫持，预览里不需要
+          if (name === 'id' || name === 'name') {
             child.removeAttribute(attr.name);
+            return;
+          }
+
+          if (URL_ATTRS[name]) {
+            if (!isSafeUrl(value, name === 'src')) child.removeAttribute(attr.name);
+            return;
+          }
+
+          if (name === 'srcset') {
+            var cleaned = cleanSrcset(value);
+            if (cleaned) child.setAttribute('srcset', cleaned);
+            else child.removeAttribute(attr.name);
+            return;
+          }
+
+          // target 一律改为新窗口 + noopener，避免反向标签页劫持
+          if (name === 'target') {
+            child.setAttribute('target', '_blank');
+            child.setAttribute('rel', 'noopener noreferrer');
           }
         });
         walk(child);
@@ -842,7 +913,7 @@
           }).then(function (res) {
             var rel = '/' + String(res.content.path).replace(/^\/+/, '');
             insertAtCursor('![](' + rel + ')' + '\n');
-            toast('图片已上传：' + rel.split('/').pop(), false, 3000);
+            toast('图片已上传：' + escapeHtml(rel.split('/').pop()), false, 3000);
           });
         });
       });
@@ -1104,7 +1175,7 @@
     state.token = data.access_token;
     state.tokenSource = 'oauth';
     state.tokenExpiresAt = data.expires_in ? Date.now() + Number(data.expires_in) * 1000 : 0;
-    state.refreshToken = data.refresh_token || '';
+    state.refreshToken = ''; // 刷新令牌需要 client_secret，本应用不使用，不落盘
     connect(
       $('#adm-owner').value.trim(),
       $('#adm-repo').value.trim(),
@@ -1131,7 +1202,7 @@
         echo($('#adm-branch-label'), state.branch);
         return api('/user').then(function (user) {
           echo($('#adm-user-label'), '@' + user.login);
-          toast('已连接 ' + owner + '/' + repo, false);
+          toast('已连接 ' + escapeHtml(owner + '/' + repo), false);
           return loadFiles();
         });
       })
@@ -1149,8 +1220,13 @@
   }
 
   function logout() {
+    stopDevice('');
+    device.code = '';
     clearConfig();
     state.token = '';
+    state.tokenSource = 'pat';
+    state.tokenExpiresAt = 0;
+    state.refreshToken = '';
     state.current = null;
     $('#adm-login').hidden = false;
     $('#adm-workbench').hidden = true;
