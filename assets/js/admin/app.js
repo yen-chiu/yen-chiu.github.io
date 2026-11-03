@@ -149,6 +149,16 @@
     state.tokenSource = cfg.source || 'pat';
     state.tokenExpiresAt = cfg.expires_at || 0;
     state.refreshToken = ''; // refresh_token 不再持久化
+    if (cfg.refresh_token) {
+      // 旧版本写入的刷新令牌：顺手擦掉，避免长期凭据留在本机
+      try {
+        delete cfg.refresh_token;
+        var store = localStorage.getItem(LS_KEY) ? localStorage : sessionStorage;
+        store.setItem(LS_KEY, JSON.stringify(cfg));
+      } catch (e) {
+        /* ignore */
+      }
+    }
     // OAuth 令牌过期则视为未登录
     if (state.tokenExpiresAt && Date.now() > state.tokenExpiresAt) {
       state.token = '';
@@ -183,7 +193,14 @@
     try {
       localStorage.removeItem(LS_KEY);
       sessionStorage.removeItem(LS_KEY);
-      // 一并清掉本地草稿：里面是未发布的文章正文
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  /** 只在用户显式登出时调用：清掉本地草稿（未发布的文章正文） */
+  function purgeDrafts() {
+    try {
       [localStorage, sessionStorage].forEach(function (store) {
         var doomed = [];
         for (var i = 0; i < store.length; i += 1) {
@@ -748,6 +765,8 @@
       ''
     );
     if (!v) return true; // 空属性无害
+    // 协议相对（//evil.com）、反斜杠变体（\\evil.com、/\\evil.com）一律不放行
+    if (/^[\\/]{2}/.test(v) || /^\/[\\]/.test(v)) return false;
     if (/^(#|\/|\?|\.{1,2}\/)/.test(v)) return true; // 锚点 / 站内绝对 / 相对
     if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) return true; // 无协议，按相对路径处理
     if (SAFE_SCHEME.test(v)) return true;
@@ -782,6 +801,17 @@
           return;
         }
         var tag = child.tagName;
+        if (tag === 'INPUT') {
+          // GFM 任务列表：<input type=checkbox checked disabled> → ☑ / ☐
+          var isCheckbox = (child.getAttribute('type') || '').toLowerCase() === 'checkbox';
+          if (isCheckbox) {
+            var box = child.hasAttribute('checked') ? '☑ ' : '☐ ';
+            child.replaceWith(document.createTextNode(box));
+          } else {
+            child.remove();
+          }
+          return;
+        }
         if (!ALLOWED_TAGS[tag]) {
           child.remove();
           return;
@@ -791,7 +821,7 @@
           var value = attr.value || '';
 
           // 事件处理器、内联样式、内嵌文档一律剥离
-          if (name.indexOf('on') === 0 || name === 'srcdoc' || name === 'style') {
+          if (name.indexOf('on') === 0 || name === 'srcdoc' || name === 'style' || name === 'ping') {
             child.removeAttribute(attr.name);
             return;
           }
@@ -808,7 +838,8 @@
           }
 
           if (name === 'srcset') {
-            var cleaned = cleanSrcset(value);
+            // data: URL 自带逗号，srcset 的逗号语法无法可靠切分，直接丢弃
+            var cleaned = /data:/i.test(value) ? '' : cleanSrcset(value);
             if (cleaned) child.setAttribute('srcset', cleaned);
             else child.removeAttribute(attr.name);
             return;
@@ -1223,6 +1254,7 @@
     stopDevice('');
     device.code = '';
     clearConfig();
+    purgeDrafts();
     state.token = '';
     state.tokenSource = 'pat';
     state.tokenExpiresAt = 0;

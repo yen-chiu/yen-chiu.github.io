@@ -87,10 +87,18 @@ layout: compress
       {% include animated-background.html %}
     {% endif %}
     <!-- JavaScripts -->
-    {% include js-selector.html lang=lang %}
+    {% comment %}
+      写作台里存着 GitHub 令牌，不加载任何第三方脚本（jsdelivr 的搜索/高亮/灯箱、
+      统计脚本等）；它自己只需要 admin.css + marked + app.js。
+    {% endcomment %}
+    {% unless page.body_class == 'admin-page' %}
+      {% include js-selector.html lang=lang %}
+    {% endunless %}
 
     {% include ui-enhance.html %}
 
-    {% include_cached search-loader.html lang=lang %}
+    {% unless page.body_class == 'admin-page' %}
+      {% include_cached search-loader.html lang=lang %}
+    {% endunless %}
   </body>
 </html>

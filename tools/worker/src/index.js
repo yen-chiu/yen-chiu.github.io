@@ -1,17 +1,16 @@
 /**
- * Cloudflare Worker：GitHub 设备码登录的 CORS 代理（无状态、默认不存任何密钥）
+ * Cloudflare Worker：GitHub 设备码登录的 CORS 代理（无状态，不存任何密钥/令牌）
  * ---------------------------------------------------------------------------
  * 为什么需要它：浏览器直接请求 github.com/login/device/code 会被 CORS 拦截
  * （GitHub 不返回 Access-Control-Allow-Origin），所以需要一个同源代理。
  *
  * 路由：
- *   GET  /health          → 探测是否可用、是否开启静默续期
+ *   GET  /health          → 探活，只返回 {"ok":true}
  *   POST /device/code     → 申请设备码（返回 user_code / verification_uri）
  *   POST /device/token    → 轮询换取 access_token
- *   POST /refresh         → 用 refresh_token 续期（需要配置 GITHUB_CLIENT_SECRET）
  *
  * 唯一必需的环境变量：GITHUB_CLIENT_ID（公开信息，可写进 wrangler.toml）
- * 可选：GITHUB_CLIENT_SECRET（仅当需要静默续期时用 `wrangler secret put` 配置）
+ * 刻意不提供 /refresh：刷新令牌需要 Client Secret，本应用不使用续期。
  */
 
 const GITHUB = 'https://github.com';
@@ -41,10 +40,10 @@ function corsHeaders(origin, env) {
   };
 }
 
-function json(body, status, origin, env) {
+function json(body, status, origin, env, extraHeaders) {
   return new Response(JSON.stringify(body), {
     status: status || 200,
-    headers: { ...JSON_HEADERS, ...corsHeaders(origin, env) }
+    headers: { ...JSON_HEADERS, ...corsHeaders(origin, env), ...(extraHeaders || {}) }
   });
 }
 
@@ -77,11 +76,8 @@ async function githubPost(path, form) {
 const RATE_BUCKETS = new Map();
 
 function clientIp(request) {
-  return (
-    request.headers.get('CF-Connecting-IP') ||
-    request.headers.get('X-Forwarded-For') ||
-    'unknown'
-  );
+  // 只信任 Cloudflare 注入的头；X-Forwarded-For 客户端可伪造，不能作为限流依据
+  return request.headers.get('CF-Connecting-IP') || 'unknown';
 }
 
 function rateLimited(ip, limit) {
@@ -95,8 +91,11 @@ function rateLimited(ip, limit) {
   }
   hits.push(now);
   RATE_BUCKETS.set(ip, hits);
-  // 防止 Map 无限增长
-  if (RATE_BUCKETS.size > 5000) RATE_BUCKETS.clear();
+  // 淘汰最老的条目，而不是整体清空（清空会让换 IP 的人顺带重置所有人）
+  if (RATE_BUCKETS.size > 5000) {
+    const oldest = RATE_BUCKETS.keys().next().value;
+    RATE_BUCKETS.delete(oldest);
+  }
   return false;
 }
 
@@ -126,7 +125,7 @@ export default {
 
     if (url.pathname === '/device/code' && request.method === 'POST') {
       if (rateLimited(clientIp(request), Number(env.RATE_LIMIT_CODE || 10))) {
-        return json({ error: 'rate_limited' }, 429, origin, env);
+        return json({ error: 'rate_limited' }, 429, origin, env, { 'Retry-After': '60' });
       }
       const { status, body } = await githubPost('/login/device/code', {
         client_id: env.GITHUB_CLIENT_ID
@@ -135,8 +134,8 @@ export default {
     }
 
     if (url.pathname === '/device/token' && request.method === 'POST') {
-      if (rateLimited(clientIp(request), Number(env.RATE_LIMIT_TOKEN || 120))) {
-        return json({ error: 'rate_limited' }, 429, origin, env);
+      if (rateLimited(clientIp(request), Number(env.RATE_LIMIT_TOKEN || 300))) {
+        return json({ error: 'rate_limited' }, 429, origin, env, { 'Retry-After': '60' });
       }
       let payload = {};
       try {
