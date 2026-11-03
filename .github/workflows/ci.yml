@@ -46,5 +46,8 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm i --no-audit --no-fund && npm run build
 
+      - name: Check post front matter
+        run: node tools/check-frontmatter.mjs
+
       - name: Test Site
         run: bash tools/test.sh

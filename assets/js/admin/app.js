@@ -414,15 +414,36 @@
     $('#adm-cover').dataset.alt = (data.image && data.image.alt) || '';
   }
 
+  /**
+   * 列表字段的解析。除了半角逗号，还兼容中文场景里最容易打出来的分隔符：
+   * 全角逗号「，」、顿号「、」、中英文分号、竖线、换行。
+   * 不兼容的后果很隐蔽：categories: [杂技，综合] 在 YAML 里会被当成**一个**分类。
+   */
   function toList(value) {
-    if (Array.isArray(value)) return value.map(String);
+    if (Array.isArray(value)) {
+      return value
+        .map(String)
+        .map(function (s) {
+          return s.trim();
+        })
+        .filter(Boolean);
+    }
     if (value == null || value === '') return [];
     return String(value)
-      .split(',')
+      .split(/[,，、;；|｜\n\r]+/)
       .map(function (s) {
         return s.trim();
       })
       .filter(Boolean);
+  }
+
+  /** 保存前把输入框里的中文分隔符统一成半角，避免写出 YAML 认不出的写法 */
+  function normalizeListField(id) {
+    var el = $(id);
+    if (!el) return;
+    var list = toList(el.value);
+    var canonical = list.join(', ');
+    if (canonical !== el.value) el.value = canonical;
   }
 
   function composeDocument(body) {
@@ -530,6 +551,7 @@
         var parsed = parseFrontMatter(text);
         setForm(parsed.data);
         $('#adm-content').value = parsed.body;
+        resetHistory(parsed.body);
         state.current = { path: path, sha: data.sha, isNew: false };
         state.original = text;
         $('#adm-workbench').hidden = false;
@@ -561,6 +583,7 @@
       tags: []
     });
     $('#adm-content').value = template;
+    resetHistory(template);
     state.original = '';
     $('#adm-workbench').hidden = false;
     renderList();
@@ -578,6 +601,38 @@
   /* ------------------------------------------------------------------ *
    * 保存
    * ------------------------------------------------------------------ */
+
+  /**
+   * 保存前的格式预检查。返回问题列表（空数组 = 通过）。
+   * 思路是「能在本地判断的，就不要等 CI 或 Jekyll 才暴露」。
+   */
+  function validateDraft() {
+    var errors = [];
+    var warnings = [];
+    var problems = errors;
+    var title = $('#adm-title').value.trim();
+    if (!title) problems.push('标题不能为空');
+
+    var d = $('#adm-date').value;
+    var tm = $('#adm-time').value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) problems.push('日期格式不对，应为 YYYY-MM-DD');
+    if (!/^\d{2}:\d{2}$/.test(tm)) problems.push('时间格式不对，应为 HH:MM');
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d) && /^\d{2}:\d{2}$/.test(tm)) {
+      var when = new Date(d + 'T' + tm + ':00');
+      if (!isNaN(when.getTime()) && when.getTime() > Date.now() + 60 * 1000) {
+        // 只是提醒，不阻断：作者可能就是提前排稿
+        warnings.push('日期在未来：站点配置了 future: false，这篇文章不会立刻出现在博客上');
+      }
+    }
+
+    var body = $('#adm-content').value;
+    if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(body)) {
+      problems.push('正文里含有不可见的控制字符，建议删掉后重写');
+    }
+
+    return { errors: errors, warnings: warnings };
+  }
 
   function currentText() {
     return composeDocument($('#adm-content').value);
@@ -607,6 +662,24 @@
     if (!state.current) {
       toast('请先打开或新建一篇文章', true);
       return;
+    }
+
+    // 先把中文标点归一化，再校验
+    normalizeListField('#adm-categories');
+    normalizeListField('#adm-tags');
+    var report = validateDraft();
+    if (report.errors.length) {
+      renderPreview();
+      toast(
+        '<b>格式检查没通过：</b><br>· ' + report.errors.map(escapeHtml).join('<br>· '),
+        true,
+        9000
+      );
+      status('保存已取消：' + report.errors[0]);
+      return;
+    }
+    if (report.warnings.length) {
+      toast('格式提醒：<br>· ' + report.warnings.map(escapeHtml).join('<br>· '), false, 8000);
     }
 
     var content = currentText();
@@ -1074,6 +1147,56 @@
     echo($('#adm-counter'), text.length + ' 字');
   }
 
+  /* ------------------------------------------------------------------ *
+   * 撤销 / 重做（自己维护快照栈，比 execCommand 在各端更一致）
+   * ------------------------------------------------------------------ */
+
+  var history = { stack: [], index: -1, timer: null, applying: false };
+
+  function updateHistoryButtons() {
+    var undoBtn = $('#adm-undo');
+    var redoBtn = $('#adm-redo');
+    if (undoBtn) undoBtn.disabled = history.index <= 0;
+    if (redoBtn) redoBtn.disabled = history.index >= history.stack.length - 1;
+  }
+
+  function resetHistory(value) {
+    history.stack = [String(value == null ? '' : value)];
+    history.index = 0;
+    history.timer = null;
+    updateHistoryButtons();
+  }
+
+  function pushHistory() {
+    if (history.applying) return;
+    var value = $('#adm-content').value;
+    if (history.stack[history.index] === value) return;
+    history.stack = history.stack.slice(0, history.index + 1);
+    history.stack.push(value);
+    if (history.stack.length > 200) history.stack.shift();
+    history.index = history.stack.length - 1;
+    updateHistoryButtons();
+  }
+
+  function scheduleHistory() {
+    if (history.applying) return;
+    clearTimeout(history.timer);
+    history.timer = setTimeout(pushHistory, 400);
+  }
+
+  function applyHistory(delta) {
+    clearTimeout(history.timer);
+    pushHistory();
+    var next = history.index + delta;
+    if (next < 0 || next >= history.stack.length) return;
+    history.index = next;
+    history.applying = true;
+    $('#adm-content').value = history.stack[next];
+    history.applying = false;
+    onContentChanged();
+    updateHistoryButtons();
+  }
+
   function onContentChanged() {
     renderPreview();
     updateCounter();
@@ -1352,6 +1475,27 @@
     };
 
     on('adm-new', 'click', newPost);
+    on('adm-undo', 'click', function () {
+      applyHistory(-1);
+    });
+    on('adm-redo', 'click', function () {
+      applyHistory(1);
+    });
+    var contentEl = $('#adm-content');
+    if (contentEl) {
+      contentEl.addEventListener('input', scheduleHistory);
+      contentEl.addEventListener('keydown', function (e) {
+        if (!(e.ctrlKey || e.metaKey)) return;
+        var k = (e.key || '').toLowerCase();
+        if (k === 'z') {
+          e.preventDefault();
+          applyHistory(e.shiftKey ? 1 : -1);
+        } else if (k === 'y') {
+          e.preventDefault();
+          applyHistory(1);
+        }
+      });
+    }
     on('adm-save', 'click', save);
     on('adm-logout', 'click', logout);
     on('adm-toggle-list', 'click', function () {
