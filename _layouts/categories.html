@@ -12,7 +12,18 @@ layout: page
 
 {% assign sort_categories = site.categories | sort %}
 
-{% for category in sort_categories %}
+<div class="wx-taxonomy">
+  <header class="wx-taxonomy-hero">
+    <p class="wx-taxonomy-kicker">Browse by topic</p>
+    <div class="wx-taxonomy-title-row">
+      <h1>{{ page.title }}</h1>
+      <span class="wx-taxonomy-count">{{ site.categories.size }} 个分类 · {{ site.posts.size }} 篇文章</span>
+    </div>
+    <p class="wx-taxonomy-desc">按主题浏览全部文章。展开一个分类，可以看到它下面的子分类。</p>
+  </header>
+
+  <div class="wx-category-grid">
+    {% for category in sort_categories %}
   {% assign category_name = category | first %}
   {% assign posts_of_category = category | last %}
   {% assign first_post = posts_of_category | first %}
@@ -137,3 +148,13 @@ layout: page
     {% assign group_index = group_index | plus: 1 %}
   {% endif %}
 {% endfor %}
+  </div>
+
+  <p class="wx-taxonomy-foot">
+    <a href="{{ '/categories/' | relative_url }}">按分类</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/tags/' | relative_url }}">按标签</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/archives/' | relative_url }}">按时间</a>
+  </p>
+</div>

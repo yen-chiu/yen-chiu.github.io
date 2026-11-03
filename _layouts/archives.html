@@ -8,28 +8,47 @@ layout: page
 {% assign df_strftime_m = site.data.locales[lang].df.archives.strftime | default: '/ %m' %}
 {% assign df_dayjs_m = site.data.locales[lang].df.archives.dayjs | default: '/ MM' %}
 
-<div id="archives" class="pl-xl-3">
-  {% for post in site.posts %}
-    {% assign cur_year = post.date | date: '%Y' %}
+<div class="wx-taxonomy">
+  <header class="wx-taxonomy-hero">
+    <p class="wx-taxonomy-kicker">Timeline</p>
+    <div class="wx-taxonomy-title-row">
+      <h1>{{ page.title }}</h1>
+      <span class="wx-taxonomy-count">{{ site.posts.size }} 篇文章</span>
+    </div>
+    <p class="wx-taxonomy-desc">按时间倒序排列，最近写下的在最前面。</p>
+  </header>
 
-    {% if cur_year != last_year %}
-      {% unless forloop.first %}</ul>{% endunless %}
+  <div id="archives">
+    {% for post in site.posts %}
+      {% assign cur_year = post.date | date: '%Y' %}
 
-      <time class="year lead d-block">{{ cur_year }}</time>
-      {{ '<ul class="list-unstyled">' }}
+      {% if cur_year != last_year %}
+        {% unless forloop.first %}</ul>{% endunless %}
 
-      {% assign last_year = cur_year %}
-    {% endif %}
+        <time class="year lead d-block">{{ cur_year }}</time>
+        {{ '<ul class="list-unstyled">' }}
 
-    <li>
-      {% assign ts = post.date | date: '%s' %}
-      <span class="date day" data-ts="{{ ts }}" data-df="DD">{{ post.date | date: '%d' }}</span>
-      <span class="date month small text-muted ms-1" data-ts="{{ ts }}" data-df="{{ df_dayjs_m }}">
-        {{ post.date | date: df_strftime_m }}
-      </span>
-      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    </li>
+        {% assign last_year = cur_year %}
+      {% endif %}
 
-    {% if forloop.last %}</ul>{% endif %}
-  {% endfor %}
+      <li>
+        {% assign ts = post.date | date: '%s' %}
+        <span class="date day" data-ts="{{ ts }}" data-df="DD">{{ post.date | date: '%d' }}</span>
+        <span class="date month small text-muted ms-1" data-ts="{{ ts }}" data-df="{{ df_dayjs_m }}">
+          {{ post.date | date: df_strftime_m }}
+        </span>
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </li>
+
+      {% if forloop.last %}</ul>{% endif %}
+    {% endfor %}
+  </div>
+
+  <p class="wx-taxonomy-foot">
+    <a href="{{ '/categories/' | relative_url }}">按分类</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/tags/' | relative_url }}">按标签</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/archives/' | relative_url }}">按时间</a>
+  </p>
 </div>

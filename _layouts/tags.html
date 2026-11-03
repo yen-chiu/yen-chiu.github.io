@@ -3,20 +3,40 @@ layout: page
 # All the Tags of posts.
 ---
 
-<div id="tags" class="d-flex flex-wrap mx-xl-2">
-  {% assign tags = '' | split: '' %}
-  {% for t in site.tags %}
-    {% assign tags = tags | push: t[0] %}
-  {% endfor %}
-
-  {% assign sorted_tags = tags | sort_natural %}
-
-  {% for t in sorted_tags %}
-    <div>
-      <a class="tag" href="{{ t | slugify | url_encode | prepend: '/tags/' | append: '/' | relative_url }}">
-        {{ t -}}
-        <span class="text-muted">{{ site.tags[t].size }}</span>
-      </a>
+<div class="wx-taxonomy">
+  <header class="wx-taxonomy-hero">
+    <p class="wx-taxonomy-kicker">Browse by keyword</p>
+    <div class="wx-taxonomy-title-row">
+      <h1>{{ page.title }}</h1>
+      <span class="wx-taxonomy-count">{{ site.tags.size }} 个标签</span>
     </div>
-  {% endfor %}
+    <p class="wx-taxonomy-desc">从关键词进入，找到与它相关的全部文章。</p>
+  </header>
+
+  <div id="tags" class="d-flex flex-wrap">
+    {% assign tags = '' | split: '' %}
+    {% for t in site.tags %}
+      {% assign tags = tags | push: t[0] %}
+    {% endfor %}
+
+    {% assign sorted_tags = tags | sort_natural %}
+
+    {% for t in sorted_tags %}
+      {% assign tag_size = site.tags[t].size %}
+      <div>
+        <a class="tag{% if tag_size >= 3 %} wx-tag-lg{% elsif tag_size == 2 %} wx-tag-md{% endif %}" href="{{ t | slugify | url_encode | prepend: '/tags/' | append: '/' | relative_url }}">
+          {{ t -}}
+          <span class="text-muted">{{ tag_size }}</span>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <p class="wx-taxonomy-foot">
+    <a href="{{ '/categories/' | relative_url }}">按分类</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/tags/' | relative_url }}">按标签</a>
+    <span aria-hidden="true">·</span>
+    <a href="{{ '/archives/' | relative_url }}">按时间</a>
+  </p>
 </div>

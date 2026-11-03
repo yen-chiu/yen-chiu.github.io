@@ -23,8 +23,13 @@ layout: compress
 
     {% include lang.html %}
 
+    {% assign hide_panel = page.hide_panel %}
+    {% if page.layout == 'category' or page.layout == 'tag' %}
+      {% assign hide_panel = true %}
+    {% endif %}
+
     {% assign content_cols = 'col-12 col-lg-11 col-xl-9' %}
-    {% if page.hide_panel %}
+    {% if hide_panel %}
       {% assign content_cols = 'col-12 col-lg-12 col-xl-12' %}
     {% endif %}
 
@@ -41,7 +46,7 @@ layout: compress
             {% endif %}
           </main>
 
-          {% unless page.hide_panel %}
+          {% unless hide_panel %}
             <!-- panel -->
             <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 mb-5 text-muted">
               <div class="access">
