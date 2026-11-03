@@ -11,6 +11,20 @@
 - date: 2026-11-03
   kind: feature
   scope: 主站
+  title: 关于页重做，更新日志搬了进来
+  note: 首屏、便当盒、时间线，还有这一页更新记录。
+  links:
+    - { label: 关于页, url: /about/ }
+
+- date: 2026-11-03
+  kind: style
+  scope: 主站
+  title: 关于页加了滚动入场和数字动画
+  note: 系统里开了「减少动态效果」就会自动停下。
+
+- date: 2026-11-03
+  kind: feature
+  scope: 主站
   title: 页脚加了「刷新缓存」
   note: 不用再去设置里删网站数据，点一下就好。
   links:

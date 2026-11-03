@@ -36,6 +36,9 @@
   --wx-aurora-2: rgb(236 72 153 / 12%);
   --wx-aurora-3: rgb(56 189 248 / 13%);
 
+  /* 等宽字体：标签、日期、命令行氛围 */
+  --wx-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
   /* 动效 */
   --wx-ease: cubic-bezier(0.22, 0.82, 0.24, 1);
   --wx-dur: 0.32s;

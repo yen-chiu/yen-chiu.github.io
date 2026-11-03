@@ -9,8 +9,10 @@
     {% for entry in entries %}
       {% assign day = entry.date | date: '%Y-%m-%d' %}
       {% if day != prev_day %}
-        <li class="wx-changelog-day" aria-hidden="true">
-          <time datetime="{{ entry.date | date_to_xmlschema }}">{{ day }}</time>
+        <li class="wx-changelog-day">
+          <span class="wx-changelog-day-label">
+            <time datetime="{{ entry.date | date_to_xmlschema }}">{{ day }}</time>
+          </span>
         </li>
         {% assign prev_day = day %}
       {% endif %}
@@ -40,10 +42,14 @@
           {% if entry.links %}
             <p class="wx-changelog-links">
               {% for link in entry.links %}
-                <a href="{% if link.url contains '://' %}{{ link.url }}{% else %}{{ link.url | relative_url }}{% endif %}">{{ link.label }}</a>
+                <a href="{% if link.url contains '://' %}{{ link.url }}{% else %}{{ link.url | relative_url }}{% endif %}"
+                  {% if link.url contains '://' %}target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
                 {%- unless forloop.last %} · {% endunless -%}
               {% endfor %}
             </p>
+          {% endif %}
+          {% if entry.commit %}
+            <p class="wx-changelog-commit"><code>{{ entry.commit }}</code></p>
           {% endif %}
         </div>
       </li>
