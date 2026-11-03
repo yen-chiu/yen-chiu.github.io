@@ -17,6 +17,12 @@
 
 这里是我的个人博客，记录技术笔记、读书与生活。
 
+<p align="center">
+  <img src="assets/img/readme-preview.png" alt="博客首页预览" width="100%" />
+  <br />
+  <sub>首页 · 深浅色自动切换 · 响应式布局</sub>
+</p>
+
 - **内容**：Markdown 写作，支持目录、代码高亮、数学公式、图片灯箱与脚注
 - **体验**：深浅色自动切换、阅读进度条、PWA 离线缓存、站内搜索、Giscus 评论
 - **写作**：既可以在本地写 Markdown 提交，也可以直接用 [/admin/](https://yenchiu.com/admin/) 在线写作台上传图片并发布（手机、平板、电脑通用）
