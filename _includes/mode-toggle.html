@@ -143,6 +143,7 @@
 
       const open = typeof force === 'boolean' ? force : !menu.classList.contains('show');
       menu.classList.toggle('show', open);
+      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
       this.button.parentElement.classList.toggle('show', open);
       this.button.setAttribute('aria-expanded', open ? 'true' : 'false');
 
@@ -208,6 +209,7 @@
       const menu = this.menu;
       if (menu) {
         menu.classList.remove('show');
+        menu.setAttribute('aria-hidden', 'true');
       }
       this.button.parentElement.classList.remove('show');
       this.button.setAttribute('aria-expanded', 'false');
