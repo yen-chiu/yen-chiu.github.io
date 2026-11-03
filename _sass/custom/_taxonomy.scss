@@ -277,6 +277,7 @@
     letter-spacing: 0;
     line-height: 1.2;
     transition:
+      opacity var(--wx-dur) var(--wx-ease),
       transform var(--wx-dur) var(--wx-ease),
       border-color var(--wx-dur) var(--wx-ease),
       background var(--wx-dur) var(--wx-ease),
@@ -320,6 +321,35 @@
   padding: 0.62rem 1.02rem;
   font-size: 1rem;
   font-weight: 600;
+}
+
+.wx-taxonomy-tag-hint {
+  margin: 0 0 0.8rem;
+  color: var(--text-muted-color);
+  font-size: 0.8rem;
+}
+
+#tags .tag.is-related {
+  border-color: var(--wx-border-strong) !important;
+  background: var(--wx-gradient-soft);
+  color: var(--wx-accent) !important;
+  transform: translateY(-1px);
+}
+
+#tags .tag.is-dimmed {
+  opacity: 0.32;
+}
+
+.wx-tag-related {
+  min-height: 1.5rem;
+  margin: 0.9rem 0 0;
+  color: var(--text-muted-color);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+#archives [data-wx-reveal] {
+  transition-delay: var(--wx-delay, 0ms);
 }
 
 /* ---------- 档案：时间线 ---------- */
