@@ -3,19 +3,26 @@
    ========================================================================== */
 
 #sidebar {
+  --wx-avatar-size: clamp(5rem, 10.5vh, 6.5rem);
+
   border-right: 1px solid var(--main-border-color);
 
   .profile-wrapper {
-    padding-top: 0.5rem;
+    width: 100%;
+    margin: clamp(1.4rem, 4.2vh, 3.5rem) 0 clamp(1rem, 2.5vh, 2.5rem);
+    padding: 0.5rem 0 0;
+    box-sizing: border-box;
 
     #avatar {
       position: relative;
       display: inline-block;
+      width: var(--wx-avatar-size);
+      height: var(--wx-avatar-size);
       border-radius: 50%;
       isolation: isolate;
     }
 
-    /* 旋转的渐变光环 */
+    /* 静态渐变光环：不再旋转，避免缩放时闪烁 */
     #avatar::before {
       position: absolute;
       z-index: -1;
@@ -32,7 +39,6 @@
       opacity: 0.55;
       filter: blur(1px);
       transition: opacity var(--wx-dur) var(--wx-ease);
-      animation: wx-ring-spin 9s linear infinite;
     }
 
     #avatar::after {
@@ -51,11 +57,12 @@
 
     #avatar img {
       display: block;
-      width: 6.5rem;
-      height: 6.5rem;
+      width: 100%;
+      height: 100%;
       border: 3px solid var(--sidebar-bg);
       border-radius: 50%;
       background-color: var(--sidebar-bg);
+      box-sizing: border-box;
       object-fit: cover;
       transition: transform var(--wx-dur) var(--wx-ease);
     }
@@ -65,17 +72,18 @@
     }
 
     .site-title {
-      margin-top: 0.9rem;
+      margin-top: clamp(0.55rem, 1.2vh, 0.9rem);
+      font-size: clamp(1.45rem, 3.1vh, 1.75rem);
       font-weight: 700;
       letter-spacing: 0.02em;
 
       a {
         background: var(--wx-gradient);
-        background-size: 220% 100%;
+        background-size: 100% 100%;
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
-        animation: wx-gradient-move 12s linear infinite alternate;
+        font-size: inherit;
 
         &:hover {
           text-decoration: none;
@@ -85,7 +93,7 @@
 
     .site-subtitle {
       color: var(--site-subtitle-color);
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 1.8vh, 0.9rem);
       letter-spacing: 0.04em;
     }
 
@@ -95,9 +103,9 @@
       gap: 0.35rem;
       align-items: center;
       justify-content: center;
-      margin: 0.6rem 0 0;
+      margin: clamp(0.35rem, 0.8vh, 0.6rem) 0 0;
       color: var(--text-muted-color);
-      font-size: 0.68rem;
+      font-size: clamp(0.62rem, 1.2vh, 0.7rem);
       letter-spacing: 0.04em;
     }
 
@@ -107,31 +115,30 @@
       height: 6px;
       border-radius: 50%;
       background: #22c55e;
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
-      animation: wx-pulse-dot 2.4s ease-out infinite;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
     }
 
     .wx-sidebar-divider {
       width: 2.5rem;
       height: 1px;
-      margin: 1rem auto 0;
+      margin: clamp(0.6rem, 1.2vh, 1rem) auto 0;
       background: var(--wx-gradient);
       opacity: 0.45;
     }
   }
 
   .nav {
-    gap: 0.15rem;
-    padding-top: 0.35rem;
+    gap: clamp(0.05rem, 0.2vh, 0.15rem);
+    padding-top: clamp(0.2rem, 0.5vh, 0.35rem);
   }
 
-  .nav-link {
+  .nav .nav-link {
     display: flex;
     align-items: center;
     gap: 0.55rem;
     position: relative;
     border-radius: 12px;
-    padding: 0.55rem 0.85rem;
+    padding: clamp(0.4rem, 0.9vh, 0.55rem) 0.85rem;
     color: var(--sidebar-muted-color);
     transition: color var(--wx-dur) var(--wx-ease),
       background-color var(--wx-dur) var(--wx-ease), transform var(--wx-dur) var(--wx-ease);
@@ -168,20 +175,50 @@
       }
     }
   }
-}
 
-@keyframes wx-ring-spin {
-  to {
-    transform: rotate(360deg);
+  .nav ul {
+    margin-bottom: clamp(0.75rem, 2vh, 2rem);
+  }
+
+  .sidebar-bottom {
+    margin-bottom: clamp(0.8rem, 1.8vh, 1.5rem);
   }
 }
 
 /* 移动端：抽屉里的侧边栏稍微收一点内边距 */
 @media (max-width: 991.98px) {
   #sidebar {
-    .profile-wrapper #avatar img {
-      width: 5.5rem;
-      height: 5.5rem;
+    --wx-avatar-size: clamp(4.8rem, 9.5vh, 5.6rem);
+  }
+}
+
+/* 矮屏：进一步收紧纵向占用，避免 14 寸本 100% 缩放时拥挤 */
+@media (max-height: 780px) {
+  #sidebar {
+    .profile-wrapper {
+      margin-top: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .wx-sidebar-divider {
+      display: none;
+    }
+
+    .wx-sidebar-status {
+      margin-top: 0.35rem;
+      font-size: 0.64rem;
+    }
+
+    .site-subtitle {
+      font-size: 0.82rem;
+    }
+
+    .nav .nav-link {
+      padding: 0.4rem 0.8rem;
+    }
+
+    .sidebar-bottom {
+      margin-bottom: 0.8rem;
     }
   }
 }
