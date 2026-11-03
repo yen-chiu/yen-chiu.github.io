@@ -13,7 +13,7 @@ layout: page
     <p class="wx-taxonomy-desc">从关键词进入相关文章，或者看看它们之间怎样连在一起。</p>
   </header>
 
-  <div class="wx-tag-view-switch" role="tablist" aria-label="标签视图">
+  <div class="wx-tag-view-switch" role="tablist" aria-label="标签视图" hidden>
     <button
       type="button"
       id="wx-tag-tab-cloud"
@@ -107,4 +107,4 @@ layout: page
   </p>
 </div>
 
-<script src="{{ '/assets/js/taxonomy.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/taxonomy.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
