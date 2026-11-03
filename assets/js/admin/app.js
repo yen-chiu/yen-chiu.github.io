@@ -1242,17 +1242,13 @@
       return;
     }
 
-    // 在用户手势里同步打开授权页，避免被浏览器拦截弹窗
-    try {
-      window.open('https://github.com/login/device', '_blank', 'noopener');
-    } catch (e) {
-      /* ignore */
-    }
-
     var btn = $('#adm-gh-login');
     if (btn) btn.disabled = true;
     var box = $('#adm-device');
-    if (box) box.hidden = false;
+    if (box) {
+      box.hidden = false;
+      if (box.scrollIntoView) box.scrollIntoView({ block: 'nearest' });
+    }
     echo($('#adm-user-code'), '······');
     setDeviceStatus('正在向 GitHub 申请验证码…');
 
@@ -1276,7 +1272,7 @@
         echo($('#adm-user-code'), data.user_code || '----');
         var link = $('#adm-device-link');
         if (link && data.verification_uri) link.href = data.verification_uri;
-        setDeviceStatus('等待你在 GitHub 上确认…');
+        setDeviceStatus('验证码已显示；点下面链接去 GitHub 粘贴确认');
         copyText(data.user_code || '').then(function (ok) {
           if (ok) setDeviceStatus('验证码已复制，去 GitHub 粘贴确认…');
         });
