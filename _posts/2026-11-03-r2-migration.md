@@ -20,7 +20,7 @@ R2 的 S3 兼容端点是这个形式：
 https://<ACCOUNT_ID>.r2.cloudflarestorage.com
 ```
 
-看到 `0123456789abcdef0123456789abcdef` 这种 32 位十六进制，很容易误以为是 Access Key ID。
+看到 `82dcaec385f4599232711f5e7e48d3d8` 这种 32 位十六进制，很容易误以为是 Access Key ID。
 实际上它是**账户 ID**，S3 访问还需要配对的 Secret Access Key。
 而且就算有 S3 密钥，**公开访问（r2.dev 子域 / 自定义域）也不在 S3 API 里**，必须走 Cloudflare API 或面板。
 
