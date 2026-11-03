@@ -1148,6 +1148,11 @@ html.wx-reveal-ready [data-wx-reveal].is-in {
     margin-bottom: 0.75rem;
   }
 
+  .wx-about-section-head > .wx-about-head-link,
+  .wx-about-section-head > .wx-about-head-note {
+    flex-basis: 100%;
+  }
+
   .wx-about-bento {
     gap: 0.65rem;
   }
