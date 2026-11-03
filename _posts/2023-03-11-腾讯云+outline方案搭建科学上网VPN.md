@@ -4,17 +4,22 @@ date: 2023-03-11 16:10:46 +0800
 description: 用腾讯云 + Outline 自建科学上网服务的完整记录：购买服务器、部署 Docker、生成访问密钥、配置客户端。
 categories: [Uncategories, 网络环境]
 tags: [科学上网]
+image: /assets/img/posts/tencent-outline-vpn/cover.png
 ---
 
-# 腾讯云+outline 方案搭建科学上网 VPN
+# 腾讯云 + Outline 方案搭建科学上网 VPN
+
+> **时效提醒**：本文写于 2023 年 3 月，命令与镜像源来自当时的官方文档。
+> 现在的 Docker 安装方式、CentOS 版本（8 已停止维护）和 Outline 客户端版本都可能已经变化，
+> 照抄前请以官方文档为准。文中的截图是外链引用的第三方图床，可能已经失效。
 
 - 支持多个平台: iOS/Android/Mac/PC
   - APK: [APK](https://github.com/Jigsaw-Code/outline-releases/blob/master/client/Outline.apk)
   - IOS 直接 Appstore 下载
 
-# 搭建步骤:
+## 搭建步骤
 
-## 购买腾讯云服务器，选你想要的地区
+### 购买腾讯云服务器，选你想要的地区
 
 - https://buy.cloud.tencent.com/cvm?tab=lite
 - 比如: 中国香港
@@ -23,7 +28,7 @@ tags: [科学上网]
 
 ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705529135921670552912900.png)
 
-## 部署腾讯云服务器
+### 部署腾讯云服务器
 
 - 登录云服务器
   ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705528845941670552884417.png)
@@ -53,7 +58,7 @@ systemctl start docker
 
   ![](https://fastly.jsdelivr.net/gh/Rootjhon/img_note@empty/16705528336041670552833459.png)
 
-## CentOS 8 - Docker
+### CentOS 8 - Docker
 
 报错信息:
 

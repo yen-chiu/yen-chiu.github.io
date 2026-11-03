@@ -3,6 +3,7 @@ title: 关于Github page的引用路径问题
 date: 2024-11-13 18:57:46 +0800
 description: Jekyll 里引用图片和视频的几种写法：相对路径、站内绝对路径、raw 外链，以及它们在 GitHub Pages 上分别会踩什么坑。
 categories: [Blog, Markdown]
+image: /assets/img/posts/github-page-paths/cover.png
 tags: [Bug]
 ---
 
