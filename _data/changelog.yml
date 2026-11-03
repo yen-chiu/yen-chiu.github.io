@@ -17,8 +17,8 @@
 - date: 2026-11-03
   kind: fix
   scope: 主站
-  title: 修正侧边栏缩放闪动与头像对齐
-  note: 停掉光环和标题动画，按视口高度收紧间距。
+  title: 修正侧边栏缩放位置抖动与对齐
+  note: 统一 profile 居中、去掉水平偏移，并固定桌面合成层。
 
 - date: 2026-11-03
   kind: feature
