@@ -7,5 +7,5 @@ compatibility_date = "2026-11-01"
 GITHUB_CLIENT_ID = "请替换成你 GitHub App 的 Client ID"
 ALLOWED_ORIGIN = "https://yenchiu.com"
 
-# 可选：只有想「静默续期」时才需要下面这条（不配也能用，只是令牌 8 小时后要重新登录）
-# npx wrangler secret put GITHUB_CLIENT_SECRET
+# 不需要 Client Secret：/refresh 已下线，本 Worker 不存任何长期密钥
+
