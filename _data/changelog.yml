@@ -11,6 +11,12 @@
 - date: 2026-11-03
   kind: fix
   scope: 主站
+  title: 修正标签视图切换按钮与缓存
+  note: 改成下划线标签页，CSS/JS 加版本号避免旧缓存。
+
+- date: 2026-11-03
+  kind: fix
+  scope: 主站
   title: 修正侧边栏缩放闪动与头像对齐
   note: 停掉光环和标题动画，按视口高度收紧间距。
 

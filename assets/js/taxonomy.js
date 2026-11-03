@@ -147,6 +147,7 @@
     });
 
     /* ---------- 视图切换 ---------- */
+    var switchElement = document.querySelector('.wx-tag-view-switch');
     var viewButtons = Array.prototype.slice.call(document.querySelectorAll('.wx-tag-view-btn'));
     var viewPanels = Array.prototype.slice.call(document.querySelectorAll('[data-tag-view-panel]'));
 
@@ -201,6 +202,10 @@
       storedView = localStorage.getItem('wx-tag-view');
     } catch (error) {
       storedView = null;
+    }
+
+    if (switchElement) {
+      switchElement.hidden = false;
     }
 
     var defaultView =
