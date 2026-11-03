@@ -20,7 +20,9 @@
   --adm-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-html[data-mode='dark'] {
+/* 写作台跳过了主题初始化脚本，html 上可能没有 data-mode；
+   系统深色时也要用深色令牌，否则会出现「深色页面 + 白色卡片」 */
+@mixin adm-dark-tokens {
   --adm-accent: #818cf8;
   --adm-accent-2: #c084fc;
   --adm-border: rgb(129 140 248 / 22%);
@@ -29,6 +31,16 @@ html[data-mode='dark'] {
   --adm-text: #e5e7eb;
   --adm-muted: #9ca3af;
   --adm-shadow: 0 12px 34px -20px rgb(0 0 0 / 70%);
+}
+
+html[data-mode='dark'] {
+  @include adm-dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-mode='light']) {
+    @include adm-dark-tokens;
+  }
 }
 
 /* 页面容器：隐藏右侧面板，让工作台占满宽度 */
@@ -771,6 +783,75 @@ html[data-mode='dark'] .adm-dirty {
     &::-webkit-scrollbar {
       display: none;
     }
+
+    /* 右侧渐隐，暗示「还能横向滑动」 */
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 1.6rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 1.6rem), transparent 100%);
+  }
+}
+
+/* ---------- 超窄屏（≤ 576px）：工具栏换行，避免按钮被裁掉 ---------- */
+
+@media (max-width: 575.98px) {
+  .adm {
+    /* 兜底：任何子元素都不允许把页面撑出横向滚动条。
+       只裁 .adm-main，避免影响抽屉（.adm-side 是 fixed 定位） */
+    > * {
+      min-width: 0;
+    }
+  }
+
+  .adm-main {
+    overflow-x: hidden;
+  }
+
+  .adm-toolbar {
+    flex-wrap: wrap;
+    row-gap: 0.45rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .adm-toolbar-left,
+  .adm-toolbar-right {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  /* 右组换行后仍然贴右，而不是漂到中间 */
+  .adm-toolbar-right {
+    margin-left: auto;
+  }
+
+  .adm-tabs {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .adm-tab {
+    padding: 0.3rem 0.62rem;
+  }
+
+  .adm-btn {
+    min-height: 2.35rem;
+    padding: 0 0.72rem;
+  }
+
+  .adm-btn-sm {
+    min-height: 2rem;
+    padding: 0 0.55rem;
+  }
+
+  .adm-statusbar {
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+  }
+
+  .adm-toast {
+    right: 12px;
+    left: 12px;
+    /* 抬高到状态栏之上，避免盖住「字数 / 草稿分支」这些常驻信息 */
+    bottom: calc(4.6rem + env(safe-area-inset-bottom));
+    max-width: none;
   }
 }
 

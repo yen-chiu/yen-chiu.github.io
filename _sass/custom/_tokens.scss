@@ -42,7 +42,12 @@
   --wx-dur-slow: 0.6s;
 }
 
-html[data-mode='dark'] {
+/* 深色令牌。两处生效：
+   1. 用户显式切换过主题 → html[data-mode='dark']
+   2. 用户没选过、但系统是深色 → 依赖 prefers-color-scheme
+   （写作台跳过了主题初始化脚本，html 上没有 data-mode，只有靠第 2 条才不会出现
+    「深色页面里浮出一张白卡片」） */
+@mixin wx-dark-tokens {
   --wx-accent: #818cf8;
   --wx-accent-2: #c084fc;
   --wx-accent-3: #f472b6;
@@ -64,4 +69,14 @@ html[data-mode='dark'] {
   --wx-aurora-1: rgb(99 102 241 / 26%);
   --wx-aurora-2: rgb(236 72 153 / 18%);
   --wx-aurora-3: rgb(56 189 248 / 16%);
+}
+
+html[data-mode='dark'] {
+  @include wx-dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-mode='light']) {
+    @include wx-dark-tokens;
+  }
 }
