@@ -1,3 +1,5 @@
+/* stylelint-disable color-function-notation, alpha-value-notation, color-hex-length, value-keyword-case */
+
 /* ==========================================================================
    自定义设计令牌（design tokens）
    --------------------------------------------------------------------------
@@ -10,6 +12,11 @@
   --wx-accent: #6366f1;
   --wx-accent-2: #a855f7;
   --wx-accent-3: #ec4899;
+  --wx-data: #0f9f9a;
+  --wx-data-strong: #0f766e;
+  --wx-data-soft: rgba(15, 159, 154, 0.1);
+  --wx-data-border: rgba(15, 159, 154, 0.22);
+  --wx-data-border-strong: rgba(15, 159, 154, 0.42);
   --wx-gradient: linear-gradient(120deg, #6366f1 0%, #a855f7 48%, #ec4899 100%);
   --wx-gradient-soft: linear-gradient(
     120deg,
@@ -54,6 +61,11 @@
   --wx-accent: #818cf8;
   --wx-accent-2: #c084fc;
   --wx-accent-3: #f472b6;
+  --wx-data: #2dd4bf;
+  --wx-data-strong: #5eead4;
+  --wx-data-soft: rgba(45, 212, 191, 0.12);
+  --wx-data-border: rgba(45, 212, 191, 0.24);
+  --wx-data-border-strong: rgba(45, 212, 191, 0.46);
   --wx-gradient: linear-gradient(120deg, #818cf8 0%, #c084fc 48%, #f472b6 100%);
   --wx-gradient-soft: linear-gradient(
     120deg,
