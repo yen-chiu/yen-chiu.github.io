@@ -1,0 +1,64 @@
+# 关于页的结构化内容
+# 改文案、换工具、加时间点都只动这里，不碰 HTML。
+
+profile:
+  name: Wendell
+  handle: "@yen-chiu"
+  tagline: "读书，买花，长大。"
+  location: "长沙"
+  role: "数据分析 / 建模仿真"
+  foot: "Jekyll · Chirpy · Cloudflare R2"
+  typing:
+    - "读书，买花，长大。"
+    - "用 Python / R / MATLAB 做数据分析。"
+    - "记录本身就是一种整理。"
+
+about:
+  title: "把复杂的事，讲得简单一点。"
+  intro: >-
+    我是 Wendell，一名做数据分析的业余编程爱好者，现旅居长沙。平时主要用
+    Python / R / MATLAB 做数据分析与建模仿真，也折腾 Linux、博客和各类自动化小工具。
+  note: >-
+    我相信「记录本身就是一种整理」，于是有了这个长期维护的个人博客。这里不追热点，
+    也不定更新频率，只把技术笔记、读书与生活里那些值得留下的片段，慢慢放进来。
+  interests:
+    - 数据分析
+    - 建模仿真
+    - Linux
+    - 摄影
+    - 阅读
+    - 旅行
+
+now:
+  - 给博客做减法，把入口慢慢收拢
+  - 用 Python / R / MATLAB 做数据分析与建模
+  - 维护写作台、聊天页和一些自动化小工具
+  - 读书、拍照，在长沙散步
+
+tools:
+  - Python
+  - R
+  - MATLAB
+  - Linux
+  - Git
+  - LaTeX
+  - Markdown
+  - Bash
+  - VS Code
+  - MySQL
+  - Jekyll
+  - Cloudflare
+
+milestones:
+  - datetime: "2023-05-20T13:14:00+08:00"
+    title: 站点开始运行
+    text: 从一台 Ubuntu 虚拟机开始，这个博客有了自己的地址。
+  - datetime: "2023-10-11"
+    title: 写下《MyBlog》
+    text: 写下「我希望在这里的世界是豁达平静的」。
+  - datetime: "2024-11-13"
+    title: 继续折腾，也开始记录
+    text: 解决 GitHub Pages 的引用路径问题，把踩过的坑写成笔记。
+  - datetime: "2026-11-03"
+    title: 一次集中改版
+    text: 设计令牌、动效、更新日志、写作台、R2 迁移。

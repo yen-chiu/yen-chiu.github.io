@@ -1,0 +1,75 @@
+<section class="wx-about-hero" aria-labelledby="wx-about-title">
+  <div class="wx-about-hero-main" data-wx-reveal>
+    <p class="wx-about-eyebrow">
+      <span class="wx-about-status-dot" aria-hidden="true"></span>
+      Changsha · Data &amp; Code
+    </p>
+
+    <h1 class="wx-about-title" id="wx-about-title">
+      你好，我是<br />
+      <span class="wx-grad">{{ site.data.about.profile.name }}</span>
+    </h1>
+
+    <p class="wx-about-typing" aria-hidden="true">
+      <span class="wx-about-prompt">~$</span>
+      <span
+        class="wx-about-typing-text"
+        data-wx-typing='{{ site.data.about.profile.typing | jsonify }}'
+      >{{ site.data.about.profile.typing[0] }}</span>
+      <span class="wx-about-caret"></span>
+    </p>
+
+    <p class="wx-about-lede">
+      一名做数据分析的业余编程爱好者，现旅居长沙。白天和数字、模型打交道，晚上折腾 Linux、博客和自动化小工具。
+    </p>
+
+    <div class="wx-about-actions">
+      <a class="wx-about-btn wx-about-btn-primary" href="{{ '/archives/' | relative_url }}">
+        <i class="iconfont icon-archive" aria-hidden="true"></i><span>读文章</span>
+      </a>
+      <a class="wx-about-btn" href="{{ '/feed.xml' | relative_url }}">
+        <i class="iconfont icon-stream" aria-hidden="true"></i><span>RSS</span>
+      </a>
+      <a class="wx-about-btn" href="https://github.com/yen-chiu" target="_blank" rel="noopener">
+        <i class="iconfont icon-github" aria-hidden="true"></i><span>GitHub</span>
+      </a>
+    </div>
+
+    <ul class="wx-about-meta">
+      <li><span aria-hidden="true">📍</span> {{ site.data.about.profile.location }}</li>
+      <li><span aria-hidden="true">🧪</span> {{ site.data.about.profile.role }}</li>
+      <li><span aria-hidden="true">🕰</span> 写着第 <strong id="wx-about-days" data-since="{{ site.uptime_since }}">{{ uptime_days }}</strong> 天</li>
+    </ul>
+  </div>
+
+  <aside class="wx-about-profile" data-wx-reveal aria-label="个人资料卡">
+    <div class="wx-about-avatar-ring">
+      <div class="wx-about-avatar" style="background-image: url('{{ avatar_url }}')" role="img" aria-label="{{ site.data.about.profile.name }} 的头像"></div>
+    </div>
+
+    <p class="wx-about-profile-name">{{ site.data.about.profile.name }} <span>{{ site.data.about.profile.handle }}</span></p>
+    <p class="wx-about-profile-bio">{{ site.data.about.profile.tagline }}</p>
+
+    <dl class="wx-about-profile-stats">
+      <div>
+        <dt>文章</dt>
+        <dd data-wx-count="{{ post_count }}">{{ post_count }}</dd>
+      </div>
+      <div>
+        <dt>分类</dt>
+        <dd data-wx-count="{{ category_count }}">{{ category_count }}</dd>
+      </div>
+      <div>
+        <dt>标签</dt>
+        <dd data-wx-count="{{ tag_count }}">{{ tag_count }}</dd>
+      </div>
+    </dl>
+
+    <a class="wx-about-profile-link" href="https://github.com/yen-chiu" target="_blank" rel="noopener">
+      <span>在 GitHub 找到我</span>
+      <span aria-hidden="true">↗</span>
+    </a>
+
+    <p class="wx-about-profile-foot">{{ site.data.about.profile.foot }}</p>
+  </aside>
+</section>

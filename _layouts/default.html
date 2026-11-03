@@ -21,12 +21,19 @@ layout: compress
 
     {% include sidebar.html lang=lang %}
 
+    {% include lang.html %}
+
+    {% assign content_cols = 'col-12 col-lg-11 col-xl-9' %}
+    {% if page.hide_panel %}
+      {% assign content_cols = 'col-12 col-lg-12 col-xl-12' %}
+    {% endif %}
+
     <div id="main-wrapper" class="d-flex justify-content-center">
       <div class="container d-flex flex-column px-xxl-5">
         {% include topbar.html lang=lang %}
 
         <div class="row flex-grow-1">
-          <main aria-label="Main Content" id="main-content" class="col-12 col-lg-11 col-xl-9 px-md-4">
+          <main aria-label="Main Content" id="main-content" class="{{ content_cols }} px-md-4">
             {% if layout.refactor or layout.layout == 'default' and page.permalink != '/404.html' %}
               {% include refactor-content.html content=content lang=lang %}
             {% else %}
@@ -34,30 +41,32 @@ layout: compress
             {% endif %}
           </main>
 
-          <!-- panel -->
-          <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 mb-5 text-muted">
-            <div class="access">
-              {% if page.layout != "post" or site.panel.post.lastmod %}
-                {% include_cached update-list.html lang=lang  %}
-              {% endif %}
-              {% if page.layout != "post" or site.panel.post.trending_tags %}
-                {% include_cached trending-tags.html lang=lang %}
-              {% endif %}
-              {% if page.layout != "post" or site.panel.post.external_links %}
-                {% include_cached external-links.html lang=lang %}
-              {% endif %}
-            </div>
+          {% unless page.hide_panel %}
+            <!-- panel -->
+            <aside aria-label="Panel" id="panel-wrapper" class="col-xl-3 ps-2 mb-5 text-muted">
+              <div class="access">
+                {% if page.layout != "post" or site.panel.post.lastmod %}
+                  {% include_cached update-list.html lang=lang  %}
+                {% endif %}
+                {% if page.layout != "post" or site.panel.post.trending_tags %}
+                  {% include_cached trending-tags.html lang=lang %}
+                {% endif %}
+                {% if page.layout != "post" or site.panel.post.external_links %}
+                  {% include_cached external-links.html lang=lang %}
+                {% endif %}
+              </div>
 
-            {% for _include in layout.panel_includes %}
-              {% assign _include_path = _include | flatify | append: '.html' %}
-              {% include {{ _include_path }} lang=lang %}
-            {% endfor %}
-          </aside>
+              {% for _include in layout.panel_includes %}
+                {% assign _include_path = _include | flatify | append: '.html' %}
+                {% include {{ _include_path }} lang=lang %}
+              {% endfor %}
+            </aside>
+          {% endunless %}
         </div>
 
         <div class="row">
           <!-- tail -->
-          <div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 px-md-4">
+          <div id="tail-wrapper" class="{{ content_cols }} px-md-4">
             {% for _include in layout.tail_includes %}
               {% assign _include_path = _include | flatify | append: '.html' %}
               {% include {{ _include_path }} lang=lang %}

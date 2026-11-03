@@ -188,16 +188,18 @@
     });
   })();
 
-  /* ---------- giscus 评论区 ---------- */
+  /* ---------- giscus 评论区（折叠后按需加载） ---------- */
   (function () {
     var mount = document.getElementById('wx-about-giscus');
     if (!mount) return;
 
+    var details = document.getElementById('wx-about-comments');
     var repo = mount.getAttribute('data-repo');
     if (!repo) return;
 
     var origin = 'https://giscus.app';
     var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    var loaded = false;
 
     function currentTheme() {
       var mode = document.documentElement.getAttribute('data-mode');
@@ -206,29 +208,34 @@
       return darkQuery.matches ? 'dark_dimmed' : 'light';
     }
 
-    var attributes = {
-      src: origin + '/client.js',
-      'data-repo': repo,
-      'data-repo-id': mount.getAttribute('data-repo-id') || '',
-      'data-category': mount.getAttribute('data-category') || '',
-      'data-category-id': mount.getAttribute('data-category-id') || '',
-      'data-mapping': mount.getAttribute('data-mapping') || 'pathname',
-      'data-strict': '0',
-      'data-reactions-enabled': '1',
-      'data-emit-metadata': '0',
-      'data-input-position': 'top',
-      'data-theme': currentTheme(),
-      'data-lang': 'zh-CN',
-      'data-loading': 'lazy',
-      crossorigin: 'anonymous',
-      async: ''
-    };
+    function load() {
+      if (loaded) return;
+      loaded = true;
 
-    var script = document.createElement('script');
-    Object.keys(attributes).forEach(function (key) {
-      script.setAttribute(key, attributes[key]);
-    });
-    mount.appendChild(script);
+      var attributes = {
+        src: origin + '/client.js',
+        'data-repo': repo,
+        'data-repo-id': mount.getAttribute('data-repo-id') || '',
+        'data-category': mount.getAttribute('data-category') || '',
+        'data-category-id': mount.getAttribute('data-category-id') || '',
+        'data-mapping': mount.getAttribute('data-mapping') || 'pathname',
+        'data-strict': '0',
+        'data-reactions-enabled': '1',
+        'data-emit-metadata': '0',
+        'data-input-position': 'top',
+        'data-theme': currentTheme(),
+        'data-lang': 'zh-CN',
+        'data-loading': 'lazy',
+        crossorigin: 'anonymous',
+        async: ''
+      };
+
+      var script = document.createElement('script');
+      Object.keys(attributes).forEach(function (key) {
+        script.setAttribute(key, attributes[key]);
+      });
+      mount.appendChild(script);
+    }
 
     function updateTheme(theme) {
       var frame = mount.querySelector('.giscus-frame');
@@ -249,6 +256,20 @@
       if (!document.documentElement.hasAttribute('data-mode')) {
         updateTheme(currentTheme());
       }
+    });
+
+    if (!details) {
+      load();
+      return;
+    }
+
+    if (details.open || window.location.hash === '#comments') {
+      details.open = true;
+      load();
+    }
+
+    details.addEventListener('toggle', function () {
+      if (details.open) load();
     });
   })();
 })();

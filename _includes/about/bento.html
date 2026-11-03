@@ -1,0 +1,60 @@
+<section class="wx-about-section" id="about" aria-labelledby="wx-about-about-title">
+  <header class="wx-about-section-head">
+    <div>
+      <p class="wx-about-kicker">01 / About</p>
+      <h2 class="wx-about-section-title" id="wx-about-about-title">关于我，和这个站</h2>
+    </div>
+    <a class="wx-about-head-link" href="#changelog">这个站最近改了什么 <span aria-hidden="true">↓</span></a>
+  </header>
+
+  <div class="wx-about-bento">
+    <article class="wx-about-card wx-about-span-7" data-wx-reveal>
+      <p class="wx-about-label">Who am I</p>
+      <h3>{{ site.data.about.about.title }}</h3>
+      <p>{{ site.data.about.about.intro }}</p>
+      <p>{{ site.data.about.about.note }}</p>
+      <ul class="wx-about-tags" aria-label="兴趣与方向">
+        {% for item in site.data.about.about.interests %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+
+    <figure class="wx-about-card wx-about-card-quote wx-about-span-5" data-wx-reveal>
+      <blockquote>我希望在这里的世界是豁达平静的。</blockquote>
+      <figcaption>—《MyBlog》，2023.10</figcaption>
+    </figure>
+
+    <article class="wx-about-card wx-about-span-4" data-wx-reveal>
+      <p class="wx-about-label">Now</p>
+      <h3>最近在做</h3>
+      <ul class="wx-about-now">
+        {% for item in site.data.about.now %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+
+    <article class="wx-about-card wx-about-span-4" data-wx-reveal>
+      <p class="wx-about-label">Toolbox</p>
+      <h3>常用工具</h3>
+      <ul class="wx-about-skills" aria-label="常用工具">
+        {% for item in site.data.about.tools %}
+          <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </article>
+
+    <article class="wx-about-card wx-about-span-4" data-wx-reveal>
+      <p class="wx-about-label">This site</p>
+      <h3>这个站</h3>
+      <dl class="wx-about-facts">
+        <div><dt>框架</dt><dd>Jekyll + Chirpy</dd></div>
+        <div><dt>托管</dt><dd>GitHub Pages</dd></div>
+        <div><dt>媒体</dt><dd>Cloudflare R2</dd></div>
+        <div><dt>写作台</dt><dd>自建 <code>/admin/</code></dd></div>
+      </dl>
+      <a class="wx-about-inline-link" href="#changelog">看更新日志 <span aria-hidden="true">→</span></a>
+    </article>
+  </div>
+</section>
