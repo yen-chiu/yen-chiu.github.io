@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: feature
+  scope: 写作台
+  title: 写作台支持「点一下」GitHub 登录
+  note: 设备码走 Worker 代理，不用再手动建令牌。
+
+- date: 2026-11-03
   kind: style
   scope: 主站
   title: 侧边栏标题改为 hover 故障特效
