@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: fix
+  scope: 主站
+  title: 修正侧边栏缩放闪动与头像对齐
+  note: 停掉光环和标题动画，按视口高度收紧间距。
+
+- date: 2026-11-03
   kind: feature
   scope: 主站
   title: 标签页增加 SVG 关系图与 PMI 预计算
