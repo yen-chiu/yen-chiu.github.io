@@ -12,12 +12,22 @@ layout: page
 
 {% assign sort_categories = site.categories | sort %}
 
+{% assign top_category_count = 0 %}
+{% for category in sort_categories %}
+  {% assign category_name = category | first %}
+  {% assign posts_of_category = category | last %}
+  {% assign first_post = posts_of_category | first %}
+  {% if category_name == first_post.categories[0] %}
+    {% assign top_category_count = top_category_count | plus: 1 %}
+  {% endif %}
+{% endfor %}
+
 <div class="wx-taxonomy">
   <header class="wx-taxonomy-hero">
     <p class="wx-taxonomy-kicker">Browse by topic</p>
     <div class="wx-taxonomy-title-row">
       <h1>{{ page.title }}</h1>
-      <span class="wx-taxonomy-count">{{ site.categories.size }} 个分类 · {{ site.posts.size }} 篇文章</span>
+      <span class="wx-taxonomy-count">{{ top_category_count }} 个分类 · {{ site.posts.size }} 篇文章</span>
     </div>
     <p class="wx-taxonomy-desc">按主题浏览全部文章。展开一个分类，可以看到它下面的子分类。</p>
   </header>
