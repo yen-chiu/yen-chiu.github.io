@@ -3,47 +3,99 @@ layout: page
 # All the Tags of posts.
 ---
 
-<div class="wx-taxonomy">
+<div class="wx-taxonomy wx-tags-page">
   <header class="wx-taxonomy-hero">
     <p class="wx-taxonomy-kicker">Browse by keyword</p>
     <div class="wx-taxonomy-title-row">
       <h1>{{ page.title }}</h1>
       <span class="wx-taxonomy-count">{{ site.tags.size }} 个标签</span>
     </div>
-    <p class="wx-taxonomy-desc">从关键词进入，找到与它相关的全部文章。</p>
+    <p class="wx-taxonomy-desc">从关键词进入相关文章，或者看看它们之间怎样连在一起。</p>
   </header>
 
-  <p class="wx-taxonomy-tag-hint">悬停或聚焦一个标签，看看它常和哪些标签一起出现。</p>
-
-  <div id="tags" class="d-flex flex-wrap">
-    {% assign tags = '' | split: '' %}
-    {% for t in site.tags %}
-      {% assign tags = tags | push: t[0] %}
-    {% endfor %}
-
-    {% assign sorted_tags = tags | sort_natural %}
-
-    {% for t in sorted_tags %}
-      {% assign tag_size = site.tags[t].size %}
-      <div>
-        <a class="tag{% if tag_size >= 3 %} wx-tag-lg{% elsif tag_size == 2 %} wx-tag-md{% endif %}" data-tag="{{ t | escape }}" href="{{ t | slugify | url_encode | prepend: '/tags/' | append: '/' | relative_url }}">
-          {{ t -}}
-          <span class="text-muted">{{ tag_size }}</span>
-        </a>
-      </div>
-    {% endfor %}
+  <div class="wx-tag-view-switch" role="tablist" aria-label="标签视图">
+    <button
+      type="button"
+      id="wx-tag-tab-cloud"
+      class="wx-tag-view-btn is-active"
+      data-tag-view="cloud"
+      role="tab"
+      aria-selected="true"
+      aria-controls="wx-tag-cloud-view"
+    >
+      词云
+    </button>
+    <button
+      type="button"
+      id="wx-tag-tab-graph"
+      class="wx-tag-view-btn"
+      data-tag-view="graph"
+      role="tab"
+      aria-selected="false"
+      aria-controls="wx-tag-graph-view"
+    >
+      关系图
+    </button>
   </div>
 
-  <p class="wx-tag-related" id="wx-tag-related" aria-live="polite">
-    关联来自站内文章的共同标签；把鼠标放到一个标签上试试。
-  </p>
+  <div
+    class="wx-tag-view"
+    id="wx-tag-cloud-view"
+    data-tag-view-panel="cloud"
+    role="tabpanel"
+    aria-labelledby="wx-tag-tab-cloud"
+  >
+    <p class="wx-taxonomy-tag-hint">悬停或聚焦一个标签，看看它常和哪些标签一起出现。</p>
+
+    <div id="tags" class="d-flex flex-wrap">
+      {% assign tags = '' | split: '' %}
+      {% for t in site.tags %}
+        {% assign tags = tags | push: t[0] %}
+      {% endfor %}
+
+      {% assign sorted_tags = tags | sort_natural %}
+
+      {% for t in sorted_tags %}
+        {% assign tag_size = site.tags[t].size %}
+        <div>
+          <a class="tag{% if tag_size >= 3 %} wx-tag-lg{% elsif tag_size == 2 %} wx-tag-md{% endif %}" data-tag="{{ t | escape }}" href="{{ t | slugify | url_encode | prepend: '/tags/' | append: '/' | relative_url }}">
+            {{ t -}}
+            <span class="text-muted">{{ tag_size }}</span>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <p class="wx-tag-related" id="wx-tag-related" aria-live="polite">
+      关联来自站内文章的共同标签；把鼠标放到一个标签上试试。
+    </p>
+  </div>
+
+  <div
+    class="wx-tag-view"
+    id="wx-tag-graph-view"
+    data-tag-view-panel="graph"
+    role="tabpanel"
+    aria-labelledby="wx-tag-tab-graph"
+    hidden
+  >
+    <div class="wx-tag-graph-shell">
+      <svg id="wx-tag-network" viewBox="0 0 1000 560" role="group" aria-label="标签关系网络图"></svg>
+      <div class="wx-tag-graph-tip" id="wx-tag-graph-tip" role="status" hidden></div>
+    </div>
+
+    <div class="wx-tag-graph-legend" aria-hidden="true">
+      <span><i class="wx-graph-dot"></i>节点大小 = 文章数</span>
+      <span><i class="wx-graph-line"></i>线宽 = 余弦 · 深浅 = PPMI</span>
+    </div>
+
+    <p class="wx-tag-related" id="wx-tag-graph-related" aria-live="polite">
+      悬停或聚焦节点，查看关联标签。
+    </p>
+  </div>
 
   <script type="application/json" id="wx-tag-graph">
-    [
-      {% for post in site.posts %}
-        [{% for tag in post.tags %}{{ tag | jsonify }}{% unless forloop.last %},{% endunless %}{% endfor %}]{% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    ]
+    {{ site.data.tag_graph | jsonify }}
   </script>
 
   <p class="wx-taxonomy-foot">

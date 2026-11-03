@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: feature
+  scope: 主站
+  title: 标签页增加 SVG 关系图与 PMI 预计算
+  note: 词云/关系图可切换，边权来自站内共现。
+
+- date: 2026-11-03
   kind: style
   scope: 主站
   title: 首页去掉重复入口，主题菜单改为弹出圆钮
