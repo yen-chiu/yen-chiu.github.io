@@ -11,6 +11,12 @@
 - date: 2026-11-03
   kind: fix
   scope: 主站
+  title: 恢复头像月牙渐变环
+  note: 头像改流体尺寸后盖住了外圈，留出 4px 弧带。
+
+- date: 2026-11-03
+  kind: fix
+  scope: 主站
   title: 修正标签视图切换按钮与缓存
   note: 改成下划线标签页，CSS/JS 加版本号避免旧缓存。
 
