@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: infra
+  scope: 主站
+  title: 2.2MB 的 PDF 也搬到 R2
+  note: 仓库里不再存这个文件，地址走 media.yenchiu.com。
+
+- date: 2026-11-03
   kind: feature
   scope: 写作台
   title: 写作台支持「点一下」GitHub 登录
