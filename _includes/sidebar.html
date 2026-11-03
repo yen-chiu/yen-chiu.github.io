@@ -15,6 +15,15 @@
       <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
     </h1>
     <p class="site-subtitle fst-italic mb-0">{{ site.tagline }}</p>
+    <p class="wx-sidebar-status">
+      <span class="wx-sidebar-status-dot" aria-hidden="true"></span>
+      <span>
+        {{- site.data.about.profile.location | default: '长沙' -}}
+        ·
+        {{- site.data.about.profile.role | default: '数据与代码' | split: ' / ' | first -}}
+      </span>
+    </p>
+    <div class="wx-sidebar-divider" aria-hidden="true"></div>
   </header>
   <!-- .profile-wrapper -->
 

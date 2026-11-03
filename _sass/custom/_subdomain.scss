@@ -1,0 +1,135 @@
+/* ==========================================================================
+   子域：博客之外的小站入口
+   ========================================================================== */
+
+.wx-subdomain-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.wx-subdomain-card {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--wx-border);
+  border-radius: var(--wx-radius);
+  background: var(--wx-surface);
+  box-shadow: var(--wx-shadow-sm);
+  text-decoration: none;
+  transition:
+    transform var(--wx-dur) var(--wx-ease),
+    border-color var(--wx-dur) var(--wx-ease),
+    box-shadow var(--wx-dur) var(--wx-ease);
+
+  &::after {
+    position: absolute;
+    top: -45%;
+    right: -10%;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    content: '';
+    background: radial-gradient(circle, var(--wx-glow) 0%, transparent 70%);
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover {
+    border-color: var(--wx-border-strong);
+    box-shadow: var(--wx-shadow);
+    transform: translateY(-3px);
+
+    .wx-subdomain-arrow {
+      transform: translate(2px, -2px);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--wx-accent);
+    outline-offset: 3px;
+  }
+}
+
+.wx-subdomain-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid var(--wx-border);
+  border-radius: 14px;
+  background: var(--wx-gradient-soft);
+
+  img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+  }
+}
+
+.wx-subdomain-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wx-subdomain-head {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+
+  strong {
+    color: var(--text-color);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+}
+
+.wx-subdomain-arrow {
+  color: var(--wx-accent);
+  font-size: 1rem;
+  transition: transform var(--wx-dur) var(--wx-ease);
+}
+
+.wx-subdomain-desc {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--text-muted-color);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.wx-subdomain-link {
+  display: block;
+  margin-top: 0.65rem;
+  overflow: hidden;
+  color: var(--wx-accent);
+  font-family: var(--wx-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+  .wx-subdomain-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wx-subdomain-card {
+    padding: 1.05rem;
+  }
+}

@@ -6,6 +6,10 @@
 
 .wx-hero {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(220px, 0.75fr);
+  gap: 1.6rem;
+  align-items: stretch;
   padding: 1.75rem 1.85rem 1.6rem;
   overflow: hidden;
   border: 1px solid var(--wx-border);
@@ -14,6 +18,11 @@
     radial-gradient(120% 160% at 8% 0%, var(--wx-gradient-soft) 0%, transparent 60%),
     var(--wx-surface);
   box-shadow: var(--wx-shadow-sm);
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 
   &::after {
     position: absolute;
@@ -84,7 +93,7 @@
       &:hover {
         border-color: transparent;
         background: var(--wx-gradient);
-        color: #fff;
+        color: #ffffff;
         transform: translateY(-2px);
         box-shadow: 0 10px 24px -12px var(--wx-glow);
       }
@@ -92,10 +101,188 @@
   }
 }
 
+.wx-hero-main {
+  min-width: 0;
+  align-self: center;
+}
+
+.wx-hero-kicker {
+  display: flex;
+  align-items: center;
+}
+
+.wx-hero-status-dot {
+  width: 7px;
+  height: 7px;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  animation: wx-pulse-dot 2.4s ease-out infinite;
+}
+
+.wx-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  margin: 1rem 0 0;
+  color: var(--text-muted-color);
+  font-size: 0.74rem;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  span + span::before {
+    margin-right: 0.55rem;
+    content: '·';
+    opacity: 0.45;
+  }
+}
+
+.wx-hero-now {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--wx-border);
+  border-radius: var(--wx-radius);
+  background: linear-gradient(180deg, var(--wx-surface-2), transparent 90%), var(--wx-surface);
+  box-shadow: var(--wx-shadow-sm);
+}
+
+.wx-hero-now-kicker {
+  margin: 0;
+  color: var(--wx-accent);
+  font-family: var(--wx-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.wx-hero-now-list {
+  margin: 0.45rem 0 0.8rem;
+  padding: 0;
+  color: var(--text-muted-color);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  list-style: none;
+
+  li {
+    position: relative;
+    padding-left: 0.85rem;
+
+    &::before {
+      position: absolute;
+      top: 0.55rem;
+      left: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      content: '';
+      background: var(--wx-gradient);
+    }
+
+    + li {
+      margin-top: 0.35rem;
+    }
+  }
+}
+
+.wx-hero-now-link {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  margin-top: auto;
+  color: var(--wx-accent);
+  font-size: 0.78rem;
+  text-decoration: none;
+
+  span {
+    transition: transform var(--wx-dur) var(--wx-ease);
+  }
+
+  &:hover span {
+    transform: translateX(3px);
+  }
+}
+
+.wx-home-section-head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 1.7rem 0 0.85rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+}
+
+.wx-home-section-kicker {
+  margin: 0 0 0.15rem;
+  color: var(--wx-accent);
+  font-family: var(--wx-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.wx-home-section-link {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  color: var(--wx-accent);
+  font-size: 0.8rem;
+  text-decoration: none;
+
+  span {
+    transition: transform var(--wx-dur) var(--wx-ease);
+  }
+
+  &:hover span {
+    transform: translateX(3px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .wx-hero {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .wx-hero-now {
+    padding: 0.9rem 1rem;
+  }
+
+  .wx-home-section-head {
+    margin-top: 1.4rem;
+  }
+}
+
 @media (max-width: 575.98px) {
   .wx-hero {
     padding: 1.35rem 1.25rem;
     border-radius: var(--wx-radius);
+  }
+
+  .wx-home-section-head {
+    align-items: center;
+
+    h2 {
+      font-size: 1.15rem;
+    }
+  }
+
+  .wx-home-section-link {
+    font-size: 0.76rem;
   }
 }
 
@@ -193,10 +380,19 @@
 
   .page-item.active .page-link {
     background: var(--wx-gradient);
-    color: #fff;
+    color: #ffffff;
   }
 
   .page-item:not(.active) .page-link:hover {
     box-shadow: inset 0 0 0 1px var(--wx-border-strong);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wx-hero::after,
+  .wx-hero-status-dot,
+  .wx-hero h1 .wx-grad,
+  #post-list .card-wrapper {
+    animation: none;
   }
 }

@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: style
+  scope: 主站
+  title: 首页、子域与侧边栏重新排版
+  note: 首页加 Now 卡片，子域改成入口卡片，侧边栏补状态行。
+
+- date: 2026-11-03
   kind: feature
   scope: 主站
   title: 档案滚动浮现，标签云显示关联
