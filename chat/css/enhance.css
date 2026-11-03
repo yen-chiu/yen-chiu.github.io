@@ -1,0 +1,123 @@
+/* ==========================================================================
+   增强样式（在 main.min.css 之后加载，只做覆盖，不改原设计）
+   纯 CSS，不依赖预处理器
+   ========================================================================== */
+
+/* ---------- 顶部栏：桌面与移动端都保留，加「返回 / 重新开始」 ---------- */
+
+#mobile-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+}
+
+#mobile-head-title {
+  flex: 1 1 auto;
+  padding: 12px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mobile-head-btn {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #888;
+  font-size: 16px;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.mobile-head-btn:hover,
+.mobile-head-btn:focus-visible {
+  background: #eef8f6;
+  color: #22c3aa;
+  outline: none;
+}
+
+/* ---------- 移动端：占满视口，处理安全区与动态地址栏 ---------- */
+
+@media (max-width: 480px) {
+  #mobile {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* 原样式在窄屏把标题栏 display:none，导致没有返回入口；这里恢复 */
+  #mobile-head {
+    display: flex !important;
+    height: calc(45px + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    border-bottom: 1px solid #f3f3f3;
+  }
+
+  #mobile-body {
+    top: calc(45px + env(safe-area-inset-top, 0px)) !important;
+    bottom: calc(55px + env(safe-area-inset-bottom, 0px));
+  }
+
+  #mobile-foot {
+    height: calc(55px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .say-something {
+    padding: 16px 20px;
+  }
+
+  #prompt-body {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ---------- 选项序号（桌面端用数字键 1~9 快速选择） ---------- */
+
+#prompt-body .responses li,
+#prompt-body .topics li {
+  position: relative;
+}
+
+#prompt-body .responses li a::before,
+#prompt-body .topics li a::before {
+  display: inline-block;
+  width: 1.2em;
+  margin-right: 6px;
+  color: #b9c6c3;
+  font-size: 0.85em;
+  content: attr(data-key);
+}
+
+@media (max-width: 480px) {
+  /* 手机上靠点击，不显示序号 */
+  #prompt-body .responses li a::before,
+  #prompt-body .topics li a::before {
+    content: none;
+  }
+}
+
+/* ---------- 无障碍 / 细节 ---------- */
+
+#prompt-body a:focus-visible,
+#input-hint:focus-visible {
+  border-radius: 6px;
+  outline: 2px solid #22c3aa;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
