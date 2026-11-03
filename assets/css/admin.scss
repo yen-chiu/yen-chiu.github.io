@@ -203,6 +203,18 @@ html[data-mode='dark'] {
   grid-column: 1 / -1;
 }
 
+/* 日期 + 时间：两个原生控件并排，窄屏自动堆叠 */
+.adm-datetime {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  input {
+    flex: 1 1 9rem;
+    min-width: 0;
+  }
+}
+
 .adm-inline {
   display: flex;
   align-items: center;

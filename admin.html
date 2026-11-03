@@ -137,7 +137,10 @@ body_class: admin-page
           </label>
           <label class="adm-field">
             <span>日期</span>
-            <input id="adm-date" type="datetime-local" step="1">
+            <div class="adm-datetime">
+              <input id="adm-date" type="date" aria-label="发布日期">
+              <input id="adm-time" type="time" step="60" aria-label="发布时间">
+            </div>
           </label>
           <label class="adm-field">
             <span>分类（逗号分隔）</span>

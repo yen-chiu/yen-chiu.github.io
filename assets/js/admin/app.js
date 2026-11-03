@@ -371,39 +371,40 @@
    * 文档模型
    * ------------------------------------------------------------------ */
 
-  function toDateTimeLocal(dateStr) {
-    var m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/.exec(String(dateStr || ''));
+  /**
+   * 把 front matter 里的日期拆成「日期」和「时间」两段，喂给两个原生控件。
+   * 之前用 <input type="datetime-local">，在 iOS Safari 和部分 Android 浏览器上
+   * 会退化成普通文本框（点不动、也不弹选择器），所以改成 date + time 两个控件。
+   */
+  function splitDateTime(dateStr) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/.exec(String(dateStr || ''));
     if (!m) {
       var now = new Date();
-      return (
-        now.getFullYear() +
-        '-' +
-        pad(now.getMonth() + 1) +
-        '-' +
-        pad(now.getDate()) +
-        'T' +
-        pad(now.getHours()) +
-        ':' +
-        pad(now.getMinutes()) +
-        ':' +
-        pad(now.getSeconds())
-      );
+      return {
+        date: now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()),
+        time: pad(now.getHours()) + ':' + pad(now.getMinutes())
+      };
     }
-    return m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + (m[6] || '00');
+    return { date: m[1] + '-' + m[2] + '-' + m[3], time: (m[4] || '00') + ':' + (m[5] || '00') };
   }
 
-  function fromDateTimeLocal(value) {
-    var base = String(value || '').replace('T', ' ');
-    if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/.test(base)) {
-      base = toDateTimeLocal('').replace('T', ' ');
-    }
-    if (base.length === 16) base += ':00';
-    return base + ' +0800';
+  /** 两个控件合回 "YYYY-MM-DD HH:MM:SS +0800"；缺哪个就用当前时间补哪个 */
+  function composeDateTime() {
+    var dateEl = $('#adm-date');
+    var timeEl = $('#adm-time');
+    var now = splitDateTime('');
+    var date = (dateEl && dateEl.value) || now.date;
+    var time = (timeEl && timeEl.value) || now.time;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) date = now.date;
+    if (!/^\d{2}:\d{2}$/.test(time)) time = now.time;
+    return date + ' ' + time + ':00 +0800';
   }
 
   function setForm(data) {
     $('#adm-title').value = data.title || '';
-    $('#adm-date').value = toDateTimeLocal(data.date);
+    var dt = splitDateTime(data.date);
+    $('#adm-date').value = dt.date;
+    $('#adm-time').value = dt.time;
     $('#adm-categories').value = toList(data.categories).join(', ');
     $('#adm-tags').value = toList(data.tags).join(', ');
     $('#adm-pin').checked = data.pin === true || data.pin === 'true';
@@ -426,7 +427,7 @@
 
   function composeDocument(body) {
     var title = $('#adm-title').value.trim() || '无标题';
-    var date = fromDateTimeLocal($('#adm-date').value);
+    var date = composeDateTime();
     var categories = toList($('#adm-categories').value);
     var tags = toList($('#adm-tags').value);
     var pin = $('#adm-pin').checked;
@@ -1432,7 +1433,7 @@
       });
     }
 
-    ['#adm-title', '#adm-date', '#adm-categories', '#adm-tags', '#adm-pin', '#adm-description', '#adm-cover'].forEach(
+    ['#adm-title', '#adm-date', '#adm-time', '#adm-categories', '#adm-tags', '#adm-pin', '#adm-description', '#adm-cover'].forEach(
       function (sel) {
         var el = $(sel);
         if (el) {
