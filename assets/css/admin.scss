@@ -655,6 +655,58 @@ html[data-mode='dark'] .adm-dirty {
   flex: 1 1 auto;
 }
 
+/* 图片尺寸提示：工具栏下方一条细带，弱化但可点 */
+.adm-image-hint {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  border-bottom: 1px solid var(--adm-border);
+  background: linear-gradient(90deg, rgb(99 102 241 / 7%), transparent 72%);
+  color: var(--adm-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+
+  .adm-image-hint-label {
+    flex: 0 0 auto;
+    padding: 0.08rem 0.45rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--adm-accent), var(--adm-accent-2));
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  code {
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    background: var(--adm-surface-2);
+    color: var(--adm-text);
+    font-family: var(--adm-mono);
+    font-size: 0.72rem;
+  }
+
+  a.adm-image-hint-link {
+    margin-left: auto;
+    padding-bottom: 0;
+    border-bottom: 0;
+    background: none;
+    color: var(--adm-accent);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      border-bottom: 0;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+}
+
 .adm-textarea {
   flex: 1 1 auto;
   width: 100%;
