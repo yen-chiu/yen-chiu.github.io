@@ -9,6 +9,12 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-03
+  kind: fix
+  scope: 主站
+  title: 修正侧边栏主题按钮图标对齐
+  note: 按钮继承 nav-link 内边距，把 16px 图标挤成 0.8px。
+
+- date: 2026-11-03
   kind: style
   scope: 主站
   title: 首页、子域与侧边栏重新排版

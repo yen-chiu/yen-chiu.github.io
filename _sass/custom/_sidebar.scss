@@ -194,7 +194,7 @@
   align-items: center;
 }
 
-.wx-theme-toggle {
+#sidebar .wx-theme-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -303,7 +303,7 @@
     animation: none;
   }
 
-  .wx-theme-toggle {
+  #sidebar .wx-theme-toggle {
     transition: none;
   }
 }
