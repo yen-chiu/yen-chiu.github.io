@@ -1,0 +1,52 @@
+<!-- 完整更新日志：按日期倒序的时间线 -->
+{% comment %} 按文件顺序渲染：最新的写在 YAML 最上面（同日期也能保持人工顺序） {% endcomment %}
+{% assign entries = site.data.changelog %}
+
+{% if entries.size == 0 %}
+  <p class="wx-changelog-empty">还没有记录。</p>
+{% else %}
+  <ol class="wx-changelog">
+    {% for entry in entries %}
+      {% assign day = entry.date | date: '%Y-%m-%d' %}
+      {% if day != prev_day %}
+        <li class="wx-changelog-day" aria-hidden="true">
+          <time datetime="{{ entry.date | date_to_xmlschema }}">{{ day }}</time>
+        </li>
+        {% assign prev_day = day %}
+      {% endif %}
+
+      <li class="wx-changelog-item">
+        <div class="wx-changelog-meta">
+          {% case entry.kind %}
+            {% when 'feature' %}
+              <span class="wx-kind wx-kind-feature">新功能</span>
+            {% when 'fix' %}
+              <span class="wx-kind wx-kind-fix">修复</span>
+            {% when 'content' %}
+              <span class="wx-kind wx-kind-content">内容</span>
+            {% when 'style' %}
+              <span class="wx-kind wx-kind-style">样式</span>
+            {% when 'infra' %}
+              <span class="wx-kind wx-kind-infra">基建</span>
+            {% else %}
+              <span class="wx-kind">更新</span>
+          {% endcase %}
+          {% if entry.scope %}<span class="wx-changelog-scope">{{ entry.scope }}</span>{% endif %}
+        </div>
+
+        <div class="wx-changelog-body">
+          <p class="wx-changelog-title">{{ entry.title }}</p>
+          {% if entry.note %}<p class="wx-changelog-note">{{ entry.note }}</p>{% endif %}
+          {% if entry.links %}
+            <p class="wx-changelog-links">
+              {% for link in entry.links %}
+                <a href="{% if link.url contains '://' %}{{ link.url }}{% else %}{{ link.url | relative_url }}{% endif %}">{{ link.label }}</a>
+                {%- unless forloop.last %} · {% endunless -%}
+              {% endfor %}
+            </p>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ol>
+{% endif %}
