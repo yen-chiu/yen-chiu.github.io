@@ -8,6 +8,9 @@
   },
   "author": "Cotes Chung",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "since": 2019,
   "bugs": {
     "url": "https://github.com/cotes2020/jekyll-theme-chirpy/issues"

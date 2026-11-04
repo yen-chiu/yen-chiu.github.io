@@ -39,6 +39,28 @@
 | 评论 | Giscus（GitHub Discussions） |
 | 部署 | GitHub Actions → GitHub Pages |
 
+## 依赖与版本管理
+
+本站是「可部署产物」，因此依赖按**可复现**来管，而不是每次部署解析最新版本：
+
+| 东西 | 怎么固定 | 文件 |
+| --- | --- | --- |
+| Ruby | 3.3.13（3.3 仍在安全维护窗口内，暂不升 4.0） | `.ruby-version` |
+| Ruby gems | 提交 `Gemfile.lock`，同时含 `x64-mingw-ucrt` 与 `x86_64-linux` 两个平台；CI 用 `BUNDLE_FROZEN` 守卫 | `Gemfile` / `Gemfile.lock` |
+| Node | 22（LTS），CI 读 `.nvmrc`，安装用 `npm ci` | `.nvmrc` / `package.json` 的 `engines` |
+| 前端依赖 | `package-lock.json` | 同上 |
+| 依赖升级 | Dependabot：bundler / npm 每周，GitHub Actions 每月；Jekyll、sass-embedded 主版本不自动升 | `.github/dependabot.yml` |
+| 内置的 jekyll-archives | vendored 在 `.gems/jekyll-archives`，对应上游 **v2.2.1**；升级时整目录替换并在更新日志记一条 | `.gems/jekyll-archives` |
+
+改完 `Gemfile` 后，本地在 Windows 上必须补 Linux 平台，否则 ubuntu 部署会报平台不匹配：
+
+```bash
+bundle install
+bundle lock --add-platform x86_64-linux
+```
+
+> Dependabot 在 Linux 上更新 lock 时，可能把 `x64-mingw-ucrt` 从 `PLATFORMS` 里去掉；合并后在 Windows 本地跑一次 `bundle install` 会补回来，不影响部署。
+
 ## 目录结构
 
 ```text

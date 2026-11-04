@@ -14,19 +14,22 @@ jobs:
       issues: write
       pull-requests: write
     runs-on: ubuntu-latest
+    env:
+      BUNDLE_FROZEN: "true"
     steps:
       - uses: actions/checkout@v4
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3
+          # 版本读 .ruby-version，不要在这里写死
           bundler-cache: true
 
       - uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
-      - run: npm install
+      - run: npm ci --no-audit --no-fund
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
