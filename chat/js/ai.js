@@ -17,6 +17,12 @@
   var CHATS_KEY = 'wd.ai.chats';
   var ACTIVE_KEY = 'wd.ai.active';
 
+  // 站点自带的只读代理（Cloudflare Worker）：搜索与读页都在服务端取，绕开 CORS，
+  // 不保存查询内容。换掉它也能用：设置里填自己的 SearXNG / 读取代理即可。
+  var SEARCH_ENDPOINT = 'https://auth.yenchiu.com/search';
+  var READER_ENDPOINT = 'https://auth.yenchiu.com/read?url={url}';
+  var ENDPOINT_VERSION = 2;
+
   var DEFAULT_CONFIG = {
     preset: 'deepseek',
     baseUrl: 'https://api.deepseek.com/v1',
@@ -28,8 +34,9 @@
     system: '',
     stream: true,
     tools: false,
-    searchEndpoint: '',
-    readerEndpoint: 'https://r.jina.ai/'
+    searchEndpoint: SEARCH_ENDPOINT,
+    readerEndpoint: READER_ENDPOINT,
+    endpointVersion: ENDPOINT_VERSION
   };
 
   var PERSONA_PROMPTS = {
@@ -201,7 +208,21 @@
   }
 
   function loadConfig() {
-    return Object.assign({}, DEFAULT_CONFIG, readJSON(CONFIG_KEY, {}));
+    var saved = readJSON(CONFIG_KEY, {});
+    var cfg = Object.assign({}, DEFAULT_CONFIG, saved);
+
+    // 旧版本默认的 r.jina.ai 已改成要 API Key（匿名请求直接 401），
+    // 搜索接口也从空改成站点自己的代理。只迁移一次，之后尊重用户手改的值。
+    // 注意看 saved：DEFAULT_CONFIG 里的 endpointVersion 会把空值填上，用 cfg 判断永远不成立
+    if (!saved.endpointVersion || saved.endpointVersion < ENDPOINT_VERSION) {
+      if (!saved.readerEndpoint || /^https:\/\/r\.jina\.ai\/?$/i.test(String(saved.readerEndpoint).trim())) {
+        cfg.readerEndpoint = READER_ENDPOINT;
+      }
+      if (!saved.searchEndpoint) cfg.searchEndpoint = SEARCH_ENDPOINT;
+      cfg.endpointVersion = ENDPOINT_VERSION;
+      writeJSON(CONFIG_KEY, cfg);
+    }
+    return cfg;
   }
 
   function saveConfig() {
@@ -1453,10 +1474,22 @@
     return list;
   }
 
-  /* ---------- 联网：多后端降级 ----------
-     纯静态站没有后端，浏览器直连大多数搜索/网页都会被 CORS 挡住。
-     所以这里按「自建接口 → 维基百科 → DuckDuckGo 摘要」的顺序试，
-     每一家的失败原因都会带回去，方便看清到底是哪一层不通。 */
+  /* ---------- 联网：代理优先，直连降级 ----------
+     浏览器直连搜索和别人的网页都会被 CORS 挡住（DuckDuckGo 的接口甚至不返回
+     Access-Control-Allow-Origin）。所以默认走站点的只读代理，代理没配或不通时，
+     再退回允许跨域的维基百科。失败原因原样带回去，一眼能看出卡在哪一层。 */
+
+  var SOURCE_NAMES = {
+    bing: 'Bing',
+    wikipedia: '维基百科',
+    duckduckgo: 'DuckDuckGo',
+    yahoo: 'Yahoo',
+    searxng: 'SearXNG'
+  };
+
+  function sourceName(id) {
+    return SOURCE_NAMES[String(id || '').toLowerCase()] || '';
+  }
 
   function stripHtml(html) {
     return String(html || '')
@@ -1471,7 +1504,7 @@
   }
 
   function searchViaEndpoint(query) {
-    var base = config.searchEndpoint;
+    var base = String(config.searchEndpoint || '').trim();
     var url = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'q=' + encodeURIComponent(query) + '&format=json';
     return fetch(url, { headers: { Accept: 'application/json' } })
       .then(function (res) {
@@ -1481,12 +1514,17 @@
       .then(function (data) {
         var items = (data && (data.results || data.items)) || [];
         if (!items.length) return '';
+        var sources = [];
+        items.forEach(function (item) {
+          var name = sourceName(item.source);
+          if (name && sources.indexOf(name) < 0) sources.push(name);
+        });
         return (
-          '来源：自建接口\n' +
+          '来源：' + (sources.length ? sources.join(' / ') : '联网搜索') + '\n' +
           items
-            .slice(0, 5)
+            .slice(0, 6)
             .map(function (item, i) {
-              return i + 1 + '. ' + (item.title || '') + '\n' + (item.url || '') + '\n' + stripHtml(item.content || item.snippet || '').slice(0, 160);
+              return i + 1 + '. ' + (item.title || '') + '\n' + (item.url || '') + '\n' + stripHtml(item.content || item.snippet || '').slice(0, 200);
             })
             .join('\n\n')
         );
@@ -1518,32 +1556,6 @@
       });
   }
 
-  function searchDuckDuckGo(query) {
-    var api = 'https://api.duckduckgo.com/?q=' + encodeURIComponent(query) + '&format=json&no_html=1&skip_disambig=1';
-    return fetch(api, { headers: { Accept: 'application/json' } })
-      .then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(function (data) {
-        var lines = [];
-        if (data.AbstractText) {
-          lines.push('1. ' + (data.Heading || query) + '\n' + (data.AbstractURL || '') + '\n' + String(data.AbstractText).slice(0, 200));
-        }
-        (data.RelatedTopics || []).forEach(function (topic) {
-          if (lines.length >= 5) return;
-          var items = topic.Topics || [topic];
-          items.forEach(function (item) {
-            if (lines.length >= 5) return;
-            if (item.Text && item.FirstURL) {
-              lines.push(lines.length + 1 + '. ' + item.Text + '\n' + item.FirstURL);
-            }
-          });
-        });
-        return lines.length ? '来源：DuckDuckGo\n' + lines.join('\n\n') : '';
-      });
-  }
-
   async function webSearch(query) {
     var q = String(query || '').trim();
     if (!q) return '搜索词是空的。';
@@ -1553,9 +1565,9 @@
       try {
         var viaEndpoint = await searchViaEndpoint(q);
         if (viaEndpoint) return viaEndpoint;
-        tried.push('自建接口：没有结果');
+        tried.push('搜索代理：没有结果');
       } catch (err) {
-        tried.push('自建接口：' + err.message);
+        tried.push('搜索代理：' + err.message);
       }
     }
 
@@ -1567,26 +1579,28 @@
       tried.push('维基百科：' + err.message);
     }
 
-    try {
-      var viaDdg = await searchDuckDuckGo(q);
-      if (viaDdg) return viaDdg;
-      tried.push('DuckDuckGo：没有结果');
-    } catch (err) {
-      tried.push('DuckDuckGo：' + err.message);
-    }
-
-    return '这次没联上：' + tried.join('；') + '。\n可以换个说法，或者把自建搜索接口填进设置。';
+    return '这次没联上：' + tried.join('；') + '。\n可以换个说法；如果一直不通，去设置里看看「联网搜索接口」填得对不对。';
   }
 
   async function webRead(url) {
     var target = String(url || '').trim();
     if (!/^https?:\/\//i.test(target)) return '只能读 http/https 地址。';
-    var base = String(config.readerEndpoint || 'https://r.jina.ai/').trim();
+    var base = String(config.readerEndpoint || READER_ENDPOINT).trim();
     if (!base) return '没有配置网页读取代理，读不了外部网页。';
     var proxied = base.indexOf('{url}') >= 0 ? base.replace('{url}', encodeURIComponent(target)) : base + target;
 
     var res = await fetch(proxied, { headers: { Accept: 'text/plain, text/markdown;q=0.9, */*;q=0.8' } });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (!res.ok) {
+      // 代理出错时返回的是 JSON（如 origin_not_allowed / rate_limited），把原因带出来
+      var detail = '';
+      try {
+        var payload = await res.json();
+        detail = payload && payload.error ? '（' + payload.error + '）' : '';
+      } catch (e) {
+        /* 不是 JSON 就算了 */
+      }
+      throw new Error('HTTP ' + res.status + detail);
+    }
     var text = await res.text();
     var clean = String(text)
       .replace(/^Title:.*\n/i, '')

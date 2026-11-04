@@ -111,6 +111,7 @@
             <div class="wd-sheet__body">
                 <p class="wd-note">
                     Key 只写到本浏览器的 <code>localStorage</code>，不会上传到本站。公共电脑用完请点「清空 Key」。
+                    联网搜索与读网页会经本站的只读代理（<code>auth.yenchiu.com</code>）转一次，代理不保存查询内容。
                 </p>
 
                 <div class="wd-field">
@@ -176,19 +177,20 @@
                 </div>
 
                 <div class="wd-field">
-                    <label for="cfg-search">联网搜索接口（可选）</label>
-                    <input type="url" id="cfg-search" placeholder="https://searx.example.com/search" spellcheck="false">
+                    <label for="cfg-search">联网搜索接口</label>
+                    <input type="url" id="cfg-search" placeholder="https://auth.yenchiu.com/search" spellcheck="false">
                     <p class="wd-field__hint">
-                        填 SearXNG 或自建 Worker 的搜索地址；留空时依次退回维基百科、DuckDuckGo 摘要。
+                        默认用本站的只读代理（先查 DuckDuckGo，再用维基百科补充，必要时用 Yahoo 兜底）。
+                        换成自己的 SearXNG 也可以；留空则只退回维基百科直连。
                     </p>
                 </div>
 
                 <div class="wd-field">
-                    <label for="cfg-reader">网页读取代理（可选）</label>
-                    <input type="url" id="cfg-reader" placeholder="https://r.jina.ai/" spellcheck="false">
+                    <label for="cfg-reader">网页读取代理</label>
+                    <input type="url" id="cfg-reader" placeholder="https://auth.yenchiu.com/read?url={url}" spellcheck="false">
                     <p class="wd-field__hint">
-                        浏览器直连别人家的网页会被 CORS 拦住，所以读正文要经一个代理。默认 <code>https://r.jina.ai/</code>；
-                        也可以用 <code>{url}</code> 占位符指定自己的代理。
+                        浏览器直连别人的网页会被 CORS 拦住，读正文要经代理。默认走本站代理，
+                        用 <code>{url}</code> 占位符；原来的 <code>r.jina.ai</code> 现在匿名请求会返回 401，不建议再用。
                     </p>
                 </div>
 
@@ -226,7 +228,8 @@
                     <span>
                         <strong>本地工具（Agent 模式）</strong>
                         允许模型调用 <code>now</code> / <code>calc</code> / <code>roll</code> 三个本地函数。
-                        念真还会多出 <code>site_search</code> / <code>site_read</code> / <code>remember</code>，
+                        念真还会多出 <code>site_search</code> / <code>site_read</code> / <code>site_query</code> /
+                        <code>remember</code> / <code>web_search</code> / <code>web_read</code>，
                         只对她生效。部分服务不支持工具调用，会退化成普通对话。
                     </span>
                 </label>

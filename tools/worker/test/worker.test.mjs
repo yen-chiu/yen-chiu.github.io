@@ -115,12 +115,29 @@ test('/search 缺少 q 时报 400', async () => {
   assert.equal((await res.json()).error, 'missing_q');
 });
 
-test('/search 把维基结果整理成 results', async (t) => {
+test('/search 合并 DuckDuckGo 与维基结果并去重', async (t) => {
   t.mock.method(globalThis, 'fetch', async (url) => {
-    assert.match(String(url), /zh\.wikipedia\.org/);
+    const href = String(url);
+    if (href.includes('html.duckduckgo.com')) {
+      return new Response(
+        '<div class="result">' +
+          '<a rel="nofollow" class="result__a" href="//duckduckgo.com/l/?uddg=https%3A%2F%2Fbaike.baidu.com%2Fitem%2F%E8%8B%8F%E8%BD%BC&rut=x">苏轼 - 百度百科</a>' +
+          '<a class="result__snippet" href="#">苏轼（1037—1101），北宋文学家。</a></div>' +
+          '<div class="result">' +
+          '<a rel="nofollow" class="result__a" href="//duckduckgo.com/l/?uddg=https%3A%2F%2Fzh.wikipedia.org%2Fwiki%2F%25E8%258B%258F%25E8%25BD%25BC&rut=y">苏轼 - 维基百科</a>' +
+          '<a class="result__snippet" href="#">苏轼，字子瞻。</a></div>',
+        { status: 200, headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+    assert.match(href, /zh\.wikipedia\.org/);
     return new Response(
       JSON.stringify({
-        query: { search: [{ title: '苏轼', snippet: '<span>北宋</span>文学家' }] }
+        query: {
+          search: [
+            { title: '苏轼', snippet: '<span>北宋</span>文学家' },
+            { title: '苏辙', snippet: '苏轼之弟' }
+          ]
+        }
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
@@ -128,10 +145,43 @@ test('/search 把维基结果整理成 results', async (t) => {
   const res = await worker.fetch(makeRequest('/search?q=%E8%8B%8F%E8%BD%BC', { method: 'GET', ip: '198.51.100.22' }), ENV);
   assert.equal(res.status, 200);
   const body = await res.json();
+  assert.equal(body.results.length, 3);
+  assert.equal(body.results[0].title, '苏轼 - 百度百科');
+  assert.equal(body.results[0].source, 'duckduckgo');
+  assert.match(body.results[0].url, /baike\.baidu\.com/);
+  assert.equal(body.results[1].title, '苏轼 - 维基百科');
+  assert.equal(body.results[1].source, 'duckduckgo');
+  assert.equal(body.results[2].title, '苏辙');
+  assert.equal(body.results[2].source, 'wikipedia');
+  assert.equal(body.results[2].snippet, '苏轼之弟');
+});
+
+test('/search 在 DuckDuckGo 不可用时仍返回维基结果', async (t) => {
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    if (String(url).includes('duckduckgo.com')) {
+      return new Response('blocked', { status: 403 });
+    }
+    return new Response(JSON.stringify({ query: { search: [{ title: '苏轼', snippet: '北宋文学家' }] } }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  });
+  const res = await worker.fetch(makeRequest('/search?q=%E8%8B%8F%E8%BD%BC', { method: 'GET', ip: '198.51.100.25' }), ENV);
+  assert.equal(res.status, 200);
+  const body = await res.json();
   assert.equal(body.results.length, 1);
-  assert.equal(body.results[0].title, '苏轼');
-  assert.match(body.results[0].url, /zh\.wikipedia\.org\/wiki\//);
-  assert.equal(body.results[0].snippet, '北宋 文学家');
+  assert.equal(body.results[0].source, 'wikipedia');
+});
+
+test('/search 允许 chat.wendell.cloud 来源', async (t) => {
+  t.mock.method(globalThis, 'fetch', async () => new Response('', { status: 502 }));
+  const env = { ...ENV, ALLOWED_ORIGIN: 'https://yenchiu.com,https://chat.wendell.cloud' };
+  const res = await worker.fetch(
+    makeRequest('/search?q=test', { method: 'GET', origin: 'https://chat.wendell.cloud', ip: '198.51.100.26' }),
+    env
+  );
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('Access-Control-Allow-Origin'), 'https://chat.wendell.cloud');
 });
 
 test('/read 拒绝内网地址', async () => {
