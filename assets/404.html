@@ -1,197 +1,806 @@
 ---
 layout: page
-title: "You seemed to be lost..."
+title: "404"
 permalink: /404.html
-
-redirect_from:
-- /norobots/
-- /assets/
-- /posts/
-
+hide_panel: true
 no_title: true
 sitemap: false
+
+redirect_from:
+  - /norobots/
+  - /assets/
+  - /posts/
 ---
 
-<!-- 404 页面：与主题保持一致的排版，全部依赖站内资源，无第三方追踪脚本 -->
+<!--
+  404 ·「未印的一页」
+  - 全站唯一使用深色卡面的页面，作为「一页没被印出来的书」
+  - 灯跟随指针：数字的高光由 CSS 变量驱动，无 canvas、无第三方脚本
+  - 检索复用站内 search.json，首次聚焦才拉取，失败自动降级为链接
+-->
 
-<div id="not-found" class="nf">
-  <div class="nf-art" aria-hidden="true">
-    <span class="nf-glow nf-glow-1"></span>
-    <span class="nf-glow nf-glow-2"></span>
-    <img src="{{ site.baseurl }}/assets/img/404/liukanshan_wire.svg" alt="" loading="eager" decoding="async">
-  </div>
+{% include notfound-fox.html %}
 
-  <div class="nf-text">
-    <p class="nf-code">404</p>
-    <h1 class="nf-title">这个页面似乎走丢了</h1>
-    <p class="nf-poem">{{ site.data.locales[site.lang].not_found.statment }}</p>
-    <p class="nf-desc">链接可能已经变更，或是这篇内容还在路上。</p>
-    <div class="nf-actions">
-      <a class="nf-btn nf-btn-primary" href="{{ site.baseurl }}/">
-        <i class="iconfont icon-house-door"></i>
-        <span>{{ site.data.locales[site.lang].not_found.head_back | default: "回到首页" }}</span>
-      </a>
-      <button class="nf-btn" type="button" onclick="history.length > 1 ? history.back() : (location.href = '{{ site.baseurl }}/')">
-        <i class="iconfont icon-angle-left"></i>
-        <span>返回上一页</span>
+<div class="nf" id="not-found">
+  <section class="nf-cover" id="nf-cover" aria-labelledby="nf-title">
+    <div class="nf-grain" aria-hidden="true"></div>
+    <div class="nf-lamp" aria-hidden="true"></div>
+    <div class="nf-fox nf-fox-base" aria-hidden="true"><svg viewBox="0 0 153 191"><use href="#nf-fox"></use></svg></div>
+    <div class="nf-fox nf-fox-lit" id="nf-fox-lit" aria-hidden="true"><svg viewBox="0 0 153 191"><use href="#nf-fox"></use></svg></div>
+
+    <div class="nf-top">
+      <p class="nf-kicker">Error 404 · Not Found</p>
+      <button class="nf-seal" id="nf-seal" type="button" aria-label="印章：查无此页">
+        <span aria-hidden="true"><i>查</i><i>无</i><i>此</i><i>页</i></span>
       </button>
     </div>
-  </div>
+
+    <div class="nf-body">
+      <p class="nf-code" aria-hidden="true">404</p>
+      <h1 class="nf-title" id="nf-title">这一页，没有被印出来。</h1>
+      <p class="nf-sub">地址可能改过，也可能它只是草稿里的一句话。<br>先读一页再走 —— 灯还在。</p>
+      <p class="nf-path"><span>你找的是</span><code id="nf-path">/404.html</code></p>
+    </div>
+
+    <div class="nf-search" role="search">
+      <div class="nf-search-row">
+        <svg class="nf-search-ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="8.6" cy="8.6" r="5.6"></circle>
+          <path d="M12.8 12.8 17 17" stroke-linecap="round"></path>
+        </svg>
+        <label class="nf-sr" for="nf-q">站内搜索</label>
+        <input id="nf-q" type="text" autocomplete="off" spellcheck="false"
+               placeholder="找一找 —— 标题、标签，或者你记得的那句话"
+               role="combobox" aria-expanded="false" aria-controls="nf-results" aria-autocomplete="list">
+        <kbd>/</kbd>
+      </div>
+      <ul class="nf-results" id="nf-results" role="listbox" aria-label="搜索结果"></ul>
+      <p class="nf-meta" id="nf-meta" aria-live="polite">输入即搜索 · ↑↓ 选择 · ↵ 打开</p>
+    </div>
+
+    <div class="nf-foot">
+      <nav aria-label="站内导航">
+        <a href="{{ '/' | relative_url }}">回到首页</a>
+        <span class="nf-sep" aria-hidden="true">·</span>
+        <a href="{{ '/archives/' | relative_url }}">最近更新</a>
+        <span class="nf-sep" aria-hidden="true">·</span>
+        <a href="{{ '/tags/' | relative_url }}">全部标签</a>
+        <span class="nf-sep" aria-hidden="true">·</span>
+        <a href="{{ '/about/' | relative_url }}">关于</a>
+      </nav>
+      <p class="nf-hint">灯照到哪里，字才亮到哪里</p>
+    </div>
+  </section>
 </div>
 
 <style>
   .nf {
+    --nf-paper: #f2ede4;
+    --nf-dim: #a9a49b;
+    --nf-faint: #857f78;
+    --nf-cover: #121216;
+    --nf-line: rgba(255, 255, 255, 0.075);
+    --nf-hair: rgba(255, 255, 255, 0.1);
+    --nf-seal: #ad3a2d;
+    --nf-seal-ink: #fbf1e5;
+    --nf-ease: cubic-bezier(0.2, 0.8, 0.25, 1);
+    --nf-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    max-width: 760px;
+    margin: 0.5rem auto 2.5rem;
+    font-family: inherit;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-mode="light"]) .nf {
+      --nf-cover: #1b1b21;
+      --nf-line: rgba(255, 255, 255, 0.09);
+    }
+  }
+
+  html[data-mode="dark"] .nf {
+    --nf-cover: #1b1b21;
+    --nf-line: rgba(255, 255, 255, 0.09);
+  }
+
+  .nf-cover {
+    --lx: 40%;
+    --ly: 40%;
+    --cx: 120px;
+    --cy: 90px;
+    position: relative;
+    overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3rem;
-    flex-wrap: wrap;
-    min-height: 60vh;
-    padding: 2rem 0;
+    flex-direction: column;
+    gap: 34px;
+    min-height: 600px;
+    padding: 38px 50px 26px;
+    border: 1px solid var(--nf-line);
+    border-radius: 26px;
+    background: radial-gradient(120% 90% at 8% 0%, rgba(255, 255, 255, 0.055), transparent 55%), var(--nf-cover);
+    box-shadow: 0 40px 90px -50px rgba(18, 18, 28, 0.55), 0 2px 10px -6px rgba(18, 18, 28, 0.4);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: nf-cover-in 0.9s var(--nf-ease) 0.05s forwards;
   }
 
-  .nf-art {
-    position: relative;
-    width: 260px;
-    max-width: 70vw;
+  html[data-mode="dark"] .nf-cover {
+    box-shadow: 0 40px 90px -50px rgba(0, 0, 0, 0.85);
   }
 
-  .nf-art img {
-    position: relative;
-    width: 100%;
-    height: auto;
-    animation: nf-float 7s ease-in-out infinite;
+  @keyframes nf-cover-in {
+    to { opacity: 1; transform: none; }
   }
 
-  .nf-glow {
+  .nf-cover::before {
+    content: "";
     position: absolute;
-    inset: 10%;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .nf-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .nf-lamp {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      520px circle at var(--lx) var(--ly),
+      rgba(255, 236, 198, 0.2),
+      rgba(255, 236, 198, 0.07) 30%,
+      transparent 64%
+    );
+  }
+
+  .nf-fox {
+    position: absolute;
+    right: -52px;
+    bottom: -60px;
+    width: 380px;
+    height: 476px;
+    pointer-events: none;
+    color: var(--nf-dim);
+  }
+
+  .nf-fox svg { display: block; width: 100%; height: 100%; }
+  .nf-fox-base { opacity: 0.03; }
+
+  .nf-fox-lit {
+    -webkit-mask-image: radial-gradient(300px circle at var(--mx, 160px) var(--my, 200px), #000 0%, rgba(0, 0, 0, 0.45) 45%, transparent 72%);
+    mask-image: radial-gradient(300px circle at var(--mx, 160px) var(--my, 200px), #000 0%, rgba(0, 0, 0, 0.45) 45%, transparent 72%);
+  }
+
+  .nf-fox-lit svg { opacity: 0.55; }
+
+  .nf-top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 58px;
+  }
+
+  .nf-kicker {
+    margin: 2px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: var(--nf-mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: rgba(242, 237, 228, 0.58);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nf-kicker::before {
+    content: "";
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    filter: blur(48px);
-    opacity: 0.5;
-    animation: nf-pulse 9s ease-in-out infinite;
+    background: var(--nf-seal);
+    box-shadow: 0 0 0 3px rgba(173, 58, 45, 0.18);
   }
 
-  .nf-glow-1 {
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.55), transparent 70%);
+  .nf-seal {
+    flex: none;
+    width: 54px;
+    height: 54px;
+    padding: 4px;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--nf-seal-ink);
+    background: radial-gradient(circle at 26% 18%, rgba(255, 255, 255, 0.16), transparent 58%), var(--nf-seal);
+    box-shadow: inset 0 0 0 2px rgba(255, 246, 236, 0.42), inset 0 0 22px rgba(60, 12, 8, 0.35);
+    transform: rotate(-7deg);
+    filter: url(#nf-stamp);
+    transition: transform 0.3s var(--nf-ease);
+    animation: nf-seal-drop 0.6s cubic-bezier(0.16, 1.2, 0.3, 1) 1.05s backwards;
   }
 
-  .nf-glow-2 {
-    inset: 25% 5% 5% 25%;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.35), transparent 70%);
-    animation-delay: -3s;
+  .nf-seal:hover { transform: rotate(-3deg) scale(1.04); }
+  .nf-seal:focus-visible { outline: 2px solid rgba(255, 245, 230, 0.85); outline-offset: 3px; }
+
+  .nf-seal span {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: "Songti SC", "SimSun", Georgia, serif;
+    font-size: 16px;
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-shadow: 0 1px 0 rgba(70, 14, 9, 0.35);
   }
 
-  .nf-text {
-    max-width: 30rem;
+  .nf-seal span i { font-style: normal; }
+  .nf-seal.nf-stamping { animation: nf-seal-restamp 0.5s cubic-bezier(0.16, 1.2, 0.3, 1); }
+
+  @keyframes nf-seal-drop {
+    0% { opacity: 0; transform: rotate(-18deg) scale(1.9); filter: blur(3px); }
+    60% { opacity: 1; filter: blur(0); }
+    100% { opacity: 1; transform: rotate(-7deg) scale(1); }
+  }
+
+  @keyframes nf-seal-restamp {
+    0% { opacity: 0.2; transform: rotate(-14deg) scale(1.5); filter: blur(2px); }
+    100% { opacity: 1; transform: rotate(-7deg) scale(1); filter: blur(0); }
+  }
+
+  .nf-body {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .nf-code {
     margin: 0;
-    font-size: clamp(3.5rem, 9vw, 6rem);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    background: linear-gradient(120deg, #6366f1, #a855f7 45%, #ec4899);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    font-size: clamp(112px, 20vw, 178px);
+    font-weight: 400;
+    line-height: 0.8;
+    letter-spacing: 0.015em;
+    background: radial-gradient(
+      440px circle at var(--cx) var(--cy),
+      #fffaf0 0%,
+      #e8dac2 12%,
+      #8f898b 32%,
+      #47464f 58%,
+      #2b2b34 100%
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    user-select: none;
+    opacity: 0;
+    animation: nf-rise 1s var(--nf-ease) 0.18s forwards;
+    transition: transform 0.6s var(--nf-ease);
   }
 
   .nf-title {
-    margin: 0.5rem 0 0.35rem;
-    font-size: clamp(1.15rem, 2.6vw, 1.45rem);
-    font-weight: 700;
+    margin: 30px 0 0;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: 0.055em;
+    line-height: 1.5;
+    color: var(--nf-paper);
+    opacity: 0;
+    animation: nf-rise 0.9s var(--nf-ease) 0.42s forwards;
   }
 
-  /* 主题自带的「迷路诗」：作为小号引文呈现，不再抢标题层级 */
-  .nf-poem {
-    margin: 0 0 1rem;
-    max-width: 24rem;
-    color: var(--text-muted-color, #6c757d);
-    font-size: 0.88rem;
-    line-height: 1.9;
-    white-space: pre-line;
-    opacity: 0.9;
+  .nf-sub {
+    margin: 10px 0 0;
+    max-width: 32em;
+    text-wrap: pretty;
+    font-size: 14px;
+    line-height: 1.95;
+    letter-spacing: 0.02em;
+    color: var(--nf-dim);
+    opacity: 0;
+    animation: nf-rise 0.9s var(--nf-ease) 0.56s forwards;
   }
 
-  .nf-desc {
-    margin-bottom: 1.5rem;
-    color: var(--text-muted-color, #6c757d);
-  }
-
-  .nf-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .nf .nf-btn {
+  .nf-path {
+    margin: 22px 0 0;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.55rem 1.1rem;
-    border-radius: 999px;
-    border: 1px solid var(--main-border-color, rgba(128, 128, 128, 0.25));
+    gap: 9px;
+    padding: 7px 12px 7px 13px;
+    max-width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.025);
+    font-size: 12px;
+    color: var(--nf-faint);
+    opacity: 0;
+    animation: nf-rise 0.9s var(--nf-ease) 0.68s forwards;
+  }
+
+  .nf-path code {
+    font-family: var(--nf-mono);
+    font-size: 11.5px;
+    min-width: 0;
+    color: rgba(242, 237, 228, 0.72);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     background: transparent;
-    color: inherit;
-    font-size: 0.95rem;
+    padding: 0;
+    border: 0;
+  }
+
+  @keyframes nf-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .nf-search {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 540px;
+    opacity: 0;
+    animation: nf-rise 0.9s var(--nf-ease) 0.8s forwards;
+  }
+
+  .nf-search-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    transition: border-color 0.3s var(--nf-ease);
+  }
+
+  .nf-search:focus-within .nf-search-row { border-color: rgba(255, 246, 230, 0.55); }
+
+  .nf-search-ico {
+    flex: none;
+    width: 17px;
+    height: 17px;
+    color: var(--nf-faint);
+    transition: color 0.3s var(--nf-ease);
+  }
+
+  .nf-search:focus-within .nf-search-ico { color: var(--nf-paper); }
+
+  #nf-q {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 2px 0;
+    background: transparent;
+    color: var(--nf-paper);
+    font-family: inherit;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    caret-color: #ffd9a8;
+    box-shadow: none;
+  }
+
+  #nf-q:focus { outline: none; box-shadow: none; }
+
+  #nf-q::placeholder { color: rgba(169, 164, 155, 0.62); font-size: 14px; }
+
+  .nf-search kbd {
+    flex: none;
+    font-family: var(--nf-mono);
+    font-size: 10px;
+    line-height: 1;
+    padding: 5px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 5px;
+    color: var(--nf-faint);
+    background: transparent;
+  }
+
+  .nf-results {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nf-results:empty { display: none; }
+  .nf-res { opacity: 0; transform: translateY(6px); }
+  .nf-res.nf-in { animation: nf-res-in 0.34s var(--nf-ease) forwards; }
+
+  @keyframes nf-res-in { to { opacity: 1; transform: none; } }
+
+  .nf-res a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 10px 10px 8px;
+    border-radius: 8px;
     text-decoration: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    color: var(--nf-paper);
+    font-size: 13.5px;
+    letter-spacing: 0.01em;
+    transition: background-color 0.18s var(--nf-ease);
   }
 
-  .nf .nf-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.18);
+  .nf-res a:hover,
+  .nf-res[aria-selected="true"] a { background: rgba(255, 255, 255, 0.055); color: #fff; }
+
+  .nf-res-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nf-res-d { flex: none; font-family: var(--nf-mono); font-size: 10.5px; color: var(--nf-faint); }
+
+  .nf-meta {
+    margin: 10px 0 0;
+    min-height: 16px;
+    font-family: var(--nf-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--nf-faint);
+  }
+
+  .nf-foot {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--nf-hair);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .nf-foot nav { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+  .nf-foot nav a {
+    position: relative;
+    padding: 2px 0;
+    color: var(--nf-dim);
+    font-size: 13px;
+    letter-spacing: 0.02em;
     text-decoration: none;
   }
 
-  .nf .nf-btn-primary {
-    border-color: transparent;
-    color: #ffffff;
-    background: linear-gradient(120deg, #6366f1, #a855f7);
+  .nf-foot nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.34s var(--nf-ease);
   }
 
-  @keyframes nf-float {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+  .nf-foot nav a:hover { color: var(--nf-paper); text-decoration: none; }
+  .nf-foot nav a:hover::after { transform: scaleX(1); }
+  .nf-sep { color: rgba(255, 255, 255, 0.2); }
+
+  .nf-hint {
+    margin: 0;
+    font-family: var(--nf-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(169, 164, 155, 0.8);
+    white-space: nowrap;
   }
 
-  @keyframes nf-pulse {
-    0%,
-    100% {
-      opacity: 0.35;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.6;
-      transform: scale(1.08);
-    }
+  /* 主题给 .content a 加了 1px 下划线、hover 还带 !important 的橙色，
+     这一页的链接要的是「安静」，所以在这里统一压掉 */
+  .nf a,
+  .nf a:not(.img-link) { border-bottom: 0 !important; text-decoration: none; }
+
+  .nf .nf-res a { color: var(--nf-paper) !important; }
+  .nf .nf-res a:hover,
+  .nf .nf-res[aria-selected="true"] a { color: #fff !important; background: rgba(255, 255, 255, 0.055); }
+
+  .nf .nf-foot nav a { color: var(--nf-dim) !important; }
+  .nf .nf-foot nav a:hover { color: var(--nf-paper) !important; }
+
+  .nf-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  @media (max-width: 690px) {
-    .nf {
-      gap: 1.5rem;
-    }
-
-    .nf-text {
-      text-align: center;
-    }
-
-    .nf-actions {
-      justify-content: center;
-    }
+  @media (max-width: 640px) {
+    .nf { margin: 0 0 1.5rem; }
+    .nf-cover { min-height: 0; gap: 26px; padding: 26px 22px 20px; border-radius: 20px; }
+    .nf-fox { width: 240px; height: 300px; right: -56px; bottom: -40px; }
+    .nf-code { font-size: clamp(86px, 27vw, 112px); }
+    .nf-title { margin-top: 22px; font-size: 20px; letter-spacing: 0.04em; }
+    .nf-sub { font-size: 13px; }
+    .nf-path { font-size: 10.5px; padding: 6px 10px; }
+    .nf-seal { width: 50px; height: 50px; }
+    .nf-seal span { font-size: 13px; }
+    .nf-foot { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .nf-hint { white-space: normal; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nf-art img,
-    .nf-glow {
-      animation: none;
+    .nf-cover, .nf-code, .nf-title, .nf-sub, .nf-path, .nf-search, .nf-seal {
+      animation: none !important;
+      opacity: 1 !important;
     }
+    .nf-cover, .nf-code { transform: none !important; }
+    .nf-code, .nf-seal, .nf-foot nav a::after { transition: none; }
   }
 </style>
+
+<script>
+(function () {
+  "use strict";
+
+  var BASE = "{{ site.baseurl }}";
+  var SEARCH_JSON = "{{ '/assets/js/data/search.json' | relative_url }}";
+
+  var cover = document.getElementById("nf-cover");
+  var code = document.querySelector(".nf-code");
+  var foxLit = document.getElementById("nf-fox-lit");
+  var pathEl = document.getElementById("nf-path");
+  var q = document.getElementById("nf-q");
+  var list = document.getElementById("nf-results");
+  var meta = document.getElementById("nf-meta");
+  var seal = document.getElementById("nf-seal");
+
+  if (!cover) return;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- 灯：跟随指针 ---------- */
+  var raf = 0;
+  var pending = null;
+
+  function paint(clientX, clientY) {
+    var r = cover.getBoundingClientRect();
+    cover.style.setProperty("--lx", ((clientX - r.left) / r.width * 100).toFixed(2) + "%");
+    cover.style.setProperty("--ly", ((clientY - r.top) / r.height * 100).toFixed(2) + "%");
+
+    if (code) {
+      var cr = code.getBoundingClientRect();
+      cover.style.setProperty("--cx", (clientX - cr.left).toFixed(1) + "px");
+      cover.style.setProperty("--cy", (clientY - cr.top).toFixed(1) + "px");
+      if (!reduce) {
+        var dx = (clientX - r.left) / r.width - 0.5;
+        code.style.transform = "translate3d(" + (dx * -7).toFixed(2) + "px,0,0)";
+      }
+    }
+
+    if (foxLit) {
+      var fr = foxLit.getBoundingClientRect();
+      foxLit.style.setProperty("--mx", (clientX - fr.left).toFixed(1) + "px");
+      foxLit.style.setProperty("--my", (clientY - fr.top).toFixed(1) + "px");
+    }
+  }
+
+  function defaultSpot() {
+    var r = cover.getBoundingClientRect();
+    paint(r.left + r.width * 0.32, r.top + r.height * 0.28);
+  }
+
+  if (!window.matchMedia("(hover: none)").matches) {
+    cover.addEventListener("pointermove", function (e) {
+      pending = [e.clientX, e.clientY];
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0;
+        if (pending) paint(pending[0], pending[1]);
+      });
+    }, { passive: true });
+  }
+
+  /* 入场：灯从左下扫到数字上，再交给指针 */
+  function intro() {
+    defaultSpot();
+    if (reduce) return;
+    var r = cover.getBoundingClientRect();
+    var from = { x: r.left - 80, y: r.top + r.height * 0.55 };
+    var to = { x: r.left + r.width * 0.32, y: r.top + r.height * 0.28 };
+    var t0 = performance.now();
+    var dur = 1250;
+    (function step(now) {
+      var p = Math.min(1, (now - t0) / dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      paint(from.x + (to.x - from.x) * e, from.y + (to.y - from.y) * e);
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  if (document.readyState === "complete") setTimeout(intro, 120);
+  else window.addEventListener("load", function () { setTimeout(intro, 120); });
+
+  /* ---------- 路径回显（只用 textContent） ---------- */
+  if (pathEl) {
+    var p = location.pathname + location.search;
+    pathEl.textContent = p;
+    pathEl.title = p;
+  }
+
+  /* ---------- 检索 ---------- */
+  var index = null;
+  var loading = null;
+  var failed = false;
+  var active = -1;
+  var current = [];
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function abs(u) {
+    return (BASE && u.indexOf(BASE) !== 0) ? BASE + u : u;
+  }
+
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    if (loading) return loading;
+    loading = fetch(SEARCH_JSON, { cache: "force-cache" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        index = data.map(function (it) {
+          return {
+            t: it.title || "",
+            u: it.url || "",
+            d: String(it.date || "").slice(0, 10),
+            g: (it.tags || "") + " " + (it.categories || "")
+          };
+        });
+        return index;
+      })
+      .catch(function (err) {
+        failed = true;
+        loading = null;
+        throw err;
+      });
+    return loading;
+  }
+
+  function search(kw) {
+    kw = kw.trim().toLowerCase();
+    if (!kw || !index) return [];
+    return index.filter(function (it) {
+      return (it.t + " " + it.g).toLowerCase().indexOf(kw) !== -1;
+    }).slice(0, 5);
+  }
+
+  function render(kw) {
+    active = -1;
+    list.innerHTML = "";
+
+    if (!kw.trim()) {
+      meta.textContent = "输入即搜索 · ↑↓ 选择 · ↵ 打开";
+      q.setAttribute("aria-expanded", "false");
+      q.removeAttribute("aria-activedescendant");
+      return;
+    }
+
+    if (!index) {
+      if (failed) {
+        meta.textContent = "检索暂时没翻动，先用下面的链接吧";
+        return;
+      }
+      meta.textContent = "正在翻书…";
+      loadIndex().then(function () { render(q.value); }, function () {
+        meta.textContent = "检索暂时没翻动，先用下面的链接吧";
+      });
+      return;
+    }
+
+    current = search(kw);
+
+    if (!current.length) {
+      meta.textContent = "没有找到「" + kw.trim() + "」· 换个词，或者回首页看看";
+      q.setAttribute("aria-expanded", "true");
+      return;
+    }
+
+    current.forEach(function (it, i) {
+      var li = document.createElement("li");
+      li.className = "nf-res";
+      li.id = "nf-opt-" + i;
+      li.setAttribute("role", "option");
+      li.setAttribute("aria-selected", "false");
+      li.style.animationDelay = (i * 45) + "ms";
+      li.innerHTML =
+        '<a href="' + esc(abs(it.u)) + '">' +
+          '<span class="nf-res-t">' + esc(it.t) + "</span>" +
+          '<span class="nf-res-d">' + esc(it.d.replace(/-/g, ".")) + "</span>" +
+        "</a>";
+      list.appendChild(li);
+      requestAnimationFrame(function () { li.classList.add("nf-in"); });
+    });
+
+    meta.textContent = current.length + " 条结果 · ↑↓ 选择 · ↵ 打开";
+    q.setAttribute("aria-expanded", "true");
+  }
+
+  function move(dir) {
+    if (!current.length) return;
+    active = (active + dir + current.length) % current.length;
+    for (var i = 0; i < list.children.length; i++) {
+      list.children[i].setAttribute("aria-selected", i === active ? "true" : "false");
+    }
+    q.setAttribute("aria-activedescendant", "nf-opt-" + active);
+  }
+
+  q.addEventListener("input", function () { render(q.value); });
+  q.addEventListener("focus", function () { loadIndex().catch(function () {}); });
+
+  q.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+    else if (e.key === "Enter") {
+      var target = current[active] || current[0];
+      if (target) window.location.href = abs(target.u);
+    } else if (e.key === "Escape") {
+      q.value = "";
+      render("");
+      q.blur();
+    }
+  });
+
+  /* 任意键即搜 */
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === " ") return;
+    var tag = (e.target.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea" || tag === "select" || e.target.isContentEditable) return;
+    if (e.key === "/" || e.key.length === 1) {
+      e.preventDefault();
+      q.focus();
+      if (e.key !== "/") q.value += e.key;
+      render(q.value);
+    }
+  });
+
+  /* ---------- 印章 ---------- */
+  var SEALS = ["查无此页", "此书未完", "去别处看"];
+  var si = 0;
+  seal.addEventListener("click", function () {
+    si = (si + 1) % SEALS.length;
+    var span = seal.querySelector("span");
+    span.innerHTML = SEALS[si].split("").map(function (c) { return "<i>" + c + "</i>"; }).join("");
+    seal.setAttribute("aria-label", "印章：" + SEALS[si]);
+    seal.classList.remove("nf-stamping");
+    void seal.offsetWidth;
+    seal.classList.add("nf-stamping");
+  });
+})();
+</script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="nf-stamp" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="3" seed="9" result="n"></feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+  </filter>
+</svg>
