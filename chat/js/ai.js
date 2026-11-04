@@ -1076,6 +1076,48 @@
 
   /* ---------- 提示词：只有站内人格走这条路 ---------- */
 
+  /* ---------- 表情按话题取：符号/文字常驻，图片按三组挑 ---------- */
+
+  var STICKER_GROUP_WORDS = {
+    coder: ['代码', 'bug', '程序', '报错', '调试', '需求', '项目', '部署', '函数', '变量', '接口', '技术', '加班', '秃', '头发', 'star', 'github', '编译', '上线', '作业', '考试', '论文', '算法'],
+    cat: ['累', '困', '烦', '难受', '生气', '凶', '躲', '逃', '不理', '傻', '无语', '尴尬', '摸鱼', '躺', '懒', '歇', '哭了'],
+    girl: ['好看', '美', '可爱', '夸', '笑', '自恋', '识相', '刘海', '亲', '撒娇', '白眼', '讨厌', '臭美', '自拍', '哼']
+  };
+  var MAX_STICKER_IMAGES = 14;
+
+  /** 话题相关的 1–2 组；没线索时用她的默认口吻（程序 + 猫） */
+  function pickStickerGroups(text) {
+    var str = String(text || '');
+    var scores = {};
+    Object.keys(STICKER_GROUP_WORDS).forEach(function (group) {
+      var hits = 0;
+      STICKER_GROUP_WORDS[group].forEach(function (word) {
+        if (str.indexOf(word) >= 0) hits += 1;
+      });
+      scores[group] = hits;
+    });
+    var ranked = Object.keys(scores).sort(function (a, b) {
+      return scores[b] - scores[a];
+    });
+    var picked = ranked.filter(function (group) {
+      return scores[group] > 0;
+    }).slice(0, 2);
+    return picked.length ? picked : ['coder', 'cat'];
+  }
+
+  function stickersForTopic(text) {
+    var all = personaPack.emoticons || [];
+    var groups = pickStickerGroups(text);
+    var always = all.filter(function (item) {
+      return item.kind !== 'image';
+    });
+    var images = all.filter(function (item) {
+      return item.kind === 'image' && groups.indexOf(item.group) >= 0;
+    });
+    if (images.length > MAX_STICKER_IMAGES) images = images.slice(0, MAX_STICKER_IMAGES);
+    return always.concat(images);
+  }
+
   function effectiveSystem(query) {
     if (config.system && config.system.trim()) return config.system.trim();
 
@@ -1114,6 +1156,9 @@
       personaPack.traits.forEach(function (item) {
         lines.push('- ' + item);
       });
+      if (personaPack.mbti) {
+        lines.push('- 你的 MBTI 是 ' + personaPack.mbti + (personaPack.mbtiNote ? '：' + personaPack.mbtiNote : ''));
+      }
     }
 
     var voice = personaPack.voice || {};
@@ -1127,7 +1172,7 @@
     if (voice.avoid && voice.avoid.length) lines.push('- 不要：' + voice.avoid.join('；'));
     lines.push('- 说完回头看一眼：这句是不是又用了 XD 或「唔……」？上一条用过就换说法，宁可不用。');
 
-    var stickers = personaPack.emoticons || [];
+    var stickers = stickersForTopic(query);
     if (stickers.length) {
       lines.push('', '【表情】想单发一个表情，就单独占一行写 [[表情:id]]，不要和文字混在同一句里。可用的是：');
       stickers.forEach(function (sticker) {
