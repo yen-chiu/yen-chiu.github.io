@@ -1948,6 +1948,16 @@
       });
     }
 
+    var hardReloadBtn = document.getElementById('cfg-hard-reload');
+    if (hardReloadBtn) {
+      hardReloadBtn.addEventListener('click', function () {
+        hardReloadBtn.disabled = true;
+        hardReloadBtn.textContent = '刷新中…';
+        setStatus('正在清理缓存并重载…', '');
+        hardReload({});
+      });
+    }
+
     Array.prototype.forEach.call(document.querySelectorAll('[data-close-sheet]'), function (node) {
       node.addEventListener('click', function () {
         closeSheet(el.settingsSheet);
@@ -2067,6 +2077,50 @@
   }
 
   /* ======================= 启动 ======================= */
+
+  /* 强制刷新：聊天页是独立页面，主站的「刷新缓存」按钮照顾不到它 */
+  function hardReload(options) {
+    options = options || {};
+    var jobs = [];
+
+    if ('caches' in window) {
+      jobs.push(
+        caches.keys().then(function (keys) {
+          return Promise.all(
+            keys.map(function (key) {
+              return caches.delete(key);
+            })
+          );
+        })
+      );
+    }
+
+    if ('serviceWorker' in navigator) {
+      jobs.push(
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all(
+            regs.map(function (reg) {
+              return reg.unregister();
+            })
+          );
+        })
+      );
+    }
+
+    return Promise.all(jobs)
+      .catch(function () {
+        /* 清不掉也继续，顶多还是旧缓存 */
+      })
+      .then(function () {
+        if (options.navigate === false) return true;
+        var url = new URL(window.location.href);
+        url.searchParams.set('v', String(Date.now()));
+        window.location.replace(url.toString());
+        return true;
+      });
+  }
+
+  window.wxChatHardReload = hardReload;
 
   function boot() {
     bindEvents();
