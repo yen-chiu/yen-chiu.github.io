@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import worker from '../src/index.js';
 
 const ENV = { GITHUB_CLIENT_ID: 'Iv1.testclient', ALLOWED_ORIGIN: 'https://yenchiu.com' };
-const BASE = 'https://wendell-auth.example.workers.dev';
+const BASE = 'https://yenchiu-api.example.workers.dev';
 
 function makeRequest(path, { method = 'POST', origin = 'https://yenchiu.com', body, ip = '203.0.113.1' } = {}) {
   const headers = { Origin: origin, 'CF-Connecting-IP': ip };

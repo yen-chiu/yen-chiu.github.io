@@ -19,9 +19,9 @@
 
   // 站点自带的只读代理（Cloudflare Worker）：搜索与读页都在服务端取，绕开 CORS，
   // 不保存查询内容。换掉它也能用：设置里填自己的 SearXNG / 读取代理即可。
-  var SEARCH_ENDPOINT = 'https://auth.yenchiu.com/search';
-  var READER_ENDPOINT = 'https://auth.yenchiu.com/read?url={url}';
-  var ENDPOINT_VERSION = 2;
+  var SEARCH_ENDPOINT = 'https://api.yenchiu.com/search';
+  var READER_ENDPOINT = 'https://api.yenchiu.com/read?url={url}';
+  var ENDPOINT_VERSION = 3;
 
   var DEFAULT_CONFIG = {
     preset: 'deepseek',
@@ -219,6 +219,13 @@
         cfg.readerEndpoint = READER_ENDPOINT;
       }
       if (!saved.searchEndpoint) cfg.searchEndpoint = SEARCH_ENDPOINT;
+      // v2 的旧域名 auth.yenchiu.com 换成 api.yenchiu.com
+      if (/^https:\/\/auth\.yenchiu\.com\//i.test(String(saved.searchEndpoint || ''))) {
+        cfg.searchEndpoint = SEARCH_ENDPOINT;
+      }
+      if (/^https:\/\/auth\.yenchiu\.com\//i.test(String(saved.readerEndpoint || ''))) {
+        cfg.readerEndpoint = READER_ENDPOINT;
+      }
       cfg.endpointVersion = ENDPOINT_VERSION;
       writeJSON(CONFIG_KEY, cfg);
     }

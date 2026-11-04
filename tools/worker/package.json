@@ -1,5 +1,5 @@
 {
-  "name": "wendell-auth-worker",
+  "name": "yenchiu-api-worker",
   "private": true,
   "type": "module",
   "scripts": {
