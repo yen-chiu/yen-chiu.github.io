@@ -1,0 +1,47 @@
+# 依赖升级由 Dependabot 提 PR。
+# - bundler / npm：每周一；Jekyll、sass-embedded 的主版本不自动升，
+#   因为它们跨大版本时最可能改掉主题和构建链的行为。
+# - GitHub Actions：每月。
+# 注意：Dependabot 在 Linux 上更新 Gemfile.lock 时，可能把 x64-mingw-ucrt
+# 平台从 PLATFORMS 里去掉；合并后在 Windows 本地跑一次 bundle install 会补回，
+# 这只影响本地，不影响部署。
+version: 2
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    ignore:
+      - dependency-name: "jekyll"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "sass-embedded"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "ci"

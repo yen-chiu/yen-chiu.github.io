@@ -16,13 +16,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        # 部署只用 3.3（见 .ruby-version），这里同样只测 3.3：
-        # 避免同一份前端资源被重复构建三次（更慢，也更容易偶发失败）
-        ruby: ["3.3"]
+    # 与部署用同一份 Ruby（.ruby-version）和同一份锁文件
+    env:
+      BUNDLE_FROZEN: "true"
 
     steps:
       - name: Checkout
@@ -33,18 +29,19 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          # 版本读 .ruby-version，不要在这里写死
           bundler-cache: true
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version-file: ".nvmrc"
+          cache: "npm"
 
       - name: Build Assets
         env:
           NODE_OPTIONS: --max-old-space-size=4096
-        run: npm i --no-audit --no-fund && npm run build
+        run: npm ci --no-audit --no-fund && npm run build
 
       - name: Check post front matter
         run: node tools/check-frontmatter.mjs

@@ -30,13 +30,16 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    # 依赖版本由 Gemfile.lock + .ruby-version 固定；lock 与 Gemfile 不同步时直接失败
+    env:
+      BUNDLE_FROZEN: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1' # Not needed with a .ruby-version file
+          # 版本读 .ruby-version（3.3.13），不要在这里写死
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Setup Pages

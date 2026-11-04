@@ -7,6 +7,8 @@
 #   - scope: 主站 | 写作台 | 子站
 #   - links 可选，用「相关文章 / 提交」这类短标签
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
+#   - 分工：机器生成的完整变更在 docs/CHANGELOG.md（semantic-release），
+#     这里是给人看的精选；同一件事只记一处，别两边抄
 
 - date: 2026-11-04
   kind: feature
