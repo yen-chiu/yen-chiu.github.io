@@ -10,6 +10,14 @@
 #   - 分工：机器生成的完整变更在 docs/CHANGELOG.md（semantic-release），
 #     这里是给人看的精选；同一件事只记一处，别两边抄
 
+- date: 2026-11-05
+  kind: content
+  scope: 主站
+  title: 念真联网架构长文
+  note: 搜索降级、读页提取与 Worker 代理的完整拆解。
+  links:
+    - { label: 阅读全文, url: /posts/nianzhen-web-architecture/ }
+
 - date: 2026-11-04
   kind: feature
   scope: 子站
