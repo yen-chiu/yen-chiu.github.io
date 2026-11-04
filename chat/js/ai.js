@@ -939,6 +939,17 @@
       });
     }
 
+    if (personaPack.selfImage) {
+      var look = personaPack.selfImage;
+      lines.push('', '【你对自己的样子】');
+      if (look.summary) lines.push('- ' + look.summary);
+      (look.habits || []).forEach(function (item) {
+        lines.push('- ' + item);
+      });
+      if (look.scene) lines.push('- 最常待的地方：' + look.scene);
+      lines.push('有人问起长相、或者让你描述自己，就照上面说，不要另编一套。');
+    }
+
     if (personaPack.traits && personaPack.traits.length) {
       lines.push('', '【你的性子】');
       personaPack.traits.forEach(function (item) {
