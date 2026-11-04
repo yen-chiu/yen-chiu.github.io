@@ -458,6 +458,78 @@ html[data-theme="dark"] .wd-tool {
   display: none;
 }
 
+/* 能力库列表 */
+.wd-skills {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--wd-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.wd-skills__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--wd-line);
+  background: var(--wd-panel-2);
+}
+
+.wd-skills__item:last-child {
+  border-bottom: 0;
+}
+
+.wd-skills__item.is-off {
+  opacity: 0.45;
+}
+
+.wd-skills__icon {
+  flex: 0 0 auto;
+  width: 18px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.wd-skills__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wd-skills__body strong {
+  display: block;
+  font: 600 12.5px/1.4 var(--wd-font);
+  color: var(--wd-ink);
+}
+
+.wd-skills__body em {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--wd-muted);
+  font: 400 11.5px/1.5 var(--wd-font);
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wd-skills__state {
+  flex: 0 0 auto;
+  color: var(--wd-teal-deep);
+  font: 500 11px/1.4 var(--wd-font);
+}
+
+.wd-skills__item.is-off .wd-skills__state {
+  color: var(--wd-muted);
+}
+
+.wd-skills__empty {
+  padding: 9px 12px;
+  color: var(--wd-muted);
+  font: 400 11.5px/1.6 var(--wd-font);
+}
+
 /* 错误提示 */
 .wd-error {
   margin: 4px 0 16px;

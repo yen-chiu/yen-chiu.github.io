@@ -67,6 +67,25 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 
 同理，`/refresh` 端点已下线——它只会扩大攻击面，而没有任何调用方。
 
+## 五、同一份 Worker 也能当「上网代理」
+
+站内人格念真需要联网时，浏览器直连搜索和网页会被 CORS 挡住，这个 Worker 顺手提供了两条路由：
+
+| 路由 | 说明 |
+| --- | --- |
+| `GET /search?q=关键词` | 先查维基百科，查不到再用 DuckDuckGo 摘要；返回 `{results:[{title,url,snippet,source}]}` |
+| `GET /read?url=完整地址` | 只允许公网 http/https，抓回页面剥掉标签后返回纯文本（最多 8000 字） |
+
+在聊天页的设置里填：
+
+- **联网搜索接口** → `https://wendell-auth.<你的账号>.workers.dev/search`
+- **网页读取代理** → `https://wendell-auth.<你的账号>.workers.dev/read?url=`
+
+两个都留空时，搜索会自动退回维基百科 / DuckDuckGo（这两家允许浏览器跨域），但读网页仍然需要代理。
+
+`/read` 加了 SSRF 防护：拒绝回环、内网网段、link-local（含 `169.254.169.254`）和 IPv6 字面量；
+按 IP 限流（`RATE_LIMIT_SEARCH` 默认 30 次/分、`RATE_LIMIT_READ` 默认 20 次/分）。
+
 ## 本地开发
 
 ```bash
@@ -83,7 +102,8 @@ cd tools/worker
 node --test test/worker.test.mjs
 ```
 
-覆盖：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404。
+覆盖：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404，
+以及 `/search` 的整理逻辑与 `/read` 的 SSRF 防护、正文抽取。
 
 ## 安全说明
 

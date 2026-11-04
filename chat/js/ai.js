@@ -28,7 +28,8 @@
     system: '',
     stream: true,
     tools: false,
-    searchEndpoint: ''
+    searchEndpoint: '',
+    readerEndpoint: 'https://r.jina.ai/'
   };
 
   var PERSONA_PROMPTS = {
@@ -105,13 +106,17 @@
      人格既不读它，也拿不到站内工具。 */
 
   var PERSONA_FILE = 'assets/persona/nianzhen.json';
+  var SKILLS_FILE = 'skills/skills.json';
   var MEMORY_KEY = 'wd.ai.memory';
   var MEMORY_LIMIT = 120;
   var SITE_INDEX_URL = '/assets/js/data/search.json';
   var PAGE_TEXT_LIMIT = 2400;
+  var WEB_TEXT_LIMIT = 3200;
 
   var personaPack = null;
   var personaLoading = null;
+  var skills = null;
+  var skillsLoading = null;
   var memory = readJSON(MEMORY_KEY, []);
   if (!Array.isArray(memory)) memory = [];
   var siteIndex = null;
@@ -147,6 +152,8 @@
       stream: document.getElementById('cfg-stream'),
       tools: document.getElementById('cfg-tools'),
       search: document.getElementById('cfg-search'),
+      reader: document.getElementById('cfg-reader'),
+      skillsList: document.getElementById('cfg-skills'),
       memoryNote: document.getElementById('cfg-memory-note'),
       memoryClear: document.getElementById('cfg-memory-clear'),
       save: document.getElementById('cfg-save'),
@@ -439,7 +446,8 @@
       site_read: '读站内页',
       site_query: '站内统计',
       remember: '记住',
-      web_search: '联网检索'
+      web_search: '联网检索',
+      web_read: '读网页'
     };
     var resultText = tool.result || '（没有返回内容）';
 
@@ -468,6 +476,8 @@
       meta.textContent = total ? total + ' 篇' : '';
     } else if (tool.name === 'remember') {
       meta.textContent = /记下了/.test(resultText) ? '已记下' : '没记';
+    } else if (tool.name === 'web_read') {
+      meta.textContent = resultText.length + ' 字';
     }
 
     var chevron = document.createElement('span');
@@ -599,6 +609,36 @@
         return null;
       });
     return personaLoading;
+  }
+
+  /* ---------- 能力库：技能清单来自 skills/skills.json ---------- */
+
+  function loadSkills() {
+    if (skills) return Promise.resolve(skills);
+    if (skillsLoading) return skillsLoading;
+    skillsLoading = fetch(SKILLS_FILE, { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (list) {
+        skills = Array.isArray(list) ? list : [];
+        return skills;
+      })
+      .catch(function () {
+        skills = null;
+        skillsLoading = null;
+        return null;
+      });
+    return skillsLoading;
+  }
+
+  function skillsForPersona(personaId) {
+    if (!skills) return [];
+    return skills.filter(function (skill) {
+      var personas = skill.personas || ['*'];
+      return personas.indexOf('*') >= 0 || personas.indexOf(personaId) >= 0;
+    });
   }
 
   /* ---------- 记忆：只记站内人格的事 ---------- */
@@ -945,7 +985,7 @@
       lines.push(
         '- site_query 统计站内文章（按月份/标签/分类出篇数和字数）。问到「一共写了多少」「哪个月写得多」「标签怎么分布」这类问题先查再答，数字不要自己编。'
       );
-      if (config.searchEndpoint) lines.push('- web_search 联网查资料。');
+      lines.push('- web_search 联网搜公开资料，web_read 打开一个网页读正文。站里没有、又确实需要时再用；结果里会标来源，回答时说清是查到的还是你记得的。');
       lines.push('真要查的时候再调，别假装查过。');
     }
 
@@ -1054,8 +1094,23 @@
     return result;
   }
 
-  /* 站内人格专属工具：只有 persona === 'nianzhen' 时才会出现在请求里 */
+  /* 能力库 → 工具清单：来自 skills/skills.json，按人格过滤；读不到时退回内置清单 */
   function personaTools() {
+    var list = skillsForPersona(config.persona).map(function (skill) {
+      return {
+        type: 'function',
+        function: {
+          name: skill.id,
+          description: skill.description || skill.summary || '',
+          parameters: skill.parameters || { type: 'object', properties: {} }
+        }
+      };
+    });
+    if (list.length) return list;
+    return fallbackPersonaTools();
+  }
+
+  function fallbackPersonaTools() {
     var list = [
       {
         type: 'function',
@@ -1134,21 +1189,6 @@
       }
     ];
 
-    if (config.searchEndpoint) {
-      list.push({
-        type: 'function',
-        function: {
-          name: 'web_search',
-          description: '联网搜索。站内资料不够用时才用。',
-          parameters: {
-            type: 'object',
-            properties: { query: { type: 'string' } },
-            required: ['query'],
-            additionalProperties: false
-          }
-        }
-      });
-    }
     return list;
   }
 
@@ -1158,8 +1198,24 @@
     return list;
   }
 
-  function webSearch(query) {
-    if (!config.searchEndpoint) return Promise.resolve('没有配置搜索接口，现在联不了网。');
+  /* ---------- 联网：多后端降级 ----------
+     纯静态站没有后端，浏览器直连大多数搜索/网页都会被 CORS 挡住。
+     所以这里按「自建接口 → 维基百科 → DuckDuckGo 摘要」的顺序试，
+     每一家的失败原因都会带回去，方便看清到底是哪一层不通。 */
+
+  function stripHtml(html) {
+    return String(html || '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function searchViaEndpoint(query) {
     var base = config.searchEndpoint;
     var url = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'q=' + encodeURIComponent(query) + '&format=json';
     return fetch(url, { headers: { Accept: 'application/json' } })
@@ -1169,17 +1225,121 @@
       })
       .then(function (data) {
         var items = (data && (data.results || data.items)) || [];
-        if (!items.length) return '没有搜到结果。';
-        return items
-          .slice(0, 5)
-          .map(function (item, i) {
-            return i + 1 + '. ' + (item.title || '') + '\n' + (item.url || '') + '\n' + String(item.content || item.snippet || '').slice(0, 160);
-          })
-          .join('\n\n');
-      })
-      .catch(function (err) {
-        return '搜索失败：' + err.message;
+        if (!items.length) return '';
+        return (
+          '来源：自建接口\n' +
+          items
+            .slice(0, 5)
+            .map(function (item, i) {
+              return i + 1 + '. ' + (item.title || '') + '\n' + (item.url || '') + '\n' + stripHtml(item.content || item.snippet || '').slice(0, 160);
+            })
+            .join('\n\n')
+        );
       });
+  }
+
+  function searchWikipedia(query) {
+    var api =
+      'https://zh.wikipedia.org/w/api.php?action=query&list=search&format=json&origin=*&srlimit=4&srsearch=' +
+      encodeURIComponent(query);
+    return fetch(api, { headers: { Accept: 'application/json' } })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var items = (data && data.query && data.query.search) || [];
+        if (!items.length) return '';
+        return (
+          '来源：维基百科\n' +
+          items
+            .map(function (item, i) {
+              var title = String(item.title || '');
+              var link = 'https://zh.wikipedia.org/wiki/' + encodeURIComponent(title.replace(/\s+/g, '_'));
+              return i + 1 + '. ' + title + '\n' + link + '\n' + stripHtml(item.snippet || '').slice(0, 160);
+            })
+            .join('\n\n')
+        );
+      });
+  }
+
+  function searchDuckDuckGo(query) {
+    var api = 'https://api.duckduckgo.com/?q=' + encodeURIComponent(query) + '&format=json&no_html=1&skip_disambig=1';
+    return fetch(api, { headers: { Accept: 'application/json' } })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var lines = [];
+        if (data.AbstractText) {
+          lines.push('1. ' + (data.Heading || query) + '\n' + (data.AbstractURL || '') + '\n' + String(data.AbstractText).slice(0, 200));
+        }
+        (data.RelatedTopics || []).forEach(function (topic) {
+          if (lines.length >= 5) return;
+          var items = topic.Topics || [topic];
+          items.forEach(function (item) {
+            if (lines.length >= 5) return;
+            if (item.Text && item.FirstURL) {
+              lines.push(lines.length + 1 + '. ' + item.Text + '\n' + item.FirstURL);
+            }
+          });
+        });
+        return lines.length ? '来源：DuckDuckGo\n' + lines.join('\n\n') : '';
+      });
+  }
+
+  async function webSearch(query) {
+    var q = String(query || '').trim();
+    if (!q) return '搜索词是空的。';
+    var tried = [];
+
+    if (config.searchEndpoint) {
+      try {
+        var viaEndpoint = await searchViaEndpoint(q);
+        if (viaEndpoint) return viaEndpoint;
+        tried.push('自建接口：没有结果');
+      } catch (err) {
+        tried.push('自建接口：' + err.message);
+      }
+    }
+
+    try {
+      var viaWiki = await searchWikipedia(q);
+      if (viaWiki) return viaWiki;
+      tried.push('维基百科：没有结果');
+    } catch (err) {
+      tried.push('维基百科：' + err.message);
+    }
+
+    try {
+      var viaDdg = await searchDuckDuckGo(q);
+      if (viaDdg) return viaDdg;
+      tried.push('DuckDuckGo：没有结果');
+    } catch (err) {
+      tried.push('DuckDuckGo：' + err.message);
+    }
+
+    return '这次没联上：' + tried.join('；') + '。\n可以换个说法，或者把自建搜索接口填进设置。';
+  }
+
+  async function webRead(url) {
+    var target = String(url || '').trim();
+    if (!/^https?:\/\//i.test(target)) return '只能读 http/https 地址。';
+    var base = String(config.readerEndpoint || 'https://r.jina.ai/').trim();
+    if (!base) return '没有配置网页读取代理，读不了外部网页。';
+    var proxied = base.indexOf('{url}') >= 0 ? base.replace('{url}', encodeURIComponent(target)) : base + target;
+
+    var res = await fetch(proxied, { headers: { Accept: 'text/plain, text/markdown;q=0.9, */*;q=0.8' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    var text = await res.text();
+    var clean = String(text)
+      .replace(/^Title:.*\n/i, '')
+      .replace(/^URL Source:.*\n/i, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+    if (!clean) return '页面读到了，但没有正文。';
+    return '来源：' + target + '\n\n' + clean.slice(0, WEB_TEXT_LIMIT);
   }
 
   async function runTool(call) {
@@ -1234,6 +1394,9 @@
       } else if (name === 'web_search') {
         summary = args.query || '';
         result = await webSearch(args.query);
+      } else if (name === 'web_read') {
+        summary = String(args.url || '').slice(0, 60);
+        result = await webRead(args.url);
       } else {
         summary = name || 'unknown';
         result = '没有这个工具';
@@ -1282,7 +1445,7 @@
 
     // 站内人格：先把性格模块（含头像）、站内索引、说话样本备齐，再建气泡
     if (config.persona === 'nianzhen') {
-      await Promise.all([loadPersona(), loadSiteIndex(), loadSamples()]);
+      await Promise.all([loadPersona(), loadSkills(), loadSiteIndex(), loadSamples()]);
     }
 
     var reply = { role: 'assistant', content: '', tools: [], ts: Date.now() };
@@ -1562,10 +1725,12 @@
     el.form.persona.value = config.persona;
     el.form.system.value = config.system || '';
     if (el.form.search) el.form.search.value = config.searchEndpoint || '';
+    if (el.form.reader) el.form.reader.value = config.readerEndpoint || '';
     el.form.stream.checked = config.stream !== false;
     el.form.tools.checked = Boolean(config.tools);
     el.form.presetNote.textContent = preset ? preset.note : '';
     updateMemoryNote();
+    loadSkills().then(updateSkillsList);
     fillModelOptions(preset);
   }
 
@@ -1593,8 +1758,36 @@
       system: el.form.system.value,
       stream: el.form.stream.checked,
       tools: el.form.tools.checked,
-      searchEndpoint: el.form.search ? el.form.search.value.trim() : config.searchEndpoint || ''
+      searchEndpoint: el.form.search ? el.form.search.value.trim() : config.searchEndpoint || '',
+      readerEndpoint: el.form.reader ? el.form.reader.value.trim() : config.readerEndpoint || ''
     };
+  }
+
+  /* 设置面板里把能力库列出来：名字 + 一句话 + 是否随人格生效 */
+  function updateSkillsList() {
+    if (!el.form.skillsList) return;
+    var list = skills || [];
+    if (!list.length) {
+      el.form.skillsList.innerHTML = '<li class="wd-skills__empty">能力库还没读到。</li>';
+      return;
+    }
+    var enabled = config.persona === 'nianzhen';
+    el.form.skillsList.innerHTML = list
+      .map(function (skill) {
+        var usable = (skill.personas || ['*']).indexOf('*') >= 0 || (skill.personas || []).indexOf(config.persona) >= 0;
+        return (
+          '<li class="wd-skills__item' + (usable ? '' : ' is-off') + '">' +
+          '<span class="wd-skills__icon">' + (skill.icon || '⚙') + '</span>' +
+          '<span class="wd-skills__body"><strong>' + (skill.name || skill.id) + '</strong>' +
+          '<em>' + (skill.summary || '') + '</em></span>' +
+          '<span class="wd-skills__state">' + (usable ? (config.tools ? '已启用' : '待开工具') : '不可用') + '</span>' +
+          '</li>'
+        );
+      })
+      .join('');
+    if (!enabled) {
+      el.form.skillsList.innerHTML += '<li class="wd-skills__empty">这些技能只属于站内人格；通用助手和写代码的拿不到。</li>';
+    }
   }
 
   function updateMemoryNote() {
@@ -1884,6 +2077,7 @@
     if (config.persona === 'nianzhen') {
       loadSamples();
       loadSiteIndex();
+      loadSkills();
       // 头像在人格模块里，到货后把历史消息重画一遍
       loadPersona().then(function () {
         if (sending) return;

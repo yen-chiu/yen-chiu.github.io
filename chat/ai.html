@@ -174,8 +174,23 @@
                     <label for="cfg-search">联网搜索接口（可选）</label>
                     <input type="url" id="cfg-search" placeholder="https://searx.example.com/search" spellcheck="false">
                     <p class="wd-field__hint">
-                        填一个返回 JSON 的搜索接口（SearXNG 之类），念真就能联网查资料；留空就只用站内资料。
+                        填 SearXNG 或自建 Worker 的搜索地址；留空时依次退回维基百科、DuckDuckGo 摘要。
                     </p>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-reader">网页读取代理（可选）</label>
+                    <input type="url" id="cfg-reader" placeholder="https://r.jina.ai/" spellcheck="false">
+                    <p class="wd-field__hint">
+                        浏览器直连别人家的网页会被 CORS 拦住，所以读正文要经一个代理。默认 <code>https://r.jina.ai/</code>；
+                        也可以用 <code>{url}</code> 占位符指定自己的代理。
+                    </p>
+                </div>
+
+                <div class="wd-field">
+                    <label>能力库（只对念真生效）</label>
+                    <ul class="wd-skills" id="cfg-skills"></ul>
+                    <p class="wd-field__hint">开「本地工具」后，这些技能才会作为工具交给模型。</p>
                 </div>
 
                 <div class="wd-field">

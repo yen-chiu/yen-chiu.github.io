@@ -1,0 +1,95 @@
+[
+  {
+    "id": "site_search",
+    "name": "站内检索",
+    "icon": "🔍",
+    "summary": "在站主的博客里找文章，返回标题、日期、链接和摘要",
+    "description": "在站主的博客里搜文章，返回标题、日期、链接和摘要。想知道站里写过什么时用它。",
+    "personas": ["nianzhen"],
+    "parameters": {
+      "type": "object",
+      "properties": { "query": { "type": "string", "description": "关键词，尽量短" } },
+      "required": ["query"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "id": "site_read",
+    "name": "读站内页",
+    "icon": "📄",
+    "summary": "打开站内某个页面读正文，最多 2400 字",
+    "description": "打开站内某个页面读正文（最多 2400 字）。参数是站内路径，例如 /posts/ai动画/。",
+    "personas": ["nianzhen"],
+    "parameters": {
+      "type": "object",
+      "properties": { "path": { "type": "string", "description": "站内路径或完整本站链接" } },
+      "required": ["path"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "id": "site_query",
+    "name": "站内统计",
+    "icon": "📊",
+    "summary": "按月份/标签/分类统计篇数与字数，或列文章明细",
+    "description": "统计站内文章：按月份/标签/分类汇总篇数和字数，或按条件列出文章。问「写了多少篇」「哪个月写得多」「标签分布」这类问题时用它，数字要从这里来，不要凭印象估。",
+    "personas": ["nianzhen"],
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "mode": { "type": "string", "enum": ["aggregate", "list"], "description": "aggregate 出汇总，list 列文章明细" },
+        "group_by": { "type": "string", "enum": ["month", "tag", "category"], "description": "aggregate 时按什么分组，默认 month" },
+        "metric": { "type": "string", "enum": ["posts", "words"], "description": "aggregate 时看篇数还是字数，默认 posts" },
+        "tag": { "type": "string", "description": "只看带这个标签的文章" },
+        "category": { "type": "string", "description": "只看这个分类的文章" },
+        "since": { "type": "string", "description": "起始日期，YYYY-MM-DD" },
+        "until": { "type": "string", "description": "结束日期，YYYY-MM-DD" },
+        "limit": { "type": "number", "description": "最多返回多少行，默认 12" }
+      },
+      "required": ["mode"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "id": "remember",
+    "name": "记忆",
+    "icon": "🧠",
+    "summary": "把对方说的要紧事记下来，下次还用得上",
+    "description": "把对方说过的、以后值得记住的小事记下来。只记对方本人相关的事实或偏好，不要记闲聊。",
+    "personas": ["nianzhen"],
+    "parameters": {
+      "type": "object",
+      "properties": { "text": { "type": "string", "description": "一句话，第三人称，例如「他喜欢在夜里写代码」" } },
+      "required": ["text"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "id": "web_search",
+    "name": "联网搜索",
+    "icon": "🌐",
+    "summary": "查公开资料：概念、人物、事件；没配接口时走维基百科与 DuckDuckGo",
+    "description": "联网搜公开资料，返回标题、链接和摘要。问站里没有的常识、人物、事件时用它。结果里会注明来源。",
+    "personas": ["nianzhen"],
+    "parameters": {
+      "type": "object",
+      "properties": { "query": { "type": "string", "description": "搜索词，尽量具体" } },
+      "required": ["query"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "id": "web_read",
+    "name": "读网页",
+    "icon": "📖",
+    "summary": "打开一个网页读正文（经读取代理转成纯文本）",
+    "description": "打开一个网页读正文。用于站外链接、别人贴的地址。只能读 http/https，正文会截断。",
+    "personas": ["nianzhen"],
+    "parameters": {
+      "type": "object",
+      "properties": { "url": { "type": "string", "description": "完整的 http/https 地址" } },
+      "required": ["url"],
+      "additionalProperties": false
+    }
+  }
+]

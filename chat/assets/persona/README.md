@@ -36,13 +36,42 @@
 - 设置面板里能看到条数和最近两条，也能一键清空。
 
 ## 站内资料怎么来
-
 - 索引：`/assets/js/data/search.json`，由 Jekyll 从全部文章生成（标题、链接、分类、摘要、正文）。
 - 检索：中文按二元组切词，按词的稀有度加权（"AI"这种满站都是的词会被压低）。
 - `site_read` 只允许读本站页面，正文截断到 2400 字。
 - `site_query` 做统计：按月份/标签/分类汇总篇数与字数，或按标签、分类、日期区间列文章明细。问「一共几篇」「哪个月写得多」这类问题走它，数字都从索引里算，不靠模型估。
 
-## 联网搜索
+## 联网搜索与读网页
 
-`web_search` 不会凭空出现：得在设置里填一个返回 JSON 的搜索接口（SearXNG：`https://你的实例/search`）。
-没填就没有这个工具，念真也只会说"联不了网"。
+`web_search` 按「自建接口 → 维基百科 → DuckDuckGo 摘要」的顺序降级：
+
+- 自建接口：设置里的「联网搜索接口」，SearXNG 或 `tools/worker` 的 `/search` 都行；
+- 维基百科：`origin=*` 允许浏览器跨域，不用配任何东西就能用；
+- DuckDuckGo：`api.duckduckgo.com` 的即时摘要，作为最后的兜底。
+
+`web_read` 需要一个读取代理，把网页转成纯文本（默认 `https://r.jina.ai/`）：
+浏览器直接抓别家网页会被 CORS 挡住，这一步绕不开。自建就用 `tools/worker` 的 `/read?url=`。
+
+每一家的失败原因都会带回结果里（例如「维基百科：HTTP 429」），方便看清是哪一层不通。
+
+## 技能库（能力库）
+
+技能清单在 [`skills/skills.json`](../../skills/skills.json)，不写在代码里。每条长这样：
+
+```json
+{
+  "id": "site_query",
+  "name": "站内统计",
+  "icon": "📊",
+  "summary": "一句话说明，会显示在设置面板",
+  "description": "给模型看的说明，决定它什么时候调用",
+  "personas": ["nianzhen"],
+  "parameters": { "type": "object", "properties": {} }
+}
+```
+
+- `personas` 决定谁能用：填 `["nianzhen"]` 就只有站内人格拿得到，填 `["*"]` 所有人都能用。
+- `parameters` 是标准的 JSON Schema，客户端直接把它当工具的 `parameters` 交给模型。
+- 加一条就是加一个技能；执行逻辑按 `id` 在 `js/ai.js` 的 `runTool` 里接。
+- 设置面板的「能力库」会列出全部技能和当前状态（已启用 / 待开工具 / 不可用）。
+- `skills.json` 读不到时，客户端会退回内置的工具清单，功能不至于全丢。
