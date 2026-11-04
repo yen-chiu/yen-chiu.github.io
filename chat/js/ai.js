@@ -1123,6 +1123,7 @@
     if (voice.emoticonNote) lines.push('- ' + voice.emoticonNote);
     if (voice.frequency) lines.push('- 用多少：' + voice.frequency);
     if (voice.pacing) lines.push('- ' + voice.pacing);
+    if (voice.tone) lines.push('- ' + voice.tone);
     if (voice.avoid && voice.avoid.length) lines.push('- 不要：' + voice.avoid.join('；'));
     lines.push('- 说完回头看一眼：这句是不是又用了 XD 或「唔……」？上一条用过就换说法，宁可不用。');
 
