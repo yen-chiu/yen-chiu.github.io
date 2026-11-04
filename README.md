@@ -122,6 +122,36 @@ bundle exec jekyll serve --livereload
 > 令牌/登录态只保存在浏览器本地，不会经过任何第三方服务器。写作台页面已加入 `noindex` 与 `robots` 屏蔽。
 > GitHub 登录需要一个 Cloudflare Worker 做 CORS 代理，搭建步骤见 [`tools/worker/README.md`](tools/worker/README.md)。
 
+## 写作约定
+
+**链接一律用 `https://`。** CI（`.github/workflows/ci.yml`）在构建之后会跑一遍 `htmlproofer --disable-external`，任何 `http://` 链接都会被判失败，报错原文是 `is not an HTTPS link`。`--disable-external` 只表示不去访问外网，并不豁免这条规则——公众号、知乎这类默认给 `http` 的地址，粘过来要手动补 `s`。写错不会影响发布（部署是另一个工作流），但 CI 会一直红。
+
+**配图**放 `assets/img/uploads/YYYY/MM/`（写作台上传时会自动压到 1600px 并归档），正文里用 `/assets/img/uploads/...` 绝对路径引用。要图注就写：
+
+```html
+<figure class="post-figure">
+  <img src="/assets/img/uploads/2026/11/example.png" alt="说明">
+  <figcaption>图注文字</figcaption>
+</figure>
+```
+
+对应样式在 `_sass/custom/_post.scss`。
+
+**本地自检**，和 CI 是同一套：
+
+```bash
+node tools/check-frontmatter.mjs   # front matter
+bash tools/test.sh                 # 构建 + 链接检查
+```
+
+Windows 上 `htmlproofer` 常常因为 ffi 找不到 `libcurl` 直接起不来，仓库里备了一个只替掉网络层的桩（`--disable-external` 下用不到真实请求）：
+
+```powershell
+$env:RUBYLIB="$PWD\tools\htmlproofer-stub"
+bundle exec jekyll build --quiet
+bundle exec htmlproofer "_site" --disable-external --ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
+```
+
 ## 部署
 
 推送到 `master` 即触发 `.github/workflows/jekyll.yml`：安装 Ruby → `bundle exec jekyll build` → 发布到 GitHub Pages。
