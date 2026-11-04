@@ -73,6 +73,66 @@
     });
   }
 
+  /**
+   * 光清当前页不够：用户往往是在别的页面点「刷新」，然后去开聊天页。
+   * 这里把「要去的那个页面」本身和它的 css/js 都用 cache:'reload' 顶一遍。
+   */
+  function primePageAssets(target) {
+    if (typeof fetch !== 'function') return Promise.resolve(0);
+    return fetch(target, { cache: 'reload' })
+      .then(function (res) {
+        return res && res.ok ? res.text() : '';
+      })
+      .then(function (html) {
+        if (!html) return 0;
+        var base = new URL(target, location.origin);
+        var seen = {};
+        var urls = [];
+        var re = /(?:href|src)\s*=\s*["']([^"']+)["']/g;
+        var m;
+        while ((m = re.exec(html))) {
+          var raw = m[1];
+          if (!/\.(css|js)(\?|$)/i.test(raw)) continue;
+          var abs;
+          try {
+            abs = new URL(raw, base).toString();
+          } catch (e) {
+            continue;
+          }
+          if (abs.indexOf(location.origin) !== 0 || seen[abs]) continue;
+          seen[abs] = 1;
+          urls.push(abs);
+        }
+        return Promise.all(
+          urls.map(function (u) {
+            return fetch(u, { cache: 'reload' }).catch(function () {
+              return null;
+            });
+          })
+        ).then(function () {
+          return urls.length;
+        });
+      })
+      .catch(function () {
+        return 0;
+      });
+  }
+
+  /** 从哪来回哪去：刷新完把用户送回他当时那一页 */
+  function currentTarget() {
+    try {
+      if (document.referrer) {
+        var ref = new URL(document.referrer);
+        if (ref.origin === location.origin && ref.pathname !== location.pathname) {
+          return ref.pathname + ref.search;
+        }
+      }
+    } catch (e) {
+      /* 忽略 */
+    }
+    return REDIRECT;
+  }
+
   function unregisterWorkers() {
     if (!('serviceWorker' in navigator)) return Promise.resolve(0);
     return navigator.serviceWorker
@@ -100,25 +160,36 @@
       button.textContent = '刷新中…';
     }
 
-    return Promise.all([clearCaches(), unregisterWorkers(), primeAssets()]).then(function (result) {
-      var cleared = result[0];
-      var workers = result[1];
-      try {
-        sessionStorage.setItem('wx-cache-cleared-at', String(Date.now()));
-      } catch (e) {
-        /* 隐私模式下忽略 */
-      }
+    var target = options.target || currentTarget();
 
-      if (options.onDone) options.onDone(cleared, workers);
-      if (options.reload === false) return result;
+    // 先清、再注销、最后才去重新拉资源：顺序反了会把旧 SW 的缓存又拉回来
+    return clearCaches()
+      .then(function (cleared) {
+        return unregisterWorkers().then(function (workers) {
+          return { cleared: cleared, workers: workers };
+        });
+      })
+      .then(function (result) {
+        return Promise.all([primeAssets(), primePageAssets(target)]).then(function (primes) {
+          return { cleared: result.cleared, workers: result.workers, primes: primes };
+        });
+      })
+      .then(function (result) {
+        try {
+          sessionStorage.setItem('wx-cache-cleared-at', String(Date.now()));
+        } catch (e) {
+          /* 隐私模式下忽略 */
+        }
 
-      // 带上时间戳，确保拿到的是新的 HTML 而不是浏览器缓存
-      var target = options.target || REDIRECT;
-      var url = new URL(target, location.origin);
-      url.searchParams.set('v', String(Date.now()));
-      location.replace(url.toString());
-      return result;
-    });
+        if (options.onDone) options.onDone(result.cleared, result.workers, result.primes);
+        if (options.reload === false) return result;
+
+        // 带上时间戳，确保拿到的是新的 HTML 而不是浏览器缓存
+        var url = new URL(target, location.origin);
+        url.searchParams.set('v', String(Date.now()));
+        location.replace(url.toString());
+        return result;
+      });
   }
 
   window.wxRefreshCache = refresh;

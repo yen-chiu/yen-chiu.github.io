@@ -10,7 +10,7 @@ sitemap: false
   <p class="wx-refresh-icon" aria-hidden="true">⟳</p>
   <h1>正在清理缓存…</h1>
   <p class="wx-refresh-note">
-    会删掉本站的离线缓存和 Service Worker，然后重新加载首页。<br>
+    会删掉本站的离线缓存和 Service Worker，重新拉一遍刚才那一页的 HTML、样式和脚本，再带你回去。<br>
     <strong>不会</strong>清除写作台的登录状态。
   </p>
   <p class="wx-refresh-status" id="wx-refresh-status">如果 3 秒后没有自动跳转，请点下面的按钮。</p>
@@ -104,9 +104,8 @@ sitemap: false
         return;
       }
       window.wxRefreshCache({
-        target: '/',
         onDone: function (caches, workers) {
-          fallback('已清理 ' + caches + ' 份缓存、注销 ' + workers + ' 个 Service Worker，正在返回首页…');
+          fallback('已清理 ' + caches + ' 份缓存、注销 ' + workers + ' 个 Service Worker，正在回到刚才那一页…');
         }
       });
     }
