@@ -14,6 +14,8 @@
   'use strict';
 
   var THEME_KEY = 'wd.theme';
+  var AMBIENT_KEY = 'wd.ambient';
+  var AMBIENT_MODES = { auto: 1, still: 1, firefly: 1 };
 
   /* ---------------- 主题：尽量早执行，且不阻塞渲染 ---------------- */
 
@@ -34,12 +36,45 @@
   }
 
   function applyTheme(mode) {
-    document.documentElement.setAttribute('data-theme', resolveTheme(mode));
+    var resolved = resolveTheme(mode);
+    document.documentElement.setAttribute('data-theme', resolved);
     document.documentElement.setAttribute('data-theme-mode', mode);
+    try {
+      // 背景层只需要知道「现在是深还是浅」，不必自己去读属性
+      document.dispatchEvent(new CustomEvent('wd:themechange', { detail: { theme: resolved } }));
+    } catch (e) {
+      /* 老浏览器没有 CustomEvent 构造器，背景层保持首帧颜色即可 */
+    }
   }
 
   var themeMode = readTheme();
   applyTheme(themeMode);
+
+  /* 氛围模式要在首帧之前落成属性，否则「静」会先闪一下动效 */
+  function readAmbientMode() {
+    try {
+      var v = window.localStorage.getItem(AMBIENT_KEY);
+      return AMBIENT_MODES[v] ? v : 'auto';
+    } catch (e) {
+      return 'auto';
+    }
+  }
+
+  var ambientMode = readAmbientMode();
+  document.documentElement.setAttribute('data-ambient-mode', ambientMode);
+
+  function setAmbientMode(mode) {
+    if (!AMBIENT_MODES[mode]) return;
+    ambientMode = mode;
+    try {
+      window.localStorage.setItem(AMBIENT_KEY, mode);
+    } catch (e) {
+      /* 隐私模式下只在本次会话生效 */
+    }
+    document.documentElement.setAttribute('data-ambient-mode', mode);
+    if (window.WDAmbient) window.WDAmbient.setMode(mode);
+    syncThemeButtons();
+  }
 
   function setThemeMode(mode) {
     themeMode = mode;
@@ -83,15 +118,6 @@
       desc: '原来的那个聊天页，她按写好的剧本回你。'
     },
     {
-      id: 'game',
-      name: '凌晨两点十七分',
-      href: 'game.html',
-      tone: 'indigo',
-      badge: '新',
-      note: '对话游戏',
-      desc: '一个随手就能玩完的即时通讯式剧情，4 个结局。'
-    },
-    {
       id: 'ai',
       name: '自带模型的 AI',
       href: 'ai.html',
@@ -99,6 +125,15 @@
       badge: 'BYOK',
       note: 'AI 模块',
       desc: '填自己的 API Key，接任何 OpenAI 兼容接口，还带本地工具。'
+    },
+    {
+      id: 'game',
+      name: '凌晨两点十七分',
+      href: 'game.html',
+      tone: 'indigo',
+      badge: '新',
+      note: '对话游戏',
+      desc: '一个随手就能玩完的即时通讯式剧情，4 个结局。'
     },
     {
       id: 'credits',
@@ -209,10 +244,23 @@
       '</header>' +
       '<ul class="wd-app-grid">' + appItems + '</ul>' +
       '<footer class="wd-drawer__foot">' +
+      '<div class="wd-drawer__modes">' +
+      '<div class="wd-mode">' +
+      '<span class="wd-mode__label">配色</span>' +
       '<div class="wd-theme-switch" role="group" aria-label="配色">' +
       '<button type="button" data-theme-mode="auto" aria-pressed="false">自动</button>' +
       '<button type="button" data-theme-mode="light" aria-pressed="false">浅色</button>' +
       '<button type="button" data-theme-mode="dark" aria-pressed="false">深色</button>' +
+      '</div>' +
+      '</div>' +
+      '<div class="wd-mode">' +
+      '<span class="wd-mode__label">氛围</span>' +
+      '<div class="wd-theme-switch" role="group" aria-label="氛围">' +
+      '<button type="button" data-ambient-mode="auto" aria-pressed="false">自动</button>' +
+      '<button type="button" data-ambient-mode="still" aria-pressed="false">静</button>' +
+      '<button type="button" data-ambient-mode="firefly" aria-pressed="false">萤火</button>' +
+      '</div>' +
+      '</div>' +
       '</div>' +
       '<div class="wd-drawer__links">' + links + '</div>' +
       '</footer>' +
@@ -229,6 +277,12 @@
         btn.setAttribute('aria-pressed', String(btn.getAttribute('data-theme-mode') === themeMode));
       }
     );
+    Array.prototype.forEach.call(
+      drawer.querySelectorAll('[data-ambient-mode]'),
+      function (btn) {
+        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-ambient-mode') === ambientMode));
+      }
+    );
   }
 
   function openDrawer() {
@@ -237,6 +291,8 @@
     drawer.classList.add('is-open');
     drawer.setAttribute('aria-hidden', 'false');
     document.documentElement.style.overflow = 'hidden';
+    // 抽屉背后有一层全屏 backdrop-filter，底下再跑动画就是每帧重算整屏模糊
+    if (window.WDAmbient) window.WDAmbient.suspend('drawer');
     syncThemeButtons();
     var first = drawer.querySelector('.wd-tile');
     if (first) first.focus({ preventScroll: true });
@@ -247,6 +303,7 @@
     drawer.classList.remove('is-open');
     drawer.setAttribute('aria-hidden', 'true');
     document.documentElement.style.overflow = '';
+    if (window.WDAmbient) window.WDAmbient.resume('drawer');
     if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
   }
 
@@ -270,6 +327,11 @@
       var themeBtn = e.target.closest('[data-theme-mode]');
       if (themeBtn) {
         setThemeMode(themeBtn.getAttribute('data-theme-mode'));
+        return;
+      }
+      var ambientBtn = e.target.closest('[data-ambient-mode]');
+      if (ambientBtn) {
+        setAmbientMode(ambientBtn.getAttribute('data-ambient-mode'));
       }
     });
 
@@ -314,6 +376,10 @@
     theme: function (mode) {
       if (mode) setThemeMode(mode);
       return themeMode;
+    },
+    ambient: function (mode) {
+      if (mode) setAmbientMode(mode);
+      return ambientMode;
     }
   };
 })();

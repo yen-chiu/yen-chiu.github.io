@@ -15,9 +15,10 @@
     <title>与念真聊天中</title>
     <link href="css/main.min.css" rel="stylesheet" type="text/css">
     <link href="css/enhance.css" rel="stylesheet" type="text/css">
-    <link href="css/shell.css" rel="stylesheet" type="text/css">
+    <link href="css/shell.css?v=3beda793a5" rel="stylesheet" type="text/css">
+    <link href="css/ambient.css?v=3beda793a5" rel="stylesheet" type="text/css">
     <!-- 壳层尽早加载：主题要在首帧之前定好，否则深色模式会先白一下 -->
-    <script src="js/shell.js"></script>
+    <script src="js/shell.js?v=3beda793a5"></script>
 </head>
 
 <body>
@@ -74,26 +75,18 @@
         <div id="prompt-bg" v-on:click="togglePrompt(false)"></div>
     </div>
 
-    <div class="extra-link" id="meta-link">
-        <!--<a id="en-link" class="letters" href="https://yenchiu.com/archives/" target="_blank">
-                EN
-            </a>-->
+    <footer class="wd-signature" aria-label="站点信息">
+        <span class="wd-signature__name">Wendell</span>
+        <span class="wd-signature__rule" aria-hidden="true"></span>
+        <nav class="wd-signature__links" aria-label="站外链接">
+            <a href="https://yenchiu.com/" target="_blank" rel="noopener noreferrer">博客<em>↗</em></a>
+            <a href="https://github.com/yen-chiu/Chat" target="_blank" rel="noopener noreferrer">源码<em>↗</em></a>
+            <a href="credits.html">致谢</a>
+        </nav>
+    </footer>
 
-        <a class="letters" href="https://github.com/yen-chiu/Chat" target="_blank">
-            Source code
-        </a>
-
-        <a class="letters" href="https://yenchiu.com" target="_blank">
-            Blog
-        </a>
-
-        <a id="yuan-link" class="letters" href="https://github.com/Ovilia" target="_blank">
-            Original author: Ovilia
-        </a>
-    </div>
-
-    <div class="extra-link" id="social-link">
-        <a href="mailto:yenchiu.he@gmail.com" target="_blank">
+    <div class="extra-link wd-social" id="social-link">
+        <a href="mailto:yenchiu.he@gmail.com" aria-label="邮件">
             <svg width="22px" height="20px" viewBox="0 0 20 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -113,7 +106,7 @@
             </svg>
         </a>
 
-        <a href="https://github.com/yen-chiu" target="_blank">
+        <a href="https://github.com/yen-chiu" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
             <svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -133,7 +126,7 @@
             </svg>
         </a>
 
-        <a href="https://weibo.com/u/5842115866" target="_blank">
+        <a href="https://weibo.com/u/5842115866" target="_blank" rel="noopener noreferrer" aria-label="微博">
             <svg width="22px" height="20px" viewBox="0 0 20 17" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -200,7 +193,8 @@
             </a>
 -->
 
-        <a href="https://www.zhihu.com/people/xiao-feng-75-38-5" target="_blank">
+        <a href="https://www.zhihu.com/people/xiao-feng-75-38-5" target="_blank" rel="noopener noreferrer"
+            aria-label="知乎">
             <svg width="19px" height="20px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -224,6 +218,7 @@
 
     <script src="js/index-min.js"></script>
     <script src="js/enhance.js"></script>
+    <script src="js/ambient.js?v=3beda793a5" defer></script>
 
     <!-- 原站点带的是设计师的 UA-38205696-1，早已失效；为隐私与性能一并移除 -->
     <script src="js/sw-update.js"></script>
