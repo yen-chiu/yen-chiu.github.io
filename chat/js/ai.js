@@ -118,7 +118,7 @@
   var MEMORY_LIMIT = 120;
   var SITE_INDEX_URL = '/assets/js/data/search.json';
   var PAGE_TEXT_LIMIT = 2400;
-  var WEB_TEXT_LIMIT = 3200;
+  var WEB_TEXT_LIMIT = 8000;
 
   var personaPack = null;
   var personaLoading = null;
