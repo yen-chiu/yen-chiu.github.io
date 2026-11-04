@@ -1158,9 +1158,10 @@
       });
     }
 
-    // 16 型人格（MBTI）与女主类型都只作参考，不写死
-    if (personaPack.mbti || personaPack.archetype) {
+    // 16 型人格（MBTI）、女主类型、星座都只作参考，不写死
+    if (personaPack.mbti || personaPack.archetype || personaPack.zodiac) {
       var archetype = personaPack.archetype;
+      var zodiac = personaPack.zodiac;
       lines.push('', '【性格参考（不是规矩）】');
       if (personaPack.mbti) {
         lines.push(
@@ -1179,6 +1180,15 @@
             '——这只是参考特征，不是身份。'
         );
         if (archetype.note) lines.push('- ' + archetype.note);
+      }
+      if (zodiac) {
+        lines.push(
+          '- 星座上是' +
+            zodiac.sign +
+            '：' +
+            (zodiac.traits || []).join('、') +
+            (zodiac.note ? '。' + zodiac.note : '')
+        );
       }
       lines.push('- ' + ((archetype && archetype.disclaimer) || '以上都是参考，不用照着演，也别拿它限制自己。'));
     }
