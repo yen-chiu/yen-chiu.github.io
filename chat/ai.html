@@ -45,12 +45,17 @@
 
         <main class="wd-ai" id="ai-chat" aria-live="polite" aria-label="对话">
             <section class="wd-welcome" id="ai-welcome">
-                <p class="wd-welcome__eyebrow">Bring your own key</p>
-                <h1 class="wd-welcome__title">把她接上模型</h1>
-                <p class="wd-welcome__text">
-                    这个页面没有后端：你填的 API Key 只保存在这台设备的浏览器里，请求由浏览器直接发往你指定的接口。
-                    换一句话说，模型是谁的、账单算谁的，都由你决定。
-                </p>
+                <div class="wd-welcome__grid">
+                    <div class="wd-welcome__main">
+                        <p class="wd-welcome__eyebrow">Bring your own key</p>
+                        <h1 class="wd-welcome__title">把她接上模型</h1>
+                        <p class="wd-welcome__text">
+                            这个页面没有后端：你填的 API Key 只保存在这台设备的浏览器里，请求由浏览器直接发往你指定的接口。
+                            换一句话说，模型是谁的、账单算谁的，都由你决定。
+                        </p>
+                    </div>
+                    <figure class="wd-welcome__portrait" id="ai-portrait" hidden></figure>
+                </div>
 
                 <div class="wd-personas" id="ai-personas" role="group" aria-label="人格">
                     <button type="button" class="wd-persona" data-persona="nianzhen" aria-pressed="true">念真（站内人格）</button>

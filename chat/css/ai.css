@@ -577,6 +577,61 @@ html[data-theme="dark"] .wd-error {
   display: none;
 }
 
+/* 欢迎屏上的自画像 */
+.wd-welcome__grid {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.wd-welcome__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wd-welcome__portrait {
+  flex: 0 0 auto;
+  width: 176px;
+  margin: 0;
+}
+
+.wd-welcome__portrait[hidden] {
+  display: none;
+}
+
+.wd-welcome__portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: var(--wd-shadow-sm);
+}
+
+.wd-welcome__portrait figcaption {
+  margin-top: 6px;
+  color: var(--wd-muted);
+  font: 400 11px/1.5 var(--wd-font);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .wd-welcome__grid {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .wd-welcome__portrait {
+    width: 100%;
+  }
+
+  .wd-welcome__portrait img {
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+  }
+}
+
 .wd-welcome__eyebrow {
   margin: 0 0 6px;
   font: 500 11.5px/1.4 var(--wd-font);

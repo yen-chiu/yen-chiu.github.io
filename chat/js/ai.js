@@ -589,6 +589,31 @@
     el.title.textContent = label;
   }
 
+  /* 欢迎屏上的自画像：只有念真、且人格模块读到了 portrait 才显示 */
+  function updateWelcomePortrait() {
+    var fig = document.getElementById('ai-portrait');
+    if (!fig) return;
+    var src = config.persona === 'nianzhen' && personaPack ? personaPack.portrait : '';
+    if (!src) {
+      fig.hidden = true;
+      return;
+    }
+
+    // 图片由脚本创建：静态 HTML 里不放空 src 的 img（链接检查会报错）
+    var img = fig.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      img.loading = 'lazy';
+      img.alt = (personaPack.name || '念真') + ' 的自画像';
+      fig.appendChild(img);
+      var cap = document.createElement('figcaption');
+      cap.textContent = (personaPack.name || '念真') + ' · 夜里那张书桌';
+      fig.appendChild(cap);
+    }
+    if (img.getAttribute('src') !== src) img.src = src;
+    fig.hidden = false;
+  }
+
   /* ======================= 人格 ======================= */
 
   function loadPersona() {
@@ -1828,6 +1853,9 @@
     config = Object.assign({}, config, next);
     saveConfig();
     updateModelChip();
+    updateTitle();
+    updateWelcomePortrait();
+    loadSkills().then(updateSkillsList);
     setStatus('已保存。', 'ok');
     if (config.persona === 'nianzhen') {
       loadSamples();
@@ -1991,10 +2019,13 @@
       saveConfig();
       syncPersonaButtons();
       updateTitle();
+      updateWelcomePortrait();
       if (config.persona === 'nianzhen') {
         loadSamples();
         loadPersona();
         loadSiteIndex();
+        loadSkills();
+        loadPersona().then(updateWelcomePortrait);
       }
     });
 
@@ -2137,14 +2168,16 @@
     bindEvents();
     updateModelChip();
     syncPersonaButtons();
+    updateWelcomePortrait();
     renderChatList();
     renderChat();
     if (config.persona === 'nianzhen') {
       loadSamples();
       loadSiteIndex();
       loadSkills();
-      // 头像在人格模块里，到货后把历史消息重画一遍
+      // 头像与自画像在人格模块里，到货后重画一遍
       loadPersona().then(function () {
+        updateWelcomePortrait();
         if (sending) return;
         var chat = currentChat();
         if (chat && chat.messages.length) renderChat();

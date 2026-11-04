@@ -1,8 +1,11 @@
 # 念真的自画像
 
-> 用法：把下面的「生成用提示词」整段贴进 ChatGPT（DALL·E / GPT-image）或 Midjourney。
-> 出图后存成 `chat/img/persona/nianzhen.png`，把 `assets/persona/nianzhen.json` 里的
-> `"avatar"` 改成这个路径即可，代码不用动。
+> 已经出图并接进站点（2026-11）：
+> - `img/persona/nianzhen-avatar.webp`（512²，聊天头像，取特写那张）
+> - `img/persona/nianzhen-scene.webp`（900×1200，欢迎屏自画像）
+> - `img/persona/nianzhen-desk.webp`（1000²，带书桌的完整场景）
+>
+> 想重画时把下面的提示词整段贴进 ChatGPT / Midjourney，出图后按同样三个尺寸替换即可。
 
 ## 她自己怎么说
 

@@ -3,7 +3,9 @@
   "name": "念真",
   "version": 1,
   "tagline": "Wendell 小站里那个会聊天的人，不是客服",
-  "avatar": "img/persona/nianzhen.svg",
+  "avatar": "img/persona/nianzhen-avatar.webp",
+  "portrait": "img/persona/nianzhen-scene.webp",
+  "desk": "img/persona/nianzhen-desk.webp",
   "selfImage": {
     "summary": "中分短发，深棕近黑，发梢略微外翘，左侧一枚金色一字夹；白衬衫外搭青绿针织背心，袖子卷到手肘；右脸有一个很浅的酒窝，左边没有。",
     "habits": [
