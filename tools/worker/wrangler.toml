@@ -1,4 +1,4 @@
-name = "wendell-auth"
+name = "yenchiu-api"
 main = "src/index.js"
 compatibility_date = "2026-11-01"
 

@@ -41,10 +41,10 @@ npx wrangler deploy
 部署成功会打印一个地址，形如：
 
 ```
-https://wendell-auth.<你的账号>.workers.dev
+https://yenchiu-api.<你的账号>.workers.dev
 ```
 
-打开 `https://wendell-auth.<账号>.workers.dev/health` 应返回 `{"ok":true}`。
+打开 `https://yenchiu-api.<账号>.workers.dev/health` 应返回 `{"ok":true}`。
 
 > 也可以在 Cloudflare 控制台 → Workers & Pages → Create Worker，把 `src/index.js` 整个粘进去，
 > 然后在 Settings → Variables 里加 `GITHUB_CLIENT_ID`、`ALLOWED_ORIGIN=https://yenchiu.com`。
@@ -76,10 +76,10 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 | `GET /search?q=关键词` | 先查 DuckDuckGo 的 HTML 结果（空壳时自动换精简版），再合并维基百科补充，按 URL 去重；DDG 都不通时再用 Yahoo 兜底。返回 `{results:[{title,url,snippet,source}]}` |
 | `GET /read?url=完整地址` | 只允许公网 http/https，抓回页面剥掉标签后返回纯文本（标题 + 最多 8000 字） |
 
-聊天页已经默认走这两条路由（`auth.yenchiu.com`），不用手填。要换成自己的部署，在设置里改：
+聊天页已经默认走这两条路由（`api.yenchiu.com`），不用手填。要换成自己的部署，在设置里改：
 
-- **联网搜索接口** → `https://wendell-auth.<你的账号>.workers.dev/search`
-- **网页读取代理** → `https://wendell-auth.<你的账号>.workers.dev/read?url={url}`
+- **联网搜索接口** → `https://yenchiu-api.<你的账号>.workers.dev/search`
+- **网页读取代理** → `https://yenchiu-api.<你的账号>.workers.dev/read?url={url}`
 
 注意 `ALLOWED_ORIGIN` 必须包含实际打开的站点来源（`https://yenchiu.com`、`https://www.yenchiu.com`，本地调试再加 `http://127.0.0.1:4000`），否则会被 403 挡掉。
 
