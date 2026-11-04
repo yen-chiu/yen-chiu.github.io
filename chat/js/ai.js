@@ -1700,11 +1700,17 @@
       var title = document.createElement('strong');
       title.textContent = aborted ? '已停止' : '请求失败';
       var lines = document.createElement('span');
+      var authFailed =
+        !aborted &&
+        err &&
+        (err.status === 401 ||
+          err.status === 403 ||
+          /api key|authentication|invalid.*key|unauthorized|鉴权|无权/i.test(String(err.message || '')));
       lines.textContent = aborted
         ? shown
           ? '已经收到的部分留在上面。'
           : '这次没有拿到内容，可以重新问一次。'
-        : (err && err.message ? err.message : '未知错误') + (err && err.hint ? ' · ' + err.hint : '');
+        : (err && err.message ? err.message : '未知错误') + ' · ' + (authFailed ? authHint() : err && err.hint ? err.hint : '');
       box.appendChild(title);
       box.appendChild(lines);
 
@@ -1739,6 +1745,59 @@
 
   function stopGeneration() {
     if (controller) controller.abort();
+  }
+
+  /* ---------- 认证失败时，尽量说清「哪台服务器、哪把 key」 ---------- */
+
+  var PROVIDER_HINTS = [
+    [/deepseek\.com$/i, 'DeepSeek'],
+    [/moonshot\.cn$/i, 'Moonshot / Kimi'],
+    [/openai\.com$/i, 'OpenAI'],
+    [/siliconflow\.cn$/i, '硅基流动'],
+    [/openrouter\.ai$/i, 'OpenRouter'],
+    [/bigmodel\.cn$/i, '智谱'],
+    [/dashscope\.aliyuncs\.com$/i, '阿里云百炼 / 通义'],
+    [/volces\.com$/i, '火山方舟 / 豆包'],
+    [/baichuan|minimax|hunyuan|tencent/i, '国内模型服务'],
+    [/googleapis\.com$/i, 'Google Gemini'],
+    [/anthropic\.com$/i, 'Anthropic']
+  ];
+
+  function endpointHost() {
+    var base = String(config.baseUrl || '');
+    try {
+      return new URL(base).hostname || base;
+    } catch (e) {
+      return base || '（还没填接口地址）';
+    }
+  }
+
+  function providerName() {
+    var host = endpointHost();
+    for (var i = 0; i < PROVIDER_HINTS.length; i++) {
+      if (PROVIDER_HINTS[i][0].test(host)) return PROVIDER_HINTS[i][1];
+    }
+    return '';
+  }
+
+  function keyTail() {
+    var key = String(config.apiKey || '');
+    if (!key) return '空';
+    return key.length > 4 ? '…' + key.slice(-4) : '（太短）';
+  }
+
+  function authHint() {
+    var provider = providerName();
+    return (
+      '接口是 ' +
+      endpointHost() +
+      (provider ? '（' + provider + '）' : '') +
+      '，本地这把 Key 末尾是 ' +
+      keyTail() +
+      '。' +
+      '先看错误里提到的 Key 末尾是不是同一把：不是，说明粘贴的是另一家的 Key；是同一把，就重新复制一次（别带空格和换行），或者去服务商后台看它是否已被重置。' +
+      '改完点「测试连接」，它会顺带把可用模型读回来。'
+    );
   }
 
   /* ======================= 设置面板 ======================= */

@@ -17,7 +17,7 @@
       id: 'deepseek',
       name: 'DeepSeek',
       baseUrl: 'https://api.deepseek.com/v1',
-      models: ['deepseek-chat', 'deepseek-reasoner'],
+      models: ['deepseek-flash', 'deepseek-v4-pro'],
       note: '官方接口对浏览器直连的 CORS 支持不稳定，必要时把「代理地址」填成自己的 Worker。'
     },
     {
