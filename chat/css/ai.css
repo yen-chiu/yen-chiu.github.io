@@ -336,12 +336,12 @@ html[data-theme="dark"] .wd-inline-code {
 }
 
 /* 工具调用卡 */
+/* 工具卡：平时只留一行摘要，点开才看检索到的内容 */
 .wd-tool {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: block;
+  max-width: min(100%, 620px);
   margin: 6px 0 12px;
-  padding: 7px 12px;
+  overflow: hidden;
   border: 1px dashed rgba(240, 140, 46, 0.5);
   border-radius: 10px;
   background: rgba(240, 140, 46, 0.08);
@@ -353,10 +353,84 @@ html[data-theme="dark"] .wd-tool {
   color: #f0b263;
 }
 
-.wd-tool code {
-  font: 400 11.5px/1.5 var(--wd-mono);
+.wd-tool__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  background: transparent;
   color: inherit;
-  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.wd-tool__head:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.wd-tool__label {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.wd-tool__arg {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font: 400 11.5px/1.5 var(--wd-mono);
+  opacity: 0.85;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wd-tool__meta {
+  flex: 0 0 auto;
+  font: 500 11px/1.4 var(--wd-font);
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.wd-tool__chevron {
+  flex: 0 0 auto;
+  display: inline-flex;
+  width: 12px;
+  height: 12px;
+  opacity: 0.7;
+  transition: transform 0.18s ease;
+}
+
+.wd-tool__chevron svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wd-tool[data-open="true"] .wd-tool__chevron {
+  transform: rotate(90deg);
+}
+
+.wd-tool__body {
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0 12px 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(240, 140, 46, 0.32);
+  color: var(--wd-ink-2);
+  font: 400 12px/1.7 var(--wd-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.wd-tool__body[hidden] {
+  display: none;
 }
 
 /* 错误提示 */

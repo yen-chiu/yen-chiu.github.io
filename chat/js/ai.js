@@ -416,21 +416,64 @@
   function toolCard(tool) {
     var node = document.createElement('div');
     node.className = 'wd-tool';
-    var label = document.createElement('span');
+    node.setAttribute('data-open', 'false');
+
     var labels = {
       site_search: '站内检索',
       site_read: '读站内页',
       remember: '记住',
       web_search: '联网检索'
     };
+    var resultText = tool.result || '（没有返回内容）';
+
+    var head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'wd-tool__head';
+    head.setAttribute('aria-expanded', 'false');
+
+    var label = document.createElement('span');
+    label.className = 'wd-tool__label';
     label.textContent = '⚙ ' + (labels[tool.name] || '本地工具');
-    var name = document.createElement('code');
-    name.textContent = tool.name + '(' + (tool.args || '') + ')';
-    var result = document.createElement('code');
-    result.textContent = '→ ' + (tool.result || '');
-    node.appendChild(label);
-    node.appendChild(name);
-    node.appendChild(result);
+
+    var arg = document.createElement('span');
+    arg.className = 'wd-tool__arg';
+    arg.textContent = tool.name + '(' + (tool.args || '') + ')';
+
+    var meta = document.createElement('span');
+    meta.className = 'wd-tool__meta';
+    if (tool.name === 'site_search') {
+      var found = (resultText.match(/《/g) || []).length;
+      meta.textContent = found ? found + ' 条' : '没找到';
+    } else if (tool.name === 'site_read') {
+      meta.textContent = resultText.length + ' 字';
+    } else if (tool.name === 'remember') {
+      meta.textContent = /记下了/.test(resultText) ? '已记下' : '没记';
+    }
+
+    var chevron = document.createElement('span');
+    chevron.className = 'wd-tool__chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.innerHTML = '<svg viewBox="0 0 16 16"><path d="M6 3.5l4.5 4.5L6 12.5"/></svg>';
+
+    head.appendChild(label);
+    head.appendChild(arg);
+    if (meta.textContent) head.appendChild(meta);
+    head.appendChild(chevron);
+
+    var body = document.createElement('div');
+    body.className = 'wd-tool__body';
+    body.hidden = true;
+    body.textContent = resultText;
+
+    head.addEventListener('click', function () {
+      var open = node.getAttribute('data-open') === 'true';
+      node.setAttribute('data-open', String(!open));
+      head.setAttribute('aria-expanded', String(!open));
+      body.hidden = open;
+    });
+
+    node.appendChild(head);
+    node.appendChild(body);
     return node;
   }
 
