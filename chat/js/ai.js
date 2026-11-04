@@ -1700,12 +1700,16 @@
       var title = document.createElement('strong');
       title.textContent = aborted ? '已停止' : '请求失败';
       var lines = document.createElement('span');
+      var failMessage = String((err && err.message) || '');
+      // 本地就能判定的问题（比如 Key 里有中文标点）不走「认证失败」那套提示
+      var localHeaderIssue = /非 ASCII|ISO-8859-1/i.test(failMessage);
       var authFailed =
         !aborted &&
         err &&
+        !localHeaderIssue &&
         (err.status === 401 ||
           err.status === 403 ||
-          /api key|authentication|invalid.*key|unauthorized|鉴权|无权/i.test(String(err.message || '')));
+          /api key|authentication|invalid.*key|unauthorized|鉴权|无权/i.test(failMessage));
       lines.textContent = aborted
         ? shown
           ? '已经收到的部分留在上面。'
@@ -1845,7 +1849,7 @@
     return {
       preset: el.form.preset.value,
       baseUrl: window.WDai.normalizeBase(el.form.base.value),
-      apiKey: el.form.key.value.trim(),
+      apiKey: el.form.key.value.replace(/[^\x20-\x7E]/g, '').trim(),
       model: el.form.model.value.trim(),
       temperature: Number(el.form.temp.value),
       maxTokens: Number(el.form.max.value),
@@ -1900,6 +1904,8 @@
   }
 
   function applyForm() {
+    // 从手机复制粘贴时常混进中文标点/全角空格，这类字符进不了请求头
+    var strippedKeyChars = (el.form.key.value.match(/[^\x20-\x7E]/g) || []).length;
     var next = readForm();
     if (!next.baseUrl) {
       setStatus('接口地址不能为空。', 'bad');
@@ -1915,7 +1921,13 @@
     updateTitle();
     updateWelcomePortrait();
     loadSkills().then(updateSkillsList);
-    setStatus('已保存。', 'ok');
+    if (el.form.key.value !== next.apiKey) el.form.key.value = next.apiKey;
+    setStatus(
+      strippedKeyChars
+        ? '已去掉 Key 里的 ' + strippedKeyChars + ' 个非 ASCII 字符（多半是中文标点或全角空格），请确认 Key 完整。'
+        : '已保存。',
+      strippedKeyChars ? 'bad' : 'ok'
+    );
     if (config.persona === 'nianzhen') {
       loadSamples();
       loadPersona();

@@ -75,6 +75,8 @@
       hint =
         '请求没有到达服务器，最常见的原因是 CORS 或地址写错。' +
         '大多数厂商的官方接口不允许浏览器直连，可以填自己的代理地址再试。';
+    } else if (/ISO-8859-1|non ISO/i.test(message)) {
+      hint = '请求头里混进了非 ASCII 字符（中文标点、全角空格之类）。把 API Key 重新复制一次，首尾别带标点。';
     } else if (status === 401 || status === 403) {
       hint = 'Key 无效或没有权限。检查一下 Key、以及它属于哪个服务商。';
     } else if (status === 404) {
@@ -169,6 +171,22 @@
    * @param {(text:string)=>void} [options.onDelta]
    * @returns {Promise<{content:string, toolCalls:Array, usage:object, finishReason:string}>}
    */
+  /**
+   * 请求头只能放 ASCII：从手机复制粘贴时经常夹带中文标点、全角空格，
+   * 浏览器会直接抛 "String contains non ISO-8859-1 code point"。
+   * 这里提前挡住，并把原因说清楚。
+   */
+  function safeHeaderValue(value, label) {
+    var str = String(value == null ? '' : value);
+    if (/[^\x20-\x7E]/.test(str)) {
+      var error = new Error(label + ' 里有非 ASCII 字符（多半是中文标点或全角空格）');
+      error.hint = '浏览器没法把这类字符放进请求头。重新复制一次，注意首尾不要带标点。';
+      error.status = 0;
+      throw error;
+    }
+    return str;
+  }
+
   async function chat(options) {
     var base = normalizeBase(options.baseUrl);
     if (!base) throw friendlyError(new Error('还没有填接口地址'), options);
@@ -186,7 +204,7 @@
     }
 
     var headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
-    if (options.apiKey) headers.Authorization = 'Bearer ' + options.apiKey;
+    if (options.apiKey) headers.Authorization = 'Bearer ' + safeHeaderValue(options.apiKey, 'API Key');
 
     var response;
     try {
@@ -271,7 +289,7 @@
     var base = normalizeBase(options.baseUrl);
     if (!base) throw friendlyError(new Error('还没有填接口地址'), options);
     var headers = { Accept: 'application/json' };
-    if (options.apiKey) headers.Authorization = 'Bearer ' + options.apiKey;
+    if (options.apiKey) headers.Authorization = 'Bearer ' + safeHeaderValue(options.apiKey, 'API Key');
 
     var response;
     try {
