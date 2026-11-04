@@ -5,7 +5,7 @@ compatibility_date = "2026-11-01"
 # 允许调用这个代理的站点（逗号分隔可写多个；本地调试时可临时加 http://127.0.0.1:4010）
 [vars]
 GITHUB_CLIENT_ID = "Iv23linA8pcxyEOzQ39C"
-ALLOWED_ORIGIN = "https://yenchiu.com,https://www.yenchiu.com,https://chat.wendell.cloud"
+ALLOWED_ORIGIN = "https://yenchiu.com,https://www.yenchiu.com"
 
 # 不需要 Client Secret：/refresh 已下线，本 Worker 不存任何长期密钥
 

@@ -81,7 +81,7 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 - **联网搜索接口** → `https://wendell-auth.<你的账号>.workers.dev/search`
 - **网页读取代理** → `https://wendell-auth.<你的账号>.workers.dev/read?url={url}`
 
-注意 `ALLOWED_ORIGIN` 必须包含实际打开的站点来源（`https://yenchiu.com`、`https://chat.wendell.cloud`，本地调试再加 `http://127.0.0.1:4000`），否则会被 403 挡掉。
+注意 `ALLOWED_ORIGIN` 必须包含实际打开的站点来源（`https://yenchiu.com`、`https://www.yenchiu.com`，本地调试再加 `http://127.0.0.1:4000`），否则会被 403 挡掉。
 
 浏览器直连 DuckDuckGo 的接口拿不到 `Access-Control-Allow-Origin`，维基百科在部分网络环境又不可达，所以“搜索”和“读网页”都以 Worker 为主；两个接口都留空时只退回维基百科直连。
 

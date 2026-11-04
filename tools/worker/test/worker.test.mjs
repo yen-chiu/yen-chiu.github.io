@@ -173,15 +173,15 @@ test('/search 在 DuckDuckGo 不可用时仍返回维基结果', async (t) => {
   assert.equal(body.results[0].source, 'wikipedia');
 });
 
-test('/search 允许 chat.wendell.cloud 来源', async (t) => {
+test('/search 允许 www.yenchiu.com 来源', async (t) => {
   t.mock.method(globalThis, 'fetch', async () => new Response('', { status: 502 }));
-  const env = { ...ENV, ALLOWED_ORIGIN: 'https://yenchiu.com,https://chat.wendell.cloud' };
+  const env = { ...ENV, ALLOWED_ORIGIN: 'https://yenchiu.com,https://www.yenchiu.com' };
   const res = await worker.fetch(
-    makeRequest('/search?q=test', { method: 'GET', origin: 'https://chat.wendell.cloud', ip: '198.51.100.26' }),
+    makeRequest('/search?q=test', { method: 'GET', origin: 'https://www.yenchiu.com', ip: '198.51.100.26' }),
     env
   );
   assert.equal(res.status, 200);
-  assert.equal(res.headers.get('Access-Control-Allow-Origin'), 'https://chat.wendell.cloud');
+  assert.equal(res.headers.get('Access-Control-Allow-Origin'), 'https://www.yenchiu.com');
 });
 
 test('/read 拒绝内网地址', async () => {
