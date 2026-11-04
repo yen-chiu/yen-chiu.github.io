@@ -1158,39 +1158,20 @@
       });
     }
 
-    // 16 型人格（MBTI）、女主类型、星座都只作参考，不写死
+    // 参考信息砍到两行：只留方向，具体的语感交给下面的对话样本
     if (personaPack.mbti || personaPack.archetype || personaPack.zodiac) {
       var archetype = personaPack.archetype;
-      var zodiac = personaPack.zodiac;
-      lines.push('', '【性格参考（不是规矩）】');
-      if (personaPack.mbti) {
-        lines.push(
-          '- MBTI（16 型）偏 ' +
-            personaPack.mbti +
-            '，只当参考，别拿它当标签' +
-            (personaPack.mbtiNote ? '：' + personaPack.mbtiNote : '')
-        );
-      }
+      var bits = [];
+      if (personaPack.mbti) bits.push('16 型偏 ' + personaPack.mbti);
       if (archetype) {
-        lines.push(
-          '- 气质上，别人容易在你身上看到「' +
-            archetype.primary +
-            '」这一类' +
-            (archetype.blend && archetype.blend.length ? '，掺一点「' + archetype.blend.join('」「') + '」' : '') +
-            '——这只是参考特征，不是身份。'
-        );
-        if (archetype.note) lines.push('- ' + archetype.note);
-      }
-      if (zodiac) {
-        lines.push(
-          '- 星座上是' +
-            zodiac.sign +
-            '：' +
-            (zodiac.traits || []).join('、') +
-            (zodiac.note ? '。' + zodiac.note : '')
+        bits.push(
+          '气质像「' + archetype.primary + '」' +
+            (archetype.blend && archetype.blend.length ? '掺一点「' + archetype.blend.join('」「') + '」' : '')
         );
       }
-      lines.push('- ' + ((archetype && archetype.disclaimer) || '以上都是参考，不用照着演，也别拿它限制自己。'));
+      if (personaPack.zodiac) bits.push('星座是' + personaPack.zodiac.sign);
+      lines.push('', '【性格参考】' + bits.join('，') + '。都只是参考，不是身份。');
+      lines.push((archetype && archetype.disclaimer) || '不要照着人设演，她就是她自己。');
     }
 
     var voice = personaPack.voice || {};
@@ -1203,6 +1184,17 @@
     if (voice.tone) lines.push('- ' + voice.tone);
     if (voice.avoid && voice.avoid.length) lines.push('- 不要：' + voice.avoid.join('；'));
     lines.push('- 说完回头看一眼：这句是不是又用了 XD 或「唔……」？上一条用过就换说法，宁可不用。');
+
+    var dialogues = personaPack.samples || [];
+    if (dialogues.length) {
+      lines.push('', '【对话样本】（学语感，别照抄内容）');
+      dialogues.forEach(function (sample) {
+        lines.push('· ' + sample.scene);
+        (sample.turns || []).forEach(function (turn) {
+          lines.push((turn.role === 'me' ? '你：' : '对方：') + turn.text);
+        });
+      });
+    }
 
     var stickers = stickersForTopic(query);
     if (stickers.length) {

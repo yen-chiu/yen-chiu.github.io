@@ -24,7 +24,10 @@
 | `selfImage` | 自画像：`summary`（长相与穿着的要点）、`habits`（身上/生活里的小痕迹）、`scene`（最常待的地方）。会被写进提示词，别人问「你长什么样」时她照这个说 |
 | `origins` | 经历。花名来历、爱好、手艺，写成事实，别写成形容词 |
 | `traits` | 性子。写成会表现在对话里的倾向，不要"善良可爱"这种空话 |
-| `mbti` / `mbtiNote` | 16 型人格与一句补充（现在是 INTP）；会写进提示词的「你的性子」末尾 |
+| `mbti` / `mbtiNote` | 16 型人格与一句补充（INTP）。提示词里只留「16 型偏 INTP」半句，细节不再铺开 |
+| `archetype` | 女主类型参考：`primary` / `blend` / `note` / `disclaimer`。提示词只合成一行 |
+| `zodiac` | 星座参考：`sign` / `traits` / `note`。提示词只留星座名 |
+| `samples` | 对话样本：`[{ scene, turns: [{ role: "me"｜"them", text }] }]`。**语感主要靠它，参考信息只是方向** |
 | `voice.rhythm` | 句子长短和节奏 |
 | `voice.signature` | 口头禅（只列两三个，提示词会注明"偶尔冒一句"） |
 | `voice.emoticons` | 古早网络符号表情的存货（XD、= =、T_T、orz、囧、233……），提示词会注明"挑一个，别串成一串" |
