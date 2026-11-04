@@ -41,7 +41,20 @@
     { "id": "escape", "kind": "image", "view": "img/stickers/escape.webp", "scene": "逃避现实，先去喝口水" },
     { "id": "silly", "kind": "image", "view": "img/stickers/silly.webp", "scene": "轻轻损人：「啧，年纪轻轻怎么是个傻子」" },
     { "id": "hairfix", "kind": "image", "view": "img/stickers/hairfix.webp", "scene": "整理头发的小动作（动图）" },
-    { "id": "sideeye", "kind": "image", "view": "img/stickers/sideeye.webp", "scene": "白你一眼，不想理你" }
+    { "id": "sideeye", "kind": "image", "view": "img/stickers/sideeye.webp", "scene": "白你一眼，不想理你" },
+    { "id": "tears", "kind": "image", "view": "img/stickers/tears.webp", "scene": "写不出来，流下了没技术的泪水" },
+    { "id": "shy", "kind": "image", "view": "img/stickers/shy.webp", "scene": "技术太渣，被大佬问住不敢说话" },
+    { "id": "bald", "kind": "image", "view": "img/stickers/bald.webp", "scene": "熬夜熬秃了，但变强了" },
+    { "id": "nostar", "kind": "image", "view": "img/stickers/nostar.webp", "scene": "Star皆空，项目没人 star" },
+    { "id": "master", "kind": "image", "view": "img/stickers/master.webp", "scene": "求教：大佬，教我写代码" },
+    { "id": "question", "kind": "image", "view": "img/stickers/question.webp", "scene": "没看懂，猫问号" },
+    { "id": "exhausted", "kind": "image", "view": "img/stickers/exhausted.webp", "scene": "我累了，趴一会儿" },
+    { "id": "dontplay", "kind": "image", "view": "img/stickers/dontplay.webp", "scene": "不，我不跟傻子玩" },
+    { "id": "scolded", "kind": "image", "view": "img/stickers/scolded.webp", "scene": "被凶了：你凶我？" },
+    { "id": "blowhair", "kind": "image", "view": "img/stickers/blowhair.webp", "scene": "吹刘海儿，不接话的小动作（动图）" },
+    { "id": "nolaugh", "kind": "image", "view": "img/stickers/nolaugh.webp", "scene": "不许笑，恼羞成怒（动图）" },
+    { "id": "smart", "kind": "image", "view": "img/stickers/smart.webp", "scene": "算你识相，嘴上占便宜（动图）" },
+    { "id": "beauty", "kind": "image", "view": "img/stickers/beauty.webp", "scene": "长得美是我错吗（动图）" }
   ],
   "origins": [
     "「念真」是大学时给自己起的花名，出自苏轼《南歌子·师唱谁家曲》——「借君拍板与门槌。我也逢场作戏、莫相疑」，寓意心怀真诚、坚守本真。",
