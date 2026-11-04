@@ -92,6 +92,25 @@ article.px-1 {
     border-radius: var(--wx-radius-sm);
   }
 
+  /* 带图注的配图 */
+  figure.post-figure {
+    margin: 1.8rem 0 2rem;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    figcaption {
+      margin-top: 0.65rem;
+      color: var(--text-muted-color);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+  }
+
   hr {
     margin: 2.2rem 0;
     border: 0;
