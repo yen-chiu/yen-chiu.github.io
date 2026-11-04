@@ -374,6 +374,140 @@
     return row;
   }
 
+  /* ======================= 渲染：分条与表情 =======================
+     站内人格可以连发几条，用 [[分条]] 隔开；也可以单发一个表情，
+     写 [[表情:id]]。这里负责把这两种标记渲染成真正的气泡。 */
+
+  var SEGMENT_SPLIT = '[[分条]]';
+  var STICKER_RE = /^\[\[表情:([^\]\s]+)\]\]$/;
+
+  function stickerOf(id) {
+    var list = (personaPack && personaPack.emoticons) || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].id === id) return list[i];
+    }
+    return null;
+  }
+
+  function parseSticker(raw) {
+    var m = String(raw || '').trim().match(STICKER_RE);
+    return m ? stickerOf(m[1]) : null;
+  }
+
+  /** 流式还没收完时，把最后一个没闭合的 [[ 之后先藏起来，别露出半截标记 */
+  function maskPartialMarker(text) {
+    var str = String(text || '');
+    var open = str.lastIndexOf('[[');
+    if (open < 0) return str;
+    if (str.slice(open).indexOf(']]') >= 0) return str;
+    return str.slice(0, open);
+  }
+
+  function splitReply(text, streaming) {
+    var parts = String(text || '').split(SEGMENT_SPLIT);
+    if (streaming && parts.length) parts[parts.length - 1] = maskPartialMarker(parts[parts.length - 1]);
+    return parts;
+  }
+
+  function createBubble() {
+    var bubble = document.createElement('div');
+    bubble.className = 'wd-msg__bubble wd-msg__bubble--ai';
+    var content = document.createElement('div');
+    content.className = 'wd-msg__content';
+    bubble.appendChild(content);
+    return { bubble: bubble, content: content };
+  }
+
+  function ensureBubbles(node, count) {
+    var bubbles = Array.prototype.filter.call(node.stack.children, function (el) {
+      return el.classList.contains('wd-msg__bubble');
+    });
+    while (bubbles.length < count) {
+      var made = createBubble();
+      node.stack.appendChild(made.bubble);
+      bubbles.push(made.bubble);
+    }
+    while (bubbles.length > count) {
+      node.stack.removeChild(bubbles.pop());
+    }
+    return bubbles;
+  }
+
+  function paintPart(bubble, raw) {
+    var sticker = parseSticker(raw);
+    if (sticker) {
+      bubble.classList.add('wd-msg__bubble--sticker');
+      bubble.innerHTML = '';
+      if (sticker.kind === 'image') {
+        var img = document.createElement('img');
+        img.className = 'wd-sticker';
+        img.src = sticker.view;
+        img.alt = sticker.scene || '表情';
+        img.decoding = 'async';
+        bubble.appendChild(img);
+      } else {
+        var span = document.createElement('span');
+        span.className = 'wd-sticker wd-sticker--text';
+        span.textContent = sticker.view;
+        bubble.appendChild(span);
+      }
+      return null;
+    }
+
+    bubble.classList.remove('wd-msg__bubble--sticker');
+    var content = bubble.querySelector('.wd-msg__content');
+    if (!content) {
+      content = document.createElement('div');
+      content.className = 'wd-msg__content';
+      bubble.appendChild(content);
+    }
+    content.innerHTML = window.WDMarkdown.render(raw);
+    return content;
+  }
+
+  function caretAnchor(host) {
+    var last = host.lastElementChild;
+    if (!last) return host;
+    var tag = last.tagName;
+    if (tag === 'UL' || tag === 'OL') return last.lastElementChild || last;
+    if (tag === 'BLOCKQUOTE') {
+      var ps = last.querySelectorAll('p');
+      return ps.length ? ps[ps.length - 1] : last;
+    }
+    if (/^(P|H[1-6]|LI|TD|TH)$/.test(tag)) return last;
+    return host;
+  }
+
+  /**
+   * 把整段回复铺到气泡组里。
+   * options.streaming：未收完，隐藏半截标记
+   * options.caret：光标元素，放在最后一个文字气泡里
+   */
+  function paintReply(node, text, options) {
+    options = options || {};
+    var parts = splitReply(text, options.streaming);
+    while (parts.length > 1 && !parts[parts.length - 1].trim()) parts.pop();
+
+    var bubbles = ensureBubbles(node, parts.length);
+    var lastContent = null;
+    parts.forEach(function (raw, i) {
+      var content = paintPart(bubbles[i], raw);
+      if (content) {
+        content.classList.toggle('is-streaming', !!options.streaming);
+        if (options.streaming) content.setAttribute('aria-busy', 'true');
+        else content.removeAttribute('aria-busy');
+        lastContent = content;
+      }
+    });
+
+    node.stack.hidden = !parts.join('').trim();
+    if (options.caret) {
+      if (lastContent) caretAnchor(lastContent).appendChild(options.caret);
+      else if (bubbles.length) bubbles[bubbles.length - 1].appendChild(options.caret);
+    }
+    return lastContent;
+  }
+
   function appendAssistantNode(msg) {
     var row = document.createElement('div');
     row.className = 'wd-msg';
@@ -406,21 +540,21 @@
       body.appendChild(toolCard(tool));
     });
 
-    // 助手回复统一装进气泡，形状照「念真」的来客气泡
-    var bubble = document.createElement('div');
-    bubble.className = 'wd-msg__bubble wd-msg__bubble--ai';
-
-    var content = document.createElement('div');
-    content.className = 'wd-msg__content';
-    content.innerHTML = window.WDMarkdown.render(msg.content || '');
-    bubble.appendChild(content);
-    body.appendChild(bubble);
+    // 一次回复可以由多个气泡组成（她连发几条），所以外面套一层 stack
+    var stack = document.createElement('div');
+    stack.className = 'wd-msg__stack';
+    body.appendChild(stack);
 
     row.appendChild(avatar);
     row.appendChild(body);
     el.chat.appendChild(row);
 
-    return { row: row, content: content, body: body, bubble: bubble };
+    var node = { row: row, body: body, stack: stack, bubble: null, content: null };
+    ensureBubbles(node, 1);
+    node.bubble = stack.firstElementChild;
+    node.content = node.bubble.querySelector('.wd-msg__content');
+    if (msg.content) paintReply(node, msg.content, {});
+    return node;
   }
 
   /* 等待回复时的三个点，节奏来自「念真」的 dotZoomIn */
@@ -986,14 +1120,23 @@
     lines.push('', '【怎么说话】');
     if (voice.rhythm) lines.push('- ' + voice.rhythm);
     if (voice.signature && voice.signature.length) lines.push('- 口头禅（偶尔冒一句，不是每句）：' + voice.signature.join('、'));
-    if (voice.emoticons && voice.emoticons.length) {
-      lines.push('- 你是从 2000 年代论坛、QQ 那一代泡过来的业余程序猿，古早符号表情是存货：' + voice.emoticons.join('  '));
-      lines.push('- 这些符号用来调味，挑一个就好，别串成一串。');
-    }
+    if (voice.emoticonNote) lines.push('- ' + voice.emoticonNote);
     if (voice.frequency) lines.push('- 用多少：' + voice.frequency);
     if (voice.pacing) lines.push('- ' + voice.pacing);
     if (voice.avoid && voice.avoid.length) lines.push('- 不要：' + voice.avoid.join('；'));
     lines.push('- 说完回头看一眼：这句是不是又用了 XD 或「唔……」？上一条用过就换说法，宁可不用。');
+
+    var stickers = personaPack.emoticons || [];
+    if (stickers.length) {
+      lines.push('', '【表情】想单发一个表情，就单独占一行写 [[表情:id]]，不要和文字混在同一句里。可用的是：');
+      stickers.forEach(function (sticker) {
+        var label = sticker.kind === 'image' ? '［图片］' : sticker.view;
+        lines.push('- ' + sticker.id + ' ' + label + (sticker.scene ? '：' + sticker.scene : ''));
+      });
+      lines.push('一次只发一个，别连着发；同一轮里不重复用同一个；不为了用表情而用。');
+    }
+
+    lines.push('', '【怎么发】想连发几条，就用 [[分条]] 隔开，每条一到两句，像真人连着敲出来的；一两句能说完就别拆。');
 
     lines.push('', '【你脚下的这个站】站主写读书、数据分析和生活。');
     var recent = recentTitles(6);
@@ -1508,28 +1651,13 @@
     var tailTimer = null;
     var caretEl = null;
 
-    function caretHost() {
-      var last = node.content.lastElementChild;
-      if (!last) return node.content;
-      var tag = last.tagName;
-      if (tag === 'UL' || tag === 'OL') return last.lastElementChild || last;
-      if (tag === 'BLOCKQUOTE') {
-        var ps = last.querySelectorAll('p');
-        return ps.length ? ps[ps.length - 1] : last;
-      }
-      // 段落、标题、列表项这类能放行内元素的，光标就贴在里面
-      if (/^(P|H[1-6]|LI|TD|TH)$/.test(tag)) return last;
-      // 代码块、表格、分割线之后没有"行内位置"了，就放到块后面
-      return node.content;
-    }
-
-    function placeCaret() {
+    function ensureCaret() {
       if (!caretEl) {
         caretEl = document.createElement('span');
         caretEl.className = 'wd-caret';
         caretEl.setAttribute('aria-hidden', 'true');
       }
-      caretHost().appendChild(caretEl);
+      return caretEl;
     }
 
     function renderShown() {
@@ -1540,10 +1668,7 @@
       }
       // 每一拍都重新看一眼：用户往上翻了就别再把人拽回底部
       var stick = nearBottom();
-      node.content.innerHTML = window.WDMarkdown.render(shown);
-      node.content.classList.add('is-streaming');
-      node.content.setAttribute('aria-busy', 'true');
-      placeCaret();
+      paintReply(node, shown, { streaming: true, caret: ensureCaret() });
       if (stick) scrollToBottom();
     }
 
@@ -1600,8 +1725,10 @@
         tailTimer = null;
         if (caretEl && caretEl.parentNode) caretEl.parentNode.removeChild(caretEl);
         caretEl = null;
-        node.content.classList.remove('is-streaming');
-        node.content.removeAttribute('aria-busy');
+        Array.prototype.forEach.call(node.stack.querySelectorAll('.wd-msg__content'), function (content) {
+          content.classList.remove('is-streaming');
+          content.removeAttribute('aria-busy');
+        });
       }, 900);
     }
 
@@ -1642,7 +1769,7 @@
           result.toolCalls.forEach(function (call, index) {
             var applied = calls[index];
             reply.tools.push({ name: applied.name, args: applied.args, result: applied.result });
-            node.body.insertBefore(toolCard(applied), node.bubble);
+            node.body.insertBefore(toolCard(applied), node.stack);
             apiMessages.push({
               role: 'tool',
               tool_call_id: call.id || 'call_' + index,
@@ -1693,11 +1820,9 @@
       caretEl = null;
       pending = '';
       shown = reply.content || '';
-      node.content.innerHTML = window.WDMarkdown.render(shown);
-      node.content.classList.remove('is-streaming');
-      node.content.removeAttribute('aria-busy');
+      paintReply(node, shown, { streaming: false });
       // 一个字都没拿到时，别留一个空气泡，错误卡自己会说明
-      if (!shown) node.bubble.hidden = true;
+      if (!shown.trim()) node.stack.hidden = true;
 
       var box = document.createElement('div');
       box.className = 'wd-error';

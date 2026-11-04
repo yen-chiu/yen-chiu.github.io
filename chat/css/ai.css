@@ -133,6 +133,39 @@
   object-fit: cover;
 }
 
+/* 一条回复可以是多个气泡（她连发几条） */
+.wd-msg__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* 单发的表情：不套气泡底 */
+.wd-msg__bubble.wd-msg__bubble--sticker {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.wd-sticker {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 112px;
+  max-height: 112px;
+}
+
+.wd-sticker--text {
+  width: auto;
+  height: auto;
+  color: var(--wd-ink-2);
+  font: 400 24px/1.3 var(--wd-mono);
+  white-space: pre;
+}
+
 .wd-msg__body {
   min-width: 0;
   max-width: calc(100% - 44px);
