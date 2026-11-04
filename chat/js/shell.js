@@ -113,7 +113,7 @@
   var LINKS = [
     { label: '博客', href: 'https://yenchiu.com/' },
     { label: '源码', href: 'https://github.com/yen-chiu/Chat' },
-    { label: '联系', href: 'mailto:wendell.wenwu.he@gmail.com' }
+    { label: '联系', href: 'mailto:yenchiu.he@gmail.com' }
   ];
 
   function currentAppId() {
