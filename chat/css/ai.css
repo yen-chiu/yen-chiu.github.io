@@ -591,7 +591,7 @@ html[data-theme="dark"] .wd-error {
 
 .wd-welcome__portrait {
   flex: 0 0 auto;
-  width: 176px;
+  width: 152px;
   margin: 0;
 }
 
@@ -619,16 +619,22 @@ html[data-theme="dark"] .wd-error {
   .wd-welcome__grid {
     flex-direction: column-reverse;
     align-items: stretch;
-    gap: 14px;
+    gap: 12px;
   }
 
+  /* 手机上不放整宽横幅：会按 16:9 裁掉脸。改成小图，保持 3:4 原比例 */
   .wd-welcome__portrait {
-    width: 100%;
+    width: 112px;
+    margin: 0 auto;
   }
 
   .wd-welcome__portrait img {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 3 / 4;
     border-radius: 14px;
+  }
+
+  .wd-welcome__portrait figcaption {
+    font-size: 10.5px;
   }
 }
 
