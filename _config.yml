@@ -214,6 +214,8 @@ pwa:
     deny_paths:
       - "/admin" # 写作台（含令牌）不参与离线缓存
       - "/refresh" # 刷新缓存页本身也要实时获取
+      # 聊天子站是独立应用，改动频繁；缓存优先会让人一直看到旧版 JS，所以不进离线缓存
+      - "/chat"
       # - "/example"  # 符合 `<SITE_URL>/example/*` 的 URL 不会被 PWA 缓存
 
 # 大文件（视频等）走 Cloudflare R2，不要放回仓库
