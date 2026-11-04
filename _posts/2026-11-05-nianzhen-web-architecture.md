@@ -184,27 +184,65 @@ if (!saved.endpointVersion || saved.endpointVersion < ENDPOINT_VERSION) {
 
 Worker 的部署没有走 `wrangler login`，而是直接把 `index.js` 通过 Cloudflare API `PUT` 到脚本上，变量（`GITHUB_CLIENT_ID`、`ALLOWED_ORIGIN`）一起带上。自定义域 `api.yenchiu.com` 绑定后，证书自动签发。
 
-验证分三层：
+下面是一轮完整的线上验证记录（2026-11-05 凌晨，真实网络，不是 mock 的 Web 请求）。
+
+### 单测
+
+Worker 单测覆盖 16 个用例：CORS 预检、来源拒绝、设备码透传、限流、搜索合并去重、DDG 失败降级、`/read` 的 SSRF 拒绝和正文提取。`node --test` 全过（16/16）。
+
+### 搜索
+
+| 查询 | HTTP | 结果数 | 实际用到的来源 |
+| --- | --- | --- | --- |
+| 苏轼 | 200 | 6 | DuckDuckGo + 维基百科 |
+| 量子纠缠是什么 | 200 | 6 | DuckDuckGo + 维基百科 |
+| Cloudflare Workers | 200 | 6 | 维基百科 + Yahoo（DDG 返回空壳，自动降级） |
+| 鲁迅 | 200 | 6 | 维基百科 + Yahoo |
+| 今天北京天气 | 200 | 6 | 维基百科 + Yahoo |
+
+这组结果说明降级链路真的在工作：DDG 被反爬时没有整体失败，而是切到了 lite / Yahoo；维基百科则一直作为补充源合并进来。
+
+### 读页
+
+| 目标 | HTTP | 正文长度 | 说明 |
+| --- | --- | --- | --- |
+| 维基「苏轼」 | 200 | 8019 字（含标题） | 开头是词条正文，不是语言列表 |
+| example.com | 200 | 187 字 | 短页面，正文完整 |
+
+### 边界与防护
+
+| 用例 | 结果 |
+| --- | --- |
+| `http://127.0.0.1/x` | 502 `private_host` |
+| `ftp://example.com/x` | 502 `bad_protocol` |
+| `Origin: https://evil.example` | 403 `origin_not_allowed` |
+| OPTIONS 预检 | 204，`Access-Control-Allow-Origin: https://yenchiu.com` |
+
+### 浏览器全链路
+
+用无头 Chrome 打开线上 `ai.html`，在页面上下文里发一句「帮我查一下苏轼，再读一下维基百科的页面」，由本地假模型依次发起两个工具调用：
+
+- 工具卡片 1：`web_search(苏轼)`
+- 工具卡片 2：`web_read(维基「苏轼」)` → 工具结果 8053 字（Worker 正文 8019 字 + 来源前缀）
+- 模型收到两条 `role: tool` 结果后给出最终回答
+- 控制台 0 报错
+
+> 这一轮用假模型是为了稳定触发工具调用，验证的是「页面 → Worker → 上游 → 工具结果 → 第二轮回答」这条链路；搜索、读页的网络请求都是真的。真实模型能否发起工具调用，取决于它是否支持 function calling 以及你填的 Key。
+
+三条基础命令仍然可以直接复现：
 
 ```bash
-# 1. 探活
 curl -s https://api.yenchiu.com/health
 # {"ok":true}
 
-# 2. 搜索
 curl -s 'https://api.yenchiu.com/search?q=苏轼' \
   -H 'Origin: https://yenchiu.com'
 # {"results":[{"title":"苏轼…","source":"duckduckgo"}, …]}
 
-# 3. 读页
 curl -s 'https://api.yenchiu.com/read?url=https%3A%2F%2Fexample.com' \
   -H 'Origin: https://yenchiu.com'
 # Example Domain …
 ```
-
-再往上是一层真实浏览器验证：用无头 Chrome 打开线上页面，从页面上下文 `fetch` Worker，确认 CORS 头、结果条数和正文都正常；最后用一个会返回 `web_search` 工具调用的假模型跑完整条链路，确认工具卡片、`role: tool` 消息和第二轮回答都能出来。
-
-Worker 单测覆盖了 16 个用例：CORS 预检、来源拒绝、设备码透传、限流、搜索合并去重、DDG 失败降级、`/read` 的 SSRF 拒绝和正文提取。CI 里 `node --test` 全过。
 
 ## 九、已知限制
 
