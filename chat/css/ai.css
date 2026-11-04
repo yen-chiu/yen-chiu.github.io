@@ -1,8 +1,10 @@
 /* ==========================================================================
    AI 模块：自带模型的对话页
    --------------------------------------------------------------------------
-   版式沿用「手机卡片」，但对话区用文档排版（Markdown），所以助手回复不再套
-   气泡，而是留出更宽的阅读宽度。变量全部来自 shell.css。
+   版式沿用「手机卡片」。双方都用气泡，形状照搬「与念真聊天中」：
+   来客是白底、左上角一个方形小尖角；我说的那句是青色渐变、右下角收尖。
+   气泡里仍是 Markdown 排版，所以阅读宽度用 max-width 收住。
+   变量全部来自 shell.css。
    ========================================================================== */
 
 .wd-app {
@@ -127,13 +129,38 @@
 .wd-msg__bubble {
   display: inline-block;
   padding: 10px 15px;
-  border-radius: 16px 4px 16px 16px;
+  border-radius: 20px 20px 4px 20px;
   background: linear-gradient(20deg, #2fb9c6 0%, #22c3aa 100%);
   color: #fff;
   font: 400 14px/1.7 var(--wd-font);
   white-space: pre-wrap;
   word-break: break-word;
   box-shadow: 0 6px 18px rgba(34, 195, 170, 0.22);
+}
+
+/* 助手气泡：白底 + 左上角小尖角 + 很轻的投影，和「念真」那边一致 */
+.wd-msg__bubble--ai {
+  display: block;
+  max-width: min(100%, 620px);
+  padding: 11px 15px;
+  border: 1px solid var(--wd-line);
+  border-radius: 4px 20px 20px 20px;
+  background: #fff;
+  color: var(--wd-ink-2);
+  font: 400 14.5px/1.85 var(--wd-font);
+  word-break: break-word;
+  box-shadow: 5px 5px 15px rgba(102, 102, 102, 0.1);
+}
+
+html[data-theme="dark"] .wd-msg__bubble--ai {
+  background: var(--wd-panel-2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+/* 气泡内部的排版沿用正文那套，颜色交给气泡决定 */
+.wd-msg__bubble--ai .wd-msg__content {
+  font: inherit;
+  color: inherit;
 }
 
 .wd-msg__content {
@@ -266,6 +293,35 @@ html[data-theme="dark"] .wd-inline-code {
   color: #d7ecE7;
   font: 400 12.5px/1.7 var(--wd-mono);
   white-space: pre;
+}
+
+/* ---------- 等待回复：三个点 ----------
+   节奏沿用「念真」那边的错峰思路（每颗错开 0.15 秒、一个周期 1.2 秒），
+   但不再缩到 0——那样某一帧会三颗全隐，看上去像卡住了。现在改成
+   上下轻跳 + 透明度呼吸，任何时刻至少有一颗亮着。 */
+.wd-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 1.15em;
+  padding: 2px;
+}
+
+.wd-typing i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--wd-teal-deep);
+  opacity: 0.35;
+  animation: wdTypingPulse 1.2s infinite ease-in-out both;
+}
+
+.wd-typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.wd-typing i:nth-child(3) {
+  animation-delay: 0.3s;
 }
 
 /* 流式输出时的光标 */
@@ -844,6 +900,20 @@ html[data-theme="dark"] .wd-error {
   }
 }
 
+@keyframes wdTypingPulse {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
 @keyframes wdSlideIn {
   from {
     opacity: 0;
@@ -890,5 +960,11 @@ html[data-theme="dark"] .wd-error {
 
   .wd-msg__content.is-streaming::after {
     animation: none;
+  }
+
+  .wd-typing i {
+    animation: none;
+    transform: none;
+    opacity: 0.7;
   }
 }

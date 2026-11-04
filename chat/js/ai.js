@@ -307,8 +307,11 @@
     el.chat.appendChild(day);
 
     chat.messages.forEach(function (msg) {
-      if (msg.role === 'user') appendUserNode(msg);
-      else appendAssistantNode(msg);
+      if (msg.role === 'user') {
+        appendUserNode(msg);
+      } else if (msg.content || (msg.tools || []).length) {
+        appendAssistantNode(msg);
+      }
     });
 
     scrollToBottom();
@@ -359,16 +362,30 @@
       body.appendChild(toolCard(tool));
     });
 
+    // 助手回复统一装进气泡，形状照「念真」的来客气泡
+    var bubble = document.createElement('div');
+    bubble.className = 'wd-msg__bubble wd-msg__bubble--ai';
+
     var content = document.createElement('div');
     content.className = 'wd-msg__content';
     content.innerHTML = window.WDMarkdown.render(msg.content || '');
-    body.appendChild(content);
+    bubble.appendChild(content);
+    body.appendChild(bubble);
 
     row.appendChild(avatar);
     row.appendChild(body);
     el.chat.appendChild(row);
 
-    return { row: row, content: content, body: body };
+    return { row: row, content: content, body: body, bubble: bubble };
+  }
+
+  /* 等待回复时的三个点，节奏来自「念真」的 dotZoomIn */
+  function typingMarkup() {
+    return (
+      '<span class="wd-typing" role="status" aria-label="正在输入">' +
+      '<i></i><i></i><i></i>' +
+      '</span>'
+    );
   }
 
   function avatarText() {
@@ -655,8 +672,7 @@
 
     var reply = { role: 'assistant', content: '', tools: [], ts: Date.now() };
     var node = appendAssistantNode(reply);
-    node.content.classList.add('is-streaming');
-    node.content.innerHTML = '<p class="is-thinking">…</p>';
+    node.content.innerHTML = typingMarkup();
     chat.messages.push(reply);
     scrollToBottom();
 
@@ -665,7 +681,13 @@
 
     function paint() {
       renderQueued = false;
-      node.content.innerHTML = window.WDMarkdown.render(reply.content || '…');
+      if (reply.content) {
+        node.content.innerHTML = window.WDMarkdown.render(reply.content);
+        node.content.classList.add('is-streaming');
+      } else {
+        // 还没吐字，就继续亮着三个点
+        node.content.innerHTML = typingMarkup();
+      }
       if (stick) scrollToBottom();
     }
 
@@ -741,6 +763,8 @@
     } catch (err) {
       node.content.classList.remove('is-streaming');
       node.content.innerHTML = window.WDMarkdown.render(reply.content || '');
+      // 一个字都没拿到时，别留一个空气泡，错误卡自己会说明
+      if (!reply.content) node.bubble.hidden = true;
 
       var box = document.createElement('div');
       box.className = 'wd-error';
