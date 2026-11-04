@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#22c3aa">
+    <meta name="description" content="自带模型的 AI 对话页：Key 只存本机，直连任何 OpenAI 兼容接口。">
+    <title>自带模型的 AI · 念真</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link href="css/shell.css" rel="stylesheet">
+    <link href="css/ai.css" rel="stylesheet">
+    <script src="js/shell.js"></script>
+</head>
+
+<body class="wd-page">
+    <div class="wd-app">
+        <header class="wd-appbar">
+            <button type="button" class="wd-icon-btn" id="btn-chats" aria-label="会话列表" aria-haspopup="dialog">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16M4 12h16M4 17h10" />
+                </svg>
+            </button>
+
+            <div class="wd-appbar__title">
+                <strong id="ai-title">念真 · AI</strong>
+                <span class="wd-chip" id="ai-model-chip">未配置模型</span>
+            </div>
+
+            <span data-wd-apps-slot></span>
+
+            <button type="button" class="wd-icon-btn" id="btn-settings" aria-label="设置" aria-haspopup="dialog">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.5a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2l.4 2.7h4l.4-2.7a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z" />
+                </svg>
+            </button>
+
+            <button type="button" class="wd-icon-btn" id="btn-new" aria-label="新对话">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" />
+                </svg>
+            </button>
+        </header>
+
+        <main class="wd-ai" id="ai-chat" aria-live="polite" aria-label="对话">
+            <section class="wd-welcome" id="ai-welcome">
+                <p class="wd-welcome__eyebrow">Bring your own key</p>
+                <h1 class="wd-welcome__title">把她接上模型</h1>
+                <p class="wd-welcome__text">
+                    这个页面没有后端：你填的 API Key 只保存在这台设备的浏览器里，请求由浏览器直接发往你指定的接口。
+                    换一句话说，模型是谁的、账单算谁的，都由你决定。
+                </p>
+
+                <div class="wd-personas" id="ai-personas" role="group" aria-label="人格">
+                    <button type="button" class="wd-persona" data-persona="nianzhen" aria-pressed="true">念真（站内人格）</button>
+                    <button type="button" class="wd-persona" data-persona="assistant" aria-pressed="false">通用助手</button>
+                    <button type="button" class="wd-persona" data-persona="coder" aria-pressed="false">写代码的</button>
+                </div>
+
+                <div class="wd-suggestions" id="ai-suggestions">
+                    <button type="button" class="wd-suggestion" data-prompt="用三句话介绍这个站点，以及你为什么会在这里。">
+                        <span>01</span>用三句话介绍这里
+                    </button>
+                    <button type="button" class="wd-suggestion" data-prompt="我最近总是半夜醒，想读点不费脑子的书，推荐三本，并说明为什么适合深夜。">
+                        <span>02</span>推荐三本深夜读的书
+                    </button>
+                    <button type="button" class="wd-suggestion" data-prompt="帮我写一个 JavaScript 函数：把 Markdown 里的代码块提取出来，返回数组。">
+                        <span>03</span>写个小工具函数
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="wd-composer">
+            <div class="wd-composer__box">
+                <textarea id="ai-input" rows="1" placeholder="说点什么……（先点右上角齿轮配一下模型）"
+                    aria-label="消息输入框"></textarea>
+                <button type="button" class="wd-send" id="ai-send" aria-label="发送">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h13M12.5 5.5L19 12l-6.5 6.5" />
+                    </svg>
+                </button>
+                <button type="button" class="wd-stop" id="ai-stop" hidden>停止</button>
+            </div>
+            <div class="wd-composer__meta">
+                <span><kbd>Enter</kbd> 发送 · <kbd>Shift</kbd>+<kbd>Enter</kbd> 换行</span>
+                <span id="ai-count">0 字</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 设置 -->
+    <div class="wd-sheet" id="settings-sheet" hidden>
+        <div class="wd-sheet__backdrop" data-close-sheet></div>
+        <section class="wd-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+            <header class="wd-sheet__head">
+                <h2 id="settings-title">模型设置</h2>
+                <button type="button" class="wd-icon-btn" data-close-sheet aria-label="关闭">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                </button>
+            </header>
+
+            <div class="wd-sheet__body">
+                <p class="wd-note">
+                    Key 只写到本浏览器的 <code>localStorage</code>，不会上传到本站。公共电脑用完请点「清空 Key」。
+                </p>
+
+                <div class="wd-field">
+                    <label for="cfg-preset">服务商</label>
+                    <select id="cfg-preset"></select>
+                    <p class="wd-field__hint" id="cfg-preset-note"></p>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-base">接口地址</label>
+                    <input type="url" id="cfg-base" placeholder="https://api.deepseek.com/v1" spellcheck="false">
+                    <p class="wd-field__hint">
+                        以 <code>/v1</code> 结尾即可，会自动拼上 <code>/chat/completions</code>。
+                        如果厂商禁止浏览器直连，就填自己的代理地址。
+                    </p>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-key">API Key</label>
+                    <input type="password" id="cfg-key" placeholder="sk-…" autocomplete="off" spellcheck="false">
+                    <p class="wd-field__hint">Ollama 等本机模型可以留空。</p>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-model">模型</label>
+                    <input type="text" id="cfg-model" list="model-options" placeholder="deepseek-chat"
+                        autocomplete="off" spellcheck="false">
+                    <datalist id="model-options"></datalist>
+                    <p class="wd-field__hint">可以点下面的「读取可用模型」从接口拉一份列表。</p>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-temp">温度</label>
+                    <div class="wd-range">
+                        <input type="range" id="cfg-temp" min="0" max="2" step="0.1" value="0.7">
+                        <output id="cfg-temp-out" for="cfg-temp">0.7</output>
+                    </div>
+                    <p class="wd-field__hint">越低越稳，越高越发散。聊天一般 0.6–0.9。</p>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-max">单次回复上限（tokens）</label>
+                    <div class="wd-range">
+                        <input type="range" id="cfg-max" min="256" max="8192" step="256" value="2048">
+                        <output id="cfg-max-out" for="cfg-max">2048</output>
+                    </div>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-persona">人格</label>
+                    <select id="cfg-persona">
+                        <option value="nianzhen">念真（站内人格，会读对话样本）</option>
+                        <option value="assistant">通用助手</option>
+                        <option value="coder">写代码的</option>
+                        <option value="custom">自定义</option>
+                    </select>
+                </div>
+
+                <div class="wd-field">
+                    <label for="cfg-system">系统提示词</label>
+                    <textarea id="cfg-system" placeholder="留空则使用所选人格的默认提示词。"></textarea>
+                    <p class="wd-field__hint">写在框里的内容会覆盖人格默认提示词。</p>
+                </div>
+
+                <label class="wd-toggle" for="cfg-stream">
+                    <input type="checkbox" id="cfg-stream" checked>
+                    <span><strong>流式输出</strong>边生成边显示，体验更接近即时通讯。</span>
+                </label>
+
+                <label class="wd-toggle" for="cfg-tools">
+                    <input type="checkbox" id="cfg-tools">
+                    <span>
+                        <strong>本地工具（Agent 模式）</strong>
+                        允许模型调用 <code>now</code> / <code>calc</code> / <code>roll</code> 三个本地函数。
+                        部分服务不支持工具调用，会退化成普通对话。
+                    </span>
+                </label>
+
+                <div class="wd-actions">
+                    <button type="button" class="wd-mini-btn wd-mini-btn--primary" id="cfg-save">保存并使用</button>
+                    <button type="button" class="wd-mini-btn" id="cfg-test">测试连接</button>
+                    <button type="button" class="wd-mini-btn" id="cfg-models">读取可用模型</button>
+                </div>
+                <div class="wd-actions">
+                    <button type="button" class="wd-mini-btn wd-mini-btn--danger" id="cfg-clear">清空 Key</button>
+                    <a class="wd-mini-btn" href="credits.html">这些思路来自哪里</a>
+                </div>
+                <p class="wd-status" id="cfg-status" role="status"></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- 会话列表 -->
+    <div class="wd-sheet" id="chats-sheet" hidden>
+        <div class="wd-sheet__backdrop" data-close-sheet></div>
+        <section class="wd-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="chats-title">
+            <header class="wd-sheet__head">
+                <h2 id="chats-title">本机的对话</h2>
+                <button type="button" class="wd-icon-btn" data-close-sheet aria-label="关闭">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                </button>
+            </header>
+            <div class="wd-sheet__body">
+                <p class="wd-note">
+                    全部对话存在这台设备的浏览器里，最多保留 30 段、每段 200 条消息。清空浏览器数据就没了。
+                </p>
+                <ul class="wd-chatlist" id="chats-list"></ul>
+                <div class="wd-actions">
+                    <button type="button" class="wd-mini-btn wd-mini-btn--primary" id="chats-new">新对话</button>
+                    <button type="button" class="wd-mini-btn" id="chats-export">导出为 Markdown</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <noscript>
+        <p style="padding:24px;font-family:sans-serif;">这个页面需要 JavaScript 才能运行。</p>
+    </noscript>
+
+    <script src="js/core/markdown.js"></script>
+    <script src="js/core/ai-client.js"></script>
+    <script src="js/ai.js"></script>
+</body>
+
+</html>

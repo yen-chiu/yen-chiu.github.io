@@ -1,0 +1,177 @@
+/* ==========================================================================
+   致谢页
+   --------------------------------------------------------------------------
+   一页纸把「站在谁的肩膀上」说清楚：依赖、借鉴、同类项目，分开写。
+   ========================================================================== */
+
+.wd-doc {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 24px calc(40px + var(--wd-safe-bottom));
+  border-radius: 26px;
+  background: var(--wd-panel);
+  box-shadow: var(--wd-shadow);
+}
+
+@media (max-width: 640px) {
+  .wd-doc {
+    padding: 20px 18px calc(32px + var(--wd-safe-bottom));
+    border-radius: 0;
+    min-height: 100dvh;
+    box-shadow: none;
+  }
+}
+
+.wd-doc__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.wd-doc__top .wd-icon-btn {
+  color: var(--wd-muted);
+}
+
+.wd-doc__crumb {
+  flex: 1 1 auto;
+  font: 500 12px/1.4 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+.wd-doc__eyebrow {
+  margin: 0 0 8px;
+  font: 500 11.5px/1.4 var(--wd-font);
+  letter-spacing: 0.16em;
+  color: var(--wd-teal-deep);
+  text-transform: uppercase;
+}
+
+.wd-doc h1 {
+  margin: 0 0 12px;
+  font: 700 30px/1.35 var(--wd-font);
+  color: var(--wd-ink);
+  letter-spacing: 0.01em;
+}
+
+.wd-doc__lead {
+  margin: 0 0 30px;
+  max-width: 60ch;
+  font: 400 14px/1.95 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+.wd-doc section {
+  margin-bottom: 34px;
+}
+
+.wd-doc h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 4px;
+  font: 600 16px/1.5 var(--wd-font);
+  color: var(--wd-ink);
+}
+
+.wd-doc h2 small {
+  font: 400 11.5px/1.5 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+.wd-doc__section-note {
+  margin: 0 0 16px;
+  font: 400 12.5px/1.8 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+.wd-credit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  padding: 13px 0;
+  border-top: 1px solid var(--wd-line);
+}
+
+.wd-credit:last-child {
+  border-bottom: 1px solid var(--wd-line);
+}
+
+.wd-credit__name {
+  font: 600 13.5px/1.5 var(--wd-font);
+  color: var(--wd-ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.wd-credit__name:hover,
+.wd-credit__name:focus-visible {
+  color: var(--wd-teal-deep);
+  border-bottom-color: rgba(34, 195, 170, 0.4);
+  outline: none;
+}
+
+.wd-credit__tag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--wd-teal-soft);
+  color: var(--wd-teal-deep);
+  font: 500 10.5px/1.7 var(--wd-font);
+  letter-spacing: 0.03em;
+}
+
+.wd-credit__tag--plain {
+  background: var(--wd-panel-2);
+  color: var(--wd-muted);
+}
+
+.wd-credit__license {
+  font: 400 10.5px/1.7 var(--wd-mono);
+  color: var(--wd-muted);
+}
+
+.wd-credit__what {
+  flex: 1 1 100%;
+  margin: 2px 0 0;
+  font: 400 12.5px/1.8 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+.wd-doc__foot {
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid var(--wd-line);
+  font: 400 12.5px/1.9 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+.wd-doc__foot a {
+  color: var(--wd-teal-deep);
+  text-decoration: none;
+}
+
+.wd-doc__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.wd-doc__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--wd-line);
+  border-radius: 999px;
+  color: var(--wd-ink-2);
+  font: 500 12px/1.4 var(--wd-font);
+  text-decoration: none;
+}
+
+.wd-doc__pill:hover {
+  border-color: rgba(34, 195, 170, 0.5);
+  color: var(--wd-teal-deep);
+}

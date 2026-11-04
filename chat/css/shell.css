@@ -1,0 +1,575 @@
+/* ==========================================================================
+   与小站共用的一层「壳」：设计令牌、应用抽屉、通用按钮、深色主题
+   --------------------------------------------------------------------------
+   加载顺序：任何页面的样式之后加载（index.html 里放在 enhance.css 之后），
+   这样它可以覆盖旧页面的少量配色，而不必改动原来的 main.min.css。
+
+   命名约定：新增组件统一用 wd- 前缀，避免和旧页面里的 .msg / #mobile 冲突。
+   注意：抽屉里的应用图标叫 .wd-tile，页面级的卡片叫 .wd-app，两者别混。
+   ========================================================================== */
+
+:root {
+  /* 品牌色沿用聊天页的 #22c3aa，其余是围绕它调出来的中性色 */
+  --wd-teal: #22c3aa;
+  --wd-teal-deep: #12a58d;
+  --wd-teal-soft: #e8f9f6;
+
+  --wd-ink: #1d2a2e;
+  --wd-ink-2: #43555a;
+  --wd-muted: #7c8d92;
+  --wd-line: rgba(29, 42, 46, 0.1);
+  --wd-line-strong: rgba(29, 42, 46, 0.18);
+
+  --wd-bg: #eafaf7;
+  --wd-bg-2: #dff4f0;
+  --wd-panel: #ffffff;
+  --wd-panel-2: #f6fbfa;
+
+  --wd-radius-lg: 22px;
+  --wd-radius: 16px;
+  --wd-radius-sm: 10px;
+
+  --wd-shadow: 0 24px 70px rgba(15, 96, 85, 0.18);
+  --wd-shadow-sm: 0 6px 18px rgba(15, 96, 85, 0.1);
+
+  --wd-font: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --wd-mono: "SFMono-Regular", Consolas, "JetBrains Mono", Menlo, monospace;
+
+  --wd-safe-top: env(safe-area-inset-top, 0px);
+  --wd-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --wd-ink: #e7f0ee;
+  --wd-ink-2: #b9c8c6;
+  --wd-muted: #859790;
+  --wd-line: rgba(231, 240, 238, 0.1);
+  --wd-line-strong: rgba(231, 240, 238, 0.2);
+
+  --wd-bg: #0b1416;
+  --wd-bg-2: #101c1e;
+  --wd-panel: #131e21;
+  --wd-panel-2: #172427;
+
+  --wd-teal-soft: #12312d;
+  --wd-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  --wd-shadow-sm: 0 6px 20px rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
+}
+
+/* ---------- 通用 ---------- */
+
+.wd-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* hidden 属性必须赢过组件自己的 display（.wd-btn 之类会把它盖掉） */
+[hidden] {
+  display: none !important;
+}
+
+.wd-icon-btn {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--wd-muted);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.wd-icon-btn:hover,
+.wd-icon-btn:focus-visible {
+  background: var(--wd-teal-soft);
+  color: var(--wd-teal-deep);
+  outline: none;
+}
+
+.wd-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.wd-icon-btn svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--wd-line);
+  border-radius: 999px;
+  background: var(--wd-panel);
+  color: var(--wd-muted);
+  font: 500 12px/1.4 var(--wd-font);
+  white-space: nowrap;
+}
+
+.wd-chip.is-live {
+  color: var(--wd-teal-deep);
+  border-color: rgba(34, 195, 170, 0.35);
+  background: var(--wd-teal-soft);
+}
+
+.wd-dot-live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 3px rgba(34, 195, 170, 0.18);
+}
+
+.wd-tile:focus {
+  outline: none;
+}
+
+.wd-tile:focus-visible .wd-tile__icon,
+.wd-tile:focus .wd-tile__icon {
+  outline: 2px solid var(--wd-teal-deep);
+  outline-offset: 3px;
+}
+
+/* index.html 的标题栏是 width:100% + padding:0 8px，默认 content-box 会多出 16px */
+#mobile-head,
+#mobile-foot {
+  box-sizing: border-box;
+}
+
+/* ---------- 顶层入口按钮 ---------- */
+
+#wd-apps-trigger {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #8a9a9f;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+#wd-apps-trigger:hover,
+#wd-apps-trigger:focus-visible {
+  background: rgba(34, 195, 170, 0.12);
+  color: var(--wd-teal-deep);
+  outline: none;
+}
+
+#wd-apps-trigger svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+html[data-theme="dark"] #wd-apps-trigger {
+  color: #8fa4a8;
+}
+
+/* 没有现成标题栏的页面用悬浮按钮兜底 */
+#wd-apps-trigger.wd-floating {
+  position: fixed;
+  left: 18px;
+  bottom: calc(18px + var(--wd-safe-bottom));
+  z-index: 40;
+  width: 42px;
+  height: 42px;
+  background: var(--wd-panel);
+  border: 1px solid var(--wd-line);
+  box-shadow: var(--wd-shadow-sm);
+}
+
+#wd-apps-trigger.wd-floating svg {
+  width: 20px;
+  height: 20px;
+  color: var(--wd-teal-deep);
+}
+
+/* ---------- 独立模块页的公共底色 ---------- */
+
+.wd-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 24px 16px calc(24px + var(--wd-safe-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  font-family: var(--wd-font);
+  color: var(--wd-ink);
+  background-color: var(--wd-bg);
+  background-image: radial-gradient(ellipse farthest-corner at 50% 0, #d9f5ef 0%, #a9e7db 100%);
+  -webkit-font-smoothing: antialiased;
+}
+
+html[data-theme="dark"] .wd-page {
+  background-color: #07110f;
+  background-image: radial-gradient(ellipse farthest-corner at 50% 0, #13302c 0%, #07110f 100%);
+}
+
+@media (max-width: 520px) {
+  .wd-page {
+    padding: 0;
+    align-items: stretch;
+  }
+}
+
+/* ---------- 应用抽屉 ---------- */
+
+.wd-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  visibility: hidden;
+}
+
+.wd-drawer.is-open {
+  visibility: visible;
+}
+
+.wd-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 30, 27, 0.5);
+  opacity: 0;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.26s ease;
+}
+
+.wd-drawer.is-open .wd-drawer__backdrop {
+  opacity: 1;
+}
+
+.wd-drawer__sheet {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  max-height: min(88vh, 760px);
+  padding: 10px 22px calc(18px + var(--wd-safe-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 26px 26px 0 0;
+  background: var(--wd-panel);
+  box-shadow: var(--wd-shadow);
+  transform: translateY(24px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease;
+}
+
+.wd-drawer.is-open .wd-drawer__sheet {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.wd-drawer__grabber {
+  width: 38px;
+  height: 4px;
+  margin: 2px auto 16px;
+  border-radius: 999px;
+  background: var(--wd-line-strong);
+}
+
+.wd-drawer__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.wd-drawer__title {
+  margin: 0;
+  font: 700 19px/1.3 var(--wd-font);
+  letter-spacing: 0.01em;
+  color: var(--wd-ink);
+}
+
+.wd-drawer__sub {
+  margin: 5px 0 0;
+  font: 400 12.5px/1.5 var(--wd-font);
+  color: var(--wd-muted);
+}
+
+/* 手机桌面式的图标网格 */
+.wd-app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px 10px;
+  margin: 4px 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.wd-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wd-tile__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 17px;
+  color: #fff;
+  background: linear-gradient(160deg, #35d0b5 0%, #16a892 100%);
+  box-shadow: 0 10px 22px rgba(18, 165, 141, 0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.wd-tile__icon svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wd-tile:hover .wd-tile__icon,
+.wd-tile:focus-visible .wd-tile__icon {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(18, 165, 141, 0.34);
+}
+
+.wd-tile:active .wd-tile__icon {
+  transform: scale(0.95);
+}
+
+.wd-tile__name {
+  font: 500 12.5px/1.35 var(--wd-font);
+  color: var(--wd-ink-2);
+  text-align: center;
+  word-break: break-word;
+}
+
+.wd-tile__badge {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #ff7a59;
+  color: #fff;
+  font: 700 10px/1.6 var(--wd-font);
+  box-shadow: 0 2px 6px rgba(255, 122, 89, 0.4);
+}
+
+/* 不同模块的图标底色，照着「手机桌面」的节奏来 */
+.wd-tile[data-tone="indigo"] .wd-tile__icon {
+  background: linear-gradient(160deg, #7c8cf8 0%, #4c5bd4 100%);
+  box-shadow: 0 10px 22px rgba(76, 91, 212, 0.28);
+}
+
+.wd-tile[data-tone="amber"] .wd-tile__icon {
+  background: linear-gradient(160deg, #ffc25c 0%, #f08c2e 100%);
+  box-shadow: 0 10px 22px rgba(240, 140, 46, 0.3);
+}
+
+.wd-tile[data-tone="slate"] .wd-tile__icon {
+  background: linear-gradient(160deg, #8fa3ad 0%, #5f7480 100%);
+  box-shadow: 0 10px 22px rgba(95, 116, 128, 0.28);
+}
+
+.wd-tile[data-tone="rose"] .wd-tile__icon {
+  background: linear-gradient(160deg, #ff8fa6 0%, #e35d7c 100%);
+  box-shadow: 0 10px 22px rgba(227, 93, 124, 0.28);
+}
+
+/* 抽屉底部：主题切换 + 站外链接 */
+.wd-drawer__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--wd-line);
+}
+
+.wd-theme-switch {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--wd-panel-2);
+  border: 1px solid var(--wd-line);
+}
+
+.wd-theme-switch button {
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--wd-muted);
+  font: 500 12px/1.4 var(--wd-font);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.wd-theme-switch button[aria-pressed="true"] {
+  background: var(--wd-panel);
+  color: var(--wd-ink);
+  box-shadow: 0 1px 4px rgba(15, 96, 85, 0.16);
+}
+
+.wd-drawer__links {
+  display: inline-flex;
+  gap: 14px;
+  font: 500 12px/1.4 var(--wd-font);
+}
+
+.wd-drawer__links a {
+  color: var(--wd-muted);
+  text-decoration: none;
+}
+
+.wd-drawer__links a:hover,
+.wd-drawer__links a:focus-visible {
+  color: var(--wd-teal-deep);
+  outline: none;
+}
+
+/* 桌面端把抽屉做成居中面板，别贴着屏幕底边 */
+@media (min-width: 720px) {
+  .wd-drawer {
+    align-items: center;
+  }
+
+  .wd-drawer__sheet {
+    border-radius: 26px;
+    padding-bottom: 20px;
+  }
+
+  .wd-drawer__grabber {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wd-drawer__sheet,
+  .wd-drawer__backdrop,
+  .wd-tile__icon,
+  #wd-apps-trigger {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   深色主题对旧聊天页的覆盖
+   旧样式全部写死成白色，这里只改配色，不动布局。
+   ========================================================================== */
+
+html[data-theme="dark"] body {
+  background-color: #07110f;
+  background-image: radial-gradient(ellipse farthest-corner at 50% 0, #13302c 0%, #07110f 100%);
+}
+
+html[data-theme="dark"] #mobile {
+  background-color: var(--wd-panel);
+  box-shadow: 0 0 36px rgba(34, 195, 170, 0.22);
+}
+
+html[data-theme="dark"] #mobile-head,
+html[data-theme="dark"] #mobile-foot,
+html[data-theme="dark"] #prompt-head,
+html[data-theme="dark"] #prompt-body {
+  background-color: var(--wd-panel);
+  border-color: var(--wd-line);
+}
+
+html[data-theme="dark"] #mobile-head-title {
+  color: var(--wd-muted);
+}
+
+html[data-theme="dark"] #mobile-body {
+  background: #0f191b;
+}
+
+html[data-theme="dark"] #mobile-body-content {
+  color: var(--wd-ink-2);
+}
+
+html[data-theme="dark"] #mobile-body a {
+  color: #4dd9c0;
+}
+
+html[data-theme="dark"] .msg {
+  background: #1b2629;
+  color: #dce7e4;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .msg-me .msg {
+  background: linear-gradient(20deg, #2aa9bd 0%, #22c3aa 100%);
+  color: #fff;
+}
+
+html[data-theme="dark"] #mobile-body-content::-webkit-scrollbar-thumb {
+  background-color: #24413d;
+}
+
+html[data-theme="dark"] #prompt-body .responses li {
+  border-color: var(--wd-line);
+}
+
+html[data-theme="dark"] #prompt-body .responses li a {
+  color: var(--wd-ink-2);
+}
+
+html[data-theme="dark"] .say-something {
+  color: #7d918f;
+}
+
+html[data-theme="dark"] #prompt-bg {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="dark"] .mobile-head-btn:hover,
+html[data-theme="dark"] .mobile-head-btn:focus-visible {
+  background: rgba(34, 195, 170, 0.14);
+}

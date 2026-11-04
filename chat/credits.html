@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#22c3aa">
+    <meta name="description" content="这个小站站着的开源项目：聊天页、对话游戏、AI 模块各自的来处与许可证。">
+    <title>致谢 · 开源清单</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link href="css/shell.css" rel="stylesheet">
+    <link href="css/credits.css" rel="stylesheet">
+    <script src="js/shell.js"></script>
+</head>
+
+<body class="wd-page">
+    <main class="wd-doc">
+        <div class="wd-doc__top">
+            <a class="wd-icon-btn" href="index.html" title="回到聊天" aria-label="回到聊天">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 5l-7 7 7 7" />
+                </svg>
+            </a>
+            <span class="wd-doc__crumb">小站 / 致谢</span>
+            <span data-wd-apps-slot></span>
+        </div>
+
+        <p class="wd-doc__eyebrow">Credits</p>
+        <h1>站在这些项目上</h1>
+        <p class="wd-doc__lead">
+            这个小站的聊天页来自一个开源模板，对话游戏的写法受几门叙事脚本语言启发，
+            AI 模块的形态参考了几个很成熟的开源客户端。下面按「真的加载了」「借鉴了思路」
+            分开列，尽量写清每个项目具体帮了什么忙。许可证以各仓库当前的 LICENSE 为准。
+        </p>
+
+        <section>
+            <h2>一、随页面一起发布的依赖 <small>浏览器真的加载了</small></h2>
+            <p class="wd-doc__section-note">
+                这部分是打包进页面的代码，不是「灵感」。改动它们需要遵守对应许可证。
+            </p>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://vuejs.org/" target="_blank" rel="noopener noreferrer">Vue 2</a>
+                <span class="wd-credit__tag">依赖</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">聊天页的模板与状态绑定。它是旧模板留下的版本，升级到 Vue 3 会牵动整页逻辑，所以先保持不动。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://zeptojs.com/" target="_blank" rel="noopener noreferrer">Zepto</a>
+                <span class="wd-credit__tag">依赖</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">聊天页里的 DOM 操作、JSON 请求和滚动动画。体积小，够用。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://www.latofonts.com/" target="_blank" rel="noopener noreferrer">Lato</a>
+                <span class="wd-credit__tag">依赖</span>
+                <span class="wd-credit__license">SIL OFL 1.1</span>
+                <p class="wd-credit__what">聊天页的拉丁字体。中文字体交给系统自带的字体栈，不额外下载。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener noreferrer">Jekyll Theme Chirpy</a>
+                <span class="wd-credit__tag">依赖</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">主博客的主题与构建骨架，这个聊天站是挂在它下面的子站。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/Ovilia/blog" target="_blank" rel="noopener noreferrer">Ovilia 的开源博客模板</a>
+                <span class="wd-credit__tag">来源</span>
+                <span class="wd-credit__license">以其仓库 LICENSE 为准</span>
+                <p class="wd-credit__what">「与念真聊天中」最初的界面与脚本化对话实现来自这里。这个站重新做了移动端、样式和若干交互，但骨架是她的。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>二、对话游戏 <small>思路与写法</small></h2>
+            <p class="wd-doc__section-note">
+                《凌晨两点十七分》的剧本与运行时是为这个站写的，但语法设计明显站在下面这几个项目上。
+            </p>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/inkle/ink" target="_blank" rel="noopener noreferrer">inkle/ink</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">
+                    叙事脚本语言，《80 Days》《Heaven's Vault》都用它。本站剧本的「节点 + 变量 + 条件跳转」结构直接参考了它的
+                    knot / stitch 概念；但为了保持无构建，没有引入它的编译器。
+                </p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/y-lohse/inkjs" target="_blank" rel="noopener noreferrer">y-lohse/inkjs</a>
+                <span class="wd-credit__tag">备选</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">
+                    ink 的 JavaScript 运行时。目前没有打包它；如果哪天剧本长到几千行、需要真正的状态机，
+                    应该直接换过去，而不是继续手写解析。
+                </p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/YarnSpinnerTool/YarnSpinner" target="_blank" rel="noopener noreferrer">Yarn Spinner</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">给游戏写对话用的开源工具（《Night in the Woods》用过）。「选项本身也是一句台词」这个设计来自它。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/klembot/twinejs" target="_blank" rel="noopener noreferrer">Twine</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">GPL-3.0</span>
+                <p class="wd-credit__what">把分支故事当成一张可以看见的地图来写。本站没有用它，但「先写节点，再让人走一遍」的工作方式来自它。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/renpy/renpy" target="_blank" rel="noopener noreferrer">Ren'Py</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">
+                    视觉小说引擎。下面提到的《Digital: A Love Story》就是用它写的。它证明了「几乎没有画面，只有文字」也能成立。
+                </p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://en.wikipedia.org/wiki/Emily_is_Away" target="_blank" rel="noopener noreferrer">Emily is Away（Kyle Seeley）</a>
+                <span class="wd-credit__tag wd-credit__tag--plain">形式参考</span>
+                <span class="wd-credit__license">商业作品 · 闭源</span>
+                <p class="wd-credit__what">
+                    用 2000 年代的即时通讯窗口讲一个故事。本站借鉴的是「界面本身就是叙事」这件事，没有使用它的任何素材或代码。
+                </p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://en.wikipedia.org/wiki/Digital:_A_Love_Story" target="_blank" rel="noopener noreferrer">Digital: A Love Story（Christine Love）</a>
+                <span class="wd-credit__tag wd-credit__tag--plain">形式参考</span>
+                <span class="wd-credit__license">免费作品</span>
+                <p class="wd-credit__what">整款游戏发生在 1980 年代的 BBS 界面里。剧本里「凌晨的旧聊天软件」这个设定向它致意。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>三、AI 模块 <small>接口与形态</small></h2>
+            <p class="wd-doc__section-note">
+                AI 模块没有后端、没有框架，只是一个 fetch 加一段 Markdown 渲染。下面这些项目提供了协议、交互和架构上的参考。
+            </p>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://platform.openai.com/docs/api-reference/chat" target="_blank" rel="noopener noreferrer">OpenAI Chat Completions API</a>
+                <span class="wd-credit__tag wd-credit__tag--plain">规范</span>
+                <span class="wd-credit__license">接口文档</span>
+                <p class="wd-credit__what">
+                    本站的 AI 客户端只实现了这份协议里很小的一部分：messages、stream、tools。任何兼容它的服务都能接进来，
+                    这也是为什么「换服务商」在这里只是改两个输入框。
+                </p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/mckaywrigley/chatbot-ui" target="_blank" rel="noopener noreferrer">chatbot-ui</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">早期最常被拿来当起点的开源聊天界面。多会话、本地保存、模型切换的角色分工参考了它。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/danny-avila/LibreChat" target="_blank" rel="noopener noreferrer">LibreChat</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">多服务商配置界面的范式：预设 + 自定义地址 + 模型列表。本站的设置面板是它的极简版。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/lobehub/lobe-chat" target="_blank" rel="noopener noreferrer">LobeChat</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">以其仓库 LICENSE 为准</span>
+                <p class="wd-credit__what">「助手 / 人格」作为一等公民的组织方式，以及流式输出时的排版细节。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/open-webui/open-webui" target="_blank" rel="noopener noreferrer">Open WebUI</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">以其仓库 LICENSE 为准</span>
+                <p class="wd-credit__what">自托管 AI 前端的完整形态：模型清单、会话管理、工具调用的可视化。本站只取了最小的一套。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/Yonom/assistant-ui" target="_blank" rel="noopener noreferrer">assistant-ui</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">React 的聊天原语。它关于「流式消息、自动滚动、停止生成」的状态划分很值得抄，本站的做法基本照着这个思路手写。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/vercel/ai" target="_blank" rel="noopener noreferrer">Vercel AI SDK</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">Apache-2.0</span>
+                <p class="wd-credit__what">把「流式 + 工具调用」抽象成一套统一接口。本站没有用它（不想上构建），但工具循环的写法参考了它的文档。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/a16z-infra/ai-town" target="_blank" rel="noopener noreferrer">AI Town</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">生成式智能体的开源示例。「让模型自己决定调用哪个小工具」这件事，在这里被做得很好玩。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/SillyTavern/SillyTavern" target="_blank" rel="noopener noreferrer">SillyTavern</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">AGPL-3.0</span>
+                <p class="wd-credit__what">角色卡与「用一段样本教模型说话」的做法。念真的人格提示词里塞了几段站内对话，就是从这里学来的。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>四、手机式启动器 <small>界面形态</small></h2>
+            <p class="wd-doc__section-note">应用抽屉不是新发明，它只是把「网页集合」摆成手机桌面的样子。</p>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/HeyPuter/puter" target="_blank" rel="noopener noreferrer">Puter</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">AGPL-3.0</span>
+                <p class="wd-credit__what">浏览器里的桌面系统。它说明「把一个站做成一组应用」在纯前端也能成立。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/DustinBrett/daedalOS" target="_blank" rel="noopener noreferrer">daedalOS</a>
+                <span class="wd-credit__tag">借鉴</span>
+                <span class="wd-credit__license">以其仓库 LICENSE 为准</span>
+                <p class="wd-credit__what">另一个浏览器桌面，细节（图标、任务栏、窗口层级）做得非常认真。</p>
+            </div>
+
+            <div class="wd-credit">
+                <a class="wd-credit__name" href="https://github.com/nextapps-de/winbox" target="_blank" rel="noopener noreferrer">WinBox</a>
+                <span class="wd-credit__tag">备选</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">轻量的窗口管理器。现在是整页跳转，如果以后想让模块真的「以窗口形式并存」，它是最省事的入口。</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>五、这个站自己写的部分</h2>
+            <p class="wd-doc__section-note">以下代码与文本由本站完成，随 <a href="https://github.com/yen-chiu/Chat" target="_blank" rel="noopener noreferrer">Chat 仓库</a> 一起以 MIT 发布。</p>
+
+            <div class="wd-credit">
+                <span class="wd-credit__name">《凌晨两点十七分》剧本</span>
+                <span class="wd-credit__tag wd-credit__tag--plain">原创</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">一个 45 个节点、4 个结局的聊天式短剧，写在 assets/stories/night-radio.json 里，可以照着格式继续加。</p>
+            </div>
+
+            <div class="wd-credit">
+                <span class="wd-credit__name">剧情运行时</span>
+                <span class="wd-credit__tag wd-credit__tag--plain">原创</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">js/core/narrative.js：条件表达式解析（不用 eval）、变量结算、结局、回退、存档。</p>
+            </div>
+
+            <div class="wd-credit">
+                <span class="wd-credit__name">Markdown 渲染</span>
+                <span class="wd-credit__tag wd-credit__tag--plain">原创</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">js/core/markdown.js：先转义再排版，不引第三方库，也就没有 XSS 面。</p>
+            </div>
+
+            <div class="wd-credit">
+                <span class="wd-credit__name">AI 客户端与工具循环</span>
+                <span class="wd-credit__tag wd-credit__tag--plain">原创</span>
+                <span class="wd-credit__license">MIT</span>
+                <p class="wd-credit__what">js/core/ai-client.js + js/ai.js：SSE 流式解析、错误归类、本地工具调用。</p>
+            </div>
+        </section>
+
+        <footer class="wd-doc__foot">
+            <p>
+                说明：除 Vue、Zepto、Lato 与主站主题外，上面的项目都没有被打包进这个站，列出来是因为它们直接影响了设计与实现。
+                如果某个署名或措辞让你不舒服，或者你发现许可证写错了，请写信到
+                <a href="mailto:wendell.wenwu.he@gmail.com">wendell.wenwu.he@gmail.com</a>，会改。
+            </p>
+            <div class="wd-doc__actions">
+                <a class="wd-doc__pill" href="index.html">回聊天</a>
+                <a class="wd-doc__pill" href="game.html">玩那个游戏</a>
+                <a class="wd-doc__pill" href="https://yenchiu.com/" target="_blank" rel="noopener noreferrer">回博客</a>
+                <a class="wd-doc__pill" href="https://github.com/yen-chiu/Chat" target="_blank" rel="noopener noreferrer">源码</a>
+            </div>
+        </footer>
+    </main>
+</body>
+
+</html>

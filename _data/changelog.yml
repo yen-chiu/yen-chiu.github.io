@@ -9,6 +9,18 @@
 #   - 顺序：最新的写在最上面，页面按文件顺序渲染
 
 - date: 2026-11-04
+  kind: feature
+  scope: 子站
+  title: 聊天子站多了三个模块
+  note: 对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页，抽屉统一入口。
+
+- date: 2026-11-04
+  kind: style
+  scope: 子站
+  title: 子站支持深色主题
+  note: 抽屉里切换浅色 / 深色 / 跟随系统，旧聊天页也一并适配。
+
+- date: 2026-11-04
   kind: infra
   scope: 主站
   title: 发布站点快照 2026-11-04
