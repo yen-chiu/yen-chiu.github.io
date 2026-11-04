@@ -676,25 +676,112 @@
     chat.messages.push(reply);
     scrollToBottom();
 
-    var stick = nearBottom();
-    var renderQueued = false;
+    /* ---------------- 吐字节奏 ----------------
+       接口吐字是成串的，一次全铺上去就像机器贴上去的。这里让收到的内容
+       先进 pending，再按人的速度一小口一小口放进 shown；停在逗号、句号、
+       段落上就多歇一会儿——"说完一段，喘口气，再说下一段"。
+       光标是贴在最后一个字后面的行内元素，不再挂在整块内容末尾。 */
+    var shown = '';
+    var pending = '';
+    var streamDone = false;
+    var ticker = null;
+    var tailTimer = null;
+    var caretEl = null;
 
-    function paint() {
-      renderQueued = false;
-      if (reply.content) {
-        node.content.innerHTML = window.WDMarkdown.render(reply.content);
-        node.content.classList.add('is-streaming');
-      } else {
-        // 还没吐字，就继续亮着三个点
-        node.content.innerHTML = typingMarkup();
+    function caretHost() {
+      var last = node.content.lastElementChild;
+      if (!last) return node.content;
+      var tag = last.tagName;
+      if (tag === 'UL' || tag === 'OL') return last.lastElementChild || last;
+      if (tag === 'BLOCKQUOTE') {
+        var ps = last.querySelectorAll('p');
+        return ps.length ? ps[ps.length - 1] : last;
       }
+      // 段落、标题、列表项这类能放行内元素的，光标就贴在里面
+      if (/^(P|H[1-6]|LI|TD|TH)$/.test(tag)) return last;
+      // 代码块、表格、分割线之后没有"行内位置"了，就放到块后面
+      return node.content;
+    }
+
+    function placeCaret() {
+      if (!caretEl) {
+        caretEl = document.createElement('span');
+        caretEl.className = 'wd-caret';
+        caretEl.setAttribute('aria-hidden', 'true');
+      }
+      caretHost().appendChild(caretEl);
+    }
+
+    function renderShown() {
+      if (!node.row.isConnected) return;
+      if (!shown) {
+        node.content.innerHTML = typingMarkup();
+        return;
+      }
+      // 每一拍都重新看一眼：用户往上翻了就别再把人拽回底部
+      var stick = nearBottom();
+      node.content.innerHTML = window.WDMarkdown.render(shown);
+      node.content.classList.add('is-streaming');
+      node.content.setAttribute('aria-busy', 'true');
+      placeCaret();
       if (stick) scrollToBottom();
     }
 
-    function queuePaint() {
-      if (renderQueued) return;
-      renderQueued = true;
-      requestAnimationFrame(paint);
+    function takeStep() {
+      var backlog = pending.length;
+      // 积压越多放得越快：长回答不至于让人干等，短回答才像在慢慢敲
+      var size = backlog > 480 ? 20 : backlog > 200 ? 8 : backlog > 80 ? 4 : 2;
+      var chunk = pending.slice(0, size);
+      pending = pending.slice(size);
+      shown += chunk;
+
+      // 停下来的位置决定这次多歇多久
+      var extra = 0;
+      if (backlog <= 240) {
+        if (/\n\n$/.test(shown)) extra = 300;
+        else if (/[。！？!?…]["」』）)]*$/.test(chunk)) extra = 170;
+        else if (/\n$/.test(shown)) extra = 130;
+        else if (/[，、；：,;:]["」』）)]*$/.test(chunk)) extra = 70;
+      }
+
+      renderShown();
+      return (backlog > 480 ? 14 : backlog > 200 ? 20 : backlog > 80 ? 28 : 46) + extra;
+    }
+
+    function tick() {
+      ticker = null;
+      // 会话切走或节点被重建了，就别在旧气泡上继续演
+      if (!node.row.isConnected) {
+        streamDone = true;
+        return;
+      }
+      if (pending) {
+        ticker = setTimeout(tick, takeStep());
+        return;
+      }
+      if (streamDone) finishReveal();
+    }
+
+    function schedule() {
+      if (ticker) return;
+      if (pending) {
+        // 第一个字之前多等一小会儿，像是先想了一下
+        ticker = setTimeout(tick, shown ? 0 : 160);
+        return;
+      }
+      if (streamDone) finishReveal();
+    }
+
+    function finishReveal() {
+      if (tailTimer) return;
+      // 全部显示完，光标再闪两下才走，别戛然而止
+      tailTimer = setTimeout(function () {
+        tailTimer = null;
+        if (caretEl && caretEl.parentNode) caretEl.parentNode.removeChild(caretEl);
+        caretEl = null;
+        node.content.classList.remove('is-streaming');
+        node.content.removeAttribute('aria-busy');
+      }, 900);
     }
 
     controller = new AbortController();
@@ -718,7 +805,8 @@
           signal: controller.signal,
           onDelta: function (delta) {
             reply.content += delta;
-            queuePaint();
+            pending += delta;
+            schedule();
           }
         });
 
@@ -733,7 +821,7 @@
           result.toolCalls.forEach(function (call, index) {
             var applied = calls[index];
             reply.tools.push({ name: applied.name, args: applied.args, result: applied.result });
-            node.body.insertBefore(toolCard(applied), node.content);
+            node.body.insertBefore(toolCard(applied), node.bubble);
             apiMessages.push({
               role: 'tool',
               tool_call_id: call.id || 'call_' + index,
@@ -743,7 +831,8 @@
 
           if (result.content) {
             reply.content += result.content;
-            queuePaint();
+            pending += result.content;
+            schedule();
           }
           scrollToBottom();
           continue;
@@ -754,34 +843,64 @@
       }
 
       if (!reply.content) reply.content = '（模型没有返回内容，可能是被截断或触发了内容过滤。）';
-      node.content.innerHTML = window.WDMarkdown.render(reply.content);
-      node.content.classList.remove('is-streaming');
+
+      // 非流式（或工具轮）时内容是一次性到的，补进待显示队列
+      var revealed = shown.length + pending.length;
+      if (reply.content.length > revealed) {
+        pending += reply.content.slice(revealed);
+      }
+
+      streamDone = true;
+      schedule();
       chat.updatedAt = Date.now();
       reply.ts = Date.now();
       saveChats();
       renderChatList();
     } catch (err) {
+      // 出错或点了停止：不再慢慢演，把已经收到的都摆出来
+      if (ticker) {
+        clearTimeout(ticker);
+        ticker = null;
+      }
+      if (tailTimer) {
+        clearTimeout(tailTimer);
+        tailTimer = null;
+      }
+      streamDone = true;
+      if (caretEl && caretEl.parentNode) caretEl.parentNode.removeChild(caretEl);
+      caretEl = null;
+      pending = '';
+      shown = reply.content || '';
+      node.content.innerHTML = window.WDMarkdown.render(shown);
       node.content.classList.remove('is-streaming');
-      node.content.innerHTML = window.WDMarkdown.render(reply.content || '');
+      node.content.removeAttribute('aria-busy');
       // 一个字都没拿到时，别留一个空气泡，错误卡自己会说明
-      if (!reply.content) node.bubble.hidden = true;
+      if (!shown) node.bubble.hidden = true;
 
       var box = document.createElement('div');
       box.className = 'wd-error';
+      // 主动点停止和真出错要分开说：前者不是失败，别吓人
+      var aborted = !!(controller && controller.signal.aborted) || (err && err.name === 'AbortError');
       var title = document.createElement('strong');
-      title.textContent = err && err.name === 'AbortError' ? '已停止' : '请求失败';
+      title.textContent = aborted ? '已停止' : '请求失败';
       var lines = document.createElement('span');
-      lines.textContent = (err && err.message ? err.message : '未知错误') + (err && err.hint ? ' · ' + err.hint : '');
+      lines.textContent = aborted
+        ? shown
+          ? '已经收到的部分留在上面。'
+          : '这次没有拿到内容，可以重新问一次。'
+        : (err && err.message ? err.message : '未知错误') + (err && err.hint ? ' · ' + err.hint : '');
       box.appendChild(title);
       box.appendChild(lines);
 
-      var retry = document.createElement('button');
-      retry.type = 'button';
-      retry.textContent = '打开设置';
-      retry.addEventListener('click', function () {
-        openSheet(el.settingsSheet);
-      });
-      box.appendChild(retry);
+      if (!aborted) {
+        var retry = document.createElement('button');
+        retry.type = 'button';
+        retry.textContent = '打开设置';
+        retry.addEventListener('click', function () {
+          openSheet(el.settingsSheet);
+        });
+        box.appendChild(retry);
+      }
       node.body.appendChild(box);
 
       chat.updatedAt = Date.now();

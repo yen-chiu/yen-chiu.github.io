@@ -324,16 +324,15 @@ html[data-theme="dark"] .wd-inline-code {
   animation-delay: 0.3s;
 }
 
-/* 流式输出时的光标 */
-.wd-msg__content.is-streaming::after {
-  content: '';
+/* 打字光标：贴在最后一个字后面，不再挂在整块内容的末尾 */
+.wd-caret {
   display: inline-block;
   width: 2px;
-  height: 1.05em;
+  height: 1.02em;
   margin-left: 2px;
   background: var(--wd-teal-deep);
-  vertical-align: -0.15em;
-  animation: wdBlink 1s steps(2, start) infinite;
+  vertical-align: -0.16em;
+  animation: wdBlink 1.05s steps(2, start) infinite;
 }
 
 /* 工具调用卡 */
@@ -958,8 +957,9 @@ html[data-theme="dark"] .wd-error {
     scroll-behavior: auto;
   }
 
-  .wd-msg__content.is-streaming::after {
+  .wd-caret {
     animation: none;
+    opacity: 0.6;
   }
 
   .wd-typing i {
