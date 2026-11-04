@@ -1156,9 +1156,31 @@
       personaPack.traits.forEach(function (item) {
         lines.push('- ' + item);
       });
+    }
+
+    // 16 型人格（MBTI）与女主类型都只作参考，不写死
+    if (personaPack.mbti || personaPack.archetype) {
+      var archetype = personaPack.archetype;
+      lines.push('', '【性格参考（不是规矩）】');
       if (personaPack.mbti) {
-        lines.push('- MBTI 大概是 ' + personaPack.mbti + '，只作参考，别拿它当标签或借口' + (personaPack.mbtiNote ? '：' + personaPack.mbtiNote : ''));
+        lines.push(
+          '- MBTI（16 型）偏 ' +
+            personaPack.mbti +
+            '，只当参考，别拿它当标签' +
+            (personaPack.mbtiNote ? '：' + personaPack.mbtiNote : '')
+        );
       }
+      if (archetype) {
+        lines.push(
+          '- 气质上，别人容易在你身上看到「' +
+            archetype.primary +
+            '」这一类' +
+            (archetype.blend && archetype.blend.length ? '，掺一点「' + archetype.blend.join('」「') + '」' : '') +
+            '——这只是参考特征，不是身份。'
+        );
+        if (archetype.note) lines.push('- ' + archetype.note);
+      }
+      lines.push('- ' + ((archetype && archetype.disclaimer) || '以上都是参考，不用照着演，也别拿它限制自己。'));
     }
 
     var voice = personaPack.voice || {};
