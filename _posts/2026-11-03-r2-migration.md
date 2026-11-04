@@ -39,14 +39,14 @@ https://<ACCOUNT_ID>.r2.cloudflarestorage.com
 
 ```bash
 # 建桶
-POST /accounts/{acc}/r2/buckets            {"name": "wendell-media"}
+POST /accounts/{acc}/r2/buckets            {"name": "yenchiu-media"}
 
 # 开启 r2.dev 公开子域（兜底用）
-PUT  /accounts/{acc}/r2/buckets/wendell-media/domains/managed   {"enabled": true}
-# → https://pub-e7751e1bfd71419bab839e2163979f70.r2.dev
+PUT  /accounts/{acc}/r2/buckets/yenchiu-media/domains/managed   {"enabled": true}
+# → https://pub-268edce3f97543bcbc959e0001310230.r2.dev
 
 # 绑自定义域（会自动在你的 DNS 里加 CNAME，不用手动配）
-POST /accounts/{acc}/r2/buckets/wendell-media/domains/custom
+POST /accounts/{acc}/r2/buckets/yenchiu-media/domains/custom
      {"domain": "media.yenchiu.com", "zoneId": "...", "enabled": true}
 ```
 
@@ -56,7 +56,7 @@ POST /accounts/{acc}/r2/buckets/wendell-media/domains/custom
 ## 三、上传：npx 不在 PATH 怎么办
 
 ```bash
-npx wrangler r2 object put wendell-media/videos/xxx.mp4 \
+npx wrangler r2 object put yenchiu-media/videos/xxx.mp4 \
   --file assets/media/xxx.mp4 --content-type video/mp4 --remote
 ```
 

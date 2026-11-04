@@ -6,9 +6,9 @@
 
 | 项 | 值 |
 | --- | --- |
-| 桶名 | `wendell-media` |
+| 桶名 | `yenchiu-media`（2026-11-04 从 `wendell-media` 迁移） |
 | 自定义域 | `https://media.yenchiu.com`（已绑，CNAME 自动添加） |
-| 备用公开域 | `https://pub-e7751e1bfd71419bab839e2163979f70.r2.dev`（有速率限制，只做兜底） |
+| 备用公开域 | `https://pub-268edce3f97543bcbc959e0001310230.r2.dev`（有速率限制，只做兜底） |
 | 对象键 | `videos/marxism-micro-lesson.mp4` |
 | 站点引用 | `_config.yml` 的 `media_base`，文章里写 `{{ site.media_base }}/videos/...` |
 
@@ -23,11 +23,11 @@ curl -I https://media.yenchiu.com/videos/marxism-micro-lesson.mp4
 
 ```bash
 # 方式一：wrangler（有 Node 环境时）
-npx wrangler r2 object put wendell-media/videos/<文件名> \
+npx wrangler r2 object put yenchiu-media/videos/<文件名> \
   --file <本地路径> --content-type video/mp4 --remote
 
 # 方式二：控制台拖拽（>300MB 时更省事）
-# Cloudflare → R2 → wendell-media → Upload
+# Cloudflare → R2 → yenchiu-media → Upload
 ```
 
 上传完在文章里写 `{{ site.media_base }}/videos/<文件名>` 即可，不用改任何配置。
