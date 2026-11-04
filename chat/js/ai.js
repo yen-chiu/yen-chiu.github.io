@@ -27,7 +27,8 @@
     persona: 'nianzhen',
     system: '',
     stream: true,
-    tools: false
+    tools: false,
+    searchEndpoint: ''
   };
 
   var PERSONA_PROMPTS = {
@@ -99,6 +100,23 @@
     }
   ];
 
+  /* ---------- 站内人格：性格模块 / 记忆 / 站内资料 ----------
+     这些东西只服务「念真」这个站内人格；通用助手和写代码的那两个
+     人格既不读它，也拿不到站内工具。 */
+
+  var PERSONA_FILE = 'assets/persona/nianzhen.json';
+  var MEMORY_KEY = 'wd.ai.memory';
+  var MEMORY_LIMIT = 120;
+  var SITE_INDEX_URL = '/assets/js/data/search.json';
+  var PAGE_TEXT_LIMIT = 2400;
+
+  var personaPack = null;
+  var personaLoading = null;
+  var memory = readJSON(MEMORY_KEY, []);
+  if (!Array.isArray(memory)) memory = [];
+  var siteIndex = null;
+  var siteIndexLoading = null;
+
   var el = {
     chat: document.getElementById('ai-chat'),
     welcome: document.getElementById('ai-welcome'),
@@ -128,6 +146,9 @@
       system: document.getElementById('cfg-system'),
       stream: document.getElementById('cfg-stream'),
       tools: document.getElementById('cfg-tools'),
+      search: document.getElementById('cfg-search'),
+      memoryNote: document.getElementById('cfg-memory-note'),
+      memoryClear: document.getElementById('cfg-memory-clear'),
       save: document.getElementById('cfg-save'),
       test: document.getElementById('cfg-test'),
       models: document.getElementById('cfg-models'),
@@ -396,7 +417,13 @@
     var node = document.createElement('div');
     node.className = 'wd-tool';
     var label = document.createElement('span');
-    label.textContent = '⚙ 本地工具';
+    var labels = {
+      site_search: '站内检索',
+      site_read: '读站内页',
+      remember: '记住',
+      web_search: '联网检索'
+    };
+    label.textContent = '⚙ ' + (labels[tool.name] || '本地工具');
     var name = document.createElement('code');
     name.textContent = tool.name + '(' + (tool.args || '') + ')';
     var result = document.createElement('code');
@@ -491,12 +518,281 @@
 
   /* ======================= 人格 ======================= */
 
-  function effectiveSystem() {
+  function loadPersona() {
+    if (personaPack) return Promise.resolve(personaPack);
+    if (personaLoading) return personaLoading;
+    personaLoading = fetch(PERSONA_FILE, { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        personaPack = data || null;
+        return personaPack;
+      })
+      .catch(function () {
+        personaPack = null;
+        personaLoading = null;
+        return null;
+      });
+    return personaLoading;
+  }
+
+  /* ---------- 记忆：只记站内人格的事 ---------- */
+
+  function saveMemory() {
+    if (memory.length > MEMORY_LIMIT) memory = memory.slice(-MEMORY_LIMIT);
+    writeJSON(MEMORY_KEY, memory);
+  }
+
+  function rememberFact(text) {
+    var clean = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 160);
+    if (clean.length < 2) return false;
+    var exists = memory.some(function (m) {
+      return m.text === clean;
+    });
+    if (exists) return false;
+    memory.push({ text: clean, ts: Date.now() });
+    saveMemory();
+    return true;
+  }
+
+  function memoryBlock(query) {
+    if (!memory.length) return '';
+    var grams = bigrams(query || '');
+    var picked = memory.slice(-8);
+    memory.forEach(function (m) {
+      if (picked.indexOf(m) >= 0) return;
+      var related = grams.some(function (g) {
+        return m.text.indexOf(g) >= 0;
+      });
+      if (related) picked.push(m);
+    });
+    return picked
+      .slice(0, 12)
+      .map(function (m) {
+        return '· ' + m.text;
+      })
+      .join('\n');
+  }
+
+  // 中文按二元组切，够用又不怕分词
+  function bigrams(text) {
+    var s = String(text || '').replace(/[\s，。！？、；：""''（）()《》「」~…·,.!?;:]/g, '');
+    var seen = {};
+    var out = [];
+    for (var i = 0; i < s.length - 1; i++) {
+      var g = s.slice(i, i + 2);
+      if (seen[g]) continue;
+      seen[g] = true;
+      out.push(g);
+    }
+    return out;
+  }
+
+  /* ---------- 站内资料 ---------- */
+
+  function loadSiteIndex() {
+    if (siteIndex) return Promise.resolve(siteIndex);
+    if (siteIndexLoading) return siteIndexLoading;
+    siteIndexLoading = fetch(SITE_INDEX_URL, { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (list) {
+        siteIndex = Array.isArray(list) ? list : [];
+        return siteIndex;
+      })
+      .catch(function () {
+        siteIndex = [];
+        siteIndexLoading = null;
+        return [];
+      });
+    return siteIndexLoading;
+  }
+
+  function searchSite(query, limit) {
+    if (!siteIndex || !siteIndex.length) return [];
+    var grams = bigrams(query);
+    if (!grams.length) return [];
+
+    function postFields(post) {
+      return {
+        title: String(post.title || ''),
+        tags: String(post.tags || '') + ' ' + String(post.categories || ''),
+        snippet: String(post.snippet || ''),
+        body: String(post.content || '')
+      };
+    }
+
+    // 越少文章里出现的词越说明问题：「AI」满站都是，压权重；「动画」只在几篇里，提上来
+    var total = siteIndex.length;
+    var weights = {};
+    var maxWeight = 0;
+    grams.forEach(function (g) {
+      var df = 0;
+      siteIndex.forEach(function (post) {
+        var f = postFields(post);
+        if ((f.title + f.tags + f.snippet + f.body).indexOf(g) >= 0) df++;
+      });
+      var w = Math.log(1 + total / (1 + df));
+      weights[g] = w;
+      if (w > maxWeight) maxWeight = w;
+    });
+
+    return siteIndex
+      .map(function (post) {
+        var f = postFields(post);
+        var score = 0;
+        var matched = 0;
+        grams.forEach(function (g) {
+          var w = weights[g];
+          var hit = 0;
+          if (f.title.indexOf(g) >= 0) hit = 3 * w;
+          else if (f.tags.indexOf(g) >= 0) hit = 2.2 * w;
+          else if (f.snippet.indexOf(g) >= 0) hit = 2 * w;
+          else if (f.body.indexOf(g) >= 0) {
+            var times = Math.min(3, f.body.split(g).length - 1);
+            hit = w * (0.6 + 0.4 * times);
+          }
+          if (hit) {
+            score += hit;
+            matched++;
+          }
+        });
+        return { post: post, score: score, matched: matched };
+      })
+      // 一个词恰巧撞上也别当命中；两个词以上，或者单个词足够稀有，才算数
+      .filter(function (hit) {
+        return hit.matched >= 2 || hit.score >= 1.3;
+      })
+      .sort(function (a, b) {
+        return b.score - a.score;
+      })
+      .slice(0, limit || 3)
+      .filter(function (hit, i, list) {
+        return hit.score >= list[0].score * 0.34;
+      });
+  }
+
+  function recentTitles(n) {
+    if (!siteIndex || !siteIndex.length) return [];
+    return siteIndex
+      .slice()
+      .sort(function (a, b) {
+        return String(b.date).localeCompare(String(a.date));
+      })
+      .slice(0, n)
+      .map(function (post) {
+        return '《' + post.title + '》';
+      });
+  }
+
+  function fetchPageText(path) {
+    var url = String(path || '').trim();
+    if (!url) return Promise.reject(new Error('没有给地址'));
+    if (/^https?:/i.test(url)) {
+      if (url.indexOf(window.location.origin) !== 0) throw new Error('只能读本站的页面');
+    } else if (url.charAt(0) !== '/') {
+      url = '/' + url.replace(/^\.?\//, '');
+    }
+    return fetch(url, { cache: 'no-cache', credentials: 'same-origin' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.text();
+      })
+      .then(function (html) {
+        var text = html
+          .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+          .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/&amp;/g, '&')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+          .replace(/\s+/g, ' ')
+          .trim();
+        return text.slice(0, PAGE_TEXT_LIMIT);
+      });
+  }
+
+  /* ---------- 提示词：只有站内人格走这条路 ---------- */
+
+  function effectiveSystem(query) {
     if (config.system && config.system.trim()) return config.system.trim();
-    if (config.persona === 'nianzhen') {
+
+    // 通用助手 / 写代码的：原样，不掺人格设定，也拿不到站内资料
+    if (config.persona !== 'nianzhen') {
+      return PERSONA_PROMPTS[config.persona] || PERSONA_PROMPTS.assistant;
+    }
+
+    if (!personaPack) {
       return NIANZHEN_PROMPT.replace('{{samples}}', samples || '（暂时没读到样本，按上面的语气自己把握）');
     }
-    return PERSONA_PROMPTS[config.persona] || PERSONA_PROMPTS.assistant;
+
+    var lines = [];
+    lines.push('你是「' + (personaPack.name || '念真') + '」——Wendell 个人小站里那个会聊天的人。你不是客服，也不是万能助手。');
+
+    if (personaPack.origins && personaPack.origins.length) {
+      lines.push('', '【你是谁】');
+      personaPack.origins.forEach(function (item) {
+        lines.push('- ' + item);
+      });
+    }
+
+    if (personaPack.traits && personaPack.traits.length) {
+      lines.push('', '【你的性子】');
+      personaPack.traits.forEach(function (item) {
+        lines.push('- ' + item);
+      });
+    }
+
+    var voice = personaPack.voice || {};
+    lines.push('', '【怎么说话】');
+    if (voice.rhythm) lines.push('- ' + voice.rhythm);
+    if (voice.signature && voice.signature.length) lines.push('- 常挂在嘴边：' + voice.signature.join('、'));
+    if (voice.pacing) lines.push('- ' + voice.pacing);
+    if (voice.avoid && voice.avoid.length) lines.push('- 不要：' + voice.avoid.join('；'));
+
+    lines.push('', '【你脚下的这个站】站主写读书、数据分析和生活。');
+    var recent = recentTitles(6);
+    if (recent.length) lines.push('站里最近写过：' + recent.join('；') + '。');
+
+    var hits = query ? searchSite(query, 3) : [];
+    if (hits.length) {
+      lines.push('', '【这次话题相关的站内文章】');
+      hits.forEach(function (hit) {
+        lines.push(
+          '- 《' + hit.post.title + '》（' + String(hit.post.date || '').slice(0, 10) + '，' + hit.post.url + '）：' +
+            String(hit.post.snippet || '').slice(0, 150)
+        );
+      });
+      lines.push('引用就照上面的说，不要补文章里没有的细节。');
+    }
+
+    var mem = memoryBlock(query);
+    if (mem) lines.push('', '【你记得的事】', mem);
+
+    if (personaPack.boundaries && personaPack.boundaries.length) {
+      lines.push('', '【边界】');
+      personaPack.boundaries.forEach(function (item) {
+        lines.push('- ' + item);
+      });
+    }
+
+    if (config.tools) {
+      lines.push('', '【手上能用的】');
+      lines.push('- site_search 在站里找文章，site_read 打开某篇读正文，remember 把对方说的要紧事记下来。');
+      if (config.searchEndpoint) lines.push('- web_search 联网查资料。');
+      lines.push('真要查的时候再调，别假装查过。');
+    }
+
+    if (samples) {
+      lines.push('', '【说话的样本】（学语气，别照抄内容）', samples);
+    }
+
+    return lines.join('\n');
   }
 
   function loadSamples() {
@@ -597,7 +893,99 @@
     return result;
   }
 
-  function runTool(call) {
+  /* 站内人格专属工具：只有 persona === 'nianzhen' 时才会出现在请求里 */
+  function personaTools() {
+    var list = [
+      {
+        type: 'function',
+        function: {
+          name: 'site_search',
+          description: '在站主的博客里搜文章，返回标题、日期、链接和摘要。想知道站里写过什么时用它。',
+          parameters: {
+            type: 'object',
+            properties: { query: { type: 'string', description: '关键词，尽量短' } },
+            required: ['query'],
+            additionalProperties: false
+          }
+        }
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'site_read',
+          description: '打开站内某个页面读正文（最多 ' + PAGE_TEXT_LIMIT + ' 字）。参数是站内路径，例如 /posts/ai动画/。',
+          parameters: {
+            type: 'object',
+            properties: { path: { type: 'string', description: '站内路径或完整本站链接' } },
+            required: ['path'],
+            additionalProperties: false
+          }
+        }
+      },
+      {
+        type: 'function',
+        function: {
+          name: 'remember',
+          description: '把对方说过的、以后值得记住的小事记下来。只记对方本人相关的事实或偏好，不要记闲聊。',
+          parameters: {
+            type: 'object',
+            properties: { text: { type: 'string', description: '一句话，第三人称，例如「他喜欢在夜里写代码」' } },
+            required: ['text'],
+            additionalProperties: false
+          }
+        }
+      }
+    ];
+
+    if (config.searchEndpoint) {
+      list.push({
+        type: 'function',
+        function: {
+          name: 'web_search',
+          description: '联网搜索。站内资料不够用时才用。',
+          parameters: {
+            type: 'object',
+            properties: { query: { type: 'string' } },
+            required: ['query'],
+            additionalProperties: false
+          }
+        }
+      });
+    }
+    return list;
+  }
+
+  function toolsFor() {
+    var list = TOOLS.slice();
+    if (config.persona === 'nianzhen') list = list.concat(personaTools());
+    return list;
+  }
+
+  function webSearch(query) {
+    if (!config.searchEndpoint) return Promise.resolve('没有配置搜索接口，现在联不了网。');
+    var base = config.searchEndpoint;
+    var url = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'q=' + encodeURIComponent(query) + '&format=json';
+    return fetch(url, { headers: { Accept: 'application/json' } })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var items = (data && (data.results || data.items)) || [];
+        if (!items.length) return '没有搜到结果。';
+        return items
+          .slice(0, 5)
+          .map(function (item, i) {
+            return i + 1 + '. ' + (item.title || '') + '\n' + (item.url || '') + '\n' + String(item.content || item.snippet || '').slice(0, 160);
+          })
+          .join('\n\n');
+      })
+      .catch(function (err) {
+        return '搜索失败：' + err.message;
+      });
+  }
+
+  async function runTool(call) {
     var name = call.function && call.function.name;
     var args = {};
     try {
@@ -624,6 +1012,26 @@
         for (var i = 0; i < count; i++) rolls.push(1 + Math.floor(Math.random() * sides));
         summary = count + 'd' + sides;
         result = rolls.join(' + ') + (count > 1 ? ' = ' + rolls.reduce(function (a, b) { return a + b; }, 0) : '');
+      } else if (name === 'site_search') {
+        await loadSiteIndex();
+        summary = args.query || '';
+        var hits = searchSite(args.query, 4);
+        result = hits.length
+          ? hits
+              .map(function (hit) {
+                return '《' + hit.post.title + '》（' + String(hit.post.date || '').slice(0, 10) + '）' + hit.post.url + '\n' + String(hit.post.snippet || '').slice(0, 220);
+              })
+              .join('\n\n')
+          : '站里没有找到相关的文章。';
+      } else if (name === 'site_read') {
+        summary = args.path || '';
+        result = await fetchPageText(args.path);
+      } else if (name === 'remember') {
+        summary = String(args.text || '').slice(0, 40);
+        result = rememberFact(args.text) ? '记下了。' : '这条已经记过，或者太短了。';
+      } else if (name === 'web_search') {
+        summary = args.query || '';
+        result = await webSearch(args.query);
       } else {
         summary = name || 'unknown';
         result = '没有这个工具';
@@ -637,8 +1045,8 @@
 
   /* ======================= 请求 ======================= */
 
-  function buildApiMessages(extra) {
-    var list = [{ role: 'system', content: effectiveSystem() }];
+  function buildApiMessages(extra, query) {
+    var list = [{ role: 'system', content: effectiveSystem(query) }];
     var chat = currentChat();
     var history = chat ? chat.messages.slice(-20) : [];
 
@@ -729,15 +1137,16 @@
 
     function takeStep() {
       var backlog = pending.length;
-      // 积压越多放得越快：长回答不至于让人干等，短回答才像在慢慢敲
-      var size = backlog > 480 ? 20 : backlog > 200 ? 8 : backlog > 80 ? 4 : 2;
+      // 按积压取块：流式时积压很小，就像在慢慢敲；整段一次性到的长文，
+      // 块会变大、间隔变短，先跟上再说，末尾再回到人的节奏。
+      var size = Math.max(2, Math.min(60, Math.ceil(backlog / 12)));
       var chunk = pending.slice(0, size);
       pending = pending.slice(size);
       shown += chunk;
 
-      // 停下来的位置决定这次多歇多久
+      // 停下来的位置决定这次多歇多久（只在慢速段生效，别拖长文的后腿）
       var extra = 0;
-      if (backlog <= 240) {
+      if (backlog <= 120) {
         if (/\n\n$/.test(shown)) extra = 300;
         else if (/[。！？!?…]["」』）)]*$/.test(chunk)) extra = 170;
         else if (/\n$/.test(shown)) extra = 130;
@@ -745,7 +1154,7 @@
       }
 
       renderShown();
-      return (backlog > 480 ? 14 : backlog > 200 ? 20 : backlog > 80 ? 28 : 46) + extra;
+      return (backlog > 400 ? 10 : backlog > 120 ? 16 : 46) + extra;
     }
 
     function tick() {
@@ -789,7 +1198,11 @@
     updateSendUI(true);
 
     try {
-      var apiMessages = buildApiMessages([{ role: 'user', content: userText }]);
+      // 站内人格：先把性格模块、站内索引、说话样本备齐
+      if (config.persona === 'nianzhen') {
+        await Promise.all([loadPersona(), loadSiteIndex(), loadSamples()]);
+      }
+      var apiMessages = buildApiMessages([{ role: 'user', content: userText }], userText);
       var rounds = 0;
 
       while (rounds++ < 4) {
@@ -801,7 +1214,7 @@
           temperature: Number(config.temperature),
           maxTokens: Number(config.maxTokens),
           stream: config.stream !== false && !config.tools,
-          tools: config.tools ? TOOLS : null,
+          tools: config.tools ? toolsFor() : null,
           signal: controller.signal,
           onDelta: function (delta) {
             reply.content += delta;
@@ -817,7 +1230,7 @@
             tool_calls: result.toolCalls
           });
 
-          var calls = result.toolCalls.map(runTool);
+          var calls = await Promise.all(result.toolCalls.map(runTool));
           result.toolCalls.forEach(function (call, index) {
             var applied = calls[index];
             reply.tools.push({ name: applied.name, args: applied.args, result: applied.result });
@@ -825,7 +1238,8 @@
             apiMessages.push({
               role: 'tool',
               tool_call_id: call.id || 'call_' + index,
-              content: JSON.stringify(applied.payload)
+              // 直接把结果文本交给模型；套一层 JSON 只会多出转义和噪音
+              content: applied.result
             });
           });
 
@@ -944,9 +1358,11 @@
     el.form.maxOut.textContent = String(config.maxTokens);
     el.form.persona.value = config.persona;
     el.form.system.value = config.system || '';
+    if (el.form.search) el.form.search.value = config.searchEndpoint || '';
     el.form.stream.checked = config.stream !== false;
     el.form.tools.checked = Boolean(config.tools);
     el.form.presetNote.textContent = preset ? preset.note : '';
+    updateMemoryNote();
     fillModelOptions(preset);
   }
 
@@ -973,8 +1389,23 @@
       persona: el.form.persona.value,
       system: el.form.system.value,
       stream: el.form.stream.checked,
-      tools: el.form.tools.checked
+      tools: el.form.tools.checked,
+      searchEndpoint: el.form.search ? el.form.search.value.trim() : config.searchEndpoint || ''
     };
+  }
+
+  function updateMemoryNote() {
+    if (!el.form.memoryNote) return;
+    if (!memory.length) {
+      el.form.memoryNote.textContent = '还什么都没记下。开着工具模式聊天时，她会自己挑值得记的事。';
+    } else {
+      var last = memory
+        .slice(-2)
+        .map(function (m) { return '「' + m.text + '」'; })
+        .join('、');
+      el.form.memoryNote.textContent = '共 ' + memory.length + ' 条。最近的：' + last;
+    }
+    if (el.form.memoryClear) el.form.memoryClear.disabled = !memory.length;
   }
 
   function applyForm() {
@@ -991,7 +1422,11 @@
     saveConfig();
     updateModelChip();
     setStatus('已保存。', 'ok');
-    if (config.persona === 'nianzhen') loadSamples();
+    if (config.persona === 'nianzhen') {
+      loadSamples();
+      loadPersona();
+      loadSiteIndex();
+    }
     return true;
   }
 
@@ -1108,6 +1543,15 @@
       openSheet(el.settingsSheet);
     });
 
+    if (el.form.memoryClear) {
+      el.form.memoryClear.addEventListener('click', function () {
+        memory = [];
+        saveMemory();
+        updateMemoryNote();
+        setStatus('记忆已清空。', 'ok');
+      });
+    }
+
     Array.prototype.forEach.call(document.querySelectorAll('[data-close-sheet]'), function (node) {
       node.addEventListener('click', function () {
         closeSheet(el.settingsSheet);
@@ -1130,7 +1574,11 @@
       saveConfig();
       syncPersonaButtons();
       updateTitle();
-      if (config.persona === 'nianzhen') loadSamples();
+      if (config.persona === 'nianzhen') {
+        loadSamples();
+        loadPersona();
+        loadSiteIndex();
+      }
     });
 
     el.suggestions.addEventListener('click', function (e) {
@@ -1230,7 +1678,11 @@
     syncPersonaButtons();
     renderChatList();
     renderChat();
-    if (config.persona === 'nianzhen') loadSamples();
+    if (config.persona === 'nianzhen') {
+      loadSamples();
+      loadPersona();
+      loadSiteIndex();
+    }
 
     // 没有配好模型时，第一次进来直接把设置打开，别让人对着输入框发呆
     if (!config.apiKey && !/ollama|localhost|127\.0\.0\.1/.test(config.baseUrl || '')) {

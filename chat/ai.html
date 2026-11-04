@@ -157,7 +157,7 @@
                 <div class="wd-field">
                     <label for="cfg-persona">人格</label>
                     <select id="cfg-persona">
-                        <option value="nianzhen">念真（站内人格，会读对话样本）</option>
+                        <option value="nianzhen">念真（站内人格 · 有记性，会查站内文章）</option>
                         <option value="assistant">通用助手</option>
                         <option value="coder">写代码的</option>
                         <option value="custom">自定义</option>
@@ -170,6 +170,22 @@
                     <p class="wd-field__hint">写在框里的内容会覆盖人格默认提示词。</p>
                 </div>
 
+                <div class="wd-field">
+                    <label for="cfg-search">联网搜索接口（可选）</label>
+                    <input type="url" id="cfg-search" placeholder="https://searx.example.com/search" spellcheck="false">
+                    <p class="wd-field__hint">
+                        填一个返回 JSON 的搜索接口（SearXNG 之类），念真就能联网查资料；留空就只用站内资料。
+                    </p>
+                </div>
+
+                <div class="wd-field">
+                    <label>念真记得的事</label>
+                    <p class="wd-field__hint" id="cfg-memory-note">还什么都没记下。</p>
+                    <div class="wd-actions">
+                        <button type="button" class="wd-mini-btn" id="cfg-memory-clear">清空记忆</button>
+                    </div>
+                </div>
+
                 <label class="wd-toggle" for="cfg-stream">
                     <input type="checkbox" id="cfg-stream" checked>
                     <span><strong>流式输出</strong>边生成边显示，体验更接近即时通讯。</span>
@@ -180,7 +196,8 @@
                     <span>
                         <strong>本地工具（Agent 模式）</strong>
                         允许模型调用 <code>now</code> / <code>calc</code> / <code>roll</code> 三个本地函数。
-                        部分服务不支持工具调用，会退化成普通对话。
+                        念真还会多出 <code>site_search</code> / <code>site_read</code> / <code>remember</code>，
+                        只对她生效。部分服务不支持工具调用，会退化成普通对话。
                     </span>
                 </label>
 
