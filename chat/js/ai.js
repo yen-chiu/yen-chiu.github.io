@@ -1157,7 +1157,7 @@
         lines.push('- ' + item);
       });
       if (personaPack.mbti) {
-        lines.push('- 你的 MBTI 是 ' + personaPack.mbti + (personaPack.mbtiNote ? '：' + personaPack.mbtiNote : ''));
+        lines.push('- MBTI 大概是 ' + personaPack.mbti + '，只作参考，别拿它当标签或借口' + (personaPack.mbtiNote ? '：' + personaPack.mbtiNote : ''));
       }
     }
 
