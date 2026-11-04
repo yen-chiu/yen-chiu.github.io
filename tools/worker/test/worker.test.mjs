@@ -108,3 +108,59 @@ test('缺少 client_id 时返回 500', async () => {
   assert.equal(res.status, 500);
   assert.equal((await res.json()).error, 'missing_client_id');
 });
+
+test('/search 缺少 q 时报 400', async () => {
+  const res = await worker.fetch(makeRequest('/search', { method: 'GET', ip: '198.51.100.21' }), ENV);
+  assert.equal(res.status, 400);
+  assert.equal((await res.json()).error, 'missing_q');
+});
+
+test('/search 把维基结果整理成 results', async (t) => {
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    assert.match(String(url), /zh\.wikipedia\.org/);
+    return new Response(
+      JSON.stringify({
+        query: { search: [{ title: '苏轼', snippet: '<span>北宋</span>文学家' }] }
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  });
+  const res = await worker.fetch(makeRequest('/search?q=%E8%8B%8F%E8%BD%BC', { method: 'GET', ip: '198.51.100.22' }), ENV);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.results.length, 1);
+  assert.equal(body.results[0].title, '苏轼');
+  assert.match(body.results[0].url, /zh\.wikipedia\.org\/wiki\//);
+  assert.equal(body.results[0].snippet, '北宋 文学家');
+});
+
+test('/read 拒绝内网地址', async () => {
+  for (const target of ['http://127.0.0.1/x', 'http://10.0.0.5/a', 'http://169.254.169.254/latest', 'ftp://example.com/x']) {
+    const res = await worker.fetch(
+      makeRequest('/read?url=' + encodeURIComponent(target), { method: 'GET', ip: '198.51.100.23' }),
+      ENV
+    );
+    assert.equal(res.status, 502);
+    const body = await res.json();
+    assert.match(body.error, /private_host|bad_protocol/);
+  }
+});
+
+test('/read 抓回网页并转成纯文本', async (t) => {
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    assert.match(String(url), /example\.com/);
+    return new Response('<html><head><title>示例</title></head><body><p>正文 <b>加粗</b></p><script>x()</script></body></html>', {
+      status: 200,
+      headers: { 'Content-Type': 'text/html; charset=utf-8' }
+    });
+  });
+  const res = await worker.fetch(
+    makeRequest('/read?url=' + encodeURIComponent('https://example.com/a'), { method: 'GET', ip: '198.51.100.24' }),
+    ENV
+  );
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('Content-Type'), /text\/plain/);
+  const text = await res.text();
+  assert.match(text, /正文 加粗/);
+  assert.doesNotMatch(text, /x\(\)/);
+});
