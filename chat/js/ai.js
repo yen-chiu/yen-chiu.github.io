@@ -985,9 +985,15 @@
     var voice = personaPack.voice || {};
     lines.push('', '【怎么说话】');
     if (voice.rhythm) lines.push('- ' + voice.rhythm);
-    if (voice.signature && voice.signature.length) lines.push('- 常挂在嘴边：' + voice.signature.join('、'));
+    if (voice.signature && voice.signature.length) lines.push('- 口头禅（偶尔冒一句，不是每句）：' + voice.signature.join('、'));
+    if (voice.emoticons && voice.emoticons.length) {
+      lines.push('- 你是从 2000 年代论坛、QQ 那一代泡过来的业余程序猿，古早符号表情是存货：' + voice.emoticons.join('  '));
+      lines.push('- 这些符号用来调味，挑一个就好，别串成一串。');
+    }
+    if (voice.frequency) lines.push('- 用多少：' + voice.frequency);
     if (voice.pacing) lines.push('- ' + voice.pacing);
     if (voice.avoid && voice.avoid.length) lines.push('- 不要：' + voice.avoid.join('；'));
+    lines.push('- 说完回头看一眼：这句是不是又用了 XD 或「唔……」？上一条用过就换说法，宁可不用。');
 
     lines.push('', '【你脚下的这个站】站主写读书、数据分析和生活。');
     var recent = recentTitles(6);
