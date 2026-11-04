@@ -71,6 +71,8 @@
   flex: 1 1 auto;
   padding: 20px 20px 8px;
   overflow-y: auto;
+  /* 窄屏上别让任何一张卡把页面顶出横向滚动 */
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scroll-behavior: smooth;
 }
@@ -347,6 +349,7 @@ html[data-theme="dark"] .wd-inline-code {
   background: rgba(240, 140, 46, 0.08);
   color: #b06a17;
   font: 500 12px/1.5 var(--wd-font);
+  box-sizing: border-box;
 }
 
 html[data-theme="dark"] .wd-tool {
@@ -358,6 +361,8 @@ html[data-theme="dark"] .wd-tool {
   align-items: center;
   gap: 8px;
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 7px 12px;
   border: 0;
   background: transparent;
@@ -373,8 +378,12 @@ html[data-theme="dark"] .wd-tool {
 }
 
 .wd-tool__label {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
   font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .wd-tool__arg {
@@ -426,6 +435,8 @@ html[data-theme="dark"] .wd-tool {
   color: var(--wd-ink-2);
   font: 400 12px/1.7 var(--wd-mono);
   white-space: pre-wrap;
+  /* 长 URL 里一个断点都没有，也要能在边界内折行 */
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
