@@ -371,10 +371,26 @@
     var row = document.createElement('div');
     row.className = 'wd-msg';
 
+    /* 头像是人格模块的一部分：念真有专属图，其他人格仍用文字缩写 */
     var avatar = document.createElement('div');
     avatar.className = 'wd-msg__avatar';
     avatar.setAttribute('aria-hidden', 'true');
-    avatar.textContent = avatarText();
+    var avatarSrc = config.persona === 'nianzhen' && personaPack ? personaPack.avatar : '';
+    if (avatarSrc) {
+      avatar.className += ' wd-msg__avatar--img';
+      var avatarImg = document.createElement('img');
+      avatarImg.src = avatarSrc;
+      avatarImg.alt = '';
+      avatarImg.decoding = 'async';
+      avatarImg.addEventListener('error', function () {
+        avatar.className = 'wd-msg__avatar';
+        avatar.removeChild(avatarImg);
+        avatar.textContent = avatarText();
+      });
+      avatar.appendChild(avatarImg);
+    } else {
+      avatar.textContent = avatarText();
+    }
 
     var body = document.createElement('div');
     body.className = 'wd-msg__body';
@@ -421,6 +437,7 @@
     var labels = {
       site_search: '站内检索',
       site_read: '读站内页',
+      site_query: '站内统计',
       remember: '记住',
       web_search: '联网检索'
     };
@@ -446,6 +463,9 @@
       meta.textContent = found ? found + ' 条' : '没找到';
     } else if (tool.name === 'site_read') {
       meta.textContent = resultText.length + ' 字';
+    } else if (tool.name === 'site_query') {
+      var total = (resultText.match(/共\s*(\d+)\s*篇/) || [])[1];
+      meta.textContent = total ? total + ' 篇' : '';
     } else if (tool.name === 'remember') {
       meta.textContent = /记下了/.test(resultText) ? '已记下' : '没记';
     }
@@ -732,6 +752,101 @@
       });
   }
 
+  /* ---------- 站点统计：给「数据分析」用的查询 ---------- */
+
+  function splitList(text) {
+    return String(text || '')
+      .split(/[,，]/)
+      .map(function (s) {
+        return s.trim();
+      })
+      .filter(Boolean);
+  }
+
+  function postWords(post) {
+    return String(post.content || '').replace(/\s+/g, '').length;
+  }
+
+  function postMonth(post) {
+    var m = String(post.date || '').match(/(\d{4})-(\d{2})/);
+    return m ? m[1] + '-' + m[2] : '未知';
+  }
+
+  function matchPost(post, args) {
+    var date = String(post.date || '').slice(0, 10);
+    if (args.tag && splitList(post.tags).indexOf(String(args.tag).trim()) < 0) return false;
+    if (args.category && splitList(post.categories).indexOf(String(args.category).trim()) < 0) return false;
+    if (args.since && date && date < String(args.since)) return false;
+    if (args.until && date && date > String(args.until)) return false;
+    return true;
+  }
+
+  function siteQuery(args) {
+    if (!siteIndex || !siteIndex.length) return '站内索引还没读到，稍后再试。';
+
+    var posts = siteIndex.filter(function (post) {
+      return matchPost(post, args || {});
+    });
+    if (!posts.length) return '没有符合条件的文章。';
+
+    var limit = Math.max(1, Math.min(50, Number(args.limit) || 12));
+    var totalWords = posts.reduce(function (sum, post) {
+      return sum + postWords(post);
+    }, 0);
+
+    if (args.mode === 'list') {
+      var lines = posts
+        .slice()
+        .sort(function (a, b) {
+          return String(b.date).localeCompare(String(a.date));
+        })
+        .slice(0, limit)
+        .map(function (post) {
+          return '· 《' + post.title + '》（' + String(post.date).slice(0, 10) + '）' + post.url + ' · ' + postWords(post) + ' 字';
+        });
+      return '共 ' + posts.length + ' 篇，合计 ' + totalWords + ' 字。\n' + lines.join('\n');
+    }
+
+    var groupBy = ['month', 'tag', 'category'].indexOf(args.group_by) >= 0 ? args.group_by : 'month';
+    var groups = {};
+    posts.forEach(function (post) {
+      var keys;
+      if (groupBy === 'tag') keys = splitList(post.tags);
+      else if (groupBy === 'category') keys = splitList(post.categories);
+      else keys = [postMonth(post)];
+      if (!keys.length) keys = ['未分类'];
+      keys.forEach(function (key) {
+        if (!groups[key]) groups[key] = { posts: 0, words: 0 };
+        groups[key].posts += 1;
+        groups[key].words += postWords(post);
+      });
+    });
+
+    var rows = Object.keys(groups).map(function (key) {
+      return { key: key, posts: groups[key].posts, words: groups[key].words };
+    });
+    rows.sort(function (a, b) {
+      return groupBy === 'month' ? (a.key < b.key ? 1 : -1) : b.posts - a.posts || (a.key < b.key ? -1 : 1);
+    });
+
+    var label = groupBy === 'month' ? '月份' : groupBy === 'tag' ? '标签' : '分类';
+    return (
+      '共 ' +
+      posts.length +
+      ' 篇，合计 ' +
+      totalWords +
+      ' 字；按' +
+      label +
+      '分组：\n' +
+      rows
+        .slice(0, limit)
+        .map(function (r) {
+          return '· ' + r.key + '：' + r.posts + ' 篇 · ' + r.words + ' 字';
+        })
+        .join('\n')
+    );
+  }
+
   function fetchPageText(path) {
     var url = String(path || '').trim();
     if (!url) return Promise.reject(new Error('没有给地址'));
@@ -827,6 +942,9 @@
     if (config.tools) {
       lines.push('', '【手上能用的】');
       lines.push('- site_search 在站里找文章，site_read 打开某篇读正文，remember 把对方说的要紧事记下来。');
+      lines.push(
+        '- site_query 统计站内文章（按月份/标签/分类出篇数和字数）。问到「一共写了多少」「哪个月写得多」「标签怎么分布」这类问题先查再答，数字不要自己编。'
+      );
       if (config.searchEndpoint) lines.push('- web_search 联网查资料。');
       lines.push('真要查的时候再调，别假装查过。');
     }
@@ -968,6 +1086,42 @@
       {
         type: 'function',
         function: {
+          name: 'site_query',
+          description:
+            '统计站内文章：按月份/标签/分类汇总篇数和字数，或按条件列出文章。' +
+            '问「写了多少篇」「哪个月写得多」「标签分布」这类问题时用它，数字要从这里来，不要凭印象估。',
+          parameters: {
+            type: 'object',
+            properties: {
+              mode: {
+                type: 'string',
+                enum: ['aggregate', 'list'],
+                description: 'aggregate 出汇总，list 列文章明细'
+              },
+              group_by: {
+                type: 'string',
+                enum: ['month', 'tag', 'category'],
+                description: 'aggregate 时按什么分组，默认 month'
+              },
+              metric: {
+                type: 'string',
+                enum: ['posts', 'words'],
+                description: 'aggregate 时看篇数还是字数，默认 posts'
+              },
+              tag: { type: 'string', description: '只看带这个标签的文章' },
+              category: { type: 'string', description: '只看这个分类的文章' },
+              since: { type: 'string', description: '起始日期，YYYY-MM-DD' },
+              until: { type: 'string', description: '结束日期，YYYY-MM-DD' },
+              limit: { type: 'number', description: '最多返回多少行，默认 12' }
+            },
+            required: ['mode'],
+            additionalProperties: false
+          }
+        }
+      },
+      {
+        type: 'function',
+        function: {
           name: 'remember',
           description: '把对方说过的、以后值得记住的小事记下来。只记对方本人相关的事实或偏好，不要记闲聊。',
           parameters: {
@@ -1069,6 +1223,11 @@
       } else if (name === 'site_read') {
         summary = args.path || '';
         result = await fetchPageText(args.path);
+      } else if (name === 'site_query') {
+        await loadSiteIndex();
+        var mode = args.mode === 'list' ? 'list' : 'aggregate';
+        summary = mode + (mode === 'aggregate' ? ' · ' + (args.group_by || 'month') : '');
+        result = siteQuery(args);
       } else if (name === 'remember') {
         summary = String(args.text || '').slice(0, 40);
         result = rememberFact(args.text) ? '记下了。' : '这条已经记过，或者太短了。';
@@ -1120,6 +1279,11 @@
     el.welcome.hidden = true;
     appendUserNode({ role: 'user', content: userText });
     scrollToBottom();
+
+    // 站内人格：先把性格模块（含头像）、站内索引、说话样本备齐，再建气泡
+    if (config.persona === 'nianzhen') {
+      await Promise.all([loadPersona(), loadSiteIndex(), loadSamples()]);
+    }
 
     var reply = { role: 'assistant', content: '', tools: [], ts: Date.now() };
     var node = appendAssistantNode(reply);
@@ -1241,10 +1405,6 @@
     updateSendUI(true);
 
     try {
-      // 站内人格：先把性格模块、站内索引、说话样本备齐
-      if (config.persona === 'nianzhen') {
-        await Promise.all([loadPersona(), loadSiteIndex(), loadSamples()]);
-      }
       var apiMessages = buildApiMessages([{ role: 'user', content: userText }], userText);
       var rounds = 0;
 
@@ -1723,8 +1883,13 @@
     renderChat();
     if (config.persona === 'nianzhen') {
       loadSamples();
-      loadPersona();
       loadSiteIndex();
+      // 头像在人格模块里，到货后把历史消息重画一遍
+      loadPersona().then(function () {
+        if (sending) return;
+        var chat = currentChat();
+        if (chat && chat.messages.length) renderChat();
+      });
     }
 
     // 没有配好模型时，第一次进来直接把设置打开，别让人对着输入框发呆

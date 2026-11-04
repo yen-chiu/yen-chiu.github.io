@@ -119,6 +119,20 @@
   user-select: none;
 }
 
+/* 有专属头像的人格（念真）：图铺满，去掉底色和文字 */
+.wd-msg__avatar--img {
+  overflow: hidden;
+  background: transparent;
+  box-shadow: 0 2px 8px rgba(15, 96, 85, 0.16);
+}
+
+.wd-msg__avatar--img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .wd-msg__body {
   min-width: 0;
   max-width: calc(100% - 44px);
