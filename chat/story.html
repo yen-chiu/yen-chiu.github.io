@@ -27,6 +27,13 @@
                 <strong>与念真聊天中</strong>
                 <span id="wd-chapter">01:12 · 第一夜</span>
             </div>
+            <button type="button" class="wd-icon-btn" id="wd-pocket-btn" aria-label="口袋">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 8.5h12l-1.2 9.5H7.2L6 8.5z" />
+                    <path d="M9 8.5V6.5a3 3 0 0 1 6 0v2" />
+                </svg>
+                <span id="wd-pocket-count">0/8</span>
+            </button>
             <span data-wd-apps-slot></span>
             <button type="button" class="wd-icon-btn" id="wd-menu-btn" aria-haspopup="true"
                 aria-expanded="false" aria-label="菜单">
@@ -78,6 +85,17 @@
             </p>
         </section>
 
+        <!-- 口袋 -->
+        <section class="wd-pocket" id="wd-pocket" hidden aria-label="口袋">
+            <div class="wd-pocket__sheet" role="dialog" aria-modal="true" aria-label="口袋">
+                <header class="wd-pocket__head">
+                    <strong>口袋</strong>
+                    <button type="button" class="wd-icon-btn" id="wd-pocket-close" aria-label="关闭">×</button>
+                </header>
+                <div id="wd-pocket-body"></div>
+            </div>
+        </section>
+
         <!-- 章节结束 -->
         <section class="wd-overlay" id="wd-ending" hidden></section>
     </div>
@@ -96,7 +114,19 @@
             startTime: '01:12',
             showGallery: false,
             showSecretMarks: false,
-            endingEyebrow: '第一季 · 第一夜'
+            endingEyebrow: '第一季 · 第一夜',
+            pocket: {
+                fragments: [
+                    { id: 'frag_page', label: '被撕掉的一页', hint: '房间 · 桌角' },
+                    { id: 'frag_coat', label: '外套口袋里的旧车票', hint: '房间 · 椅背' },
+                    { id: 'frag_book', label: '没还的那本书', hint: '书架' },
+                    { id: 'frag_cup', label: '另一只杯子', hint: '第三夜' },
+                    { id: 'frag_msg', label: '05:00 的消息', hint: '第二夜' },
+                    { id: 'frag_scratch', label: '第 47 道划痕', hint: '第二夜' },
+                    { id: 'frag_period', label: '名单后的句号', hint: '后台' },
+                    { id: 'frag_seventh', label: '第七夜', hint: '更远的地方' }
+                ]
+            }
         };
     </script>
     <script src="js/core/narrative.js"></script>

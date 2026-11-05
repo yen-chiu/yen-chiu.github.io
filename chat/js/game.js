@@ -21,6 +21,7 @@
   var SHOW_GALLERY = CFG.showGallery !== false;
   var ENDING_EYEBROW = CFG.endingEyebrow || 'Ending';
   var SHOW_SECRET = CFG.showSecretMarks !== false;
+  var POCKET = CFG.pocket || null;
   var SPEED_KEY = 'wd.story.speed';
 
   var el = {
@@ -40,7 +41,12 @@
     speed: document.getElementById('wd-speed'),
     restart: document.getElementById('wd-restart'),
     gallery: document.getElementById('wd-gallery'),
-    galleryCount: document.getElementById('wd-gallery-count')
+    galleryCount: document.getElementById('wd-gallery-count'),
+    pocket: document.getElementById('wd-pocket'),
+    pocketBody: document.getElementById('wd-pocket-body'),
+    pocketCount: document.getElementById('wd-pocket-count'),
+    pocketBtn: document.getElementById('wd-pocket-btn'),
+    pocketClose: document.getElementById('wd-pocket-close')
   };
 
   var story = null;
@@ -429,6 +435,7 @@
       el.speed.setAttribute('aria-pressed', String(fastMode));
     }
     updateGalleryCount();
+    updatePocket();
   }
 
   function applySpeed() {
@@ -473,10 +480,67 @@
     });
   }
 
+  /* ---------------- 口袋 ---------------- */
+
+  function pocketTotal() {
+    return POCKET && POCKET.fragments ? POCKET.fragments.length : 0;
+  }
+
+  function pocketGot() {
+    if (!POCKET || !story || !story.vars) return 0;
+    return (POCKET.fragments || []).filter(function (f) {
+      return Boolean(story.vars[f.id]);
+    }).length;
+  }
+
+  function updatePocket() {
+    if (!POCKET || !el.pocketCount) return;
+    el.pocketCount.textContent = pocketGot() + '/' + pocketTotal();
+  }
+
+  function renderPocket() {
+    if (!POCKET || !el.pocketBody) return;
+    var got = pocketGot();
+    var list = (POCKET.fragments || []).map(function (f) {
+      var has = story && story.vars && story.vars[f.id];
+      return (
+        '<li data-locked="' + (has ? 'false' : 'true') + '">' +
+        '<strong>' + (has ? escapeHTML(f.label) : '？？？') + '</strong>' +
+        '<span>' + (has ? escapeHTML(f.hint || '') : '还没捡到') + '</span>' +
+        '</li>'
+      );
+    }).join('');
+    el.pocketBody.innerHTML =
+      '<p class="wd-pocket__lead">' + got + ' / ' + pocketTotal() + ' 枚。</p>' +
+      '<ul class="wd-pocket__list">' + list + '</ul>';
+    el.pocket.hidden = false;
+  }
+
+  function closePocket() {
+    if (el.pocket) el.pocket.hidden = true;
+  }
+
   /* ---------------- 绑定 ---------------- */
 
   function bindUI() {
     el.start.addEventListener('click', freshStart);
+
+    if (el.pocketBtn) {
+      el.pocketBtn.addEventListener('click', function () {
+        renderPocket();
+      });
+    }
+
+    if (el.pocketClose) {
+      el.pocketClose.addEventListener('click', closePocket);
+    }
+
+    if (el.pocket) {
+      el.pocket.addEventListener('click', function (e) {
+        if (e.target === el.pocket) closePocket();
+      });
+    }
+
 
     if (el.continueBtn) {
       el.continueBtn.addEventListener('click', function () {
@@ -565,11 +629,13 @@
       },
       onMessage: function (msg) {
         appendMessage(msg);
+        updatePocket();
         persist();
       },
       onChoices: function (list) {
         if (list && list.length) renderChoices(list);
         else clearChoices();
+        updatePocket();
         persist();
       },
       onEnding: function (ending) {
