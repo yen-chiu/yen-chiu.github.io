@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f2422">
+    <meta name="description" content="与念真聊天 · 第一季：三个夜晚，一盏没关的灯。">
+    <title>与念真聊天 · 第一夜</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link href="css/shell.css?v=3bd804aac4" rel="stylesheet">
+    <link href="css/game.css?v=20261105" rel="stylesheet">
+    <link href="css/story.css?v=20261105" rel="stylesheet">
+    <link href="css/ambient.css?v=3bd804aac4" rel="stylesheet">
+    <script src="js/shell.js?v=3bd804aac4"></script>
+</head>
+
+<body class="wd-page">
+    <div class="wd-phone">
+        <header class="wd-topbar">
+            <a class="wd-icon-btn" href="index.html" title="回到聊天" aria-label="回到聊天">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 5l-7 7 7 7" />
+                </svg>
+            </a>
+            <div class="wd-topbar__title">
+                <strong>与念真聊天中</strong>
+                <span id="wd-chapter">01:12 · 第一夜</span>
+            </div>
+            <span data-wd-apps-slot></span>
+            <button type="button" class="wd-icon-btn" id="wd-menu-btn" aria-haspopup="true"
+                aria-expanded="false" aria-label="菜单">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                    <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                    <circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                </svg>
+            </button>
+        </header>
+
+        <div class="wd-menu" id="wd-menu" hidden>
+            <button type="button" id="wd-rewind">回到上一个选择</button>
+            <button type="button" id="wd-speed">快速模式</button>
+            <div class="wd-menu__sep"></div>
+            <button type="button" id="wd-restart">从第一夜重来</button>
+        </div>
+
+        <main class="wd-chat" id="wd-chat" aria-live="polite" aria-label="对话记录"></main>
+
+        <div class="wd-typing" id="wd-typing" hidden aria-hidden="true">
+            <span>念真正在输入</span><i></i><i></i><i></i>
+        </div>
+
+        <footer class="wd-choices" id="wd-choices" hidden>
+            <p class="wd-choices__hint">挑一句你会说的话 <span id="wd-choices-hint"></span></p>
+            <div class="wd-choices__list" id="wd-choices-list"></div>
+        </footer>
+
+        <!-- 开场 -->
+        <section class="wd-overlay" id="wd-intro">
+            <p class="wd-overlay__eyebrow">第一季 · 第一夜</p>
+            <h1 class="wd-overlay__title">你比上次来得晚</h1>
+            <p class="wd-overlay__sub">
+                凌晨 01:12。她好像认识你。<br>
+                你不认识她。
+            </p>
+            <div class="wd-overlay__meta">
+                <span>约 10 分钟</span>
+                <span>第一夜</span>
+                <span>进度自动保存</span>
+            </div>
+            <div class="wd-overlay__actions">
+                <button type="button" class="wd-btn" id="wd-start">推门进去</button>
+                <button type="button" class="wd-btn wd-btn--ghost" id="wd-continue" hidden>继续上次</button>
+            </div>
+            <p class="wd-overlay__foot">
+                第一季共三夜；第二、三夜还在写。<br>
+                <a href="index.html">回聊天</a> · <a href="credits.html">致谢</a>
+            </p>
+        </section>
+
+        <!-- 章节结束 -->
+        <section class="wd-overlay" id="wd-ending" hidden></section>
+    </div>
+
+    <noscript>
+        <p style="padding:24px;font-family:sans-serif;">这一页需要 JavaScript 才能运行。</p>
+    </noscript>
+
+    <script>
+        window.WD_PLAYER = {
+            storyUrl: 'assets/stories/nianzhen/nianzhen.json',
+            saveKey: 'wd.story.nianzhen.save',
+            endingKey: 'wd.story.nianzhen.endings',
+            avatar: '念',
+            chapterSuffix: '第一夜',
+            startTime: '01:12',
+            showGallery: false,
+            showSecretMarks: false,
+            endingEyebrow: '第一季 · 第一夜'
+        };
+    </script>
+    <script src="js/core/narrative.js"></script>
+    <script src="js/game.js?v=20261105"></script>
+    <script src="js/ambient.js?v=3bd804aac4" defer></script>
+</body>
+
+</html>

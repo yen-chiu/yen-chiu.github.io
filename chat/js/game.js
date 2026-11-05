@@ -11,9 +11,16 @@
 (function () {
   'use strict';
 
-  var STORY_URL = 'assets/stories/night-radio.json';
-  var SAVE_KEY = 'wd.story.night-radio.save';
-  var ENDING_KEY = 'wd.story.endings';
+  var CFG = window.WD_PLAYER || {};
+  var STORY_URL = CFG.storyUrl || 'assets/stories/night-radio.json';
+  var SAVE_KEY = CFG.saveKey || 'wd.story.night-radio.save';
+  var ENDING_KEY = CFG.endingKey || 'wd.story.endings';
+  var AVATAR = CFG.avatar || '柚';
+  var CHAPTER_SUFFIX = CFG.chapterSuffix || '一个普通的深夜';
+  var START_TIME = CFG.startTime || '02:17';
+  var SHOW_GALLERY = CFG.showGallery !== false;
+  var ENDING_EYEBROW = CFG.endingEyebrow || 'Ending';
+  var SHOW_SECRET = CFG.showSecretMarks !== false;
   var SPEED_KEY = 'wd.story.speed';
 
   var el = {
@@ -157,7 +164,7 @@
       var avatar = document.createElement('div');
       avatar.className = 'wd-avatar';
       avatar.setAttribute('aria-hidden', 'true');
-      avatar.textContent = '柚';
+      avatar.textContent = AVATAR;
       row.appendChild(avatar);
     }
 
@@ -206,7 +213,7 @@
 
   function setChapter(time) {
     if (!el.chapter || !time) return;
-    el.chapter.textContent = time + ' · 一个普通的深夜';
+    el.chapter.textContent = time + (CHAPTER_SUFFIX ? ' · ' + CHAPTER_SUFFIX : '');
   }
 
   function clearChoices() {
@@ -238,7 +245,7 @@
       label.textContent = choice.text;
       btn.appendChild(label);
 
-      if (choice.when) {
+      if (SHOW_SECRET && choice.when) {
         var mark = document.createElement('span');
         mark.className = 'wd-choice__secret';
         mark.title = '只有在前面说对了话，才会出现这句';
@@ -300,12 +307,11 @@
       .join('');
 
     el.ending.innerHTML =
-      '<p class="wd-overlay__eyebrow">Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount + '</p>' +
+      '<p class="wd-overlay__eyebrow">' + (SHOW_GALLERY ? 'Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount : ENDING_EYEBROW) + '</p>' +
       '<h1 class="wd-overlay__title">' + escapeHTML(ending.title) + '</h1>' +
       '<p class="wd-ending__quote">' + escapeHTML(ending.quote || '') + '</p>' +
       '<p class="wd-ending__summary">' + escapeHTML(ending.summary || '') + '</p>' +
-      '<h2 class="wd-overlay__eyebrow">结局收集</h2>' +
-      '<ul class="wd-endings">' + list + '</ul>' +
+      (SHOW_GALLERY ? '<h2 class="wd-overlay__eyebrow">结局收集</h2><ul class="wd-endings">' + list + '</ul>' : '') +
       '<div class="wd-overlay__actions">' +
       '<button type="button" class="wd-btn" id="wd-again">再玩一次</button>' +
       '<button type="button" class="wd-btn wd-btn--ghost" id="wd-rewind-ending">回到上一个选择</button>' +
@@ -345,7 +351,7 @@
     state.finished = false;
     state.ending = null;
     clearChoices();
-    setChapter('02:17');
+    setChapter(START_TIME);
     if (!story) return;
     story.start();
     persist();
@@ -410,7 +416,7 @@
     el.ending.hidden = true;
     el.intro.hidden = false;
     clearChoices();
-    setChapter('02:17');
+    setChapter(START_TIME);
     if (story) story.reset();
     updateMenu();
   }
@@ -502,10 +508,12 @@
       restart();
     });
 
-    el.gallery.addEventListener('click', function () {
-      toggleMenu(false);
-      showGallery();
-    });
+    if (el.gallery) {
+      el.gallery.addEventListener('click', function () {
+        toggleMenu(false);
+        showGallery();
+      });
+    }
 
     document.addEventListener('click', function (e) {
       if (!el.menu.hidden && !el.menu.contains(e.target) && e.target !== el.menuBtn) {

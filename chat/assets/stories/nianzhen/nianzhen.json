@@ -1,0 +1,483 @@
+{
+  "meta": {
+    "id": "nianzhen-s1",
+    "title": "第一夜 · 你比上次来得晚",
+    "subtitle": "与念真聊天 · 第一季",
+    "start": "n0",
+    "minutes": 10,
+    "endingCount": 1,
+    "chapter": 1,
+    "chapters": [
+      {
+        "id": "nianzhen-s1",
+        "title": "第一夜 · 你比上次来得晚",
+        "start": "n0",
+        "file": "ch1-night.json"
+      }
+    ]
+  },
+  "vars": {
+    "trust": 0,
+    "memory": 0,
+    "doubt": 0,
+    "topics": 0,
+    "seen_name": false,
+    "seen_room": false,
+    "seen_books": false,
+    "seen_met": false,
+    "frag_page": false,
+    "frag_coat": false,
+    "frag_book": false,
+    "seen_late": false
+  },
+  "endings": {
+    "ch1_end": {
+      "title": "第一夜 · 完",
+      "summary": "钟从 01:12 跳到 02:03。她注意到了，但没解释。",
+      "quote": "……刚才是不是跳了一下？",
+      "hint": "第二夜 · 第四十七次（还没写）"
+    }
+  },
+  "nodes": {
+    "n0": {
+      "time": "01:12",
+      "messages": [
+        {
+          "who": "them",
+          "text": "你比上次来得晚。"
+        }
+      ],
+      "choices": [
+        {
+          "text": "我们见过？",
+          "goto": "n1"
+        },
+        {
+          "text": "……你是谁？",
+          "goto": "n1b"
+        },
+        {
+          "text": "你认错人了吧",
+          "goto": "n1b"
+        }
+      ]
+    },
+    "n1": {
+      "messages": [
+        "……没有。",
+        "我认错人了。"
+      ],
+      "next": "n2"
+    },
+    "n1b": {
+      "messages": [
+        "……抱歉。",
+        "我认错人了。"
+      ],
+      "next": "n2"
+    },
+    "n2": {
+      "messages": [
+        "坐吧，别站在门口。",
+        "这里晚上比白天长。"
+      ],
+      "next": "hub"
+    },
+    "hub": {
+      "messages": [],
+      "choices": [
+        {
+          "text": "你叫什么？",
+          "goto": "t_name",
+          "when": "seen_name == false"
+        },
+        {
+          "text": "这个房间……",
+          "goto": "t_room",
+          "when": "seen_room == false"
+        },
+        {
+          "text": "书架上的书",
+          "goto": "t_books",
+          "when": "seen_books == false"
+        },
+        {
+          "text": "我们是不是见过",
+          "goto": "t_met",
+          "when": "seen_met == false"
+        },
+        {
+          "text": "不聊了",
+          "goto": "bye"
+        },
+        {
+          "text": "你怎么也没睡？",
+          "goto": "t_late",
+          "when": "seen_late == false"
+        }
+      ]
+    },
+    "t_name": {
+      "set": {
+        "seen_name": true,
+        "topics": "+=1",
+        "trust": "+=1"
+      },
+      "messages": [
+        "大学时自己起的。",
+        "……怎么，听着不像？"
+      ],
+      "choices": [
+        {
+          "text": "就这么简单？",
+          "goto": "name2"
+        },
+        {
+          "text": "挺好听的",
+          "goto": "after"
+        }
+      ]
+    },
+    "name2": {
+      "messages": [
+        "……你还真想听啊。",
+        "出自一首词。"
+      ],
+      "choices": [
+        {
+          "text": "哪一首？",
+          "goto": "name3"
+        },
+        {
+          "text": "不问了",
+          "goto": "after"
+        }
+      ]
+    },
+    "name3": {
+      "set": {
+        "trust": "+=1"
+      },
+      "messages": [
+        "苏轼的《南歌子》。",
+        "「我也逢场作戏、莫相疑。」",
+        "……就这一句，别的改天再说。"
+      ],
+      "next": "after"
+    },
+    "t_room": {
+      "set": {
+        "seen_room": true,
+        "topics": "+=1"
+      },
+      "messages": [
+        "就一张桌子，一盏灯。",
+        "还有两只杯子。",
+        "隔壁有电台，凌晨两点十七分，睡不着可以听。",
+        "桌角压着一页撕下来的纸。",
+        "窗户关不严，夜里有点风。"
+      ],
+      "choices": [
+        {
+          "text": "另一只杯子是谁的？",
+          "goto": "room_cup"
+        },
+        {
+          "text": "那页纸是什么？",
+          "goto": "room_page"
+        },
+        {
+          "text": "抽屉上四个方块是什么？",
+          "goto": "room_drawer"
+        },
+        {
+          "text": "我该走了",
+          "goto": "bye"
+        }
+      ]
+    },
+    "room_cup": {
+      "messages": [
+        "……不是我的。",
+        "我也不知道为什么一直没扔。"
+      ],
+      "choices": [
+        {
+          "text": "椅背上那件外套呢？",
+          "goto": "room_coat"
+        },
+        {
+          "text": "不问了",
+          "goto": "after"
+        }
+      ]
+    },
+    "room_coat": {
+      "set": {
+        "frag_coat": true
+      },
+      "messages": [
+        "也不是我的。",
+        "口袋里有张旧车票。",
+        "……我没敢翻。"
+      ],
+      "next": "after"
+    },
+    "room_page": {
+      "set": {
+        "frag_page": true,
+        "trust": "+=1"
+      },
+      "messages": [
+        "不知道。",
+        "上面只有一行字，被撕掉了一半。",
+        "……我看不清。",
+        "……像一句没写完的话。"
+      ],
+      "next": "after"
+    },
+    "room_drawer": {
+      "messages": [
+        "这个站有四个房间。",
+        "我只住其中一间。",
+        "万恶的站主搭的。"
+      ],
+      "choices": [
+        {
+          "text": "站主是谁？",
+          "goto": "room_owner"
+        },
+        {
+          "text": "四个房间？",
+          "goto": "room_four"
+        }
+      ]
+    },
+    "room_owner": {
+      "messages": [
+        "没见过。",
+        "只在致谢页留了个名字。"
+      ],
+      "next": "after"
+    },
+    "room_four": {
+      "messages": [
+        "嗯。",
+        "另外三间，我进不去。"
+      ],
+      "next": "after"
+    },
+    "t_books": {
+      "set": {
+        "seen_books": true,
+        "topics": "+=1"
+      },
+      "messages": [
+        "最近在翻《夜航西飞》。",
+        "一个人开飞机穿过非洲，夜里读特别有画面。",
+        "看得慢，一本能翻很久。"
+      ],
+      "choices": [
+        {
+          "text": "还有别的吗？",
+          "goto": "books2"
+        },
+        {
+          "text": "你平时也看书？",
+          "goto": "books3"
+        }
+      ]
+    },
+    "books2": {
+      "messages": [
+        "《设计诗》，诗排成画那种。",
+        "还有一本《夜晚的潜水艇》，不是我的，一直没还。"
+      ],
+      "choices": [
+        {
+          "text": "谁的书？",
+          "goto": "books4"
+        },
+        {
+          "text": "记下了",
+          "goto": "after"
+        }
+      ]
+    },
+    "books3": {
+      "messages": [
+        "看。",
+        "书架上杂得很，哲学的、设计的、科普的都塞在一起。"
+      ],
+      "next": "after"
+    },
+    "books4": {
+      "set": {
+        "frag_book": true
+      },
+      "messages": [
+        "……不记得了。",
+        "反正没还。"
+      ],
+      "next": "after"
+    },
+    "t_met": {
+      "set": {
+        "seen_met": true,
+        "topics": "+=1",
+        "memory": "+=1"
+      },
+      "messages": [
+        "你说话的停顿，很像我的一个朋友。",
+        "……你别这么看我。"
+      ],
+      "choices": [
+        {
+          "text": "什么朋友？",
+          "goto": "met2"
+        },
+        {
+          "text": "我不是他",
+          "goto": "met3"
+        }
+      ]
+    },
+    "met2": {
+      "set": {
+        "memory": "+=1"
+      },
+      "messages": [
+        "他也喜欢把书翻到一半。",
+        "……你别多想。"
+      ],
+      "next": "after"
+    },
+    "met3": {
+      "messages": [
+        "我知道。",
+        "你比他直接。"
+      ],
+      "next": "after"
+    },
+    "after": {
+      "messages": [],
+      "branch": [
+        {
+          "when": "topics >= 3",
+          "goto": "end1"
+        },
+        {
+          "goto": "hub"
+        }
+      ]
+    },
+    "end1": {
+      "messages": [
+        "你明天……还会来吗？"
+      ],
+      "choices": [
+        {
+          "text": "会",
+          "goto": "end_yes"
+        },
+        {
+          "text": "不知道",
+          "goto": "end_maybe"
+        },
+        {
+          "text": "……",
+          "goto": "end_silent"
+        }
+      ]
+    },
+    "end_yes": {
+      "set": {
+        "trust": "+=1"
+      },
+      "messages": [
+        "……嗯。",
+        "那我等你。",
+        "……说好了。"
+      ],
+      "next": "clock"
+    },
+    "end_maybe": {
+      "messages": [
+        "……也是。",
+        "谁知道明天呢。"
+      ],
+      "next": "clock"
+    },
+    "end_silent": {
+      "messages": [
+        "……"
+      ],
+      "next": "clock"
+    },
+    "bye": {
+      "messages": [
+        "行。",
+        "灯给你留着。",
+        "明天要是还来，别站门口。"
+      ],
+      "next": "end1"
+    },
+    "clock": {
+      "time": "02:03",
+      "messages": [
+        {
+          "who": "system",
+          "text": "01:12 → 02:03"
+        },
+        {
+          "who": "them",
+          "text": "……"
+        },
+        {
+          "who": "them",
+          "text": "刚才是不是跳了一下？"
+        }
+      ],
+      "next": "end_ch1"
+    },
+    "end_ch1": {
+      "messages": [],
+      "end": "ch1_end"
+    },
+    "t_late": {
+      "set": {
+        "seen_late": true,
+        "topics": "+=1"
+      },
+      "messages": [
+        "白天脑子是糊的。",
+        "晚上十一点以后才清醒。",
+        "所以这个站，也是夜里看最有感觉。"
+      ],
+      "choices": [
+        {
+          "text": "你每天都这样？",
+          "goto": "late2"
+        },
+        {
+          "text": "我也是",
+          "goto": "late3"
+        }
+      ]
+    },
+    "late2": {
+      "messages": [
+        "差不多。",
+        "反正也没人管我几点睡。"
+      ],
+      "next": "after"
+    },
+    "late3": {
+      "messages": [
+        "……那你也早点睡。",
+        "虽然我自己做不到。"
+      ],
+      "next": "after"
+    }
+  }
+}

@@ -1,0 +1,150 @@
+/* ==========================================================================
+   第一季 · 故事页
+   沿用游戏页的骨架，换成聊天页的皮：360px、同一套气泡、同一盏灯。
+   ========================================================================== */
+
+.wd-phone {
+  max-width: 360px;
+  height: min(940px, calc(100dvh - 60px));
+  border-radius: 22px;
+  border: 1px solid var(--wd-line);
+  box-shadow:
+    0 30px 70px -30px rgba(0, 0, 0, 0.9),
+    0 0 72px rgba(34, 195, 170, 0.14);
+}
+
+.wd-topbar {
+  border-bottom: 1px solid var(--wd-line);
+}
+
+.wd-topbar__title strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--wd-ink-2);
+}
+
+.wd-topbar__title span {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--wd-muted);
+}
+
+.wd-chat {
+  background: var(--wd-panel);
+}
+
+html[data-theme="dark"] .wd-chat {
+  background: #0f191b;
+}
+
+.wd-bubble {
+  max-width: 80%;
+  background: #1b272a;
+  color: #dce7e4;
+  border-radius: 4px 18px 18px 18px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+html[data-theme="light"] .wd-bubble {
+  background: #fff;
+  color: #2b3d3a;
+  box-shadow: 0 4px 14px rgba(12, 60, 52, 0.06);
+}
+
+.wd-row--me .wd-bubble {
+  background: linear-gradient(20deg, #2aa9bd 0%, #22c3aa 100%);
+  color: #fff;
+  border-radius: 18px 4px 18px 18px;
+}
+
+.wd-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  background: rgba(34, 195, 170, 0.14);
+  color: var(--wd-teal-deep);
+  font-size: 12px;
+}
+
+html[data-theme="dark"] .wd-avatar {
+  color: #7fe7d5;
+}
+
+.wd-choices {
+  border-top: 1px solid var(--wd-line);
+  background: var(--wd-panel);
+}
+
+.wd-choice {
+  border: 1px solid var(--wd-line);
+  background: var(--wd-panel-2);
+  color: var(--wd-ink-2);
+}
+
+.wd-choice:hover {
+  border-color: rgba(34, 195, 170, 0.35);
+  color: var(--wd-ink);
+}
+
+.wd-choice__key {
+  color: var(--wd-teal-deep);
+}
+
+.wd-chat__time {
+  color: var(--wd-muted);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+}
+
+.wd-chat__notice {
+  color: var(--wd-muted);
+  font-size: 11px;
+}
+
+.wd-overlay {
+  background: var(--wd-panel);
+}
+
+html[data-theme="dark"] .wd-overlay {
+  background: #0b1416;
+}
+
+.wd-overlay__title {
+  font-size: 26px;
+  letter-spacing: 0.01em;
+}
+
+.wd-overlay__sub {
+  color: var(--wd-muted);
+}
+
+.wd-btn {
+  background: var(--wd-teal);
+  color: #04201c;
+}
+
+.wd-btn--ghost {
+  background: transparent;
+  color: var(--wd-ink-2);
+  border: 1px solid var(--wd-line-strong);
+}
+
+.wd-ending__quote {
+  font-size: 15px;
+  color: var(--wd-ink);
+}
+
+.wd-ending__summary {
+  color: var(--wd-muted);
+}
+
+@media (max-width: 520px) {
+  .wd-phone {
+    max-width: none;
+    height: 100dvh;
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+  }
+}
