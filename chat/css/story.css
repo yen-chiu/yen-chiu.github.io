@@ -104,6 +104,33 @@ html[data-theme="dark"] .wd-avatar {
 
 .wd-overlay {
   background: var(--wd-panel);
+  color: var(--wd-ink);
+}
+
+.wd-overlay__eyebrow {
+  color: var(--wd-teal-deep);
+  letter-spacing: 0.16em;
+}
+
+html[data-theme="dark"] .wd-overlay__eyebrow {
+  color: #6fdcc7;
+}
+
+.wd-overlay__sub {
+  color: var(--wd-ink-2);
+}
+
+.wd-overlay__meta span {
+  border-color: var(--wd-line-strong);
+  color: var(--wd-muted);
+}
+
+.wd-overlay__foot {
+  color: var(--wd-muted);
+}
+
+.wd-overlay__foot a {
+  color: var(--wd-ink-2);
 }
 
 html[data-theme="dark"] .wd-overlay {
