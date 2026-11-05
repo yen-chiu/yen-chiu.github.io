@@ -332,7 +332,7 @@
     }
 
     var postHTML = ending.post ? '<p class="wd-ending__post">' + escapeHTML(ending.post) + '</p>' : '';
-    var seasonHTML = ending.seasonEnd ? '<p class="wd-ending__season">' + escapeHTML(ENDING_EYEBROW) + ' · 完</p>' : '';
+    var seasonHTML = ending.seasonEnd ? '<p class="wd-ending__season">' + (ending.final ? '全剧终' : escapeHTML(ENDING_EYEBROW) + ' · 完') + '</p>' : '';
 
     el.ending.innerHTML =
       '<p class="wd-overlay__eyebrow">' + (SHOW_GALLERY ? 'Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount : ENDING_EYEBROW + (activeSuffix ? ' · ' + activeSuffix : '')) + '</p>' +

@@ -98,7 +98,9 @@
       "quote": "外面没有我的位置。",
       "post": "第七夜 · 还有四夜",
       "seasonEnd": true,
-      "hint": "第三季 · 第七夜"
+      "hint": "第三季 · 第七夜",
+      "nextPage": "story-s3.html",
+      "nextLabel": "去第三季"
     }
   },
   "nodes": {

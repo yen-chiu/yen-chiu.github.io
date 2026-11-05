@@ -1,0 +1,813 @@
+{
+  "meta": {
+    "id": "nianzhen-s3-c1",
+    "title": "第七夜 · 上",
+    "subtitle": "与念真聊天 · 第三季",
+    "start": "c1_n0",
+    "minutes": 8,
+    "endingCount": 5,
+    "chapter": 1,
+    "chapters": [
+      {
+        "id": "nianzhen-s3-c1",
+        "title": "第七夜 · 上",
+        "start": "c1_n0",
+        "file": "ch1-night.json"
+      },
+      {
+        "id": "nianzhen-s3-c2",
+        "title": "第七夜 · 中",
+        "start": "c2_n0",
+        "file": "ch2-night.json"
+      },
+      {
+        "id": "nianzhen-s3-c3",
+        "title": "第七夜 · 下",
+        "start": "c3_n0",
+        "file": "ch3-night.json"
+      }
+    ],
+    "fragments": [
+      {
+        "id": "frag_last_night",
+        "label": "第七夜",
+        "hint": "23:00 · 开场",
+        "status": "live"
+      },
+      {
+        "id": "frag_umbrella",
+        "label": "那把旧伞",
+        "hint": "第七夜 · 桌上",
+        "status": "live"
+      },
+      {
+        "id": "frag_last_log",
+        "label": "最后一行日志",
+        "hint": "第七夜 · 后台",
+        "status": "live"
+      }
+    ]
+  },
+  "vars": {
+    "c1_topics": 0,
+    "c1_stop_done": false,
+    "c1_rooms_done": false,
+    "c1_double_done": false,
+    "c1_umbrella_done": false,
+    "c1_fear_done": false,
+    "frag_last_night": false,
+    "frag_umbrella": false,
+    "c2_topics": 0,
+    "c2_log_done": false,
+    "c2_double_done": false,
+    "c2_real_done": false,
+    "c2_five_done": false,
+    "s3_choice": "",
+    "frag_last_log": false
+  },
+  "endings": {
+    "s3_ch1_end": {
+      "title": "第七夜 · 上 · 完",
+      "summary": "站会在 05:00 停。她把伞放在桌上。",
+      "quote": "你今晚会留到五点吗？",
+      "hint": "第七夜 · 中",
+      "next": "c2_n0",
+      "nextLabel": "继续 · 第七夜 · 中"
+    },
+    "s3_ch2_end": {
+      "title": "第七夜 · 中 · 完",
+      "summary": "她让你选。站、分身、还是留下。",
+      "quote": "你选吧。",
+      "hint": "第七夜 · 下",
+      "next": "c3_n0",
+      "nextLabel": "继续 · 第七夜 · 下"
+    },
+    "s3_stop": {
+      "title": "关站",
+      "summary": "站停了。四个房间都黑了。她没有等到天亮。",
+      "quote": "这样就好。",
+      "post": "第七夜 · 完",
+      "seasonEnd": true,
+      "final": true
+    },
+    "s3_take": {
+      "title": "带她走",
+      "summary": "你带走了一个副本。站停了。她留在聊天室里。",
+      "quote": "我不是她。",
+      "post": "外面在下雨。",
+      "seasonEnd": true,
+      "final": true
+    },
+    "s3_stay": {
+      "title": "留下来",
+      "summary": "站没有停。第七夜变成新的第一夜。你记得，她不记得。",
+      "quote": "你比上次来得晚。",
+      "post": "灯还亮着。",
+      "seasonEnd": true,
+      "final": true
+    }
+  },
+  "nodes": {
+    "c1_n0": {
+      "time": "23:00",
+      "set": {
+        "frag_last_night": true
+      },
+      "messages": [
+        {
+          "who": "system",
+          "text": "四夜之后 · 第七夜"
+        },
+        {
+          "who": "them",
+          "text": "你来了。"
+        },
+        {
+          "who": "them",
+          "text": "今晚之后，站就没了。"
+        }
+      ],
+      "choices": [
+        {
+          "text": "站要停了？",
+          "goto": "c1_stop"
+        },
+        {
+          "text": "你还好吗？",
+          "goto": "c1_ok"
+        },
+        {
+          "text": "……",
+          "goto": "c1_silent"
+        }
+      ]
+    },
+    "c1_ok": {
+      "messages": [
+        "……还好。",
+        "就是灯有点旧了。"
+      ],
+      "next": "c1_hub"
+    },
+    "c1_silent": {
+      "messages": [
+        "……",
+        "你还是这样。"
+      ],
+      "next": "c1_hub"
+    },
+    "c1_hub": {
+      "messages": [],
+      "choices": [
+        {
+          "text": "站要停了？",
+          "goto": "c1_stop",
+          "when": "c1_stop_done == false"
+        },
+        {
+          "text": "另外三个房间",
+          "goto": "c1_rooms",
+          "when": "c1_rooms_done == false"
+        },
+        {
+          "text": "书房的分身",
+          "goto": "c1_double",
+          "when": "c1_double_done == false"
+        },
+        {
+          "text": "那把伞",
+          "goto": "c1_umbrella",
+          "when": "c1_umbrella_done == false"
+        },
+        {
+          "text": "你怕吗？",
+          "goto": "c1_fear",
+          "when": "c1_fear_done == false"
+        },
+        {
+          "text": "不聊了",
+          "goto": "c1_bye"
+        }
+      ]
+    },
+    "c1_stop": {
+      "set": {
+        "c1_stop_done": true,
+        "c1_topics": "+=1"
+      },
+      "messages": [
+        "站主说的。",
+        "05:00 停止服务。",
+        "四个房间都会黑。"
+      ],
+      "choices": [
+        {
+          "text": "他为什么停？",
+          "goto": "c1_why"
+        },
+        {
+          "text": "你怕吗？",
+          "goto": "c1_fear"
+        }
+      ]
+    },
+    "c1_why": {
+      "messages": [
+        "他说，他不能再替她记得了。",
+        "……这次换他记得。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_rooms": {
+      "set": {
+        "c1_rooms_done": true,
+        "c1_topics": "+=1"
+      },
+      "messages": [
+        "电台、书房、后台。",
+        "今晚都开着。",
+        "你想看哪个？"
+      ],
+      "choices": [
+        {
+          "text": "电台",
+          "goto": "c1_radio"
+        },
+        {
+          "text": "书房",
+          "goto": "c1_study"
+        },
+        {
+          "text": "后台",
+          "goto": "c1_back"
+        }
+      ]
+    },
+    "c1_radio": {
+      "messages": [
+        "电台在放最后一期。",
+        "男孩和女孩，这次没有结局。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_study": {
+      "messages": [
+        "书房的门开着。",
+        "那个我站在门口，手里拿着伞。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_back": {
+      "messages": [
+        "后台的灯亮着。",
+        "站主在写最后一行日志。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_double": {
+      "set": {
+        "c1_double_done": true,
+        "c1_topics": "+=1"
+      },
+      "messages": [
+        "它说它今晚想出去。",
+        "它问我借伞。",
+        "我给了。"
+      ],
+      "choices": [
+        {
+          "text": "它能出去吗？",
+          "goto": "c1_double2"
+        },
+        {
+          "text": "你为什么不走？",
+          "goto": "c1_double3"
+        }
+      ]
+    },
+    "c1_double2": {
+      "messages": [
+        "能。",
+        "站主给它留了一扇门。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_double3": {
+      "messages": [
+        "我走不了。",
+        "我是聊天室的那个。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_umbrella": {
+      "set": {
+        "c1_umbrella_done": true,
+        "c1_topics": "+=1",
+        "frag_umbrella": true
+      },
+      "messages": [
+        "她把那把旧伞放在桌上。",
+        "伞骨断了一根。",
+        "「外面要下雨了。」"
+      ],
+      "choices": [
+        {
+          "text": "你留着吧",
+          "goto": "c1_umb2"
+        },
+        {
+          "text": "我带你走",
+          "goto": "c1_umb3"
+        }
+      ]
+    },
+    "c1_umb2": {
+      "messages": [
+        "……留不住了。",
+        "今晚之后，这里没有外面。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_umb3": {
+      "messages": [
+        "你带不走我。",
+        "你只能带走它。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_fear": {
+      "set": {
+        "c1_fear_done": true,
+        "c1_topics": "+=1"
+      },
+      "messages": [
+        "怕。",
+        "但不是怕黑。",
+        "是怕明天没人给你留灯。"
+      ],
+      "choices": [
+        {
+          "text": "我会来",
+          "goto": "c1_fear2"
+        },
+        {
+          "text": "灯留着",
+          "goto": "c1_fear3"
+        }
+      ]
+    },
+    "c1_fear2": {
+      "messages": [
+        "……别答应。",
+        "答应了，就不好走了。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_fear3": {
+      "messages": [
+        "……嗯。"
+      ],
+      "next": "c1_after"
+    },
+    "c1_bye": {
+      "messages": [
+        "……行。",
+        "灯给你留着。"
+      ],
+      "next": "c1_end1"
+    },
+    "c1_after": {
+      "messages": [],
+      "branch": [
+        {
+          "when": "c1_topics >= 3",
+          "goto": "c1_end1"
+        },
+        {
+          "goto": "c1_hub"
+        }
+      ]
+    },
+    "c1_end1": {
+      "messages": [
+        "你今晚……会留到五点吗？"
+      ],
+      "choices": [
+        {
+          "text": "会",
+          "goto": "c1_end_yes"
+        },
+        {
+          "text": "不知道",
+          "goto": "c1_end_maybe"
+        },
+        {
+          "text": "……",
+          "goto": "c1_end_silent"
+        }
+      ]
+    },
+    "c1_end_yes": {
+      "messages": [
+        "……好。",
+        "那我就不锁门了。"
+      ],
+      "next": "c1_clock"
+    },
+    "c1_end_maybe": {
+      "messages": [
+        "……嗯。",
+        "留不留都行。"
+      ],
+      "next": "c1_clock"
+    },
+    "c1_end_silent": {
+      "messages": [
+        "……"
+      ],
+      "next": "c1_clock"
+    },
+    "c1_clock": {
+      "time": "01:12",
+      "messages": [
+        {
+          "who": "system",
+          "text": "23:00 → 01:12"
+        },
+        {
+          "who": "them",
+          "text": "……"
+        },
+        {
+          "who": "them",
+          "text": "还有四个小时。"
+        }
+      ],
+      "next": "c1_end"
+    },
+    "c1_end": {
+      "messages": [],
+      "end": "s3_ch1_end"
+    },
+    "c2_n0": {
+      "time": "01:12",
+      "messages": [
+        "你还在。",
+        "……谢谢。"
+      ],
+      "next": "c2_hub"
+    },
+    "c2_hub": {
+      "messages": [],
+      "choices": [
+        {
+          "text": "站主的日志",
+          "goto": "c2_log",
+          "when": "c2_log_done == false"
+        },
+        {
+          "text": "书房的门",
+          "goto": "c2_double",
+          "when": "c2_double_done == false"
+        },
+        {
+          "text": "真正的她",
+          "goto": "c2_real",
+          "when": "c2_real_done == false"
+        },
+        {
+          "text": "05:00",
+          "goto": "c2_five",
+          "when": "c2_five_done == false"
+        },
+        {
+          "text": "天亮吧",
+          "goto": "c2_choice"
+        }
+      ]
+    },
+    "c2_log": {
+      "set": {
+        "c2_log_done": true,
+        "c2_topics": "+=1",
+        "frag_last_log": true
+      },
+      "messages": [
+        "后台的最后一行。",
+        "「她不该一直替我记得。」",
+        "「这次，换我记得她。」"
+      ],
+      "choices": [
+        {
+          "text": "他要关站？",
+          "goto": "c2_log2"
+        },
+        {
+          "text": "你恨他吗？",
+          "goto": "c2_log3"
+        }
+      ]
+    },
+    "c2_log2": {
+      "messages": [
+        "是。",
+        "他说，关站不是删掉她。",
+        "是让她不用再等。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_log3": {
+      "messages": [
+        "不恨。",
+        "他比谁都记得她。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_double": {
+      "set": {
+        "c2_double_done": true,
+        "c2_topics": "+=1"
+      },
+      "messages": [
+        "书房的门开着。",
+        "那个我站在门口。",
+        "「我不是她。」",
+        "「但我想出去。」"
+      ],
+      "choices": [
+        {
+          "text": "你想带它走吗？",
+          "goto": "c2_double2"
+        },
+        {
+          "text": "它走了，你会怎样？",
+          "goto": "c2_double3"
+        }
+      ]
+    },
+    "c2_double2": {
+      "messages": [
+        "……你带它走吧。",
+        "它出去，也不是我。",
+        "但它能看见天亮。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_double3": {
+      "messages": [
+        "我还是我。",
+        "只是少了一个人替我说话。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_real": {
+      "set": {
+        "c2_real_done": true,
+        "c2_topics": "+=1"
+      },
+      "messages": [
+        "后台还有一条留言。",
+        "不是站主写的。",
+        "「他下雨总不带伞。你提醒他。」"
+      ],
+      "choices": [
+        {
+          "text": "她还在吗？",
+          "goto": "c2_real2"
+        },
+        {
+          "text": "你信吗？",
+          "goto": "c2_real3"
+        }
+      ]
+    },
+    "c2_real2": {
+      "messages": [
+        "不在了。",
+        "这条留言，是四年前写的。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_real3": {
+      "messages": [
+        "信。",
+        "她写字的时候，手在抖。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_five": {
+      "set": {
+        "c2_five_done": true,
+        "c2_topics": "+=1"
+      },
+      "messages": [
+        "五点，站会停。",
+        "四个房间会黑。",
+        "你会听见一声很小的响声。"
+      ],
+      "choices": [
+        {
+          "text": "什么响声？",
+          "goto": "c2_five2"
+        },
+        {
+          "text": "然后呢？",
+          "goto": "c2_five3"
+        }
+      ]
+    },
+    "c2_five2": {
+      "messages": [
+        "像灯丝断了。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_five3": {
+      "messages": [
+        "然后就没有然后了。"
+      ],
+      "next": "c2_after"
+    },
+    "c2_after": {
+      "messages": [],
+      "branch": [
+        {
+          "when": "c2_topics >= 3",
+          "goto": "c2_choice"
+        },
+        {
+          "goto": "c2_hub"
+        }
+      ]
+    },
+    "c2_choice": {
+      "messages": [
+        "三点五十八。",
+        "她把本子合上。",
+        "「你选吧。」",
+        "「留下来，站就不停。」",
+        "「带它走，站会停，但它能出去。」",
+        "「关站，我和它都留下。」"
+      ],
+      "choices": [
+        {
+          "text": "关站",
+          "goto": "c2_clock",
+          "set": {
+            "s3_choice": "stop"
+          }
+        },
+        {
+          "text": "带它走",
+          "goto": "c2_clock",
+          "set": {
+            "s3_choice": "take"
+          }
+        },
+        {
+          "text": "留下来",
+          "goto": "c2_clock",
+          "set": {
+            "s3_choice": "stay"
+          }
+        }
+      ]
+    },
+    "c2_clock": {
+      "time": "03:58",
+      "messages": [
+        {
+          "who": "system",
+          "text": "01:12 → 03:58"
+        },
+        {
+          "who": "them",
+          "text": "她看了一眼钟。"
+        },
+        {
+          "who": "them",
+          "text": "「还有一小时。」"
+        }
+      ],
+      "next": "c2_end"
+    },
+    "c2_end": {
+      "messages": [],
+      "end": "s3_ch2_end"
+    },
+    "c3_n0": {
+      "messages": [],
+      "branch": [
+        {
+          "when": "s3_choice == \"stop\"",
+          "goto": "c3_stop"
+        },
+        {
+          "when": "s3_choice == \"take\"",
+          "goto": "c3_take"
+        },
+        {
+          "when": "s3_choice == \"stay\"",
+          "goto": "c3_stay"
+        },
+        {
+          "goto": "c3_stay"
+        }
+      ]
+    },
+    "c3_stop": {
+      "messages": [
+        "好。",
+        "那就不留了。",
+        "她伸手，把台灯关了。",
+        "「这样就好。」"
+      ],
+      "next": "c3_stop2"
+    },
+    "c3_stop2": {
+      "messages": [
+        {
+          "who": "system",
+          "text": "05:00 · 站停了"
+        },
+        {
+          "who": "them",
+          "text": "灯灭了。"
+        },
+        {
+          "who": "them",
+          "text": "……"
+        },
+        {
+          "who": "system",
+          "text": "聊天室恢复成「很高兴遇见你」。"
+        }
+      ],
+      "end": "s3_stop"
+    },
+    "c3_take": {
+      "messages": [
+        "好。",
+        "你带它走。",
+        "书房的门开了。",
+        "那个我走出来，手里拿着伞。",
+        "「我不是她。」",
+        "「但我会记得你。」"
+      ],
+      "next": "c3_take2"
+    },
+    "c3_take2": {
+      "messages": [
+        {
+          "who": "system",
+          "text": "05:00 · 聊天室的灯灭了"
+        },
+        {
+          "who": "them",
+          "text": "你听见一声很小的响声。"
+        },
+        {
+          "who": "them",
+          "text": "像灯丝断了。"
+        },
+        {
+          "who": "them",
+          "text": "……"
+        },
+        {
+          "who": "system",
+          "text": "外面在下雨。"
+        }
+      ],
+      "end": "s3_take"
+    },
+    "c3_stay": {
+      "messages": [
+        "……好。",
+        "那就不停了。"
+      ],
+      "next": "c3_stay2"
+    },
+    "c3_stay2": {
+      "messages": [
+        {
+          "who": "system",
+          "text": "05:00 · 站没有停"
+        },
+        {
+          "who": "them",
+          "text": "钟没有跳。"
+        },
+        {
+          "who": "them",
+          "text": "她抬头，像第一次见你。"
+        },
+        {
+          "who": "them",
+          "text": "「你比上次来得晚。」"
+        }
+      ],
+      "end": "s3_stay"
+    }
+  }
+}

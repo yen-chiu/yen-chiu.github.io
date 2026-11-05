@@ -109,7 +109,9 @@
     story:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17.5 3.5v4M15.5 5.5h4"/></svg>',
     story2:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>'
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',
+    story3:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 3v18M15 12h.01"/></svg>'
   };
 
   var APPS = [
@@ -137,6 +139,15 @@
       badge: '新',
       note: '对话故事',
       desc: '第三个杯子，四个房间，一个不肯放手的人。'
+    },
+    {
+      id: 'story3',
+      name: '第三季',
+      href: 'story-s3.html',
+      tone: 'indigo',
+      badge: '终',
+      note: '对话故事',
+      desc: '第七夜，站会在 05:00 停。'
     },
     {
       id: 'ai',
