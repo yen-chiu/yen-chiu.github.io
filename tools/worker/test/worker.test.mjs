@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import worker from '../src/index.js';
+import worker, { resetEngineState } from '../src/index.js';
 
 const ENV = { GITHUB_CLIENT_ID: 'Iv1.testclient', ALLOWED_ORIGIN: 'https://yenchiu.com' };
 const BASE = 'https://yenchiu-api.example.workers.dev';
@@ -182,6 +182,187 @@ test('/search 允许 www.yenchiu.com 来源', async (t) => {
   );
   assert.equal(res.status, 200);
   assert.equal(res.headers.get('Access-Control-Allow-Origin'), 'https://www.yenchiu.com');
+});
+
+test('/search 中文结果不足时用 Bing 补充', async (t) => {
+  resetEngineState();
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    const href = String(url);
+    if (href.includes('html.duckduckgo.com')) {
+      return new Response(
+        '<div class="result"><a class="result__a" href="https://example.com/ddg">DDG 结果</a>' +
+          '<a class="result__snippet">DDG 摘要</a></div>',
+        { status: 200, headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+    if (href.includes('wikipedia.org')) {
+      return new Response(JSON.stringify({ query: { search: [] } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    if (href.includes('bing.com/search')) {
+      return new Response(
+        '<li class="b_algo"><h2><a href="https://example.com/bing1">苏轼 - Bing 结果一</a></h2><p>摘要一</p></li>' +
+          '<li class="b_algo"><h2><a href="https://example.com/bing2">苏轼 - Bing 结果二</a></h2><p>摘要二</p></li>',
+        { status: 200, headers: { 'Content-Type': 'text/html' } }
+      );
+    }
+    return new Response('', { status: 200 });
+  });
+  const res = await worker.fetch(
+    makeRequest('/search?q=' + encodeURIComponent('苏轼'), { method: 'GET', ip: '198.51.100.30' }),
+    ENV
+  );
+  const body = await res.json();
+  assert.equal(body.results.length, 3);
+  assert.equal(body.results.filter((r) => r.source === 'bing').length, 2);
+  resetEngineState();
+});
+
+test('/search Bing 失败不冷却', async (t) => {
+  resetEngineState();
+  let bingCalls = 0;
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    const href = String(url);
+    if (href.includes('bing.com/search')) {
+      bingCalls += 1;
+      return new Response('blocked', { status: 429 });
+    }
+    if (href.includes('html.duckduckgo.com') || href.includes('lite.duckduckgo.com') || href.includes('search.yahoo.com')) {
+      return new Response('', { status: 200 });
+    }
+    if (href.includes('api.duckduckgo.com')) {
+      return new Response(JSON.stringify({}), { status: 200 });
+    }
+    if (href.includes('wikipedia.org')) {
+      return new Response(JSON.stringify({ query: { search: [] } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    return new Response('', { status: 200 });
+  });
+  const req = () =>
+    makeRequest('/search?q=' + encodeURIComponent('苏轼'), { method: 'GET', ip: '198.51.100.31' });
+  await worker.fetch(req(), ENV);
+  await worker.fetch(req(), ENV);
+  assert.equal(bingCalls, 2);
+  resetEngineState();
+});
+
+test('/search DDG bot-wall 冷却后跳过', async (t) => {
+  resetEngineState();
+  let ddgCalls = 0;
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    const href = String(url);
+    if (href.includes('html.duckduckgo.com')) {
+      ddgCalls += 1;
+      return new Response('', { status: 429 });
+    }
+    if (href.includes('lite.duckduckgo.com')) return new Response('', { status: 429 });
+    if (href.includes('search.yahoo.com')) return new Response('', { status: 200 });
+    if (href.includes('api.duckduckgo.com')) return new Response(JSON.stringify({}), { status: 200 });
+    if (href.includes('wikipedia.org')) {
+      return new Response(JSON.stringify({ query: { search: [] } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    return new Response('', { status: 200 });
+  });
+  const req = () =>
+    makeRequest('/search?q=cloudflare', { method: 'GET', ip: '198.51.100.32' });
+  await worker.fetch(req(), ENV);
+  const afterFirst = ddgCalls;
+  await worker.fetch(req(), ENV);
+  assert.equal(afterFirst, 1);
+  assert.equal(ddgCalls, 1);
+  resetEngineState();
+});
+
+test('/search Yahoo 401 按会话冷却', async (t) => {
+  resetEngineState();
+  let yahooCalls = 0;
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    const href = String(url);
+    if (href.includes('html.duckduckgo.com') || href.includes('lite.duckduckgo.com')) {
+      return new Response('', { status: 200 });
+    }
+    if (href.includes('search.yahoo.com')) {
+      yahooCalls += 1;
+      return new Response('denied', { status: 401 });
+    }
+    if (href.includes('api.duckduckgo.com')) return new Response(JSON.stringify({}), { status: 200 });
+    if (href.includes('wikipedia.org')) {
+      return new Response(JSON.stringify({ query: { search: [] } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    return new Response('', { status: 200 });
+  });
+  const req = () =>
+    makeRequest('/search?q=cloudflare', { method: 'GET', ip: '198.51.100.33' });
+  await worker.fetch(req(), ENV);
+  const afterFirst = yahooCalls;
+  await worker.fetch(req(), ENV);
+  assert.equal(afterFirst, 1);
+  assert.equal(yahooCalls, 1);
+  resetEngineState();
+});
+
+test('/search 命中 5 分钟缓存', async (t) => {
+  resetEngineState();
+  const store = new Map();
+  globalThis.caches = {
+    default: {
+      async match(req) {
+        const body = store.get(req.url);
+        return body
+          ? new Response(body, { headers: { 'Content-Type': 'application/json' } })
+          : undefined;
+      },
+      async put(req, res) {
+        store.set(req.url, await res.text());
+      }
+    }
+  };
+  try {
+    let upstreamCalls = 0;
+    t.mock.method(globalThis, 'fetch', async (url) => {
+      const href = String(url);
+      if (href.includes('html.duckduckgo.com')) {
+        upstreamCalls += 1;
+        return new Response(
+          '<div class="result"><a class="result__a" href="https://example.com/ddg">DDG 结果</a>' +
+            '<a class="result__snippet">DDG 摘要</a></div>',
+          { status: 200, headers: { 'Content-Type': 'text/html' } }
+        );
+      }
+      if (href.includes('wikipedia.org')) {
+        upstreamCalls += 1;
+        return new Response(
+          JSON.stringify({ query: { search: [{ title: '缓存条目', snippet: '摘要' }] } }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      return new Response('', { status: 200 });
+    });
+    const req = () => makeRequest('/search?q=cachetest', { method: 'GET', ip: '198.51.100.34' });
+    const first = await worker.fetch(req(), ENV);
+    await first.json();
+    const callsAfterFirst = upstreamCalls;
+    const second = await worker.fetch(req(), ENV);
+    const body = await second.json();
+    assert.equal(upstreamCalls, callsAfterFirst);
+    assert.equal(second.headers.get('X-Search-Cache'), 'HIT');
+    assert.equal(body.cached, true);
+    assert.equal(body.results.length, 2);
+  } finally {
+    delete globalThis.caches;
+    resetEngineState();
+  }
 });
 
 test('/read 拒绝内网地址', async () => {

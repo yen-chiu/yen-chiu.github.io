@@ -66,45 +66,50 @@ Worker 同时还承担写作台的 GitHub 设备码登录代理（`/device/code`
 
 工具模式下页面会**关掉流式输出**。原因很简单：工具调用本身就是一次非流式 JSON 往返，等工具跑完再一次性把最终回答交给吐字动画，比半路插入流更稳。
 
-## 四、搜索：DuckDuckGo 为主，维基补充，Yahoo 兜底
+## 四、搜索：DuckDuckGo 为主，维基 / Bing 补充，Yahoo 兜底
 
 搜索不是「维基优先」。维基百科适合概念、人物、事件，但对「最新模型」「今天天气」这类问题并不合适；而且它在部分网络里根本连不上。
 
 现在的顺序是：
 
-1. **DuckDuckGo HTML**（`html.duckduckgo.com/html/?q=`）：通用网页搜索，中文结果稳定。解析 `result__a` 和 `result__snippet`，并把 `uddg=` 跳转还原成真实地址。
-2. **DuckDuckGo Lite**（`lite.duckduckgo.com/lite/`）：HTML 版偶尔会返回空壳（反爬挑战），这时换精简版再试一次。
-3. **Yahoo**：DDG 两个入口都空时接手。解析结果页，并把 `r.search.yahoo.com/.../RU=<url>/` 还原成目标地址。
-4. **维基百科 API**：和 DDG 并行跑，作为补充源合并进来。
+1. **DuckDuckGo HTML + 维基百科 API**：两个主源并行跑。DDG 解析 `result__a` / `result__snippet` 并把 `uddg=` 跳转还原成真实地址；维基作为概念、人物类补充。
+2. **Bing HTML**：中文查询额外并行问一次。解析 `b_algo` 结果，并做一次查询词相关性过滤——机房出口的 Bing 偶尔会返回空页或无关默认结果，过滤后为空就静默跳过。
+3. **DuckDuckGo Lite**：DDG HTML 空壳（反爬挑战）时换精简版。
+4. **Yahoo**：DDG 两个入口和 Bing 都空时接手。解析结果页，并把 `r.search.yahoo.com/.../RU=<url>/` 还原成目标地址。
 5. **DuckDuckGo 即时摘要**：最后的兜底，只适合「是什么」类问题。
 
-合并时按 URL 去重，最多返回 6 条，并给每条标上 `source`。前端会把来源拼成「来源：DuckDuckGo / 维基百科」，模型回答时就能说清「这是查到的」还是「我本来就知道的」。
+合并时按 URL 去重，最多 6 条；中文查询有 Bing 结果时会按来源分配额（DDG 前 3、维基前 2、Bing、再补其余），避免 Bing 被 5 条 DDG 挤没。每条都带 `source`，前端拼成「来源：DuckDuckGo / 维基百科」，模型回答时能说清查到的还是记得的。
 
 核心逻辑大概是这样：
 
 ```js
-async function searchUpstream(q) {
-  const [ddg, wikipedia] = await Promise.allSettled([
-    searchDuckDuckGoHtml(q),
-    searchWikipedia(q)
-  ]);
+const [ddg, wiki, bing] = await Promise.all([
+  searchDuckDuckGoHtml(q),
+  searchWikipedia(q),
+  hasCJK(q) ? searchBingHtml(q) : []
+]);
 
-  let general = ddg.status === 'fulfilled' ? ddg.value : [];
-  if (!general.length) general = await searchDuckDuckGoLite(q).catch(() => []);
-  if (!general.length) general = await searchYahoo(q).catch(() => []);
+let general = ddg;
+if (!general.length) general = await searchDuckDuckGoLite(q).catch(() => []);
+if (!general.length && !bing.length) general = await searchYahoo(q).catch(() => []);
 
-  const merged = dedupeByUrl([
-    ...general,
-    ...(wikipedia.status === 'fulfilled' ? wikipedia.value : [])
-  ]).slice(0, 6);
-
-  return merged.length ? merged : searchDuckDuckGo(q).catch(() => []);
-}
+const merged = dedupeByUrl([
+  ...general.slice(0, 3),
+  ...wiki.slice(0, 2),
+  ...bing,
+  ...general.slice(3),
+  ...wiki.slice(2)
+]).slice(0, 6);
 ```
 
 每个上游都有 8 秒超时。从 Cloudflare 机房访问这些站点，偶尔会遇到空结果或反爬页，所以「一个源失败就整体失败」是不能接受的——失败原因会被记录下来，但不阻断其他源。
 
-> 中间试过 Bing 的 RSS 搜索，从机房出口拿到过和查询完全无关的结果（甚至是不该出现的内容），果断撤掉了。搜索源也会「看起来能用」和「真的能用」是两回事。
+搜索还加了两层保护：
+
+- **5 分钟结果缓存**：用 Cloudflare Cache API 按查询词缓存非空结果，命中时响应头是 `X-Search-Cache: HIT`。查询词会以缓存键的形式在边缘节点保留最多 5 分钟，不落数据库。
+- **失败分类 + 冷却**：`bot-wall` / 超时等短失败冷却 60 秒，`auth` / `quota` 冷却到当前 isolate 结束；冷却中的引擎直接跳过。**Bing 失败不冷却**，它只是补充源，不值得为它拖慢整条链路。
+
+> Bing 的现实：从 Cloudflare 机房访问时，它经常返回空页或与查询无关的默认结果。加了相关性过滤后，这些结果会被丢掉——所以 Bing 是「有机会就补」，不保证每次都有产出，真正扛量的还是 DDG / Yahoo。
 
 ## 五、读网页：把页面变成模型能吃的正文
 
@@ -188,7 +193,7 @@ Worker 的部署没有走 `wrangler login`，而是直接把 `index.js` 通过 C
 
 ### 单测
 
-Worker 单测覆盖 16 个用例：CORS 预检、来源拒绝、设备码透传、限流、搜索合并去重、DDG 失败降级、`/read` 的 SSRF 拒绝和正文提取。`node --test` 全过（16/16）。
+Worker 单测覆盖 21 个用例：CORS 预检、来源拒绝、设备码透传、限流、搜索合并去重、Bing 补充与失败不冷却、DDG bot-wall 冷却、Yahoo 401 会话冷却、5 分钟缓存命中、DDG 失败降级、`/read` 的 SSRF 拒绝和正文提取。`node --test` 全过（21/21）。
 
 ### 搜索
 
@@ -201,6 +206,10 @@ Worker 单测覆盖 16 个用例：CORS 预检、来源拒绝、设备码透传�
 | 今天北京天气 | 200 | 6 | 维基百科 + Yahoo |
 
 这组结果说明降级链路真的在工作：DDG 被反爬时没有整体失败，而是切到了 lite / Yahoo；维基百科则一直作为补充源合并进来。
+
+Bing 在这台机器的 Cloudflare 出口下几乎总是返回空页或无关结果，相关性过滤后为空，所以上面的来源列里看不到它——它被设计成「有就补，没有就跳过」，不拖慢主链路。
+
+缓存也单独验过：同一个查询第一次 `X-Search-Cache: MISS`、耗时约 1.7 秒，第二次 `HIT`、约 0.08 秒，结果条数一致。
 
 ### 读页
 
@@ -247,6 +256,7 @@ curl -s 'https://api.yenchiu.com/read?url=https%3A%2F%2Fexample.com' \
 ## 九、已知限制
 
 - **DDG 会反爬**：同一出口短时间请求多了，HTML 版可能返回空壳，只能靠 lite / Yahoo 兜底，结果质量会波动。
+- **Bing 从机房出口不稳定**：经常返回空页或无关默认结果，相关性过滤后可能一条不剩；它只是补充，别指望它兜底。
 - **维基不是 everywhere**：中文维基在部分网络不可达，所以它只能当补充，不能当主源。
 - **Yahoo 也可能限流**：它是最后一道保险，不保证一直有结果。
 - **JS 渲染的页面读不了**：Worker 只拿原始 HTML，不做浏览器渲染；知乎、微信公众号这类页面大概率失败。
