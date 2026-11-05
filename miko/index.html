@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12121a">
+<title>异次元通讯 · 次元复苏</title>
+<meta name="description" content="《异次元通讯·次元复苏》网页移植版：与 Miko 的跨次元对话。">
+<link rel="icon" href="assets/icon/icon.webp">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 首页 -->
+<section id="view-home" class="view">
+  <div class="home-bg"></div>
+  <div class="home-inner">
+    <img class="logo" src="assets/icon/异次元通讯.webp" alt="异次元通讯">
+    <img class="logo-sub" src="assets/icon/次元复苏.webp" alt="次元复苏">
+    <p class="tagline">一个只属于你的跨次元聊天窗口</p>
+
+    <div class="chapter-grid" id="chapter-grid"></div>
+
+    <nav class="home-nav">
+      <button class="nav-btn" data-go="dict">词典</button>
+      <button class="nav-btn" data-go="gallery">图鉴</button>
+      <button class="nav-btn" data-go="feed">动态</button>
+      <button class="nav-btn" data-go="settings">设置</button>
+    </nav>
+
+    <div class="continue-bar" id="continue-bar" hidden>
+      <span>上次停在</span>
+      <button class="continue-btn" id="continue-btn">继续</button>
+    </div>
+
+    <footer class="home-foot">
+      <a href="https://www.taptap.cn/app/378027" target="_blank" rel="noopener">原作</a>
+      <span>·</span>
+      <span>网页移植版</span>
+    </footer>
+  </div>
+</section>
+
+<!-- 聊天 -->
+<section id="view-chat" class="view">
+  <header class="chat-head">
+    <button class="icon-btn" data-go="home">‹</button>
+    <div class="who-block">
+      <span class="chat-title" id="chat-title">Miko</span>
+      <span class="chat-sub" id="chat-sub"></span>
+    </div>
+    <button class="icon-btn" id="btn-menu">☰</button>
+  </header>
+
+  <div class="chat-body" id="chat-body">
+    <div class="chat-wall"></div>
+    <div class="msg-list" id="msg-list"></div>
+    <div class="choices" id="choices" hidden></div>
+    <div class="wait-card" id="wait-card" hidden>
+      <span class="wait-spinner"></span>
+      <span id="wait-text">等待中…</span>
+      <button class="wait-skip" id="wait-skip">跳过等待</button>
+    </div>
+  </div>
+
+  <div class="chat-foot">
+    <button class="foot-btn" id="btn-auto">自动</button>
+    <button class="foot-btn" id="btn-skip">跳过</button>
+    <div class="foot-hint" id="foot-hint">轻触消息区继续</div>
+  </div>
+
+  <div class="menu-sheet" id="menu-sheet" hidden>
+    <button data-go="home">返回章节</button>
+    <button data-go="dict">词典</button>
+    <button data-go="gallery">图鉴</button>
+    <button data-go="feed">动态</button>
+    <button data-go="settings">设置</button>
+    <button id="btn-restart">重开本章</button>
+  </div>
+</section>
+
+<!-- 词典 -->
+<section id="view-dict" class="view">
+  <header class="page-head">
+    <button class="icon-btn" data-go="home">‹</button>
+    <h1>词典</h1>
+    <span class="page-count" id="dict-count"></span>
+  </header>
+  <div class="page-body" id="dict-list"></div>
+</section>
+
+<!-- 图鉴 -->
+<section id="view-gallery" class="view">
+  <header class="page-head">
+    <button class="icon-btn" data-go="home">‹</button>
+    <h1>图鉴</h1>
+    <span class="page-count" id="gallery-count"></span>
+  </header>
+  <div class="page-body" id="gallery-list"></div>
+</section>
+
+<!-- 动态 -->
+<section id="view-feed" class="view">
+  <header class="page-head">
+    <button class="icon-btn" data-go="home">‹</button>
+    <h1>动态</h1>
+    <span class="page-count" id="feed-count"></span>
+  </header>
+  <div class="page-body" id="feed-list"></div>
+</section>
+
+<!-- 设置 -->
+<section id="view-settings" class="view">
+  <header class="page-head">
+    <button class="icon-btn" data-go="home">‹</button>
+    <h1>设置</h1>
+  </header>
+  <div class="page-body">
+    <div class="set-card">
+      <div class="set-row">
+        <span>打字速度</span>
+        <select id="set-speed">
+          <option value="slow">慢</option>
+          <option value="normal">中</option>
+          <option value="fast">快</option>
+        </select>
+      </div>
+      <div class="set-row">
+        <span>等待倍速</span>
+        <select id="set-wait">
+          <option value="1">真实时长</option>
+          <option value="10">10 倍速</option>
+          <option value="60">60 倍速</option>
+          <option value="0">不等待</option>
+        </select>
+      </div>
+      <div class="set-row">
+        <span>背景音乐</span>
+        <label class="switch"><input type="checkbox" id="set-bgm"><i></i></label>
+      </div>
+      <div class="set-row">
+        <span>音效 / 语音</span>
+        <label class="switch"><input type="checkbox" id="set-sfx"><i></i></label>
+      </div>
+      <div class="set-row">
+        <span>自动解锁全部词典图鉴</span>
+        <label class="switch"><input type="checkbox" id="set-auto-unlock"><i></i></label>
+      </div>
+    </div>
+
+    <div class="set-card">
+      <div class="set-row set-plain">
+        <span>已解锁</span>
+        <span id="set-stats"></span>
+      </div>
+      <button class="danger-btn" id="btn-reset">清空进度</button>
+    </div>
+
+    <p class="set-note">
+      本页为《异次元通讯·次元复苏》的非官方网页移植版，剧情文本与素材版权归原作者所有。
+      进度保存在本机浏览器中，不会上传。
+    </p>
+  </div>
+</section>
+
+<!-- 剧情解锁提示 -->
+<div class="toast" id="toast" hidden></div>
+
+<!-- BE 提示 -->
+<div class="modal" id="be-modal" hidden>
+  <div class="modal-box">
+    <h2>BE</h2>
+    <p id="be-text">你已进入 BE 路线。</p>
+    <div class="modal-btns">
+      <button id="be-restart">重开本章</button>
+      <button id="be-continue">继续看下去</button>
+    </div>
+  </div>
+</div>
+
+<!-- 图片查看 -->
+<div class="lightbox" id="lightbox" hidden><img id="lightbox-img" alt=""></div>
+
+<audio id="au-bgm" loop preload="none"></audio>
+<audio id="au-sfx" preload="none"></audio>
+
+<script src="app.js"></script>
+</body>
+</html>
