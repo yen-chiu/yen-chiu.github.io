@@ -415,6 +415,9 @@
       }
     } finally {
       st.busy = false;
+      // 若期间又切换了章节/重开（gen 已更新），排队的这一轮由这里接上，
+      // 否则 tick() 因 busy 而跳过、旧循环又因 gen 不匹配退出 → 剧情卡住不动。
+      if (myGen !== st.gen && $('#view-chat').classList.contains('active')) run(st.gen);
     }
   }
 
