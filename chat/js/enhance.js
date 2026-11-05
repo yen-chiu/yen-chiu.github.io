@@ -8,6 +8,7 @@
  *   2. 数字键 1~9 快速选择选项，Esc 关闭面板（桌面端更顺手）
  *   3. 给选项加序号并同步到按钮，方便键盘用户
  *   4. 给动态生成的链接补 rel="noopener"，避免新标签页拿到 window.opener
+ *   5. 重复提问：同一句再问一遍，只回一句「刚说过」，不重播整段
  */
 
 (function () {
@@ -35,6 +36,80 @@
   if (restartBtn) {
     restartBtn.addEventListener('click', restart);
   }
+
+  /* ---------------- 重复提问：刚说过 ----------------
+     脚本本身没有记忆，这里在外层记下「这次会话里问过什么」。
+     同一句再问，不重播整段，只回一句她的口气——短、嘴硬，偶尔心软。 */
+
+  function setupRepeatGuard() {
+    var root = document.getElementById('mobile');
+    var vm = root && root.__vue__;
+    if (!vm || typeof vm.respond !== 'function' || vm.__wdRepeatGuard) return;
+    vm.__wdRepeatGuard = true;
+
+    var seen = Object.create(null);
+
+    var LINES = [
+      '刚说过啦。',
+      '又问一遍？……你是没记住，还是想听我再说一次。',
+      '这个刚讲过。换一个问。',
+      '哼~ 自己翻聊天记录去。',
+      '讲过了呀，你是来查岗的吗。',
+      '……你是在套我话吧。',
+      '刚说过。不过你要是真想听，我也可以再讲一遍。',
+      '你这一遍问得跟上一遍一模一样。'
+    ];
+
+    function scrollChat() {
+      var body = document.getElementById('mobile-body-content');
+      if (body) body.scrollTop = body.scrollHeight;
+    }
+
+    function pickLine() {
+      return LINES[Math.floor(Math.random() * LINES.length)];
+    }
+
+    function sayRepeat(userText) {
+      vm.hasPrompt = false;
+      vm.isXianzheTyping = true;
+      vm.messages.push({ author: 'me', content: userText });
+      scrollChat();
+      setTimeout(function () {
+        vm.messages.push({ author: 'xianzhe', content: pickLine() });
+        scrollChat();
+        setTimeout(function () {
+          vm.isXianzheTyping = false;
+          scrollChat();
+        }, 600);
+      }, 550);
+    }
+
+    var originalRespond = vm.respond;
+    vm.respond = function (response) {
+      var key = response && response.content ? String(response.content) : '';
+      if (key && seen[key]) {
+        sayRepeat(key);
+        return;
+      }
+      if (key) seen[key] = true;
+      return originalRespond.call(vm, response);
+    };
+
+    var originalAsk = vm.ask;
+    vm.ask = function (topic) {
+      var key = topic && topic.brief ? 'topic:' + topic.brief : '';
+      if (key && seen[key]) {
+        var details = (topic && topic.details) || [];
+        var line = details.length ? details[Math.floor(Math.random() * details.length)] : topic.brief;
+        sayRepeat(line);
+        return;
+      }
+      if (key) seen[key] = true;
+      return originalAsk.call(vm, topic);
+    };
+  }
+
+  setupRepeatGuard();
 
   /* ---------------- 选项序号 + 键盘选择 ---------------- */
 
