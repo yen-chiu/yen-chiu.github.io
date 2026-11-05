@@ -29,7 +29,8 @@
     "frag_coat": false,
     "frag_book": false,
     "seen_late": false,
-    "seen_window": false
+    "seen_window": false,
+    "seen_you": false
   },
   "endings": {
     "ch1_end": {
@@ -122,6 +123,11 @@
           "text": "窗外",
           "goto": "t_window",
           "when": "seen_window == false"
+        },
+        {
+          "text": "那说说你吧",
+          "goto": "t_you",
+          "when": "seen_you == false"
         }
       ]
     },
@@ -256,7 +262,7 @@
       "messages": [
         "这个站有四个房间。",
         "我只住其中一间。",
-        "万恶的站主搭的。"
+        "搭这间屋子的人说，这样好看。"
       ],
       "choices": [
         {
@@ -371,8 +377,9 @@
       },
       "messages": [
         "他也喜欢把书翻到一半。",
-        "……你别多想。",
-        "后来他就没来过了。"
+        "他上次也坐这个位置。",
+        "……我记错了。你别当真。",
+        "……你别多想。"
       ],
       "next": "after"
     },
@@ -566,6 +573,52 @@
         "我有点困了。"
       ],
       "next": "end1"
+    },
+    "t_you": {
+      "set": {
+        "seen_you": true,
+        "topics": "+=1"
+      },
+      "messages": [
+        "……我？",
+        "我有什么好说的。",
+        "那你平时这个点都在干嘛？"
+      ],
+      "choices": [
+        {
+          "text": "睡不着",
+          "goto": "you2"
+        },
+        {
+          "text": "刚下班",
+          "goto": "you3"
+        },
+        {
+          "text": "不知道",
+          "goto": "you4"
+        }
+      ]
+    },
+    "you2": {
+      "messages": [
+        "……那跟我差不多。",
+        "不过你还能来这儿。"
+      ],
+      "next": "after"
+    },
+    "you3": {
+      "messages": [
+        "这么晚。",
+        "路上小心。"
+      ],
+      "next": "after"
+    },
+    "you4": {
+      "messages": [
+        "不知道也是一种回答。",
+        "我经常也不知道。"
+      ],
+      "next": "after"
     }
   }
 }
