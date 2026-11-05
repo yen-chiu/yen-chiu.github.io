@@ -107,7 +107,9 @@
     credits:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5z"/><path d="M5 17.5h14M9 7.5h6M9 11h6"/></svg>',
     story:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17.5 3.5v4M15.5 5.5h4"/></svg>'
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17.5 3.5v4M15.5 5.5h4"/></svg>',
+    story2:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>'
   };
 
   var APPS = [
@@ -121,12 +123,20 @@
     },
     {
       id: 'story',
-      name: '第一夜',
+      name: '第一季',
       href: 'story.html',
+      tone: 'indigo',
+      note: '对话故事',
+      desc: '三个夜晚，一盏没关的灯。第一季已完结。'
+    },
+    {
+      id: 'story2',
+      name: '第二季',
+      href: 'story-s2.html',
       tone: 'indigo',
       badge: '新',
       note: '对话故事',
-      desc: '三个夜晚，一盏没关的灯。第一季已完结。'
+      desc: '第三个杯子，四个房间，一个不肯放手的人。'
     },
     {
       id: 'ai',

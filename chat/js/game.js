@@ -326,8 +326,13 @@
       nextBtn = '<button type="button" class="wd-btn" id="wd-next">' + escapeHTML(ending.nextLabel || '继续下一夜') + '</button>';
     }
 
+    var pageBtn = '';
+    if (ending.nextPage) {
+      pageBtn = '<a class="wd-btn" href="' + escapeHTML(ending.nextPage) + '">' + escapeHTML(ending.nextLabel || '继续') + '</a>';
+    }
+
     var postHTML = ending.post ? '<p class="wd-ending__post">' + escapeHTML(ending.post) + '</p>' : '';
-    var seasonHTML = ending.seasonEnd ? '<p class="wd-ending__season">第一季 · 完</p>' : '';
+    var seasonHTML = ending.seasonEnd ? '<p class="wd-ending__season">' + escapeHTML(ENDING_EYEBROW) + ' · 完</p>' : '';
 
     el.ending.innerHTML =
       '<p class="wd-overlay__eyebrow">' + (SHOW_GALLERY ? 'Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount : ENDING_EYEBROW + (activeSuffix ? ' · ' + activeSuffix : '')) + '</p>' +
@@ -337,6 +342,7 @@
       postHTML + seasonHTML +
       (SHOW_GALLERY ? '<h2 class="wd-overlay__eyebrow">结局收集</h2><ul class="wd-endings">' + list + '</ul>' : '') +
       '<div class="wd-overlay__actions">' +
+      pageBtn +
       nextBtn +
       '<button type="button" class="wd-btn" id="wd-again">再玩一次</button>' +
       '<button type="button" class="wd-btn wd-btn--ghost" id="wd-rewind-ending">回到上一个选择</button>' +

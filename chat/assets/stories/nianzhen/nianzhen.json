@@ -133,7 +133,9 @@
       "quote": "你比上次来得晚。",
       "post": "05:00 · 你那边，天亮了吗？",
       "seasonEnd": true,
-      "hint": "第一季 · 完"
+      "hint": "第一季 · 完",
+      "nextPage": "story-s2.html",
+      "nextLabel": "去第二季"
     },
     "ch3_find": {
       "title": "去找她",
@@ -141,7 +143,9 @@
       "quote": "别找了。好好吃饭。",
       "post": "05:00 · 你那边，天亮了吗？",
       "seasonEnd": true,
-      "hint": "第一季 · 完"
+      "hint": "第一季 · 完",
+      "nextPage": "story-s2.html",
+      "nextLabel": "去第二季"
     },
     "ch3_letgo": {
       "title": "让她走",
@@ -149,7 +153,9 @@
       "quote": "很高兴遇见你。",
       "post": "05:00 · 你那边，天亮了吗？",
       "seasonEnd": true,
-      "hint": "第一季 · 完"
+      "hint": "第一季 · 完",
+      "nextPage": "story-s2.html",
+      "nextLabel": "去第二季"
     }
   },
   "nodes": {
