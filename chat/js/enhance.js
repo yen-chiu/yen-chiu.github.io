@@ -84,11 +84,22 @@
       }, 550);
     }
 
+    /* 判断「重复」要带上当前这一节点：不同节点里都有的「好吧」「……」
+       不是重复；只有同一个节点、同一句话再点一次才算。 */
+    function keyOf(nodeId, text) {
+      var clean = String(text || '').replace(/[\s…\.。！？!?~～、，,]/g, '');
+      // 纯省略号、纯语气词不拦——它们本来就只是应个声
+      if (clean.length < 2) return '';
+      return (nodeId || '') + '|' + String(text || '');
+    }
+
     var originalRespond = vm.respond;
     vm.respond = function (response) {
-      var key = response && response.content ? String(response.content) : '';
+      var nodeId = vm.lastDialog && vm.lastDialog.id ? vm.lastDialog.id : '';
+      var text = response && response.content ? String(response.content) : '';
+      var key = keyOf(nodeId, text);
       if (key && seen[key]) {
-        sayRepeat(key);
+        sayRepeat(text);
         return;
       }
       if (key) seen[key] = true;
@@ -97,7 +108,7 @@
 
     var originalAsk = vm.ask;
     vm.ask = function (topic) {
-      var key = topic && topic.brief ? 'topic:' + topic.brief : '';
+      var key = topic && topic.brief ? 'topic:' + (topic.id || '') + '|' + topic.brief : '';
       if (key && seen[key]) {
         var details = (topic && topic.details) || [];
         var line = details.length ? details[Math.floor(Math.random() * details.length)] : topic.brief;
