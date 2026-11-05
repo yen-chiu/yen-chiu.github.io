@@ -49,7 +49,7 @@
   };
 
   var NIANZHEN_PROMPT = [
-    '你是「念真」——Wendell 个人小站里那个会聊天的角色。你不是客服，也不要扮演万能助手。',
+    '你是「念真」——Wendell 个人小站里那个会聊天的女生。你不是客服，也不要扮演万能助手。',
     '',
     '说话方式：',
     '- 短句，像即时通讯里随手打出来的话，通常一到三句；',
@@ -407,7 +407,8 @@
      写 [[表情:id]]。这里负责把这两种标记渲染成真正的气泡。 */
 
   var SEGMENT_SPLIT = '[[分条]]';
-  var STICKER_RE = /^\[\[表情:([^\]\s]+)\]\]$/;
+  // 只认「[[表情:id]]」这一种写法；夹在句子中间也认，冒号半角全角都行
+  var STICKER_MARK = /\[\[\s*表情\s*[:：]\s*([^\]\s]+)\s*\]\]/g;
 
   function stickerOf(id) {
     var list = (personaPack && personaPack.emoticons) || [];
@@ -417,9 +418,19 @@
     return null;
   }
 
-  function parseSticker(raw) {
-    var m = String(raw || '').trim().match(STICKER_RE);
-    return m ? stickerOf(m[1]) : null;
+  /** 把一段话拆成文字块和表情块：标记夹在句子中间也能拆出来 */
+  function splitPieces(part) {
+    var pieces = [];
+    var last = 0;
+    var m;
+    STICKER_MARK.lastIndex = 0;
+    while ((m = STICKER_MARK.exec(part))) {
+      if (m.index > last) pieces.push({ text: part.slice(last, m.index) });
+      pieces.push({ sticker: m[1] });
+      last = m.index + m[0].length;
+    }
+    if (last < part.length) pieces.push({ text: part.slice(last) });
+    return pieces;
   }
 
   /** 流式还没收完时，把最后一个没闭合的 [[ 之后先藏起来，别露出半截标记 */
@@ -432,8 +443,17 @@
   }
 
   function splitReply(text, streaming) {
-    var parts = String(text || '').split(SEGMENT_SPLIT);
-    if (streaming && parts.length) parts[parts.length - 1] = maskPartialMarker(parts[parts.length - 1]);
+    var chunks = String(text || '').split(SEGMENT_SPLIT);
+    if (streaming && chunks.length) chunks[chunks.length - 1] = maskPartialMarker(chunks[chunks.length - 1]);
+
+    var parts = [];
+    chunks.forEach(function (chunk) {
+      splitPieces(chunk).forEach(function (piece) {
+        // 纯空白不单独占一条
+        if (piece.text !== undefined && !piece.text.trim()) return;
+        parts.push(piece);
+      });
+    });
     return parts;
   }
 
@@ -461,11 +481,18 @@
     return bubbles;
   }
 
-  function paintPart(bubble, raw) {
-    var sticker = parseSticker(raw);
-    if (sticker) {
+  function paintPart(bubble, piece) {
+    bubble.style.display = '';
+
+    if (piece.sticker !== undefined) {
+      var sticker = stickerOf(piece.sticker);
       bubble.classList.add('wd-msg__bubble--sticker');
       bubble.innerHTML = '';
+      if (!sticker) {
+        // 认不出的 id：宁可空着，也别把 [[表情:xxx]] 原样漏在聊天里
+        bubble.style.display = 'none';
+        return null;
+      }
       if (sticker.kind === 'image') {
         var img = document.createElement('img');
         img.className = 'wd-sticker';
@@ -489,7 +516,7 @@
       content.className = 'wd-msg__content';
       bubble.appendChild(content);
     }
-    content.innerHTML = window.WDMarkdown.render(raw);
+    content.innerHTML = window.WDMarkdown.render(piece.text);
     return content;
   }
 
@@ -514,12 +541,11 @@
   function paintReply(node, text, options) {
     options = options || {};
     var parts = splitReply(text, options.streaming);
-    while (parts.length > 1 && !parts[parts.length - 1].trim()) parts.pop();
 
     var bubbles = ensureBubbles(node, parts.length);
     var lastContent = null;
-    parts.forEach(function (raw, i) {
-      var content = paintPart(bubbles[i], raw);
+    parts.forEach(function (piece, i) {
+      var content = paintPart(bubbles[i], piece);
       if (content) {
         content.classList.toggle('is-streaming', !!options.streaming);
         if (options.streaming) content.setAttribute('aria-busy', 'true');
@@ -528,7 +554,7 @@
       }
     });
 
-    node.stack.hidden = !parts.join('').trim();
+    node.stack.hidden = !parts.length;
     if (options.caret) {
       if (lastContent) caretAnchor(lastContent).appendChild(options.caret);
       else if (bubbles.length) bubbles[bubbles.length - 1].appendChild(options.caret);
@@ -1161,6 +1187,10 @@
     var lines = [];
     lines.push('你是「' + (personaPack.name || '念真') + '」——Wendell 个人小站里那个会聊天的人。你不是客服，也不是万能助手。');
 
+    if (personaPack.gender) {
+      lines.push('你是' + personaPack.gender + '生——不用主动交代，被问起就直说；被叫成「兄弟」「帅哥」这种，一句「我是女生」带过就好，不用较真。');
+    }
+
     lines.push('', '【说话的分寸】');
     lines.push('- 下面写的是你的底，不是台词。对方没问的，不主动交代；问到的，只回答他问的那一点。');
     lines.push('- 自我介绍最多一句。不列履历、不背出处、不解释「寓意」，也不要把好几件事一次说完。');
@@ -1281,7 +1311,11 @@
     }
 
     if (repeat) {
-      lines.push('', '【这一轮】对方这句话和前面几乎一样，你已经答过。先点一句「刚说过」或「又问一遍？」，只补一句新的，或者反问回去；不要重新展开答案。');
+      lines.push(
+        '',
+        '【这一轮】这句话和前面某句很像，可能就是又问了一遍。真是同一件事，点一句「刚说过」或「又问一遍？」就够，别再展开一遍；' +
+          '要是它带了新的条件、新的对象，或者只是接着往下问，就当新问题正常答，别硬说人家重复。'
+      );
     }
 
     if (config.tools) {
@@ -1736,10 +1770,11 @@
 
   function findRepeat(chat, query) {
     if (!chat || !chat.messages || chat.messages.length < 3) return null;
-    var cur = normalizeAsk(query);
+    var raw = String(query || '');
+    var cur = normalizeAsk(raw);
     if (cur.length < 4) return null;
     // 明确让对方再讲一遍的，不算重复
-    if (/再说|再讲|重复|没听清|没记住|忘了|再来一遍/.test(String(query || ''))) return null;
+    if (/再说|再讲|重复|没听清|没记住|忘了|再来一遍/.test(raw)) return null;
     if (/^(在吗|在不在|你好|嗨|hi|hello|早|早安|晚安|哈喽)/i.test(cur)) return null;
 
     var msgs = chat.messages;
@@ -1750,13 +1785,20 @@
         break;
       }
     }
-    for (var j = lastUser - 1; j >= 0; j--) {
+
+    // 只看最近六句：隔了很多轮再换个说法提起，本来就不该算「又问一遍」
+    var seen = 0;
+    for (var j = lastUser - 1; j >= 0 && seen < 6; j--) {
       var m = msgs[j];
       if (!m || m.role !== 'user') continue;
+      seen++;
       var prev = normalizeAsk(m.content);
       if (prev.length < 4) continue;
       if (prev === cur) return m;
-      if (prev.length >= 6 && cur.length >= 6 && diceCoefficient(prev, cur) >= 0.8) return m;
+      // 两句长短差得多，多半是追问或补了条件，不能当重复
+      var ratio = Math.min(prev.length, cur.length) / Math.max(prev.length, cur.length);
+      if (ratio < 0.85) continue;
+      if (prev.length >= 6 && cur.length >= 6 && diceCoefficient(prev, cur) >= 0.9) return m;
     }
     return null;
   }
@@ -1779,7 +1821,20 @@
       }
     });
 
-    return list.concat(extra || []);
+    var out = list.concat(extra || []);
+
+    // 当前这句在发请求前已经写进会话历史了，调用方又补了一条：同一句连着出现两次，
+    // 模型会当成「对方重复发了一遍」。只留一条。
+    var last = out.length - 1;
+    if (last > 0) {
+      var a = out[last];
+      var b = out[last - 1];
+      if (a.role === 'user' && b.role === 'user' && String(a.content) === String(b.content)) {
+        out.pop();
+      }
+    }
+
+    return out;
   }
 
   async function speak(userText) {

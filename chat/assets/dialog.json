@@ -431,14 +431,14 @@
         },
         {
             "id": "0030",
-            "details": [["我帅吗？"]],
+            "details": [["我好看吗？", "……想好了再答。"]],
             "responses": [
                 {
                     "content": "还没看呢",
                     "nextXianzhe": ["0031"]
                 },
                 {
-                    "content": "念真当然最帅啦！",
+                    "content": "念真当然最好看啦！",
                     "nextXianzhe": ["0032"]
                 }
             ]
@@ -454,7 +454,7 @@
         },
         {
             "id": "0032",
-            "details": [["嘻嘻，哪里哪里~ (≧▽≦)", "<img src='img/ai_self.jpg'>"]],
+            "details": [["嘻嘻，哪里哪里~ (≧▽≦)", "<img src='img/ai_self.jpg?v=2'>"]],
             "responses": [
                 {
                     "content": "呃，这是你吗？ (⊙_☉)",
