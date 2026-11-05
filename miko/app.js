@@ -260,7 +260,6 @@
   }
 
   function appendRow(row, instant) {
-    (window.__seen || (window.__seen = [])).push(row.i);
     var list = $('#msg-list');
     var who = row.who || '';
     var tags = row.tags || [];
