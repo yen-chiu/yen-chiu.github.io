@@ -105,7 +105,9 @@
     ai:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M17.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>',
     credits:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5z"/><path d="M5 17.5h14M9 7.5h6M9 11h6"/></svg>'
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5z"/><path d="M5 17.5h14M9 7.5h6M9 11h6"/></svg>',
+    story:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17.5 3.5v4M15.5 5.5h4"/></svg>'
   };
 
   var APPS = [
@@ -116,6 +118,15 @@
       tone: 'teal',
       note: '脚本对话',
       desc: '原来的那个聊天页，她按写好的剧本回你。'
+    },
+    {
+      id: 'story',
+      name: '第一夜',
+      href: 'story.html',
+      tone: 'indigo',
+      badge: '新',
+      note: '对话故事',
+      desc: '三个夜晚，一盏没关的灯。第一季已完结。'
     },
     {
       id: 'ai',
