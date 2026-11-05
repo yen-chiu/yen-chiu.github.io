@@ -266,3 +266,16 @@ html[data-theme="dark"] .wd-overlay {
   font: 400 11px/1.4 var(--wd-font);
   color: var(--wd-muted);
 }
+
+.wd-ending__post {
+  margin: 18px 0 0;
+  font: 500 13px/1.7 var(--wd-font);
+  color: var(--wd-ink-2);
+}
+
+.wd-ending__season {
+  margin: 10px 0 0;
+  font: 500 10.5px/1.4 var(--wd-font);
+  letter-spacing: 0.22em;
+  color: var(--wd-muted);
+}

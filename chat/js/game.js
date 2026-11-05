@@ -326,11 +326,15 @@
       nextBtn = '<button type="button" class="wd-btn" id="wd-next">' + escapeHTML(ending.nextLabel || '继续下一夜') + '</button>';
     }
 
+    var postHTML = ending.post ? '<p class="wd-ending__post">' + escapeHTML(ending.post) + '</p>' : '';
+    var seasonHTML = ending.seasonEnd ? '<p class="wd-ending__season">第一季 · 完</p>' : '';
+
     el.ending.innerHTML =
       '<p class="wd-overlay__eyebrow">' + (SHOW_GALLERY ? 'Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount : ENDING_EYEBROW + (activeSuffix ? ' · ' + activeSuffix : '')) + '</p>' +
       '<h1 class="wd-overlay__title">' + escapeHTML(ending.title) + '</h1>' +
       '<p class="wd-ending__quote">' + escapeHTML(ending.quote || '') + '</p>' +
       '<p class="wd-ending__summary">' + escapeHTML(ending.summary || '') + '</p>' +
+      postHTML + seasonHTML +
       (SHOW_GALLERY ? '<h2 class="wd-overlay__eyebrow">结局收集</h2><ul class="wd-endings">' + list + '</ul>' : '') +
       '<div class="wd-overlay__actions">' +
       nextBtn +

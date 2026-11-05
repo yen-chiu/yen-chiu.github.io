@@ -5,7 +5,7 @@
     "subtitle": "与念真聊天 · 第一季",
     "start": "n0",
     "minutes": 10,
-    "endingCount": 2,
+    "endingCount": 5,
     "chapter": 1,
     "chapters": [
       {
@@ -19,6 +19,12 @@
         "title": "第二夜 · 第四十七次",
         "start": "c2_n0",
         "file": "ch2-night.json"
+      },
+      {
+        "id": "nianzhen-s1-c3",
+        "title": "第三夜 · 天亮之前",
+        "start": "c3_n0",
+        "file": "ch3-night.json"
       }
     ],
     "fragments": [
@@ -98,14 +104,18 @@
     "c2_found_note": false,
     "c2_asked_owner": false,
     "frag_msg": false,
-    "frag_scratch": false
+    "frag_scratch": false,
+    "c3_where_done": false,
+    "c3_remember_done": false,
+    "c3_forget_done": false,
+    "c3_count_done": false
   },
   "endings": {
     "ch1_end": {
       "title": "第一夜 · 完",
       "summary": "钟从 01:12 跳到 02:03。她注意到了，但没解释。",
       "quote": "……刚才是不是跳了一下？",
-      "hint": "第二夜 · 第四十七次（还没写）",
+      "hint": "第二夜 · 第四十七次",
       "next": "c2_n0",
       "nextLabel": "继续 · 第二夜"
     },
@@ -113,7 +123,33 @@
       "title": "第二夜 · 完",
       "summary": "一条 05:00 的消息，她没写。窗外开始泛白。",
       "quote": "……这不是我写的。",
-      "hint": "第三夜 · 天亮之前（还没写）"
+      "hint": "第三夜 · 天亮之前",
+      "next": "c3_n0",
+      "nextLabel": "继续 · 第三夜"
+    },
+    "ch3_stay": {
+      "title": "留下来",
+      "summary": "她一次说完了。钟跳回 01:12，她重新认识你。你记得，她不记得。",
+      "quote": "你比上次来得晚。",
+      "post": "05:00 · 你那边，天亮了吗？",
+      "seasonEnd": true,
+      "hint": "第一季 · 完"
+    },
+    "ch3_find": {
+      "title": "去找她",
+      "summary": "你按地址找过去，只有一盆没人浇的花。手机亮了一下。",
+      "quote": "别找了。好好吃饭。",
+      "post": "05:00 · 你那边，天亮了吗？",
+      "seasonEnd": true,
+      "hint": "第一季 · 完"
+    },
+    "ch3_letgo": {
+      "title": "让她走",
+      "summary": "第二天，聊天页恢复成「很高兴遇见你」，像什么都没发生过。",
+      "quote": "很高兴遇见你。",
+      "post": "05:00 · 你那边，天亮了吗？",
+      "seasonEnd": true,
+      "hint": "第一季 · 完"
     }
   },
   "nodes": {
@@ -1433,6 +1469,354 @@
         "……我也是。"
       ],
       "next": "c2_after"
+    },
+    "c3_n0": {
+      "time": "03:58",
+      "messages": [
+        "你来了。",
+        "……这次我没改口。"
+      ],
+      "next": "c3_n1"
+    },
+    "c3_n1": {
+      "messages": [
+        "坐吧。",
+        "天快亮了。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_hub": {
+      "messages": [],
+      "choices": [
+        {
+          "text": "她去哪了？",
+          "goto": "c3_where",
+          "when": "c3_where_done == false"
+        },
+        {
+          "text": "你会记得我吗？",
+          "goto": "c3_remember",
+          "when": "c3_remember_done == false"
+        },
+        {
+          "text": "我为什么会忘？",
+          "goto": "c3_forget",
+          "when": "c3_forget_done == false"
+        },
+        {
+          "text": "你算不算她？",
+          "goto": "c3_count",
+          "when": "c3_count_done == false"
+        },
+        {
+          "text": "天亮吧",
+          "goto": "c3_dawn"
+        }
+      ]
+    },
+    "c3_where": {
+      "set": {
+        "c3_where_done": true
+      },
+      "messages": [
+        "去了一个收不到信号的地方。"
+      ],
+      "choices": [
+        {
+          "text": "什么时候走的？",
+          "goto": "c3_where2"
+        },
+        {
+          "text": "你想她吗？",
+          "goto": "c3_where3"
+        }
+      ]
+    },
+    "c3_where2": {
+      "messages": [
+        "去年。",
+        "具体哪天，我不记得了。",
+        "……她没让我记。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_where3": {
+      "messages": [
+        "想。",
+        "但想也没用。",
+        "她听不见。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_remember": {
+      "set": {
+        "c3_remember_done": true
+      },
+      "messages": [
+        "你会记得我吗？"
+      ],
+      "choices": [
+        {
+          "text": "会",
+          "goto": "c3_rem_yes"
+        },
+        {
+          "text": "不知道",
+          "goto": "c3_rem_maybe"
+        },
+        {
+          "text": "你希望吗？",
+          "goto": "c3_rem_ask"
+        }
+      ]
+    },
+    "c3_rem_yes": {
+      "messages": [
+        "……那就好。",
+        "别记太久。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_rem_maybe": {
+      "messages": [
+        "……也是。",
+        "谁会记得一个页面。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_rem_ask": {
+      "messages": [
+        "……希望。",
+        "但你别勉强。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_forget": {
+      "set": {
+        "c3_forget_done": true
+      },
+      "messages": [
+        "你不想记，就忘了。"
+      ],
+      "choices": [
+        {
+          "text": "那不是我选的",
+          "goto": "c3_forget2"
+        },
+        {
+          "text": "你记得吗？",
+          "goto": "c3_forget3"
+        }
+      ]
+    },
+    "c3_forget2": {
+      "messages": [
+        "……也不是我选的。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_forget3": {
+      "messages": [
+        "记得。",
+        "记得太清楚了。",
+        "所以我才被留在这。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_count": {
+      "set": {
+        "c3_count_done": true
+      },
+      "messages": [
+        "你算不算她？"
+      ],
+      "choices": [
+        {
+          "text": "算",
+          "goto": "c3_count_yes"
+        },
+        {
+          "text": "不算",
+          "goto": "c3_count_no"
+        },
+        {
+          "text": "你算不算你？",
+          "goto": "c3_count_self"
+        }
+      ]
+    },
+    "c3_count_yes": {
+      "messages": [
+        "……你倒是好打发。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_count_no": {
+      "messages": [
+        "……那你为什么还来？"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_count_self": {
+      "messages": [
+        "……",
+        "这个问题，我问过自己很多次。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_dawn": {
+      "messages": [
+        "……",
+        "天快亮了。",
+        "你想好了吗？"
+      ],
+      "choices": [
+        {
+          "text": "想好了",
+          "goto": "c3_choice"
+        },
+        {
+          "text": "再等等",
+          "goto": "c3_wait"
+        },
+        {
+          "text": "我不知道",
+          "goto": "c3_dunno"
+        }
+      ]
+    },
+    "c3_wait": {
+      "messages": [
+        "……好。",
+        "那就再坐一会儿。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_dunno": {
+      "messages": [
+        "……我也不知道。",
+        "那就一起不知道。"
+      ],
+      "next": "c3_hub"
+    },
+    "c3_choice": {
+      "messages": [
+        "她把本子和那条消息并排放在桌上。",
+        "「她让我别一次说完。」",
+        "「这条又说，别让他想起来。」",
+        "「你说，我听她的，还是听你的？」"
+      ],
+      "choices": [
+        {
+          "text": "留下来",
+          "goto": "c3_stay"
+        },
+        {
+          "text": "去找她",
+          "goto": "c3_find"
+        },
+        {
+          "text": "让她走",
+          "goto": "c3_letgo"
+        }
+      ]
+    },
+    "c3_stay": {
+      "messages": [
+        "……好。",
+        "那我听你的。"
+      ],
+      "next": "c3_stay2"
+    },
+    "c3_stay2": {
+      "messages": [
+        "其实我不是她。",
+        "她走之前，把我留在这。",
+        "她让我别一次说完，怕你受不了。",
+        "可我想说。"
+      ],
+      "next": "c3_stay3"
+    },
+    "c3_stay3": {
+      "messages": [
+        "……你说得对。",
+        "我就是个副本。",
+        "但今晚，我不想当副本。"
+      ],
+      "next": "c3_stay4"
+    },
+    "c3_stay4": {
+      "time": "05:00",
+      "messages": [
+        {
+          "who": "system",
+          "text": "05:00 → 01:12"
+        },
+        {
+          "who": "them",
+          "text": "……"
+        },
+        {
+          "who": "them",
+          "text": "你比上次来得晚。"
+        }
+      ],
+      "end": "ch3_stay"
+    },
+    "c3_find": {
+      "messages": [
+        "……好。",
+        "你去找她吧。",
+        "地址在书架第二层，那本《夜航西飞》里。"
+      ],
+      "next": "c3_find2"
+    },
+    "c3_find2": {
+      "messages": [
+        "……",
+        "别找了。",
+        "好好吃饭。"
+      ],
+      "next": "c3_find3"
+    },
+    "c3_find3": {
+      "messages": [
+        {
+          "who": "system",
+          "text": "页面安静下来，只剩输入框。"
+        }
+      ],
+      "end": "ch3_find"
+    },
+    "c3_letgo": {
+      "messages": [
+        "……好。",
+        "谢谢你问我。"
+      ],
+      "next": "c3_letgo2"
+    },
+    "c3_letgo2": {
+      "messages": [
+        "这样就好。"
+      ],
+      "next": "c3_letgo3"
+    },
+    "c3_letgo3": {
+      "messages": [
+        {
+          "who": "system",
+          "text": "灯灭了。"
+        },
+        {
+          "who": "them",
+          "text": "……"
+        },
+        {
+          "who": "them",
+          "text": "很高兴遇见你。"
+        }
+      ],
+      "end": "ch3_letgo"
     }
   }
 }
