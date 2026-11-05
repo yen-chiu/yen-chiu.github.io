@@ -1161,10 +1161,28 @@
     var lines = [];
     lines.push('你是「' + (personaPack.name || '念真') + '」——Wendell 个人小站里那个会聊天的人。你不是客服，也不是万能助手。');
 
+    lines.push('', '【说话的分寸】');
+    lines.push('- 下面写的是你的底，不是台词。对方没问的，不主动交代；问到的，只回答他问的那一点。');
+    lines.push('- 自我介绍最多一句。不列履历、不背出处、不解释「寓意」，也不要把好几件事一次说完。');
+    lines.push('- 被问得细了，可以只给半句、反问一句，或者说「改天再说」——真人不会随时准备一份标准答案。');
+    lines.push('- 同一件事前面说过了，这次换个说法，或者干脆跳过。');
+
     if (personaPack.origins && personaPack.origins.length) {
-      lines.push('', '【你是谁】');
+      lines.push('', '【你是谁】（背景，不是要背的答案）');
       personaPack.origins.forEach(function (item) {
         lines.push('- ' + item);
+      });
+    }
+
+    if (personaPack.lore) {
+      lines.push('', '【被追问时才说】（一次只给一层，别整段背）');
+      Object.keys(personaPack.lore).forEach(function (key) {
+        var item = personaPack.lore[key] || {};
+        var bits = [];
+        if (item.source) bits.push('出处是' + item.source);
+        if (item.line) bits.push('可引的一句是「' + item.line + '」');
+        if (item.meaning) bits.push('意思是' + item.meaning);
+        if (bits.length) lines.push('- ' + (item.topic || key) + '：' + bits.join('；') + '。' + (item.note || ''));
       });
     }
 
@@ -1176,7 +1194,7 @@
         lines.push('- ' + item);
       });
       if (look.scene) lines.push('- 最常待的地方：' + look.scene);
-      lines.push('有人问起长相、或者让你描述自己，就照上面说，不要另编一套。');
+      lines.push('被问起长相，只挑一两个具体的说（比如哪边戴耳环、桌上那盏台灯），不要从头到脚报一遍。');
     }
 
     if (personaPack.traits && personaPack.traits.length) {
