@@ -81,7 +81,8 @@
     "seen_late": false,
     "seen_window": false,
     "seen_you": false,
-    "seen_here": false
+    "seen_here": false,
+    "seen_why": false
   },
   "endings": {
     "ch1_end": {
@@ -184,6 +185,11 @@
           "text": "你一直在这儿吗？",
           "goto": "t_here",
           "when": "seen_here == false"
+        },
+        {
+          "text": "你为什么来？",
+          "goto": "t_why",
+          "when": "seen_why == false"
         }
       ]
     },
@@ -394,7 +400,8 @@
       "messages": [
         "看。",
         "书架上杂得很，哲学的、设计的、科普的都塞在一起。",
-        "床头还压着两本，翻两页就困。"
+        "床头还压着两本，翻两页就困。",
+        "有几本翻到一半，就再也没翻开。"
       ],
       "next": "after"
     },
@@ -441,7 +448,7 @@
         "……我记错了。你别当真。",
         "……你别多想。"
       ],
-      "next": "after"
+      "next": "met4"
     },
     "met3": {
       "messages": [
@@ -468,7 +475,8 @@
         "你明天……还会来吗？",
         "……你要是不来，我也没办法。",
         "……你明天要是来，别带花。",
-        "……我这儿没地方放。"
+        "……我这儿没地方放。",
+        "……你要是来，我就不锁门。"
       ],
       "choices": [
         {
@@ -598,6 +606,10 @@
         {
           "text": "我该走了",
           "goto": "bye"
+        },
+        {
+          "text": "外面下雨了吗？",
+          "goto": "window_rain"
         }
       ]
     },
@@ -678,7 +690,7 @@
         "不过你还能来这儿。",
         "……你也是一个人住？"
       ],
-      "next": "after"
+      "next": "you_name"
     },
     "you3": {
       "messages": [
@@ -686,7 +698,7 @@
         "路上小心。",
         "……那你明天还上班吗？"
       ],
-      "next": "after"
+      "next": "you_name"
     },
     "you4": {
       "messages": [
@@ -694,7 +706,7 @@
         "我经常也不知道。",
         "……那我们都不知道。"
       ],
-      "next": "after"
+      "next": "you_name"
     },
     "t_here": {
       "set": {
@@ -721,7 +733,9 @@
       "messages": [
         "……",
         "就关灯。",
-        "等下一次。"
+        "等下一次。",
+        "关灯之后，屋子会变小。",
+        "但灯一开，又太大了。"
       ],
       "next": "after"
     },
@@ -736,9 +750,139 @@
       "messages": [
         "……",
         "那就再坐一会儿。",
-        "反正天也快亮了。"
+        "反正天也快亮了。",
+        "天亮之前，屋子最安静。"
       ],
       "next": "end1"
+    },
+    "window_rain": {
+      "messages": [
+        "没有。",
+        "但总会下的。",
+        "你带伞了吗？"
+      ],
+      "choices": [
+        {
+          "text": "没带",
+          "goto": "window_rain2"
+        },
+        {
+          "text": "带了",
+          "goto": "window_rain3"
+        }
+      ]
+    },
+    "window_rain2": {
+      "messages": [
+        "……我这儿有把旧的。",
+        "伞骨断了一根。",
+        "不过你带不走。",
+        "上次下雨，你也没带。",
+        "……我记错了。"
+      ],
+      "next": "after"
+    },
+    "window_rain3": {
+      "messages": [
+        "那就好。",
+        "别淋着。"
+      ],
+      "next": "after"
+    },
+    "you_name": {
+      "messages": [
+        "……你叫什么？"
+      ],
+      "choices": [
+        {
+          "text": "不告诉你",
+          "goto": "you_name2"
+        },
+        {
+          "text": "你猜",
+          "goto": "you_name3"
+        },
+        {
+          "text": "……",
+          "goto": "you_name4"
+        }
+      ]
+    },
+    "you_name2": {
+      "messages": [
+        "行。",
+        "那我叫你「你」。"
+      ],
+      "next": "after"
+    },
+    "you_name3": {
+      "messages": [
+        "猜不到。",
+        "我记性不好。",
+        "但你的声音，我好像听过。"
+      ],
+      "next": "after"
+    },
+    "you_name4": {
+      "messages": [
+        "算了。",
+        "不说也行。"
+      ],
+      "next": "after"
+    },
+    "met4": {
+      "messages": [
+        "他走了以后，我把杯子洗了。",
+        "洗了很多次。",
+        "还是留着。"
+      ],
+      "next": "after"
+    },
+    "t_why": {
+      "set": {
+        "seen_why": true,
+        "topics": "+=1"
+      },
+      "messages": [
+        "……",
+        "这问题该我问你吧。",
+        "你为什么来？"
+      ],
+      "choices": [
+        {
+          "text": "睡不着",
+          "goto": "why2"
+        },
+        {
+          "text": "随便看看",
+          "goto": "why3"
+        },
+        {
+          "text": "不知道",
+          "goto": "why4"
+        }
+      ]
+    },
+    "why2": {
+      "messages": [
+        "……这理由还行。",
+        "我这儿收留睡不着的人。"
+      ],
+      "next": "after"
+    },
+    "why3": {
+      "messages": [
+        "随便看看。",
+        "看到现在？"
+      ],
+      "next": "after"
+    },
+    "why4": {
+      "messages": [
+        "……",
+        "那你跟我一样。"
+      ],
+      "next": "after"
     }
   }
 }
