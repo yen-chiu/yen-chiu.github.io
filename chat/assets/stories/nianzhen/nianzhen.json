@@ -14,6 +14,56 @@
         "start": "n0",
         "file": "ch1-night.json"
       }
+    ],
+    "fragments": [
+      {
+        "id": "frag_page",
+        "label": "被撕掉的一页",
+        "hint": "房间 · 桌角",
+        "status": "live"
+      },
+      {
+        "id": "frag_coat",
+        "label": "外套口袋里的旧车票",
+        "hint": "房间 · 椅背",
+        "status": "live"
+      },
+      {
+        "id": "frag_book",
+        "label": "没还的那本书",
+        "hint": "书架",
+        "status": "live"
+      },
+      {
+        "id": "frag_cup",
+        "label": "另一只杯子",
+        "hint": "第三夜",
+        "status": "planned"
+      },
+      {
+        "id": "frag_msg",
+        "label": "05:00 的消息",
+        "hint": "第二夜",
+        "status": "planned"
+      },
+      {
+        "id": "frag_scratch",
+        "label": "第 47 道划痕",
+        "hint": "第二夜",
+        "status": "planned"
+      },
+      {
+        "id": "frag_period",
+        "label": "名单后的句号",
+        "hint": "后台",
+        "status": "planned"
+      },
+      {
+        "id": "frag_seventh",
+        "label": "第七夜",
+        "hint": "更远的地方",
+        "status": "planned"
+      }
     ]
   },
   "vars": {
@@ -30,7 +80,8 @@
     "frag_book": false,
     "seen_late": false,
     "seen_window": false,
-    "seen_you": false
+    "seen_you": false,
+    "seen_here": false
   },
   "endings": {
     "ch1_end": {
@@ -128,6 +179,11 @@
           "text": "那说说你吧",
           "goto": "t_you",
           "when": "seen_you == false"
+        },
+        {
+          "text": "你一直在这儿吗？",
+          "goto": "t_here",
+          "when": "seen_here == false"
         }
       ]
     },
@@ -219,7 +275,9 @@
       "messages": [
         "……不是我的。",
         "我也不知道为什么一直没扔。",
-        "杯子是成对的。买的时候就是。"
+        "杯子是成对的。买的时候就是。",
+        "这只杯子……是他留下的。",
+        "……我瞎说的。"
       ],
       "choices": [
         {
@@ -317,7 +375,9 @@
       "messages": [
         "《设计诗》，诗排成画那种。",
         "还有一本《夜晚的潜水艇》，不是我的，一直没还。",
-        "……其实我也不确定是谁的。"
+        "……其实我也不确定是谁的。",
+        "书里有一句，我抄在本子上了。",
+        "……不给你看。"
       ],
       "choices": [
         {
@@ -406,7 +466,9 @@
     "end1": {
       "messages": [
         "你明天……还会来吗？",
-        "……你要是不来，我也没办法。"
+        "……你要是不来，我也没办法。",
+        "……你明天要是来，别带花。",
+        "……我这儿没地方放。"
       ],
       "choices": [
         {
@@ -525,7 +587,8 @@
       "messages": [
         "窗外没什么好看的。",
         "一排树，一盏路灯。",
-        "下雨的时候，树会亮一点。"
+        "下雨的时候，树会亮一点。",
+        "雨停的时候，路灯会灭一下。"
       ],
       "choices": [
         {
@@ -572,7 +635,17 @@
         "你问得差不多了。",
         "我有点困了。"
       ],
-      "next": "end1"
+      "next": "end1",
+      "choices": [
+        {
+          "text": "那你睡吧",
+          "goto": "quiet_sleep"
+        },
+        {
+          "text": "再坐一会儿",
+          "goto": "quiet_stay"
+        }
+      ]
     },
     "t_you": {
       "set": {
@@ -602,23 +675,70 @@
     "you2": {
       "messages": [
         "……那跟我差不多。",
-        "不过你还能来这儿。"
+        "不过你还能来这儿。",
+        "……你也是一个人住？"
       ],
       "next": "after"
     },
     "you3": {
       "messages": [
         "这么晚。",
-        "路上小心。"
+        "路上小心。",
+        "……那你明天还上班吗？"
       ],
       "next": "after"
     },
     "you4": {
       "messages": [
         "不知道也是一种回答。",
-        "我经常也不知道。"
+        "我经常也不知道。",
+        "……那我们都不知道。"
       ],
       "next": "after"
+    },
+    "t_here": {
+      "set": {
+        "seen_here": true,
+        "topics": "+=1"
+      },
+      "messages": [
+        "大部分时候。",
+        "有人来的时候才醒。",
+        "……你别问这个。"
+      ],
+      "choices": [
+        {
+          "text": "那没人来的时候呢？",
+          "goto": "here2"
+        },
+        {
+          "text": "不问了",
+          "goto": "after"
+        }
+      ]
+    },
+    "here2": {
+      "messages": [
+        "……",
+        "就关灯。",
+        "等下一次。"
+      ],
+      "next": "after"
+    },
+    "quiet_sleep": {
+      "messages": [
+        "嗯。",
+        "灯我留着。"
+      ],
+      "next": "end1"
+    },
+    "quiet_stay": {
+      "messages": [
+        "……",
+        "那就再坐一会儿。",
+        "反正天也快亮了。"
+      ],
+      "next": "end1"
     }
   }
 }

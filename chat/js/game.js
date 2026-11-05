@@ -21,7 +21,7 @@
   var SHOW_GALLERY = CFG.showGallery !== false;
   var ENDING_EYEBROW = CFG.endingEyebrow || 'Ending';
   var SHOW_SECRET = CFG.showSecretMarks !== false;
-  var POCKET = CFG.pocket || null;
+  var POCKET = CFG.pocket && CFG.pocket !== true ? CFG.pocket : null;
   var SPEED_KEY = 'wd.story.speed';
 
   var el = {
@@ -655,6 +655,9 @@
       })
       .then(function (json) {
         data = json;
+        if (!POCKET && data.meta && data.meta.fragments) {
+          POCKET = { fragments: data.meta.fragments };
+        }
         initStoryHandlers();
         updateGalleryCount();
 
