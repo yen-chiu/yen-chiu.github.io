@@ -1146,7 +1146,7 @@
     return always.concat(images);
   }
 
-  function effectiveSystem(query) {
+  function effectiveSystem(query, repeat) {
     if (config.system && config.system.trim()) return config.system.trim();
 
     // 通用助手 / 写代码的：原样，不掺人格设定，也拿不到站内资料
@@ -1278,6 +1278,10 @@
       personaPack.boundaries.forEach(function (item) {
         lines.push('- ' + item);
       });
+    }
+
+    if (repeat) {
+      lines.push('', '【这一轮】对方这句话和前面几乎一样，你已经答过。先点一句「刚说过」或「又问一遍？」，只补一句新的，或者反问回去；不要重新展开答案。');
     }
 
     if (config.tools) {
@@ -1704,9 +1708,63 @@
 
   /* ======================= 请求 ======================= */
 
+  /* 重复提问：同一条问题在本次会话里问第二遍，就点一句「刚说过」 */
+  function normalizeAsk(text) {
+    return String(text || '')
+      .toLowerCase()
+      .replace(/[\s，。！？、；：""''（）《》…—,.!?;:'"()\[\]{}<>~`·]/g, '');
+  }
+
+  function diceCoefficient(a, b) {
+    if (!a || !b) return 0;
+    if (a === b) return 1;
+    var A = {};
+    var B = {};
+    var i;
+    for (i = 0; i < a.length - 1; i++) A[a.slice(i, i + 2)] = (A[a.slice(i, i + 2)] || 0) + 1;
+    for (i = 0; i < b.length - 1; i++) B[b.slice(i, i + 2)] = (B[b.slice(i, i + 2)] || 0) + 1;
+    var inter = 0;
+    var na = 0;
+    var nb = 0;
+    for (var k in A) {
+      na += A[k];
+      if (B[k]) inter += Math.min(A[k], B[k]);
+    }
+    for (var k2 in B) nb += B[k2];
+    return (2 * inter) / (na + nb || 1);
+  }
+
+  function findRepeat(chat, query) {
+    if (!chat || !chat.messages || chat.messages.length < 3) return null;
+    var cur = normalizeAsk(query);
+    if (cur.length < 4) return null;
+    // 明确让对方再讲一遍的，不算重复
+    if (/再说|再讲|重复|没听清|没记住|忘了|再来一遍/.test(String(query || ''))) return null;
+    if (/^(在吗|在不在|你好|嗨|hi|hello|早|早安|晚安|哈喽)/i.test(cur)) return null;
+
+    var msgs = chat.messages;
+    var lastUser = -1;
+    for (var i = msgs.length - 1; i >= 0; i--) {
+      if (msgs[i] && msgs[i].role === 'user') {
+        lastUser = i;
+        break;
+      }
+    }
+    for (var j = lastUser - 1; j >= 0; j--) {
+      var m = msgs[j];
+      if (!m || m.role !== 'user') continue;
+      var prev = normalizeAsk(m.content);
+      if (prev.length < 4) continue;
+      if (prev === cur) return m;
+      if (prev.length >= 6 && cur.length >= 6 && diceCoefficient(prev, cur) >= 0.8) return m;
+    }
+    return null;
+  }
+
   function buildApiMessages(extra, query) {
-    var list = [{ role: 'system', content: effectiveSystem(query) }];
     var chat = currentChat();
+    var repeat = findRepeat(chat, query);
+    var list = [{ role: 'system', content: effectiveSystem(query, repeat) }];
     var history = chat ? chat.messages.slice(-20) : [];
 
     history.forEach(function (msg) {
