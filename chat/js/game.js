@@ -17,6 +17,8 @@
   var ENDING_KEY = CFG.endingKey || 'wd.story.endings';
   var AVATAR = CFG.avatar || '柚';
   var CHAPTER_SUFFIX = CFG.chapterSuffix || '一个普通的深夜';
+  var CHAPTER_NAMES = CFG.chapterNames || null;
+  var activeSuffix = CHAPTER_SUFFIX;
   var START_TIME = CFG.startTime || '02:17';
   var SHOW_GALLERY = CFG.showGallery !== false;
   var ENDING_EYEBROW = CFG.endingEyebrow || 'Ending';
@@ -217,9 +219,16 @@
     if (on) scrollDown();
   }
 
+  function chapterSuffixFor(nodeId) {
+    if (!CHAPTER_NAMES) return CHAPTER_SUFFIX;
+    var m = /^c(\d+)_/.exec(nodeId || '');
+    var idx = m ? Number(m[1]) - 1 : 0;
+    return CHAPTER_NAMES[idx] || CHAPTER_SUFFIX;
+  }
+
   function setChapter(time) {
     if (!el.chapter || !time) return;
-    el.chapter.textContent = time + (CHAPTER_SUFFIX ? ' · ' + CHAPTER_SUFFIX : '');
+    el.chapter.textContent = time + (activeSuffix ? ' · ' + activeSuffix : '');
   }
 
   function clearChoices() {
@@ -312,13 +321,19 @@
       })
       .join('');
 
+    var nextBtn = '';
+    if (ending.next && data.nodes && data.nodes[ending.next]) {
+      nextBtn = '<button type="button" class="wd-btn" id="wd-next">' + escapeHTML(ending.nextLabel || '继续下一夜') + '</button>';
+    }
+
     el.ending.innerHTML =
-      '<p class="wd-overlay__eyebrow">' + (SHOW_GALLERY ? 'Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount : ENDING_EYEBROW) + '</p>' +
+      '<p class="wd-overlay__eyebrow">' + (SHOW_GALLERY ? 'Ending ' + endingIndexOf(ending.id) + ' / ' + data.meta.endingCount : ENDING_EYEBROW + (activeSuffix ? ' · ' + activeSuffix : '')) + '</p>' +
       '<h1 class="wd-overlay__title">' + escapeHTML(ending.title) + '</h1>' +
       '<p class="wd-ending__quote">' + escapeHTML(ending.quote || '') + '</p>' +
       '<p class="wd-ending__summary">' + escapeHTML(ending.summary || '') + '</p>' +
       (SHOW_GALLERY ? '<h2 class="wd-overlay__eyebrow">结局收集</h2><ul class="wd-endings">' + list + '</ul>' : '') +
       '<div class="wd-overlay__actions">' +
+      nextBtn +
       '<button type="button" class="wd-btn" id="wd-again">再玩一次</button>' +
       '<button type="button" class="wd-btn wd-btn--ghost" id="wd-rewind-ending">回到上一个选择</button>' +
       '<button type="button" class="wd-btn wd-btn--ghost" id="wd-close-ending">看看聊天记录</button>' +
@@ -331,6 +346,18 @@
     var close = document.getElementById('wd-close-ending');
 
     if (again) again.addEventListener('click', restart);
+
+    var next = document.getElementById('wd-next');
+    if (next) {
+      next.addEventListener('click', function () {
+        el.ending.hidden = true;
+        state.finished = false;
+        state.ending = null;
+        story.goto(ending.next);
+        persist();
+        updateMenu();
+      });
+    }
     if (rewind) {
       rewind.hidden = !story.canRewind();
       rewind.addEventListener('click', function () {
@@ -621,6 +648,7 @@
   function initStoryHandlers() {
     story = new window.WDNarrative.Story(data, {
       onTime: function (time) {
+        activeSuffix = chapterSuffixFor(story.nodeId);
         appendTime(time);
         setChapter(time);
       },
@@ -639,6 +667,7 @@
         persist();
       },
       onEnding: function (ending) {
+        activeSuffix = chapterSuffixFor(story.nodeId);
         if (ending) showEnding(ending);
       }
     });
@@ -680,6 +709,18 @@
           applySpeed();
         }
         if (params.has('autostart')) freshStart();
+
+        // 作者自测：?jump=c2_msg 直接跳到某个节点
+        if (params.has('jump')) {
+          var jump = params.get('jump');
+          if (data.nodes[jump]) {
+            el.intro.hidden = true;
+            el.ending.hidden = true;
+            story.reset();
+            story.goto(jump);
+            persist();
+          }
+        }
       })
       .catch(function (err) {
         if (window.console) console.error(err);
