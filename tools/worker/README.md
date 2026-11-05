@@ -73,7 +73,7 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 
 | 路由 | 说明 |
 | --- | --- |
-| `GET /search?q=关键词` | 先查 DuckDuckGo 的 HTML 结果（空壳时自动换精简版），再合并维基百科补充，按 URL 去重；DDG 都不通时再用 Yahoo 兜底。返回 `{results:[{title,url,snippet,source}]}` |
+| `GET /search?q=关键词` | DuckDuckGo HTML + 维基百科并行；中文查询额外并行问一次 Bing HTML（结果做相关性过滤）；DDG 空壳时换 Lite，仍不通再用 Yahoo。按来源配额合并、去重，最多 6 条。返回 `{results:[{title,url,snippet,source}]}` |
 | `GET /read?url=完整地址` | 只允许公网 http/https，抓回页面剥掉标签后返回纯文本（标题 + 最多 8000 字） |
 
 聊天页已经默认走这两条路由（`api.yenchiu.com`），不用手填。要换成自己的部署，在设置里改：
@@ -84,6 +84,12 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 注意 `ALLOWED_ORIGIN` 必须包含实际打开的站点来源（`https://yenchiu.com`、`https://www.yenchiu.com`，本地调试再加 `http://127.0.0.1:4000`），否则会被 403 挡掉。
 
 浏览器直连 DuckDuckGo 的接口拿不到 `Access-Control-Allow-Origin`，维基百科在部分网络环境又不可达，所以“搜索”和“读网页”都以 Worker 为主；两个接口都留空时只退回维基百科直连。
+
+搜索还有两层保护：
+
+- **5 分钟结果缓存**：用 Cloudflare Cache API 按查询词缓存非空结果，命中时响应头是 `X-Search-Cache: HIT`。查询词会以缓存键的形式在边缘节点保留最多 5 分钟，不落数据库。
+- **失败分类 + 冷却**：`bot-wall` / 超时等短失败冷却 60 秒，`auth` / `quota` 冷却到当前 isolate 结束；冷却中的引擎直接跳过，失败原因会写进 `debug=1` 的 trace。**Bing 失败不冷却**，它只是中文补充源。
+- **Bing 的现实情况**：从 Cloudflare 机房访问 Bing 时，它偶尔返回空页或与查询无关的默认结果。Worker 会做一次查询词相关性过滤，过滤后为空就静默跳过，不会污染结果；所以 Bing 是“有机会就补”，不保证每次都有产出。
 
 `/read` 加了 SSRF 防护：拒绝回环、内网网段、link-local（含 `169.254.169.254`）和 IPv6 字面量；
 按 IP 限流（`RATE_LIMIT_SEARCH` 默认 30 次/分、`RATE_LIMIT_READ` 默认 20 次/分）。
@@ -104,8 +110,9 @@ cd tools/worker
 node --test test/worker.test.mjs
 ```
 
-覆盖：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404，
-以及 `/search` 的整理逻辑与 `/read` 的 SSRF 防护、正文抽取。
+覆盖 21 个用例：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404，
+`/search` 的合并去重、Bing 补充与不冷却、DDG bot-wall 冷却、Yahoo 401 会话冷却、5 分钟缓存命中，
+以及 `/read` 的 SSRF 防护与正文抽取。
 
 ## 安全说明
 
@@ -116,5 +123,6 @@ node --test test/worker.test.mjs
   Worker 实例内的近似值。**生产环境请在 Cloudflare 控制台给这个 Worker 加 Rate limiting 规则**
   （例如：`/device/code` 每 IP 每分钟 5 次），那才是全局生效的。
 - `/health` 只返回 `{"ok":true}`，不回显白名单或任何配置。
+- 搜索结果缓存键包含查询词，边缘节点最多保留 5 分钟；不要用它搜索敏感信息。
 - 权限边界由 GitHub App 决定：只能访问被安装的那个仓库，且只有 Contents 读写。
 - 想彻底停用：Cloudflare 里删掉 Worker，或把 `admin_auth_endpoint` 清空。

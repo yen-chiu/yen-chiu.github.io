@@ -74,8 +74,73 @@ const SEARCH_TIMEOUT_MS = 8000;
 const READ_TIMEOUT_MS = 10000;
 const READ_LIMIT = 8000;
 const SEARCH_LIMIT = 6;
+const SEARCH_CACHE_TTL_SECONDS = 300;
+const SHORT_COOLDOWN_MS = 60_000;
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36 wendell-blog-worker';
+
+/* 引擎冷却：只在当前 isolate 内生效。
+ * bot-wall / transient 冷却 60 秒；auth / quota 冷却到 isolate 结束（“会话级”）。
+ * Bing 是补充源，显式设计为失败不冷却。 */
+const ENGINE_COOLDOWN = new Map();
+
+function cooldownRemaining(engineKey) {
+  const entry = ENGINE_COOLDOWN.get(engineKey);
+  if (!entry) return 0;
+  const now = Date.now();
+  if (entry.until === Infinity) return Infinity;
+  if (entry.until <= now) {
+    ENGINE_COOLDOWN.delete(engineKey);
+    return 0;
+  }
+  return entry.until - now;
+}
+
+function setCooldown(engineKey, failure) {
+  if (failure === 'invalid-response') return;
+  const indefinite = failure === 'auth' || failure === 'quota';
+  const entry = { failure, until: indefinite ? Infinity : Date.now() + SHORT_COOLDOWN_MS };
+  const previous = ENGINE_COOLDOWN.get(engineKey);
+  // 已经是会话级冷却就不要被一次短冷却覆盖
+  if (previous && previous.until === Infinity && !indefinite) return;
+  ENGINE_COOLDOWN.set(engineKey, entry);
+  if (ENGINE_COOLDOWN.size > 100) {
+    const oldest = ENGINE_COOLDOWN.keys().next().value;
+    ENGINE_COOLDOWN.delete(oldest);
+  }
+}
+
+function classifyFailure(err) {
+  if (err && (err.failure === 'bot-wall' || err.failure === 'auth' || err.failure === 'quota')) {
+    return err.failure;
+  }
+  const message = String((err && err.message) || err || '');
+  const status = Number(err && err.status) || Number((message.match(/_(\d{3})$/) || [])[1]) || 0;
+  if (status === 401) return 'auth';
+  if (status === 402) return 'quota';
+  if (status === 403) return 'bot-wall';
+  if (status === 429 || status >= 500) return 'transient';
+  if (/timeout|network|fetch failed|connection/i.test(message)) return 'transient';
+  return 'invalid-response';
+}
+
+function looksLikeBotWall(html) {
+  return /(captcha|anomaly|challenge|unusual traffic|bots use duckduckgo|bot detection|verify you are human)/i.test(
+    String(html || '')
+  );
+}
+
+function upstreamError(label, status) {
+  const err = new Error(label + '_' + status);
+  err.status = status;
+  return err;
+}
+
+function botWallError(label) {
+  const err = new Error(label + '_bot_wall');
+  err.failure = 'bot-wall';
+  return err;
+}
 
 function withTimeout(promise, ms) {
   return Promise.race([
@@ -141,7 +206,7 @@ async function searchDuckDuckGoHtml(q) {
     }),
     SEARCH_TIMEOUT_MS
   );
-  if (!res.ok) throw new Error('ddg_html_' + res.status);
+  if (!res.ok) throw upstreamError('ddg_html', res.status);
 
   const html = await res.text();
   const out = [];
@@ -175,6 +240,7 @@ async function searchDuckDuckGoHtml(q) {
       source: 'duckduckgo'
     });
   }
+  if (!out.length && looksLikeBotWall(html)) throw botWallError('ddg_html');
   return out;
 }
 
@@ -186,7 +252,7 @@ async function searchDuckDuckGoLite(q) {
     }),
     SEARCH_TIMEOUT_MS
   );
-  if (!res.ok) throw new Error('ddg_lite_' + res.status);
+  if (!res.ok) throw upstreamError('ddg_lite', res.status);
 
   const html = await res.text();
   const out = [];
@@ -219,6 +285,7 @@ async function searchDuckDuckGoLite(q) {
       source: 'duckduckgo'
     });
   }
+  if (!out.length && looksLikeBotWall(html)) throw botWallError('ddg_lite');
   return out;
 }
 
@@ -244,7 +311,7 @@ async function searchYahoo(q) {
     }),
     SEARCH_TIMEOUT_MS
   );
-  if (!res.ok) throw new Error('yahoo_' + res.status);
+  if (!res.ok) throw upstreamError('yahoo', res.status);
 
   const html = await res.text();
   const out = [];
@@ -271,6 +338,84 @@ async function searchYahoo(q) {
       source: 'yahoo'
     });
   }
+  if (!out.length && looksLikeBotWall(html)) throw botWallError('yahoo');
+  return out;
+}
+
+function decodeBingRedirect(href) {
+  try {
+    const parsed = new URL(href, 'https://www.bing.com');
+    if (/bing\.com$/i.test(parsed.hostname) && parsed.pathname.startsWith('/ck/a')) {
+      const raw = parsed.searchParams.get('u') || '';
+      if (!raw.startsWith('a1')) return '';
+      let b64 = raw.slice(2).replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      const decoded = atob(b64);
+      return /^https?:\/\//i.test(decoded) ? decoded : '';
+    }
+    return /^https?:\/\//i.test(href) ? href : '';
+  } catch (e) {
+    return '';
+  }
+}
+
+/** 判断结果和查询是否沾边：机房出口的 Bing 偶尔会返回默认/无关页，先过滤掉。 */
+function relevantToQuery(text, q) {
+  const hay = String(text || '').toLowerCase();
+  const query = String(q || '').toLowerCase().trim();
+  if (!query) return true;
+
+  const cjk = query.replace(/[^\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]/g, '');
+  if (cjk.length >= 2) {
+    for (let i = 0; i < cjk.length - 1; i++) {
+      if (hay.includes(cjk.slice(i, i + 2))) return true;
+    }
+    return hay.includes(cjk);
+  }
+
+  return query
+    .split(/[\s,，。]+/)
+    .filter((token) => token.length >= 2)
+    .some((token) => hay.includes(token));
+}
+
+/** Bing HTML：中文搜索的补充源。失败不冷却，避免它把整个链路拖慢。 */
+async function searchBingHtml(q) {
+  const res = await withTimeout(
+    fetch(
+      'https://www.bing.com/search?q=' +
+        encodeURIComponent(q) +
+        '&setlang=zh-CN&mkt=zh-CN&cc=CN&count=10',
+      {
+        headers: {
+          Accept: 'text/html,application/xhtml+xml',
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+          'User-Agent': UA
+        }
+      }
+    ),
+    SEARCH_TIMEOUT_MS
+  );
+  if (!res.ok) throw upstreamError('bing', res.status);
+
+  const html = await res.text();
+  const out = [];
+  const itemRe = /<li\b[^>]*class="[^"]*\bb_algo\b[^"]*"[^>]*>([\s\S]*?)<\/li>/gi;
+  let match;
+  while ((match = itemRe.exec(html)) && out.length < 4) {
+    const block = match[1];
+    const head = block.match(/<h2[^>]*>[\s\S]*?<a[^>]+href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i);
+    if (!head) continue;
+
+    const link = decodeBingRedirect(decodeEntities(head[1]).trim());
+    const title = stripHtml(head[2], 160);
+    if (!link || !title) continue;
+
+    const snippetMatch = block.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+    const snippet = snippetMatch ? stripHtml(snippetMatch[1], 240) : '';
+    if (!relevantToQuery(title + ' ' + snippet, q)) continue;
+    out.push({ title, url: link, snippet, source: 'bing' });
+  }
   return out;
 }
 
@@ -283,7 +428,7 @@ async function searchWikipedia(q) {
     fetch(api, { headers: { Accept: 'application/json', 'User-Agent': 'wendell-blog-worker' } }),
     SEARCH_TIMEOUT_MS
   );
-  if (!res.ok) throw new Error('wikipedia_' + res.status);
+  if (!res.ok) throw upstreamError('wikipedia', res.status);
 
   const data = await res.json();
   return ((data.query && data.query.search) || []).map((item) => ({
@@ -302,7 +447,7 @@ async function searchDuckDuckGo(q) {
     fetch(api, { headers: { Accept: 'application/json', 'User-Agent': UA } }),
     SEARCH_TIMEOUT_MS
   );
-  if (!res.ok) throw new Error('duckduckgo_' + res.status);
+  if (!res.ok) throw upstreamError('duckduckgo', res.status);
 
   const data = await res.json();
   const out = [];
@@ -337,94 +482,152 @@ function dedupeByUrl(list) {
   return out;
 }
 
-async function searchUpstream(q, trace, engine) {
-  const record = (source, ok, count, error) => {
-    if (trace) trace.push({ source, ok, count: count || 0, error: error || null });
-  };
+function traceRecord(trace, source, ok, count, error, extra) {
+  if (!trace) return;
+  trace.push(
+    Object.assign(
+      { source, ok, count: count || 0, error: error || null },
+      extra || {}
+    )
+  );
+}
+
+async function runEngine(engineKey, label, fn, trace, options) {
+  const opts = options || {};
+  if (!opts.bypassCooldown && !opts.noCooldown) {
+    const remaining = cooldownRemaining(engineKey);
+    if (remaining > 0) {
+      traceRecord(trace, label, false, 0, 'cooling_down', {
+        cooldownMs: remaining === Infinity ? null : Math.round(remaining)
+      });
+      return { items: [], ok: false, skipped: true, failure: 'cooling' };
+    }
+  }
+
+  try {
+    const items = (await fn()) || [];
+    traceRecord(trace, label, true, items.length, null);
+    return { items, ok: true };
+  } catch (err) {
+    const failure = classifyFailure(err);
+    if (!opts.noCooldown) setCooldown(engineKey, failure);
+    const remaining = opts.noCooldown ? 0 : cooldownRemaining(engineKey);
+    traceRecord(trace, label, false, 0, failure + ': ' + String((err && err.message) || err), {
+      failure,
+      cooldownMs: remaining === Infinity ? null : Math.round(remaining)
+    });
+    return { items: [], ok: false, failure };
+  }
+}
+
+async function searchUpstream(q, trace, engine, options) {
+  const bypassCooldown = !!(options && options.bypassCooldown);
+  const hasCJK = /[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(q);
 
   // 只在 debug=1 时可用：强制走某一个源，方便排查到底是哪一层不通
   if (engine === 'ddg') {
-    try {
-      const html = await searchDuckDuckGoHtml(q);
-      record('duckduckgo_html', true, html.length, null);
-      return dedupeByUrl(html).slice(0, SEARCH_LIMIT);
-    } catch (e) {
-      record('duckduckgo_html', false, 0, String(e.message || e));
-      return [];
-    }
+    const result = await runEngine('ddg', 'duckduckgo_html', () => searchDuckDuckGoHtml(q), trace, { bypassCooldown });
+    return dedupeByUrl(result.items).slice(0, SEARCH_LIMIT);
   }
   if (engine === 'ddg_lite') {
-    try {
-      const lite = await searchDuckDuckGoLite(q);
-      record('duckduckgo_lite', true, lite.length, null);
-      return dedupeByUrl(lite).slice(0, SEARCH_LIMIT);
-    } catch (e) {
-      record('duckduckgo_lite', false, 0, String(e.message || e));
-      return [];
-    }
+    const result = await runEngine('ddg_lite', 'duckduckgo_lite', () => searchDuckDuckGoLite(q), trace, { bypassCooldown });
+    return dedupeByUrl(result.items).slice(0, SEARCH_LIMIT);
   }
   if (engine === 'yahoo') {
-    try {
-      const yahoo = await searchYahoo(q);
-      record('yahoo', true, yahoo.length, null);
-      return dedupeByUrl(yahoo).slice(0, SEARCH_LIMIT);
-    } catch (e) {
-      record('yahoo', false, 0, String(e.message || e));
-      return [];
-    }
+    const result = await runEngine('yahoo', 'yahoo', () => searchYahoo(q), trace, { bypassCooldown });
+    return dedupeByUrl(result.items).slice(0, SEARCH_LIMIT);
+  }
+  if (engine === 'bing') {
+    const result = await runEngine('bing', 'bing', () => searchBingHtml(q), trace, {
+      noCooldown: true,
+      bypassCooldown
+    });
+    return dedupeByUrl(result.items).slice(0, SEARCH_LIMIT);
   }
   if (engine === 'wikipedia') {
-    try {
-      const wiki = await searchWikipedia(q);
-      record('wikipedia', true, wiki.length, null);
-      return dedupeByUrl(wiki).slice(0, SEARCH_LIMIT);
-    } catch (e) {
-      record('wikipedia', false, 0, String(e.message || e));
-      return [];
-    }
+    const result = await runEngine('wikipedia', 'wikipedia', () => searchWikipedia(q), trace, { bypassCooldown });
+    return dedupeByUrl(result.items).slice(0, SEARCH_LIMIT);
   }
 
-  const [ddg, wikipedia] = await Promise.allSettled([searchDuckDuckGoHtml(q), searchWikipedia(q)]);
-  record('duckduckgo_html', ddg.status === 'fulfilled', ddg.status === 'fulfilled' && ddg.value.length, ddg.status === 'rejected' && String(ddg.reason));
-  record(
-    'wikipedia',
-    wikipedia.status === 'fulfilled',
-    wikipedia.status === 'fulfilled' && wikipedia.value.length,
-    wikipedia.status === 'rejected' && String(wikipedia.reason)
-  );
+  const wantsBing = hasCJK;
+  const [ddg, wikipedia, bingResult] = await Promise.all([
+    runEngine('ddg', 'duckduckgo_html', () => searchDuckDuckGoHtml(q), trace, { bypassCooldown }),
+    runEngine('wikipedia', 'wikipedia', () => searchWikipedia(q), trace, { bypassCooldown }),
+    wantsBing
+      ? runEngine('bing', 'bing', () => searchBingHtml(q), trace, { noCooldown: true, bypassCooldown })
+      : Promise.resolve({ items: [] })
+  ]);
 
-  let general = ddg.status === 'fulfilled' ? ddg.value : [];
+  let general = ddg.items;
   if (!general.length) {
-    try {
-      general = await searchDuckDuckGoLite(q);
-      record('duckduckgo_lite', true, general.length, null);
-    } catch (e) {
-      record('duckduckgo_lite', false, 0, String(e.message || e));
-    }
+    general = (
+      await runEngine('ddg_lite', 'duckduckgo_lite', () => searchDuckDuckGoLite(q), trace, { bypassCooldown })
+    ).items;
   }
-  if (!general.length) {
-    try {
-      general = await searchYahoo(q);
-      record('yahoo', true, general.length, null);
-    } catch (e) {
-      record('yahoo', false, 0, String(e.message || e));
-    }
+  if (!general.length && !bingResult.items.length) {
+    general = (await runEngine('yahoo', 'yahoo', () => searchYahoo(q), trace, { bypassCooldown })).items;
   }
 
-  const merged = dedupeByUrl([
-    ...general,
-    ...(wikipedia.status === 'fulfilled' ? wikipedia.value : [])
-  ]).slice(0, SEARCH_LIMIT);
+  const wikiItems = wikipedia.items;
+  let merged;
+  if (wantsBing && bingResult.items.length) {
+    // 给 Bing 留出位置：DDG 前 3 + 维基前 2 + Bing，再补其余，避免 Bing 被 5 条 DDG 挤没
+    merged = dedupeByUrl([
+      ...general.slice(0, 3),
+      ...wikiItems.slice(0, 2),
+      ...bingResult.items,
+      ...general.slice(3),
+      ...wikiItems.slice(2)
+    ]).slice(0, SEARCH_LIMIT);
+  } else {
+    merged = dedupeByUrl([...general, ...wikiItems]).slice(0, SEARCH_LIMIT);
+  }
   if (merged.length) return merged;
 
+  const instant = await runEngine('ddg_instant', 'duckduckgo', () => searchDuckDuckGo(q), trace, {
+    bypassCooldown
+  });
+  return dedupeByUrl(instant.items).slice(0, SEARCH_LIMIT);
+}
+
+/* ---------------------------------------------------------------------------
+ * 搜索结果缓存（Cloudflare Cache API，5 分钟）
+ * 只缓存非空结果；debug=1 的请求绕过缓存。查询词会以缓存键的形式在边缘节点
+ * 保留最多 5 分钟，不落数据库。
+ * ------------------------------------------------------------------------- */
+const SEARCH_CACHE_ORIGIN = 'https://search-cache.yenchiu.internal';
+
+function searchCacheRequest(q) {
+  return new Request(
+    SEARCH_CACHE_ORIGIN + '/search?v=3&q=' + encodeURIComponent(q),
+    { method: 'GET' }
+  );
+}
+
+async function readSearchCache(q) {
+  if (typeof caches === 'undefined' || !caches.default) return null;
   try {
-    const instant = await searchDuckDuckGo(q);
-    record('duckduckgo', true, instant.length, null);
-    return dedupeByUrl(instant).slice(0, SEARCH_LIMIT);
+    const hit = await caches.default.match(searchCacheRequest(q));
+    if (!hit) return null;
+    const data = await hit.json();
+    return Array.isArray(data.results) ? data.results : null;
   } catch (e) {
-    record('duckduckgo', false, 0, String(e.message || e));
-    return [];
+    return null;
   }
+}
+
+async function writeSearchCache(q, results, ctx) {
+  if (typeof caches === 'undefined' || !caches.default || !results.length) return;
+  const response = new Response(JSON.stringify({ results }), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'public, max-age=' + SEARCH_CACHE_TTL_SECONDS
+    }
+  });
+  const task = caches.default.put(searchCacheRequest(q), response).catch(() => {});
+  if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(task);
+  else await task;
 }
 
 /** 只允许公网地址：挡住内网、回环与元数据服务 */
@@ -532,7 +735,7 @@ function rateLimited(ip, limit) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const url = new URL(request.url);
     const list = allowedOrigins(env);
@@ -560,10 +763,24 @@ export default {
       }
       try {
         const debug = url.searchParams.get('debug') === '1';
+        const cacheable = !debug;
+
+        if (cacheable) {
+          const cached = await readSearchCache(q);
+          if (cached) {
+            return json({ results: cached, cached: true }, 200, origin, env, {
+              'X-Search-Cache': 'HIT'
+            });
+          }
+        }
+
         const trace = debug ? [] : null;
         const engine = debug ? (url.searchParams.get('engine') || '').trim().toLowerCase() : '';
-        const results = await searchUpstream(q, trace, engine);
-        return json(trace ? { results, debug: trace } : { results }, 200, origin, env);
+        const results = await searchUpstream(q, trace, engine, { bypassCooldown: debug });
+        if (cacheable && results.length) await writeSearchCache(q, results, ctx);
+        return json(trace ? { results, debug: trace } : { results }, 200, origin, env, {
+          'X-Search-Cache': cacheable ? 'MISS' : 'BYPASS'
+        });
       } catch (e) {
         return json({ error: 'search_failed' }, 502, origin, env);
       }
@@ -629,3 +846,9 @@ export default {
     return json({ error: 'not_found' }, 404, origin, env);
   }
 };
+
+/** 测试用：清空本 isolate 的冷却与限流状态 */
+export function resetEngineState() {
+  ENGINE_COOLDOWN.clear();
+  RATE_BUCKETS.clear();
+}
