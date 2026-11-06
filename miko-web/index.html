@@ -131,10 +131,10 @@
       <div class="set-row">
         <span>等待倍速</span>
         <select id="set-wait">
-          <option value="1">真实时长</option>
+          <option value="1">真实时长（1×，和剧情里一样）</option>
           <option value="10">10 倍速</option>
           <option value="60">60 倍速</option>
-          <option value="0">不等待</option>
+          <option value="0">不等待（瞬间跳过）</option>
         </select>
       </div>
       <div class="set-row">
@@ -226,7 +226,7 @@
         <tr><th>运行形态</th><td class="orig">Flutter / Dart AOT 安卓包（libapp.so 三个 ABI 各 ~5MB）</td><td>纯静态网页，无构建、无后端，GitHub Pages 托管</td></tr>
         <tr><th>剧情数据</th><td class="orig">assets/story/*.csv 明文，18 种指令 + 跳转表</td><td>同一份 CSV 编译成 story.json，引擎按块跳转重写</td></tr>
         <tr><th>头像</th><td class="orig">未认识时隐藏（问号），自报姓名后才出现；重置版把「我」的头像取自 QQ</td><td>三态随剧情走：<b>未知=问号</b> → <b>知道名字=黑底字母</b> → <b>她发了第一张图=人物头像</b>；「我」可填 QQ 号取 qlogo 头像或上传本地图片，角色头像可在设置里改</td></tr>
-        <tr><th>消息节奏</th><td class="orig">逐条 <code>busyWaitTime</code> / <code>nextMessageDelayTime</code>（中位 2.4–3.1 秒，≈0.52s + 0.175s/字），最长 4 小时</td><td>按章加载原版时长：前三章 + 两番外共 <b>2,882 句</b>逐字命中取原值，其余用拟合模型；4–6 章原版为服务器下发（服务已停）故走拟合；慢/中/快 = 1.35×/1×/0.6×，等待按倍速折算</td></tr>
+        <tr><th>消息节奏</th><td class="orig">逐条 <code>busyWaitTime</code> / <code>nextMessageDelayTime</code>（中位 2.4–3.1 秒，≈0.52s + 0.175s/字），最长 4 小时</td><td>按章加载原版时长：前三章 + 两番外共 <b>2,882 句</b>逐字命中取原值，其余用拟合模型；4–6 章原版为服务器下发（服务已停）故走拟合；慢/中/快 = 1.35×/1×/0.6×；等待默认按<b>真实时长</b>（可改 10× / 60× / 不等待）</td></tr>
         <tr><th>存档</th><td class="orig">本机 SharedPreferences</td><td>localStorage，并可导出 / 导入 JSON，换设备接着玩</td></tr>
         <tr><th>阅读辅助</th><td class="orig">无</td><td>右上角菜单里：<b>自动播放</b>（逐条推进、选项自动选第一个）、<b>立即显示</b>（跳过打字与等待）、<b>跳到某天</b></td></tr>
         <tr><th>聊天头部</th><td class="orig">显示对象名；「对方正在输入…」在消息区顶部</td><td>顶部固定「名字 + 状态」：输入时显示「对方正在输入…」，对方下线后显示「上次在线 N 分钟前 / N 小时前 / N 天前」</td></tr>
