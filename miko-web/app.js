@@ -74,7 +74,7 @@
         done: st.done,
         revealed: st.revealed,
         named: st.named,
-        avaUp: st.avaUp,
+        avaUp: st.avaUp, theme: st.theme,
         likes: st.likes,
         comments: st.comments,
         replies: st.replies,
@@ -105,6 +105,7 @@
         });
       }
       if (d.avaUp) st.avaUp = d.avaUp || {};
+      if (d.theme) st.theme = d.theme || {};
       if (d.likes) st.likes = d.likes;
       if (d.comments) st.comments = d.comments;
       if (d.after) st.after = d.after;
@@ -216,6 +217,7 @@
     });
     var av = (st.meta && st.meta.avatars) || {};
     st.avaUp = st.avaUp || {};
+    st.theme = st.theme || {};
     Object.keys(av).forEach(function (who) {
       if (st.avaUp[who]) return;
       var hit = av[who];
@@ -226,6 +228,19 @@
         st.done && st.done[hit.chapter] ? 1e9 : 0
       );
       if (far > Number(hit.row)) st.avaUp[who] = true;
+    });
+    // 主题头像：按进度回推每个角色最近一次「换头像」事件
+    ((st.meta && st.meta.avatarEvents) || []).forEach(function (ev) {
+      var far = Math.max(
+        (st.progress || {})[ev.chapter] || 0,
+        ((st.marks || {})[ev.chapter] || {}).cur || 0,
+        st.chapterId === ev.chapter ? st.cur : 0,
+        st.done && st.done[ev.chapter] ? 1e9 : 0
+      );
+      if (far > Number(ev.row)) {
+        st.avaUp[ev.who] = true;
+        st.theme[ev.who] = ev.avatar;
+      }
     });
   }
 
@@ -251,10 +266,12 @@
     if (who === '我') return myAvatarSrc();
     if (who === '未知用户') return asset('icon/未知用户.webp');
     if (!nameKnown(who)) return asset('icon/未知用户.webp');   // ① 未知：问号
-    if (!hasAvatar(who)) return null;                          // ② 知道名字但没头像：黑色字母
-    var pick = (st.settings.npc || {})[who];                   // ③ 有头像：人物立绘
-    if (pick === 'letter') return null;
-    if (pick) return asset('icon/' + pick + '.webp');
+    var pick = (st.settings.npc || {})[who];
+    if (pick === 'letter') return null;                        // 手动选「字母」时才用字母头像
+    if (pick) return asset('icon/' + pick + '.webp');          // 设置里手动指定优先
+    if (!hasAvatar(who)) return asset('icon/' + (((st.meta && st.meta.avatarDefault) || '头像1')) + '.webp');  // ② 知道名字、还没发照片：黑白无脸剪影
+    var th = (st.theme || {})[who];
+    if (th) return asset('icon/' + th + '.webp');              // ③ 发过照片：换成对应主题的头像
     var d = NPC_DEFAULT[who];
     return d ? asset('icon/' + d + '.webp') : null;
   }
@@ -268,19 +285,24 @@
     if (!st.named[who]) { st.named[who] = true; }
   }
 
-  // 走到「她第一次发图」那一行时，把字母头像换成人物头像
+  // 走到「她发了某张照片」那一行时，头像同步换成对应主题
   function checkAvatar(row) {
-    var av = (st.meta && st.meta.avatars) || {};
-    var hit = av[row.who];
-    if (!hit || hit.chapter !== st.chapterId) return;
-    if (Number(st.cur) < Number(hit.row)) return;
-    if (!st.avaUp) st.avaUp = {};
-    if (st.avaUp[row.who]) return;
-    st.avaUp[row.who] = true;
+    var evs = (st.meta && st.meta.avatarEvents) || [];
+    var hit = null;
+    for (var i = 0; i < evs.length; i++) {
+      var e = evs[i];
+      if (e.chapter === st.chapterId && Number(e.row) === Number(st.cur) && (!row.who || e.who === row.who || row.who === 'Miko')) { hit = e; break; }
+    }
+    if (!hit) return;
+    st.avaUp = st.avaUp || {}; st.theme = st.theme || {};
+    if (st.avaUp[hit.who] && st.theme[hit.who] === hit.avatar) return;
+    st.avaUp[hit.who] = true;
+    st.theme[hit.who] = hit.avatar;
     save();
-    refreshAvatars(row.who);
-    toast('对方换上了头像 · ' + row.who);
+    refreshAvatars(hit.who);
+    toast('对方换了一张新头像');
   }
+
 
   // 走到「自报姓名」那一行时揭示头像
   function checkReveal(row) {
