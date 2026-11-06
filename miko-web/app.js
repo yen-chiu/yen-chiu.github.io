@@ -805,6 +805,21 @@
   /* ---------------- 设置 ---------------- */
   function avatarOptions() { return AVATARS.concat(['Lily', '未知用户']); }
 
+  // 角色头像下拉旁的小预览（选「字母」时显示首字母）
+  function syncNpcPrev(who, name) {
+    var img = document.querySelector('.npc-prev[data-prev="' + who + '"]');
+    if (!img) return;
+    if (name === 'letter') {
+      img.removeAttribute('src');
+      img.classList.add('empty');
+      img.textContent = who.slice(0, 1);
+    } else {
+      img.classList.remove('empty');
+      img.textContent = '';
+      img.src = asset('icon/' + name + '.webp');
+    }
+  }
+
   function renderAvatarPicker() {
     $$('#view-settings select[data-npc]').forEach(function (sel) {
       var who = sel.getAttribute('data-npc');
@@ -813,8 +828,10 @@
           return '<option value="' + esc(n) + '">' + esc(n) + '</option>';
         }).join('');
       sel.value = (st.settings.npc || {})[who] || (NPC_DEFAULT[who] || 'letter');
+      syncNpcPrev(who, sel.value);
       sel.onchange = function () {
         st.settings.npc[who] = this.value;
+        syncNpcPrev(who, this.value);
         save();
         refreshAvatars(who);
       };

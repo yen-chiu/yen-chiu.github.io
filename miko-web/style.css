@@ -426,3 +426,10 @@ select{
 .my-ava-form .ghost-btn{padding:8px 10px;font-size:12.5px}
 .ava.ava-link{cursor:pointer}
 .ava.ava-link:hover{box-shadow:0 0 0 2px rgba(122,92,255,.55)}
+.npc-prev{
+  width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none;
+  background:#101018;border:1px solid rgba(255,255,255,.14);
+}
+.npc-prev.empty{
+  color:#6b6880;font-size:12.5px;display:flex;align-items:center;justify-content:center;
+}
