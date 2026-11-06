@@ -1,0 +1,564 @@
+/* ==========================================================================
+   《余白》Margin —— 期刊文章页样式
+   与 assets/pdf/journal/ 下的 PDF 同源：版心 12.2 cm、正文 10 pt、衬线正文。
+   仅在 layout: paper 的页面加载，不参与博客主题的样式。
+   ========================================================================== */
+
+:root {
+  --yb-ink: #1a1a1a;
+  --yb-rule: #b8b8b8;
+  --yb-muted: #5c5c5c;
+  --yb-paper: #ffffff;
+  --yb-accent: #1f5c99;
+}
+
+html,
+body.yb-paper-body {
+  background: #f5f4f1;
+}
+
+body.yb-paper-body {
+  margin: 0;
+  color: var(--yb-ink);
+  font-family: "Times New Roman", "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 顶部工具条 ------------------------------------------------------------- */
+.yb-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 12.2cm;
+  margin: 0 auto;
+  padding: 1.4rem 1rem 0.9rem;
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 0.8rem;
+  color: var(--yb-muted);
+}
+
+.yb-topbar a {
+  color: var(--yb-muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.yb-topbar a:hover,
+.yb-topbar a:focus {
+  color: var(--yb-ink);
+  border-bottom-color: var(--yb-rule);
+}
+
+.yb-topbar nav {
+  display: flex;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.yb-pdf-btn {
+  border: 1px solid var(--yb-rule) !important;
+  border-radius: 3px;
+  padding: 0.12rem 0.55rem;
+  white-space: nowrap;
+}
+
+.yb-pdf-btn:hover {
+  border-color: var(--yb-ink) !important;
+}
+
+/* 纸张 ------------------------------------------------------------------ */
+.yb-sheet {
+  box-sizing: border-box;
+  max-width: 12.2cm;
+  margin: 0 auto 2.5rem;
+  padding: 2.2cm 0.4rem 2.4cm;
+  background: var(--yb-paper);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 560px) {
+  .yb-sheet {
+    padding: 1.4rem 1rem 1.8rem;
+    box-shadow: none;
+  }
+  .yb-topbar {
+    padding: 1rem 1rem 0.7rem;
+  }
+}
+
+/* 正文 ------------------------------------------------------------------ */
+.yb-sheet {
+  text-align: justify;
+  text-justify: inter-ideograph;
+  font-size: 10pt;
+  line-height: 1.62;
+}
+
+.yb-sheet .masthead {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-size: 8pt;
+  color: #333;
+  letter-spacing: 0.2pt;
+  border-bottom: 0.5pt solid var(--yb-rule);
+  padding-bottom: 4pt;
+  margin-bottom: 18pt;
+}
+
+.yb-sheet h1.title {
+  font-size: 14pt;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.35;
+  margin: 0 0 4pt;
+  border: 0;
+  padding: 0;
+}
+
+.yb-sheet .subtitle {
+  font-size: 11pt;
+  text-align: center;
+  font-style: italic;
+  color: #222;
+  margin: 0 0 14pt;
+}
+
+.yb-sheet .authors {
+  font-size: 12pt;
+  text-align: center;
+  margin: 10pt 0 2pt;
+  text-indent: 0;
+}
+
+.yb-sheet .affil,
+.yb-sheet .dates {
+  text-align: center;
+  text-indent: 0;
+  color: #333;
+}
+
+.yb-sheet .affil {
+  font-size: 9pt;
+  margin: 0 0 2pt;
+}
+
+.yb-sheet .dates {
+  font-size: 8pt;
+  color: #444;
+  margin: 6pt 0 16pt;
+}
+
+.yb-sheet .abstract,
+.yb-sheet .enabstract {
+  font-size: 9pt;
+  line-height: 1.5;
+  margin: 0 0.25cm 8pt;
+}
+
+.yb-sheet .enabstract {
+  margin-top: 10pt;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.yb-sheet .kw {
+  font-size: 9pt;
+  margin: 0 0.25cm 10pt;
+}
+
+.yb-sheet h2 {
+  font-size: 12pt;
+  font-weight: bold;
+  text-align: left;
+  margin: 18pt 0 6pt;
+  padding: 0;
+  border: 0;
+}
+
+.yb-sheet h2::before {
+  content: none;
+}
+
+.yb-sheet h3 {
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: left;
+  margin: 12pt 0 4pt;
+  padding: 0;
+  border: 0;
+}
+
+.yb-sheet p {
+  margin: 0 0 0.6em;
+  text-indent: 1em;
+}
+
+.yb-sheet p.noindent,
+.yb-sheet .caption {
+  text-indent: 0;
+}
+
+.yb-sheet ul,
+.yb-sheet ol {
+  margin: 0 0 6pt 1.2em;
+  padding: 0;
+}
+
+.yb-sheet li {
+  margin-bottom: 2pt;
+}
+
+/* 公式 ------------------------------------------------------------------ */
+.yb-sheet .eq {
+  position: relative;
+  text-align: center;
+  margin: 8pt 0;
+  text-indent: 0;
+}
+
+.yb-sheet .eq .num {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/* 图 -------------------------------------------------------------------- */
+.yb-sheet figure {
+  margin: 14pt 0;
+  text-align: center;
+  display: block;
+  break-inside: avoid-page;
+}
+
+.yb-sheet svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.yb-sheet figcaption {
+  font-size: 9pt;
+  line-height: 1.5;
+  margin-top: 6pt;
+  text-align: justify;
+  text-indent: 0;
+}
+
+/* 表 -------------------------------------------------------------------- */
+.yb-sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+  margin: 10pt 0 4pt;
+}
+
+.yb-sheet th,
+.yb-sheet td {
+  border-top: 0.5pt solid var(--yb-ink);
+  border-bottom: 0.5pt solid var(--yb-ink);
+  padding: 3pt 4pt;
+  text-align: left;
+  vertical-align: top;
+}
+
+.yb-sheet thead th {
+  border-bottom: 0.75pt solid var(--yb-ink);
+}
+
+.yb-sheet .caption {
+  font-size: 9pt;
+  margin: 10pt 0 4pt;
+}
+
+.yb-sheet .tblock {
+  display: block;
+  break-inside: avoid-page;
+}
+
+/* 参考文献 --------------------------------------------------------------- */
+.yb-sheet .refs {
+  font-size: 9pt;
+  line-height: 1.45;
+}
+
+.yb-sheet .refs p {
+  text-indent: -1.2em;
+  padding-left: 1.2em;
+  margin-bottom: 3pt;
+}
+
+.yb-sheet .footer-note {
+  font-size: 8pt;
+  color: #444;
+  margin-top: 20pt;
+  border-top: 0.5pt solid var(--yb-rule);
+  padding-top: 6pt;
+  text-indent: 0;
+}
+
+/* 引用信息 --------------------------------------------------------------- */
+.yb-cite {
+  box-sizing: border-box;
+  max-width: 12.2cm;
+  margin: 0 auto 3rem;
+  padding: 0 0.4rem;
+  font-family: -apple-system, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--yb-muted);
+}
+
+.yb-cite h2 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--yb-muted);
+  margin: 0 0 0.4rem;
+}
+
+.yb-cite code {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.74rem;
+  line-height: 1.55;
+  background: #ecebe7;
+  color: #2b2b2b;
+  border-left: 2px solid var(--yb-rule);
+  padding: 0.6rem 0.7rem;
+  border-radius: 2px;
+}
+
+/* 打印：只留正文，去掉屏幕装饰 ------------------------------------------- */
+@page {
+  size: A4;
+  margin: 3.6cm 4.4cm 3.2cm 4.4cm;
+}
+
+@media print {
+  html,
+  body.yb-paper-body {
+    background: #fff;
+  }
+
+  .yb-topbar,
+  .yb-cite {
+    display: none;
+  }
+
+  .yb-sheet {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .yb-sheet h2,
+  .yb-sheet h3 {
+    break-after: avoid;
+  }
+
+  .yb-sheet figcaption,
+  .yb-sheet .caption {
+    break-before: avoid;
+  }
+
+  .yb-sheet thead {
+    display: table-header-group;
+  }
+
+  .yb-sheet tr,
+  .yb-sheet .refs p {
+    break-inside: avoid;
+  }
+
+  .yb-sheet p {
+    orphans: 2;
+    widows: 2;
+  }
+}
+
+/* ==========================================================================
+   期刊首页（_tabs/journal.md）——与博客主题共存，颜色一律取 currentColor，
+   以便亮色/暗色两种模式下都清晰。
+   ========================================================================== */
+
+.j-hero {
+  margin: 0.5rem 0 2.2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.35);
+}
+
+.j-hero__kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.j-hero__title {
+  margin: 0 0 0.5rem !important;
+  font-size: 2rem !important;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+}
+
+.j-hero__tagline {
+  margin: 0 0 0.6rem;
+  font-size: 1.02rem;
+  opacity: 0.82;
+}
+
+.j-hero__meta {
+  margin: 0;
+  font-size: 0.82rem;
+  opacity: 0.66;
+}
+
+.j-hero__meta a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.j-dot {
+  margin: 0 0.35em;
+  opacity: 0.5;
+}
+
+.j-issue {
+  margin: 0 0 2.4rem;
+}
+
+.j-issue__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1rem !important;
+  padding-bottom: 0.4rem;
+  font-size: 1.06rem !important;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.j-issue__count {
+  font-size: 0.78rem;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.j-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.j-item {
+  margin: 0 0 1.6rem;
+  padding-left: 0.95rem;
+  border-left: 2px solid rgba(128, 128, 128, 0.4);
+}
+
+.j-item__title {
+  display: inline-block;
+  font-size: 1.06rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: inherit !important;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.j-item__title:hover,
+.j-item__title:focus {
+  border-bottom-color: currentColor;
+}
+
+.j-item__title-en {
+  margin: 0.15rem 0 0.35rem;
+  font-size: 0.82rem;
+  font-style: italic;
+  line-height: 1.5;
+  opacity: 0.6;
+}
+
+.j-item__authors {
+  margin: 0 0 0.4rem;
+  font-size: 0.82rem;
+  opacity: 0.78;
+}
+
+.j-item__abs {
+  margin: 0 0 0.45rem;
+  font-size: 0.86rem;
+  line-height: 1.72;
+  opacity: 0.8;
+}
+
+.j-item__meta {
+  margin: 0 0 0.55rem;
+  font-size: 0.76rem;
+  opacity: 0.6;
+}
+
+.j-item__links {
+  margin: 0;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.j-btn {
+  display: inline-block;
+  padding: 0.1rem 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.8;
+  color: inherit !important;
+  text-decoration: none;
+  border: 1px solid rgba(128, 128, 128, 0.7);
+  border-radius: 3px;
+}
+
+.j-btn:hover,
+.j-btn:focus {
+  border-color: currentColor;
+  background: rgba(128, 128, 128, 0.12);
+}
+
+.j-btn--ghost {
+  opacity: 0.8;
+}
+
+.j-about {
+  margin: 1rem 0 2rem;
+}
+
+.j-about__list {
+  margin: 0 0 1rem;
+  padding-left: 1.1rem;
+  font-size: 0.86rem;
+  line-height: 1.9;
+  opacity: 0.82;
+}
+
+.j-about__contact {
+  margin: 0;
+  font-size: 0.82rem;
+  opacity: 0.66;
+}
+
+.j-about__contact a {
+  color: inherit;
+}
+
+.j-empty {
+  margin: 0 0 2rem;
+  opacity: 0.7;
+}

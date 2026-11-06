@@ -245,6 +245,11 @@ collections:
   tabs:
     output: true
     sort_by: order
+  # 《余白》期刊文章：每篇一个文件，按卷期归档
+  journal:
+    output: true
+    sort_by: date
+    permalink: /journal/:path/
   app:
     output: true
     permalink: /:name
@@ -275,6 +280,12 @@ defaults:
     values:
       layout: page
       permalink: /:title/
+  - scope:
+      path: ""
+      type: journal
+    values:
+      layout: paper
+      hide_panel: true
 
 sass:
   style: compressed

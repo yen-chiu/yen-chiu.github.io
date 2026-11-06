@@ -1,13 +1,8 @@
 <!-- The Footer -->
 
-<footer
-  aria-label="Site Info"
-  class="
-    d-flex flex-column justify-content-center text-muted
-    flex-lg-row justify-content-lg-between align-items-lg-center pb-lg-3
-  "
->
-  <p>
+<footer aria-label="Site Info" class="wx-foot">
+  <div class="wx-foot-row">
+  <p class="wx-foot-copy">
     {{- '©' }}
     <time>{{ 'now' | date: '%Y' }}</time>
 
@@ -28,7 +23,7 @@
     {% endif %}
   </p>
 
-  <p>
+  <p class="wx-foot-meta">
     {%- capture _platform -%}
       <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>
     {%- endcapture -%}
@@ -47,6 +42,9 @@
     {{ site.data.locales[include.lang].meta | replace: ':PLATFORM', _platform | replace: ':THEME', _theme }}
   </p>
 
+  </div>
+
+  <div class="wx-foot-row">
   <p class="wx-foot-links">
     <a href="{{ '/admin/' | relative_url }}" rel="nofollow">写作台</a>
     <span aria-hidden="true">·</span>
@@ -64,4 +62,5 @@
   <span id="runtime_span" data-since="{{ site.uptime_since | default: '2023-05-20T13:14:00+08:00' }}"></span>
 </p>
 
+  </div>
 </footer>

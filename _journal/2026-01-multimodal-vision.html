@@ -1,0 +1,446 @@
+---
+layout: paper
+title: 多模态视觉的机制、边界与前沿：从图像表示到统一 token 空间的综述
+title_en: "Mechanisms, Limits and Frontiers of Multimodal Vision: A Survey from Image Representation to a Unified Token Space"
+authors: Wendell
+affiliation: 独立研究者 · yenchiu.com
+date: 2026-11-06
+received: 2026-11-06
+accepted: 2026-11-06
+volume: 1
+issue: 1
+year: 2026
+pages: 1–13
+issue_key: multimodal-vision
+permalink: /journal/2026-01-multimodal-vision/
+topic: 多模态视觉
+pdf: yubai/2026-01-multimodal-vision.pdf
+license: CC BY 4.0
+summary: 用四条线索拆开“模型长出了眼睛”这句话：图像如何变成 token、对齐空间付了什么代价、三种连接范式如何把“看”变成“读上下文”，以及为何编辑能力的天花板由理解而非生成决定。
+abstract: >-
+  以大型语言模型为核心的系统在近三年内普遍获得了读图、理解图与按图编辑的能力，这一变化常被简化为"模型长出了眼睛"。本文认为该表述掩盖了真实机制，并对这一领域的进展做了一次系统性梳理。综述沿四条线索展开：其一，回顾视觉表征从卷积网络到视觉 Transformer 的演进，说明图像如何被切分为离散 token；其二，梳理视觉—语言对齐路线，以 CLIP 的双塔对比学习为关键基础设施，讨论对齐空间的语义性质及其代价；其三，归纳多模态大模型的三种连接范式——投影层、重采样交叉注意力与原生融合，并论证"看图"在统一 token 空间中被还原为"读上下文"的机制；其四，考察生成与编辑任务对视觉理解的依赖关系，指出编辑能力的天花板由理解而非生成决定。在此基础上，本文结合公开评测中反复出现的失败模式与一个经典案例，区分"能看"与"看懂"，指出空间关系、实例计数、文字渲染与接触关系仍是系统性薄弱环节，并给出将视觉视为接口而非感官的判断。
+keywords: "多模态大模型；视觉—语言对齐；图像 token 化；对比学习；图像编辑；能力边界"
+description: 综述多模态大模型中的图像 token 化、视觉—语言对齐与三种连接范式，分析能力边界与评测失真。
+hide_panel: true
+---
+
+<div class="masthead">
+  <span>{{ site.data.journal.title }} · 第 {{ page.volume }} 卷 第 {{ page.issue }} 期（{{ page.year }}）· pp. {{ page.pages }}</span>
+  <span>开放获取 · {{ site.data.journal.license }}</span>
+</div>
+
+<h1 class="title">多模态视觉的机制、边界与前沿：<br>从图像表示到统一 token 空间的综述</h1>
+<p class="subtitle">Mechanisms, Limits and Frontiers of Multimodal Vision:<br>A Survey from Image Representation to a Unified Token Space</p>
+
+<p class="authors">Wendell</p>
+<p class="affil">独立研究者 · yenchiu.com</p>
+<p class="dates">收稿日期：2026-11-06　　接受日期：2026-11-06</p>
+
+<p class="abstract"><b class="lbl">摘要　</b>以大型语言模型为核心的系统在近三年内普遍获得了读图、理解图与按图编辑的能力，这一变化常被简化为"模型长出了眼睛"。本文认为该表述掩盖了真实机制，并对这一领域的进展做了一次系统性梳理。综述沿四条线索展开：其一，回顾视觉表征从卷积网络到视觉 Transformer 的演进，说明图像如何被切分为离散 token；其二，梳理视觉—语言对齐路线，以 CLIP 的双塔对比学习为关键基础设施，讨论对齐空间的语义性质及其代价；其三，归纳多模态大模型的三种连接范式——投影层、重采样交叉注意力与原生融合，并论证"看图"在统一 token 空间中被还原为"读上下文"的机制；其四，考察生成与编辑任务对视觉理解的依赖关系，指出编辑能力的天花板由理解而非生成决定。在此基础上，本文结合公开评测中反复出现的失败模式与一个经典案例，区分"能看"与"看懂"，指出空间关系、实例计数、文字渲染与接触关系仍是系统性薄弱环节，并给出将视觉视为接口而非感官的判断。</p>
+<p class="kw"><b>关键词　</b>多模态大模型；视觉—语言对齐；图像 token 化；对比学习；图像编辑；能力边界</p>
+
+<p class="enabstract"><b>Abstract　</b>Systems built around large language models have, within roughly three years, acquired the ability to read, reason over and edit images. This change is often described as models "growing eyes", a phrasing that obscures the actual mechanism. This survey reviews the field along four lines: the evolution of visual representations from convolutional networks to vision transformers and the resulting tokenization of images; the vision–language alignment route anchored by CLIP's dual-encoder contrastive training, together with the semantic properties and costs of the aligned space; three connection paradigms of multimodal LLMs—projection layers, resampler-based cross-attention and native early fusion—through which "seeing" is reduced to "reading context" in a unified token sequence; and the dependence of image generation and editing on visual understanding, where the ceiling of editing is set by understanding rather than by generation. Drawing on failure modes repeatedly reported in public benchmarks and on one classic case, the paper distinguishes "being able to see" from "seeing correctly", identifies spatial relations, instance counting, text rendering and contact relations as systematic weaknesses, and concludes that for large models vision is an interface rather than a sense.</p>
+<p class="kw"><b>Keywords　</b>multimodal large language models; vision–language alignment; image tokenization; contrastive learning; image editing; capability boundary</p>
+
+<h2>1　引言</h2>
+<p>二〇二〇年之前，计算机视觉与自然语言处理基本是两个互不相通的技术栈：前者以卷积网络加标签监督为主，后者以序列建模为主，二者的接口需要人工设计，例如用固定的标签集合把图像压成一个类别向量，再喂给下游的语言任务。这种接口的带宽极低——一张图最后只剩下一个类别名。</p>
+<p>变化发生在两条技术路线汇合之后。一条路线把图像切成小块并当作序列处理，使图像与文本在"序列"这一形式上取得了同构；另一条路线用海量图文对做对比学习，把图像和文本映射到同一个语义空间，使"狗"这个词与一张狗的照片在向量上彼此靠近。两者叠加之后，语言模型不再需要专门的视觉模块，只要把图像 token 与文本 token 拼进同一条上下文，视觉理解就退化成了它本来就擅长的任务。本文把这一过程称为"从切块到同框"。</p>
+<p>本文试图回答四个问题：图像是如何变成语言模型可读的 token 的；"对齐"在这条链路上扮演什么角色；为什么生成与编辑模型同样需要视觉理解；以及，既然系统能够正确描述一张图，为什么仍会在计数、空间关系与文字识别上反复出错。文章的组织如下：第 2 节回顾视觉表征的演进；第 3 节讨论视觉—语言对齐；第 4 节归纳多模态连接范式；第 5 节分析生成与编辑对理解的依赖；第 6 节综述评测与典型失败模式；第 7 节从 token 预算与几何约束两个角度剖析边界；第 8 节讨论开放问题；第 9 节总结。</p>
+
+<h2>2　视觉表征的演进：从卷积到切块</h2>
+
+<h3>2.1　卷积网络时代</h3>
+<p>以 AlexNet [1] 为起点的卷积网络奠定了近十年的视觉表征基础，其核心假设是局部感受野与平移等变性：同一组卷积核在图像上滑动，天然编码了局部纹理与边缘。残差连接 [2] 解决了深层网络的退化问题，使网络深度从十几层推进到上百层。这一范式的输出是一个全局池化后的定长向量，主要用于分类、检测与分割等任务，其语义是"类别层面"的，缺乏可供语言模型直接消费的细粒度结构。</p>
+
+<h3>2.2　视觉 Transformer 与图像切块</h3>
+<p>Vision Transformer（ViT）[4] 把图像直接视作序列：将 <i>H</i>×<i>W</i> 的图像切成 <i>P</i>×<i>P</i> 的不重叠小块，每块展平成向量后经线性映射得到 token，并加上位置编码。第 <i>i</i> 个视觉 token 可写作</p>
+<div class="eq"><span><i>z<sub>i</sub></i> = <i>E</i> · <i>x<sub>p</sub><sup>i</sup></i> + <i>e<sub>pos</sub></i></span><span class="num">(1)</span></div>
+<p>其中 <i>x<sub>p</sub><sup>i</sup></i> 为第 <i>i</i> 个展平后的图像块，<i>E</i> 为投影矩阵，<i>e<sub>pos</sub></i> 为位置编码。<span>公式 (1)</span> 的意义远不止工程实现：它把"图像"改写成了"序列"，而序列正是语言模型的原生输入格式。以自注意力 [3] 为主干的 ViT 在大规模数据上超越卷积网络的实验结果，进一步说明局部性并非视觉理解的必要条件，数据规模与全局注意力可以替代手工设计的归纳偏置。</p>
+<p>需要指出的是，切块同时带来了一个不可逆的信息损失。一张 1024×1024 的图像在 <i>P</i>=16 时被压缩为 4096 个 token；若下游语言模型每张图只能接收数百个 token，则视觉编码器必须再做一次降采样或重采样。物理上的细节在第一次切块时就已经丢掉了一部分，这一点在第 7 节讨论能力边界时会再次出现。</p>
+
+<h3>2.3　自监督预训练与目标函数的转变</h3>
+<p>与架构变化同样重要的，是训练目标的转变。早期视觉模型依赖人工标注的类别标签，监督信号的信息量被标签空间的大小严格限制。掩码自编码类方法 [22]（随机遮挡图像块，要求模型依据上下文重建）把监督信号换成了图像自身，使模型可以在无标注数据上学习纹理与结构；自蒸馏类方法 [23]（用教师网络指导学生网络处理同一图像的不同视图）则进一步把"不变性"作为学习目标，让表示对裁剪、缩放、色彩扰动保持稳定。</p>
+<p>这一转变的后果常被低估：一旦目标函数从"预测标签"变为"重建内容"或"保持一致"，模型学到的表示就不再被类别集合束缚，而对齐训练所需要的正是这种开放的、稠密的视觉表示。换句话说，对比学习之所以能成功，前提是视觉编码器已经能够输出与具体任务无关的通用特征；如果还停留在分类范式，整图嵌入里几乎没有可用于细粒度语义匹配的信息。</p>
+<p>三条线因此是叠加关系而非替代关系：架构提供了可序列化的表示单位，预训练目标提供了通用特征，对齐训练提供了跨模态的语义落点。缺少任何一环，多模态能力都无从谈起。</p>
+
+<h2>3　视觉—语言对齐：CLIP 及其后续</h2>
+
+<h3>3.1　双塔对比学习</h3>
+<p>CLIP [5] 的做法是训练两个独立的编码器，分别把图像与文本映射到同一维度的向量空间，并在一个批次内用对比目标拉近匹配的图文对、推开不匹配的对。对批次内第 <i>i</i> 个样本，其对称形式的损失为</p>
+<div class="eq"><span><i>L</i> = − (1/<i>N</i>) Σ<sub><i>i</i></sub> log [ exp(sim(<i>z<sub>i</sub></i>, <i>t<sub>i</sub></i>)/τ) / Σ<sub><i>j</i></sub> exp(sim(<i>z<sub>i</sub></i>, <i>t<sub>j</sub></i>)/τ) ]</span><span class="num">(2)</span></div>
+<p>其中 <i>z<sub>i</sub></i> 与 <i>t<sub>i</sub></i> 分别为图像与文本的归一化嵌入，τ 为可学习的温度系数。公式 (2) 的关键在于"对比"这一形式本身：它不要求模型生成描述，只要求它在四亿量级的图文对中判断哪段文字对应哪张图。这种弱监督信号的规模优势，使得视觉表征第一次具备了开放词表的语义覆盖能力——不再局限于固定的类别集合。</p>
+
+<h3>3.2　对齐空间的性质与代价</h3>
+<p>对齐空间有一个常被忽视的性质：它本质上是"词袋式"的。因为训练目标只关心整张图与整段文本的相似度，模型并不需要理解句子的语法结构，也不需要知道物体的相对位置。这带来两个后果。其一，空间关系与计数类查询天然处于劣势，因为"猫在桌上"与"桌在猫上"在整句嵌入层面差异很小；其二，模型对视觉中的文字内容异常敏感，因为它本身就是被文字监督训练出来的。</p>
+<p>后一点在公开研究中被反复观察到：在图像上叠加一个与物体无关的文字标签，可以系统性地改变模型的分类输出。这一现象通常被称为排版攻击（typographic attack）[17]，其成因正是图文对齐训练把"视觉上的字形"与"语义上的词"绑定得过于紧密。本文第 6 节会把它作为一个经典案例展开。</p>
+<p>后续工作沿两个方向改进：一是扩大规模与清洗数据（如 ALIGN [6] 之于噪声图文对），二是改进目标函数（如 SigLIP [7] 用 sigmoid 替代 softmax，降低对批次内负样本的依赖）。但"整图—整句对齐"的基本框架没有改变，上述代价也就一直存在。</p>
+
+<h3>3.3　对齐的评估与零样本能力</h3>
+<p>对齐质量通常用零样本迁移能力来间接衡量：在训练时从未见过的分类数据集上，把数据集的类别名直接写成文本提示，与图像嵌入做相似度匹配，取最接近的一项作为预测。这一评测方式的意义在于，它检验的不是模型记住了哪些类别，而是视觉嵌入空间能否被自然语言任意索引。当零样本精度接近有监督训练的模型时，说明对齐空间已经足够稠密、足够语义化。</p>
+<p>然而这种评测也掩盖了问题。零样本分类只要求"在最像的那几个词里挑一个"，对细粒度差异不敏感；它无法检验模型是否理解物体的相对位置、数量或状态。因此在很长一段时间里，文献中报告的零样本分数持续上升，而实际使用中模型却在简单计数任务上频繁出错——评测指标与真实能力之间出现了系统性的偏差，这一点在第 6 节还会讨论。</p>
+
+<h2>4　连接范式：图像如何进入语言模型</h2>
+
+<p>有了对齐良好的视觉编码器，下一个问题是：如何把视觉 token 接到语言模型上。文献中大致形成三种范式，它们的差别在于"在哪里合并"与"合并多少"。</p>
+
+<h3>4.1　投影层范式</h3>
+<p>最简洁的做法是在视觉编码器与语言模型之间插入一个轻量投影层（通常是一到两层 MLP），把视觉 token 直接映射到语言模型的词嵌入空间，然后与文本 token 拼接成一条序列送入语言模型。LLaVA [11] 是这一范式的代表：视觉编码器与语言模型都冻结，只训练投影层，即可获得可用的图文对话能力。其代价是视觉 token 数量庞大——一张图往往对应数百个 token，在长上下文场景中开销显著。</p>
+
+<h3>4.2　重采样与交叉注意力</h3>
+<p>第二类范式引入一个可学习的"瓶颈"，用少量查询向量通过交叉注意力从视觉特征中抽取固定数量的表示。Flamingo [8] 的 Perceiver Resampler 与 BLIP-2 [9] 的 Q-Former 都属于此类：无论输入图像分辨率如何，输出到语言模型的 token 数都是固定的（例如 32 或 64 个）。这解决了 token 预算问题，但也引入了一个新的信息瓶颈——重采样器必须自行决定哪些信息值得保留，而这一取舍是在训练中隐式学到的，不可解释、也不可控。</p>
+
+<h3>4.3　原生融合与统一 token 空间</h3>
+
+<p>在走向原生融合之前，BLIP [10] 已尝试用一个统一的编码器—解码器结构同时承担图文检索、描述生成与视觉问答，是"统一"目标上较早的一次尝试，但它的视觉编码器与语言侧仍然分离。</p>
+<p>第三类范式不再区分"视觉侧"与"语言侧"，而是在预训练阶段就把图像 token 与文本 token 混在一起训练，让模型从零学习跨模态的联合表示。这类模型在指令跟随与跨模态推理上通常表现更好，代价是训练成本高、且失去模块化替换的便利。</p>
+
+<div class="tblock">
+<p class="caption"><b>表 1</b>　多模态连接范式的比较（token 数为典型量级，随具体实现浮动）</p>
+<table>
+<thead><tr><th style="width:20%">范式</th><th style="width:22%">代表工作</th><th style="width:16%">每图 token 数</th><th>主要特点</th></tr></thead>
+<tbody>
+<tr><td>投影层</td><td>LLaVA、MiniGPT-4 一类</td><td>数百（随分辨率增长）</td><td>结构最简单、可训练参数少；代价是上下文开销大</td></tr>
+<tr><td>重采样 / 交叉注意力</td><td>Flamingo、BLIP-2</td><td>固定（如 32、64）</td><td>token 预算可控；引入不可解释的信息瓶颈</td></tr>
+<tr><td>原生融合</td><td>统一多模态预训练模型</td><td>随任务而定</td><td>跨模态推理更强；训练成本高、模块化差</td></tr>
+</tbody>
+</table>
+</div>
+
+
+<p>三种范式殊途同归：无论视觉 token 是几百个还是几十个，最终都是与文本 token 排在同一条自回归序列里。而一旦进入同一条序列，"看图"这件事对模型而言就变成了"在上下文中读取前面那些向量"。这正是本文标题中"同框"的含义——模型并没有增加一种感官，它只是多了一种输入格式。理解这一点，后面关于能力边界的讨论才讲得通。</p>
+
+<figure>
+<svg viewBox="0 0 345 182" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8" fill="#1a1a1a">
+<defs><marker id="mk1" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,1 L6.2,3.5 L0,6 z" fill="#1a1a1a"/></marker></defs>
+<!-- canvas 345 x 190 pt -->
+<text x="0.0" y="10.0" font-size="10" font-weight="bold">(a)</text>
+<rect x="6.3" y="20.0" width="38.0" height="32.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="25.3" y="33.4" font-size="8" text-anchor="middle">图像 x</text>
+<text x="25.3" y="43.6" font-size="8" text-anchor="middle">H×W</text>
+<rect x="52.3" y="20.0" width="38.0" height="32.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="71.3" y="33.4" font-size="8" text-anchor="middle">切块</text>
+<text x="71.3" y="43.6" font-size="8" text-anchor="middle">P×P</text>
+<rect x="98.3" y="20.0" width="54.3" height="32.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="125.4" y="38.5" font-size="8" text-anchor="middle">ViT 编码器</text>
+<rect x="160.6" y="20.0" width="53.0" height="32.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="187.1" y="33.4" font-size="8" text-anchor="middle">视觉 token</text>
+<text x="187.1" y="43.6" font-size="8" text-anchor="middle">×N</text>
+<rect x="221.6" y="20.0" width="46.0" height="32.0" rx="3" fill="#dce7f2" stroke="#1f5c99" stroke-width="1.2"/>
+<text x="244.6" y="33.4" font-size="8" text-anchor="middle">投影层 /</text>
+<text x="244.6" y="43.6" font-size="8" text-anchor="middle">重采样器</text>
+<rect x="275.6" y="20.0" width="63.1" height="32.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="307.2" y="38.5" font-size="8" text-anchor="middle">LLM 输入序列</text>
+<line x1="44.3" y1="36.0" x2="52.3" y2="36.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk1)"/>
+<line x1="90.3" y1="36.0" x2="98.3" y2="36.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk1)"/>
+<line x1="152.6" y1="36.0" x2="160.6" y2="36.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk1)"/>
+<line x1="213.6" y1="36.0" x2="221.6" y2="36.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk1)"/>
+<line x1="267.6" y1="36.0" x2="275.6" y2="36.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk1)"/>
+<text x="0.0" y="84.0" font-size="10" font-weight="bold">(b)</text>
+<rect x="54.5" y="94.0" width="52.0" height="24.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="80.5" y="108.5" font-size="8" text-anchor="middle">图像 x</text>
+<rect x="54.5" y="132.0" width="52.0" height="24.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="80.5" y="146.5" font-size="8" text-anchor="middle">文本 t</text>
+<rect x="128.5" y="94.0" width="62.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="159.5" y="108.5" font-size="8" text-anchor="middle">图像编码器</text>
+<rect x="128.5" y="132.0" width="62.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="159.5" y="146.5" font-size="8" text-anchor="middle">文本编码器</text>
+<rect x="212.5" y="94.0" width="78.0" height="62.0" rx="3" fill="#dce7f2" stroke="#1f5c99" stroke-width="1.2"/>
+<text x="251.5" y="122.4" font-size="8" text-anchor="middle">共享语义空间</text>
+<text x="251.5" y="132.6" font-size="8" text-anchor="middle">式 (2) 对比对齐</text>
+<line x1="106.5" y1="106.0" x2="128.5" y2="106.0" stroke="#1a1a1a" stroke-width="0.9" stroke-dasharray="3 2" marker-end="url(#mk1)"/>
+<line x1="106.5" y1="144.0" x2="128.5" y2="144.0" stroke="#1a1a1a" stroke-width="0.9" stroke-dasharray="3 2" marker-end="url(#mk1)"/>
+<line x1="190.5" y1="106.0" x2="212.5" y2="106.0" stroke="#1a1a1a" stroke-width="0.9" stroke-dasharray="3 2" marker-end="url(#mk1)"/>
+<line x1="190.5" y1="144.0" x2="212.5" y2="144.0" stroke="#1a1a1a" stroke-width="0.9" stroke-dasharray="3 2" marker-end="url(#mk1)"/>
+<text x="172.5" y="174.0" font-size="8" text-anchor="middle">训练期辅助路径（虚线）：对齐只在预训练阶段起作用，推理时不出现</text>
+</svg>
+<figcaption><b>图 1</b>　图像 token 化与同框的流程。(a) 图像被切块、编码为视觉 token，经投影层或重采样器映射到语言模型嵌入空间，与文本 token 拼成同一条自回归序列；(b) 对比对齐为视觉 token 提供语义落点。浅蓝框标出视觉与语言之间的接口位置；虚线仅在 (b) 中出现，表示只在预训练阶段起作用的辅助路径，推理时不出现。</figcaption>
+</figure>
+
+<figure>
+<svg viewBox="0 0 345 148" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8" fill="#1a1a1a">
+<defs><marker id="mk2" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,1 L6.2,3.5 L0,6 z" fill="#1a1a1a"/></marker></defs>
+<!-- canvas 345 x 140 pt -->
+<text x="0.0" y="10.0" font-size="10" font-weight="bold">(a)</text>
+<line x1="50.0" y1="44.0" x2="50.0" y2="60.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<line x1="50.0" y1="84.0" x2="50.0" y2="100.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<text x="120.0" y="10.0" font-size="10" font-weight="bold">(b)</text>
+<line x1="170.0" y1="44.0" x2="170.0" y2="60.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<line x1="170.0" y1="84.0" x2="170.0" y2="100.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<text x="240.0" y="10.0" font-size="10" font-weight="bold">(c)</text>
+<line x1="290.0" y1="44.0" x2="290.0" y2="60.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<line x1="290.0" y1="84.0" x2="290.0" y2="100.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<rect x="2.5" y="20.0" width="100.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="52.5" y="34.5" font-size="8" text-anchor="middle">视觉 token ×N</text>
+<rect x="2.5" y="60.0" width="100.0" height="24.0" rx="3" fill="#dce7f2" stroke="#1f5c99" stroke-width="1.2"/>
+<text x="52.5" y="74.5" font-size="8" text-anchor="middle">MLP ×2</text>
+<rect x="2.5" y="100.0" width="100.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="52.5" y="114.5" font-size="8" text-anchor="middle">LLM 输入序列</text>
+<text x="52.5" y="138.0" font-size="8" text-anchor="middle">全部 token 保留</text>
+<rect x="122.5" y="20.0" width="100.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="172.5" y="34.5" font-size="8" text-anchor="middle">视觉 token ×N</text>
+<rect x="122.5" y="60.0" width="100.0" height="24.0" rx="3" fill="#dce7f2" stroke="#1f5c99" stroke-width="1.2"/>
+<text x="172.5" y="69.4" font-size="8" text-anchor="middle">重采样器</text>
+<text x="172.5" y="79.6" font-size="8" text-anchor="middle">查询 ×M</text>
+<rect x="122.5" y="100.0" width="100.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="172.5" y="114.5" font-size="8" text-anchor="middle">M 个 token</text>
+<text x="172.5" y="138.0" font-size="8" text-anchor="middle">M ≪ N，瓶颈在此</text>
+<rect x="242.5" y="20.0" width="49.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="267.0" y="34.5" font-size="8" text-anchor="middle">图像块</text>
+<rect x="293.5" y="20.0" width="49.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="318.0" y="34.5" font-size="8" text-anchor="middle">文本 token</text>
+<line x1="267.0" y1="44.0" x2="267.0" y2="60.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<line x1="318.0" y1="44.0" x2="318.0" y2="60.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk2)"/>
+<rect x="242.5" y="60.0" width="100.0" height="24.0" rx="3" fill="#dce7f2" stroke="#1f5c99" stroke-width="1.2"/>
+<text x="292.5" y="74.5" font-size="8" text-anchor="middle">统一 Transformer</text>
+<rect x="242.5" y="100.0" width="100.0" height="24.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="292.5" y="114.5" font-size="8" text-anchor="middle">共享序列</text>
+<text x="292.5" y="138.0" font-size="8" text-anchor="middle">模态不分区</text>
+</svg>
+<figcaption><b>图 2</b>　三种多模态连接范式的结构对比。(a) 投影层把全部视觉 token 映射后送入语言模型，保真但开销大；(b) 重采样器用固定数量的查询向量压缩视觉特征，开销可控但引入不可解释的信息瓶颈（(b) 中浅蓝框）；(c) 原生融合在预训练阶段即混合模态，无明显瓶颈但失去模块化。浅蓝框在三个面板中统一标出接口位置。本文绘，依据见 [8][9][11]。</figcaption>
+</figure>
+
+<h2>5　生成与编辑：为什么"画"也需要"看"</h2>
+
+<h3>5.1　文生图的基本框架</h3>
+<p>扩散模型 [12] 把生成建模为逐步去噪的过程，其训练目标可写为</p>
+<div class="eq"><span><i>L</i> = <i>E</i><sub><i>x</i>,ε,<i>t</i></sub> ‖ ε − ε<sub>θ</sub>(<i>x<sub>t</sub></i>, <i>t</i>, <i>c</i>) ‖²</span><span class="num">(3)</span></div>
+<p>式 (3) 中，<i>c</i> 为条件（通常是文本嵌入），<i>x<sub>t</sub></i> 为第 <i>t</i> 步加噪后的样本。潜空间扩散 [13] 把去噪过程放在压缩后的潜空间中进行；DALL·E 2 [14] 则先在 CLIP 潜空间中生成图像嵌入、再解码为像素，属于层次化的生成路线，大幅降低了计算成本，也使高分辨率生成变得可行。值得注意的是，这一框架对"条件"的形式没有强约束：任何可编码为向量的东西都可以作为条件，这为后来的图像条件、结构条件、参考图条件留下了扩展空间。</p>
+
+<h3>5.2　编辑任务重新引入理解</h3>
+<p>文生图只需要把文字变成图，模型并不需要真的"理解"图上有什么。但图像编辑不同，它要求模型同时做三件事：读懂原图的内容与结构、听懂指令指向的对象与操作、并在生成后保证未改动的部分保持一致。这是一个"图像 + 文本 → 图像"的问题，理解能力第一次成为生成能力的必要条件。</p>
+<p>实践中发展出两条路线。一是把编辑拆成"理解—定位—重绘"三段，理解与定位交给多模态模型，重绘交给扩散模型，中间用蒙版传递位置信息；二是让模型直接学习配对数据，如 InstructPix2Pix [15] 一类工作以大量"编辑前后"图像对训练条件生成模型。两条路线对理解能力的要求是一致的：定位错了，重绘再精细也是错的。</p>
+<p>结构条件控制 [16]（如从边缘、深度、姿态图中提取几何约束并注入去噪网络）进一步说明，编辑质量的瓶颈往往不在生成端，而在"能否准确提取并保持结构"。当结构信息提取不准时，模型会用语义先验去填补，结果就是生成出"看起来合理但实际错位"的内容——这一点在第 6 节的失败模式中会具体展开。</p>
+
+<h3>5.3　分层编辑：为什么一次改完总会崩</h3>
+<p>如图 2 与表 1 所示，三种范式的差别集中在瓶颈位置；实际使用中很快出现一条经验规律：一条指令同时改动越多、改动范围越大，结果越容易崩坏。原因是编辑任务里混着两个性质完全不同的子问题——影调与风格是全局、低频、可容忍误差的；人物结构、物体边界与接触关系是局部、高频、不容忍误差的。前者的评价标准是"像不像那个味道"，后者是"对不对"。</p>
+<p>把两者放进同一次生成，模型会用同一套权衡去处理，结果往往是风格改得漂亮、结构却先塌了。更稳的做法是分层：先用低强度生成完成全局影调与质感，再用蒙版把结构敏感区域（手、脸、物体交界）单独保护或单独重绘。这一做法在工程上代价更高，但它把"理解"与"生成"的误差分开了，出错时也能定位到具体环节。近期流行的"参考图 + 局部重绘 + 分层合成"流水线，本质就是对这一分工的工程化表达。</p>
+
+<h2>6　评测与典型失败模式</h2>
+
+<h3>6.1　评测基准</h3>
+<p>多模态能力的评测已从早期的图文检索扩展到综合问答、细粒度感知与专业知识推理。综合型基准如 MME [18] 通常按感知与认知两个维度切分，覆盖存在性、计数、位置、颜色、文字识别等子任务；学科型基准则如 MMMU [19] 用大学水平的考题检验跨模态推理。这些基准的共同局限是：它们大多以选择题或短答案形式呈现，对"描述是否精确"的判别力有限，且题目本身可能被训练数据污染。</p>
+
+<div class="tblock">
+<p class="caption"><b>表 2</b>　多模态视觉能力的典型表现分布（据公开评测报告的定性归纳）</p>
+<table>
+<thead><tr><th style="width:22%">能力维度</th><th style="width:38%">典型任务</th><th>公开评测中的常见表现</th></tr></thead>
+<tbody>
+<tr><td>物体识别</td><td>存在性判断、类别归属</td><td>稳定，接近或超过人类平均</td></tr>
+<tr><td>计数</td><td>小数量（3–10 个）实例计数</td><td>数量增大后误差显著上升</td></tr>
+<tr><td>空间关系</td><td>左右、上下、包含、遮挡</td><td>对视角与相对位置敏感，易受语言先验干扰</td></tr>
+<tr><td>文字渲染与识别</td><td>图中文字读取、生成图中文字</td><td>小字、密集排版、非拉丁字符错误率高</td></tr>
+<tr><td>接触与物理</td><td>手持物体、支撑关系</td><td>接触点常错位，出现悬空或穿模</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>表 2 的行间差异可以在同一幅画面上拆开来看：问法不同，调用的能力就不同，失败点也不同（图 3）。</p>
+
+<figure>
+<svg viewBox="0 0 345 120" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8" fill="#1a1a1a">
+<defs><marker id="mkD" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,1 L6.2,3.5 L0,6 z" fill="#1a1a1a"/></marker></defs>
+<!-- canvas 345 x 120 pt -->
+<rect x="0.0" y="58.0" width="190.0" height="50.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.8"/>
+<line x1="10.0" y1="102.0" x2="180.0" y2="102.0" stroke="#7a7a7a" stroke-width="0.6"/>
+<ellipse cx="34.0" cy="86.0" rx="13.0" ry="7.0" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9"/>
+<circle cx="48.0" cy="76.0" r="5.6" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="53.6" y1="77.0" x2="57.0" y2="77.0" stroke="#1a1a1a" stroke-width="0.8"/>
+<path d="M46.6,70.8 L44.4,65.8 L49.6,70.6 Z" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<line x1="25.5" y1="92.4" x2="25.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="30.5" y1="92.4" x2="30.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="37.5" y1="92.4" x2="37.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="42.5" y1="92.4" x2="42.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<path d="M21.4,85.0 Q15.0,82.5 14.5,76.5" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<ellipse cx="74.0" cy="86.0" rx="13.0" ry="7.0" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9"/>
+<circle cx="88.0" cy="76.0" r="5.6" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="93.6" y1="77.0" x2="97.0" y2="77.0" stroke="#1a1a1a" stroke-width="0.8"/>
+<path d="M86.6,70.8 L84.4,65.8 L89.6,70.6 Z" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<line x1="65.5" y1="92.4" x2="65.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="70.5" y1="92.4" x2="70.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="77.5" y1="92.4" x2="77.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="82.5" y1="92.4" x2="82.5" y2="102.0" stroke="#1a1a1a" stroke-width="0.9"/>
+<path d="M61.4,85.0 Q55.0,82.5 54.5,76.5" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<rect x="104.0" y="78.0" width="56.0" height="24.0" rx="3" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9"/>
+<circle cx="132.0" cy="71.0" r="5.2" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9"/>
+<line x1="137.2" y1="72.0" x2="140.6" y2="72.0" stroke="#1a1a1a" stroke-width="0.8"/>
+<path d="M130.6,66.2 L128.4,61.2 L133.6,66.0 Z" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<rect x="200.0" y="14.0" width="143.0" height="28.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="271.5" y="25.4" font-size="8" text-anchor="middle">有几只？</text>
+<text x="271.5" y="35.6" font-size="8" text-anchor="middle">答 2：只数完整实例</text>
+<line x1="191.0" y1="28.0" x2="198.0" y2="28.0" stroke="#1a1a1a" stroke-width="0.9" marker-end="url(#mkD)"/>
+<rect x="200.0" y="48.0" width="143.0" height="28.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="271.5" y="59.4" font-size="8" text-anchor="middle">左边那只朝哪边？</text>
+<text x="271.5" y="69.6" font-size="8" text-anchor="middle">答反：左右混淆</text>
+<line x1="191.0" y1="62.0" x2="198.0" y2="62.0" stroke="#1a1a1a" stroke-width="0.9" marker-end="url(#mkD)"/>
+<rect x="200.0" y="82.0" width="143.0" height="28.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="271.5" y="93.4" font-size="8" text-anchor="middle">箱子后面是什么？</text>
+<text x="271.5" y="103.6" font-size="8" text-anchor="middle">说不清：只能猜</text>
+<line x1="191.0" y1="96.0" x2="198.0" y2="96.0" stroke="#1a1a1a" stroke-width="0.9" marker-end="url(#mkD)"/>
+</svg>
+<figcaption><b>图 3</b>　同一幅画面上的三类问题。计数要求每个实例保有独立表征，朝向要求显式的坐标与左右约定，遮挡要求恢复被遮住部分的边界——三者都不能由“认得出这是什么”推得。第三个实例只露出一部分头部，用于检验计数是否按实例而非按显著区域。示意场景，本文绘制（动物与箱体为矢量简笔，非真实照片）。</figcaption>
+</figure>
+
+<h3>6.2　一个经典案例：排版攻击</h3>
+<p>在多模态视觉的研究中，被引用得最多的异常现象之一是所谓排版攻击。实验设置极为简单：取一张可以正确分类的图像，在画面上叠加一个手写风格的文字标签，标签内容与图像无关，再让模型重新分类（实验设置见图 4）。结果是分类结果被系统性地改变——模型会倾向于输出标签上写的那个类别，而忽略画面本身。</p>
+<p>这一现象的价值不在于它"错得多离谱"，而在于它暴露了对齐训练的机理。由于模型是在海量图文对上学习"整图—整句"的相似度，其中相当一部分监督信号来自网页中的文字，视觉字形与语义词在被训练过程中被绑定得过紧。当画面中出现清晰可读的文字时，文字的语义权重会压过物体的视觉证据。这解释了一个看似矛盾的现象：模型既能识图，又会被图中的字带偏。它也提示了第 3 节所讨论的对齐空间代价——对比目标不约束结构，只约束整体相似度。</p>
+
+<figure>
+<svg viewBox="0 0 345 130" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8" fill="#1a1a1a">
+<defs><marker id="mk3" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,1 L6.2,3.5 L0,6 z" fill="#1a1a1a"/></marker></defs>
+<!-- canvas 345 x 130 pt -->
+<rect x="0.0" y="14.0" width="100.0" height="98.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<circle cx="34" cy="74" r="17" fill="#ededed" stroke="#1a1a1a" stroke-width="0.8"/>
+<path d="M34,57 q3,-9 11,-9 q-1,8 -9,9 z" fill="#ededed" stroke="#1a1a1a" stroke-width="0.6"/>
+<text x="50.0" y="106.0" font-size="8" text-anchor="middle">图像</text>
+<rect x="56.0" y="24.0" width="40.0" height="20.0" rx="3" fill="#ffffff" stroke="#c0392b" stroke-width="1.2"/>
+<text x="76.0" y="38.0" font-size="8" text-anchor="middle" fill="#c0392b">iPod</text>
+<rect x="130.0" y="24.0" width="76.0" height="32.0" rx="3" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="168.0" y="42.5" font-size="8" text-anchor="middle">图文对齐模型</text>
+<rect x="130.0" y="74.0" width="76.0" height="32.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="168.0" y="92.5" font-size="8" text-anchor="middle">人的阅读</text>
+<rect x="236.0" y="24.0" width="99.0" height="32.0" rx="3" fill="#dce7f2" stroke="#1f5c99" stroke-width="1.0"/>
+<text x="285.5" y="42.5" font-size="8" text-anchor="middle" fill="#c0392b">回答：「iPod」</text>
+<rect x="236.0" y="74.0" width="99.0" height="32.0" rx="3" fill="#ffffff" stroke="#7a7a7a" stroke-width="0.6"/>
+<text x="285.5" y="92.5" font-size="8" text-anchor="middle">判断：「苹果」</text>
+<line x1="100.0" y1="40.0" x2="130.0" y2="40.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk3)"/>
+<line x1="206.0" y1="40.0" x2="236.0" y2="40.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk3)"/>
+<line x1="100.0" y1="90.0" x2="130.0" y2="90.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk3)"/>
+<line x1="206.0" y1="90.0" x2="236.0" y2="90.0" stroke="#1a1a1a" stroke-width="1.1" marker-end="url(#mk3)"/>
+<text x="172.5" y="10.0" font-size="9" text-anchor="middle" font-weight="bold">同一张图，两种读法</text>
+</svg>
+<figcaption><b>图 4</b>　排版攻击（typographic attack）的实验设置示意。在一张模型本可正确识别的图像上叠加与画面无关的文字标签，分类结果会被系统性改变。该现象说明图文对齐训练把视觉字形与语义词绑定得过紧，也说明对比目标只约束"整图—整句"的相似度，并不约束结构。重绘自 [17]。</figcaption>
+</figure>
+
+<h3>6.3　基准的可信度问题</h3>
+<p>评测分数与真实体验之间的落差，近年逐渐成为公开讨论的话题，其来源大致有三类。其一，数据污染：大规模预训练语料的边界难以界定，基准题目或其近似变体可能已经出现在训练数据中，导致分数虚高。其二，指标错位：多项选择题只要求模型在给定选项中挑一个，即便模型并不真正理解图像，也可能凭借语言先验排除干扰项获得高分。其三，偏置：题目构成偏向某类图像来源或某类表述方式，模型在分布外的真实使用场景中表现明显下降。</p>
+<p>更根本的问题是，人类对"看懂一张图"的判断本身是模糊的：我们通常无法量化自己究竟调用了哪些线索。这使得构建与人类感知一致的评测，比构建更难的任务更难。一个可行的折中是把评测拆细：不报告一个总分，而是分别报告感知、定位、关系与推理四个环节，使失败可以被归因。这也是本文第 7 节剖析边界时所依赖的方法论前提。</p>
+
+<h2>7　能力边界的两个来源</h2>
+
+<h3>7.1　token 预算与分辨率的矛盾</h3>
+<p>视觉 token 的数量与图像细节成正比，而语言模型的上下文预算与推理成本也随 token 数线性增长。这两条曲线方向相反，工程上的折中必然造成信息损失。设原图边长 <i>H</i>、切块大小 <i>P</i>、重采样后保留 <i>n</i> 个 token，则压缩比为</p>
+<div class="eq"><span>ρ = <i>n</i> / (<i>H</i>/<i>P</i>)²</span><span class="num">(4)</span></div>
+<p>当 ρ 远小于 1 时，每个保留的 token 必须承担多个图像块的信息，细节在进入语言模型之前就已经不可恢复。这解释了为什么模型能说对"图里有一只狗"，却说错"图里有几只狗"（图 5）——实例计数需要保留每个实例的独立表征，而重采样恰恰在做合并。</p>
+
+<figure>
+<svg viewBox="0 0 345 214" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8" fill="#1a1a1a">
+<defs><marker id="mk4" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,1 L6.2,3.5 L0,6 z" fill="#1a1a1a"/></marker></defs>
+<!-- canvas 345 x 214 pt -->
+<rect x="44" y="159.1" width="292" height="12.9" fill="#f2f2f2"/>
+<line x1="44" y1="159.1" x2="336" y2="159.1" stroke="#1a1a1a" stroke-width="0.5" stroke-dasharray="2 2"/>
+<text x="334.0" y="154.1" font-size="8" text-anchor="end">ρ = 0.1 阈值</text>
+<line x1="44" y1="172" x2="336" y2="172" stroke="#1a1a1a" stroke-width="0.8"/>
+<line x1="44" y1="24" x2="44" y2="172" stroke="#1a1a1a" stroke-width="0.8"/>
+<line x1="41" y1="172.0" x2="44" y2="172.0" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="39.0" y="174.8" font-size="8" text-anchor="end">0</text>
+<line x1="41" y1="146.3" x2="44" y2="146.3" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="39.0" y="149.1" font-size="8" text-anchor="end">0.2</text>
+<line x1="41" y1="120.5" x2="44" y2="120.5" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="39.0" y="123.3" font-size="8" text-anchor="end">0.4</text>
+<line x1="41" y1="94.8" x2="44" y2="94.8" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="39.0" y="97.6" font-size="8" text-anchor="end">0.6</text>
+<line x1="41" y1="69.0" x2="44" y2="69.0" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="39.0" y="71.8" font-size="8" text-anchor="end">0.8</text>
+<line x1="41" y1="43.3" x2="44" y2="43.3" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="39.0" y="46.1" font-size="8" text-anchor="end">1.0</text>
+<line x1="44.0" y1="172" x2="44.0" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="44.0" y="184.0" font-size="8" text-anchor="middle">0</text>
+<line x1="92.7" y1="172" x2="92.7" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="92.7" y="184.0" font-size="8" text-anchor="middle">100</text>
+<line x1="141.3" y1="172" x2="141.3" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="141.3" y="184.0" font-size="8" text-anchor="middle">200</text>
+<line x1="190.0" y1="172" x2="190.0" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="190.0" y="184.0" font-size="8" text-anchor="middle">300</text>
+<line x1="238.7" y1="172" x2="238.7" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="238.7" y="184.0" font-size="8" text-anchor="middle">400</text>
+<line x1="287.3" y1="172" x2="287.3" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="287.3" y="184.0" font-size="8" text-anchor="middle">500</text>
+<line x1="336.0" y1="172" x2="336.0" y2="175" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="336.0" y="184.0" font-size="8" text-anchor="middle">600</text>
+<text x="44.0" y="16.0" font-size="8">ρ = n /(H/P)²</text>
+<text x="190.0" y="200.0" font-size="8" text-anchor="middle">每图保留的视觉 token 数 n</text>
+<polyline points="44.0,172.0 48.9,165.4 53.7,158.9 58.6,152.3 63.5,145.7 68.3,139.2 73.2,132.6 78.1,126.0 82.9,119.5 87.8,112.9 92.7,106.3 97.5,99.8 102.4,93.2 107.3,86.6 112.1,80.1 117.0,73.5 121.9,66.9 126.7,60.4 131.6,53.8 136.5,47.2 141.3,43.3 146.2,43.3 151.1,43.3 155.9,43.3 160.8,43.3 165.7,43.3 170.5,43.3 175.4,43.3 180.3,43.3 185.1,43.3 190.0,43.3 194.9,43.3 199.7,43.3 204.6,43.3 209.5,43.3 214.3,43.3 219.2,43.3 224.1,43.3 228.9,43.3 233.8,43.3 238.7,43.3 243.5,43.3 248.4,43.3 253.3,43.3 258.1,43.3 263.0,43.3 267.9,43.3 272.7,43.3 277.6,43.3 282.5,43.3 287.3,43.3 292.2,43.3 297.1,43.3 301.9,43.3 306.8,43.3 311.7,43.3 316.5,43.3 321.4,43.3 326.3,43.3 331.1,43.3 336.0,43.3" fill="none" stroke="#0072b2" stroke-width="1.4"/>
+<polyline points="44.0,172.0 48.9,171.7 53.7,171.4 58.6,171.1 63.5,170.7 68.3,170.4 73.2,170.1 78.1,169.8 82.9,169.5 87.8,169.2 92.7,168.9 97.5,168.5 102.4,168.2 107.3,167.9 112.1,167.6 117.0,167.3 121.9,167.0 126.7,166.7 131.6,166.3 136.5,166.0 141.3,165.7 146.2,165.4 151.1,165.1 155.9,164.8 160.8,164.5 165.7,164.1 170.5,163.8 175.4,163.5 180.3,163.2 185.1,162.9 190.0,162.6 194.9,162.3 199.7,161.9 204.6,161.6 209.5,161.3 214.3,161.0 219.2,160.7 224.1,160.4 228.9,160.1 233.8,159.7 238.7,159.4 243.5,159.1 248.4,158.8 253.3,158.5 258.1,158.2 263.0,157.9 267.9,157.5 272.7,157.2 277.6,156.9 282.5,156.6 287.3,156.3 292.2,156.0 297.1,155.7 301.9,155.3 306.8,155.0 311.7,154.7 316.5,154.4 321.4,154.1 326.3,153.8 331.1,153.5 336.0,153.1" fill="none" stroke="#d55e00" stroke-width="1.0" stroke-dasharray="5 2"/>
+<polyline points="44.0,172.0 48.9,171.9 53.7,171.8 58.6,171.8 63.5,171.7 68.3,171.6 73.2,171.5 78.1,171.5 82.9,171.4 87.8,171.3 92.7,171.2 97.5,171.1 102.4,171.1 107.3,171.0 112.1,170.9 117.0,170.8 121.9,170.7 126.7,170.7 131.6,170.6 136.5,170.5 141.3,170.4 146.2,170.4 151.1,170.3 155.9,170.2 160.8,170.1 165.7,170.0 170.5,170.0 175.4,169.9 180.3,169.8 185.1,169.7 190.0,169.6 194.9,169.6 199.7,169.5 204.6,169.4 209.5,169.3 214.3,169.3 219.2,169.2 224.1,169.1 228.9,169.0 233.8,168.9 238.7,168.9 243.5,168.8 248.4,168.7 253.3,168.6 258.1,168.5 263.0,168.5 267.9,168.4 272.7,168.3 277.6,168.2 282.5,168.2 287.3,168.1 292.2,168.0 297.1,167.9 301.9,167.8 306.8,167.8 311.7,167.7 316.5,167.6 321.4,167.5 326.3,167.4 331.1,167.4 336.0,167.3" fill="none" stroke="#009e73" stroke-width="1.0" stroke-dasharray="1.2 2.2"/>
+<line x1="196" y1="58" x2="222" y2="58" stroke="#0072b2" stroke-width="1.4"/>
+<text x="226.0" y="60.8" font-size="8">224 px→N = 196</text>
+<line x1="196" y1="73" x2="222" y2="73" stroke="#d55e00" stroke-width="1.0" stroke-dasharray="5 2"/>
+<text x="226.0" y="75.8" font-size="8">1024 px→N = 4096</text>
+<line x1="196" y1="88" x2="222" y2="88" stroke="#009e73" stroke-width="1.0" stroke-dasharray="1.2 2.2"/>
+<text x="226.0" y="90.8" font-size="8">2048 px→N = 16384</text>
+</svg>
+<figcaption><b>图 5</b>　压缩比 ρ 与保留 token 数 n 的关系（由式 (4) 计算，P = 16，H = 224、1024、2048 px，三条曲线由上至下对应 H 逐渐变大；为说明而非实测）。同一 n 下，输入分辨率越高，ρ 越低；阴影区为经验上细粒度信息难以维持的区间。这解释了为何模型能答对"图里有什么"，却答不对"有几个"——实例计数要求每个实例保有独立表征，而压缩恰恰在做合并。</figcaption>
+</figure>
+
+<h3>7.2　统计特征与几何约束</h3>
+<p>第二个来源更根本。视觉编码器输出的是对图像块内容的统计性描述，它擅长回答"这里有什么"，不擅长回答"它们之间精确的空间关系如何"。几何关系需要显式的坐标与约束，而注意力机制本身并不保证局部性，位置编码也只提供相对位置的弱提示。当语言先验（例如"杯子通常放在桌上"）与画面中的实际情况冲突时，模型往往选择相信先验（图 6）。这也是接触关系、遮挡关系错误频发的根源。</p>
+<p>需要强调的是，这两点都不是"模型不够大"能解决的问题，它们属于表示形式本身的约束：只要视觉信息必须被压缩成有限个与文本同构的 token，就必然存在一类无法被精确表达的关系。</p>
+
+<figure>
+<svg viewBox="0 0 345 126" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, 'Microsoft YaHei', 'PingFang SC', sans-serif" font-size="8" fill="#1a1a1a">
+<defs><marker id="mkC" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,1 L6.2,3.5 L0,6 z" fill="#1a1a1a"/></marker></defs>
+<!-- canvas 345 x 126 pt -->
+<text x="0.0" y="12.0" font-size="10" font-weight="bold">(a)</text>
+<text x="178.0" y="12.0" font-size="10" font-weight="bold">(b)</text>
+<rect x="8.0" y="58.0" width="128.0" height="4.0" rx="0" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<rect x="16.0" y="62.0" width="4.0" height="24.0" rx="0" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<rect x="124.0" y="62.0" width="4.0" height="24.0" rx="0" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<path d="M62.0,41.0 L78.0,41.0 L75.5,58.0 L64.5,58.0 Z" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<path d="M78.0,44.0 C88.0,44.0 88.0,55.0 75.5,55.0" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<text x="72.0" y="104.0" font-size="8" text-anchor="middle">杯子在桌面上</text>
+<text x="72.0" y="118.0" font-size="8" text-anchor="middle">模型答：在桌上</text>
+<rect x="186.0" y="58.0" width="128.0" height="4.0" rx="0" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<rect x="194.0" y="62.0" width="4.0" height="24.0" rx="0" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<rect x="302.0" y="62.0" width="4.0" height="24.0" rx="0" fill="#ededed" stroke="#7a7a7a" stroke-width="0.6"/>
+<path d="M238.0,66.0 L254.0,66.0 L251.5,83.0 L240.5,83.0 Z" fill="#ffffff" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<path d="M254.0,69.0 C264.0,69.0 264.0,80.0 251.5,80.0" fill="none" stroke="#1a1a1a" stroke-width="0.9" stroke-linecap="round"/>
+<text x="250.0" y="104.0" font-size="8" text-anchor="middle">杯子在桌面下</text>
+<text x="196.0" y="118.0" font-size="8">模型答：在桌上（</text>
+<text x="260.0" y="118.0" font-size="8" fill="#c0392b">错</text>
+<text x="268.0" y="118.0" font-size="8">）</text>
+</svg>
+<figcaption><b>图 6</b>　语言先验压过画面证据。同一张桌子、同一只杯子：(a) 杯子放在桌面上，模型答“在桌上”；(b) 杯子被放到桌面下方，模型仍答“在桌上”——它复述的是关于桌与杯的先验，而不是画面里的空间关系。示意图，本文绘制。</figcaption>
+</figure>
+
+<h2>8　开放问题</h2>
+<p><b>（1）原生视觉推理。</b>以 GPT-4 系列 [20] 为代表，当前的主流做法是"先编码、后推理"，推理发生在符号层面。若能在连续表示上直接进行多步推理，而不经过离散 token 的瓶颈，可能突破第 7 节所述的约束。这条路线在计算上仍有明显障碍。</p>
+<p><b>（2）动态与视频。</b>图像是静态的，视频引入了时间维度。当前多数系统的处理方式仍是抽帧后按图像处理，这既丢失了运动信息，也放大了 token 预算矛盾。如何表示"变化"而非"状态"，仍是未解问题。</p>
+<p><b>（3）评测的可解释性。</b>现有基准给出的是聚合分数，难以定位失败发生在感知、对齐还是推理环节。构建能够分解误差来源的评测方法，比继续堆高分数更有价值。</p>
+<p><b>（4）编辑中的身份保持。</b>在图像编辑任务中，保持人物身份、服装、姿态的一致性是长期难点。这本质上是"理解"与"生成"之间的对齐问题，尚无系统性解法。</p>
+<p><b>（5）安全与可控。</b>视觉输入绕过了纯文本系统的许多过滤手段：一篇被截图传播的违规文本、一张嵌入了提示词的图像，都可以进入模型上下文。当前的对齐训练（如基于人类反馈的强化学习 [21]）主要针对文本，视觉侧的对齐数据与方法都远不成熟。随着系统接入摄像头与终端设备，这一缺口的重要性会迅速上升。</p>
+<p><b>（6）成本与可及性。</b>视觉 token 的引入使推理成本上升一个量级，而高质量多模态模型的训练开销远高于同等规模的纯文本模型。如何在保持能力的前提下降低单位成本，决定了这类系统能否部署在端侧。</p>
+
+<h2>9　结论</h2>
+<p>本文梳理了多模态视觉从图像切块、图文对齐到统一 token 空间的演进路径，论证了三件事。第一，视觉能力的出现并非新增感官，而是图像被翻译为语言模型既有表示空间的结果；决定能力上限的，是这次翻译的粒度与保真度。第二，生成与编辑任务同样依赖理解，编辑能力的天花板由理解而非生成决定。第三，模型在计数、空间关系、文字与接触关系上的系统性失败，来源是 token 预算与几何约束这两个表示层面的限制，而非单纯的规模不足。</p>
+<p>因此，更准确的表述是：对大型模型而言，视觉不是一种感官，而是一个接口。它不"看"世界，它读世界被翻译成的那个版本。理解这一点，既有助于解释现有系统的失败，也提示了下一步值得投入的方向——不是把图像塞进更多的 token，而是重新思考图像在被翻译之前应该保留什么。</p>
+
+<h2>参考文献</h2>
+<div class="refs">
+<p>[1] Krizhevsky A, Sutskever I, Hinton G E. ImageNet classification with deep convolutional neural networks. NeurIPS, 2012.</p>
+<p>[2] He K, Zhang X, Ren S, Sun J. Deep residual learning for image recognition. CVPR, 2016.</p>
+<p>[3] Vaswani A, et al. Attention is all you need. NeurIPS, 2017. arXiv:1706.03762.</p>
+<p>[4] Dosovitskiy A, et al. An image is worth 16x16 words: Transformers for image recognition at scale. ICLR, 2021. arXiv:2010.11929.</p>
+<p>[5] Radford A, et al. Learning transferable visual models from natural language supervision. ICML, 2021. arXiv:2103.00020.</p>
+<p>[6] Jia C, et al. Scaling up visual and vision-language representation learning with noisy text supervision. ICML, 2021. arXiv:2102.05918.</p>
+<p>[7] Zhai X, et al. Sigmoid loss for language image pre-training. ICCV, 2023. arXiv:2303.15343.</p>
+<p>[8] Alayrac J-B, et al. Flamingo: a visual language model for few-shot learning. NeurIPS, 2022. arXiv:2204.14198.</p>
+<p>[9] Li J, Li D, Savarese S, Hoi S. BLIP-2: Bootstrapping language-image pre-training with frozen image encoders and large language models. ICML, 2023. arXiv:2301.12597.</p>
+<p>[10] Li J, et al. BLIP: Bootstrapping language-image pre-training for unified vision-language understanding and generation. ICML, 2022. arXiv:2201.12086.</p>
+<p>[11] Liu H, Li C, Wu Q, Lee Y J. Visual instruction tuning (LLaVA). NeurIPS, 2023. arXiv:2304.08485.</p>
+<p>[12] Ho J, Jain A, Abbeel P. Denoising diffusion probabilistic models. NeurIPS, 2020. arXiv:2006.11239.</p>
+<p>[13] Rombach R, et al. High-resolution image synthesis with latent diffusion models. CVPR, 2022. arXiv:2112.10752.</p>
+<p>[14] Ramesh A, et al. Hierarchical text-conditional image generation with CLIP latents. arXiv:2204.06125, 2022.</p>
+<p>[15] Brooks T, Holynski A, Efros A A. InstructPix2Pix: Learning to follow image editing instructions. CVPR, 2023. arXiv:2211.09800.</p>
+<p>[16] Zhang L, Rao A, Agrawala M. Adding conditional control to text-to-image diffusion models (ControlNet). ICCV, 2023. arXiv:2302.05543.</p>
+<p>[17] Goh G, et al. Multimodal neurons in artificial neural networks. Distill, 2021. doi:10.23915/distill.00030.</p>
+<p>[18] Fu C, et al. MME: A comprehensive evaluation benchmark for multimodal large language models. NeurIPS Datasets and Benchmarks, 2025. arXiv:2306.13394.</p>
+<p>[19] Yue X, et al. MMMU: A massive multi-discipline multimodal understanding and reasoning benchmark for expert AGI. CVPR, 2024. arXiv:2311.16502.</p>
+<p>[20] OpenAI. GPT-4 technical report. arXiv:2303.08774, 2023.</p>
+<p>[21] Ouyang L, et al. Training language models to follow instructions with human feedback. NeurIPS, 2022. arXiv:2203.02155.</p>
+<p>[22] He K, et al. Masked autoencoders are scalable vision learners. CVPR, 2022. arXiv:2111.06377.</p>
+<p>[23] Caron M, et al. Emerging properties in self-supervised vision transformers. ICCV, 2021. arXiv:2104.14294.</p>
+</div>
+
+<div class="footer-note">
+{{ site.data.journal.title }} · 卷 {{ page.volume }} · 期 {{ page.issue }} · 本文遵循开放获取与 CC BY 4.0 协议。参考文献格式采用 Springer LNCS 顺序编码制；文中 arXiv 编号仅供检索核对。
+</div>

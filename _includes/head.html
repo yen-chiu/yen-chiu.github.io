@@ -111,6 +111,11 @@
     <link rel="stylesheet" href="{{ site.data.origin[type]['lazy-polyfill'].css | relative_url }}">
   {% endif %}
 
+  {% if page.journal_css %}
+    <!-- 《余白》期刊样式 -->
+    <link rel="stylesheet" href="{{ '/assets/css/journal.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+  {% endif %}
+
   {% if page.layout == 'page' or page.layout == 'post' %}
     <!-- Image Popup -->
     <link rel="stylesheet" href="{{ site.data.origin[type].glightbox.css | relative_url }}">
