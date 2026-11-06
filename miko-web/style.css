@@ -712,3 +712,7 @@ select{
 .qz-reply:hover{color:#9d99b8}
 .qz-liker-sep{color:#5e5a74}
 .qz-liker-txt{margin-left:4px;color:#8b87a3}
+
+/* 选项面板淡入：避免对方说完最后一句就硬弹出 */
+#choices{transition:opacity .28s ease, transform .28s ease;opacity:0;transform:translateY(6px)}
+#choices.in{opacity:1;transform:translateY(0)}
