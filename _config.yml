@@ -304,6 +304,7 @@ exclude:
   - "*.gemspec"
   - docs
   - tools
+  - bin
   - README.md
   - LICENSE
   - "*.config.js"
