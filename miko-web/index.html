@@ -149,6 +149,24 @@
         </select>
       </div>
       <div class="set-row">
+        <span>自动存档间隔</span>
+        <select id="set-autosave" class="set-select">
+          <option value="0">关闭</option>
+          <option value="30">每 30 秒</option>
+          <option value="60">每 1 分钟</option>
+          <option value="180">每 3 分钟</option>
+          <option value="300">每 5 分钟</option>
+        </select>
+      </div>
+      <div class="set-row">
+        <span>本地备份文件</span>
+        <span class="set-hint" id="autofile-state">未启用</span>
+      </div>
+      <div class="two-btn" style="margin:2px 0 6px">
+        <button id="btn-autofile" class="ghost-btn">选一个文件，自动写盘</button>
+        <button id="btn-autofile-off" class="ghost-btn">停止</button>
+      </div>
+      <div class="set-row">
         <span>音效 / 语音</span>
         <label class="switch"><input type="checkbox" id="set-sfx"><i></i></label>
       </div>
@@ -321,6 +339,7 @@
 
 <audio id="au-bgm" loop preload="none"></audio>
 <audio id="au-sfx" preload="none"></audio>
+<audio id="au-click" src="assets/music/button.ogg" preload="auto"></audio>
 
 <script src="app.js"></script>
 </body>
