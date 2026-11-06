@@ -636,6 +636,21 @@ select{
 .pf .qz-post:last-child{border-bottom:0}
 .pf .qz-post-name{font-size:13px;letter-spacing:.4px}
 
+
+/* 番外：第一章下面的小条目 */
+.cc-group{display:flex;flex-direction:column;gap:7px;min-width:0}
+.cc-group .chapter-card{width:100%}
+.chapter-card.cc-extra{
+  display:flex;align-items:center;gap:8px;padding:9px 12px;min-height:0;
+  background:#15151f;border:1px solid rgba(255,255,255,.07);border-radius:12px;
+  margin:0 0 0 14px;text-align:left;
+}
+.chapter-card.cc-extra .cc-branch{color:#584f7d;font-size:15px;line-height:1}
+.chapter-card.cc-extra .cc-body{padding:0;flex:1;min-width:0}
+.chapter-card.cc-extra .cc-name{font-size:13.5px;color:#c9c4e0;font-weight:500}
+.chapter-card.cc-extra .cc-meta{font-size:11.5px;color:#6f6a88;margin-top:3px}
+.chapter-card.cc-extra:hover{background:#1b1b28}
+
 /* ---------- 章节封面 ---------- */
 .cover{
   position:fixed;inset:0;z-index:120;
