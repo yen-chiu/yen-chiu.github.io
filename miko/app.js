@@ -8,7 +8,7 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  var SPEED = { slow: 42, normal: 24, fast: 11 };   // 每字毫秒
+  var SPEED = { slow: 95, normal: 55, fast: 25 };   // 每字毫秒（比上一版慢，接近原作的等待感）
   var SAVE_KEY = 'miko.web.save.v1';
   var AVATARS = ['头像1', '头像2', '头像3', '头像4', '头像5', '头像6', '头像7', '头像8'];
 
@@ -20,7 +20,11 @@
     ctx: null,          // {labels:Set, resume:Number, target:Number}
     unlock: { dict: {}, gal: {}, dyn: {} },
     done: {},
-    settings: { speed: 'normal', wait: 60, bgm: false, sfx: true, autoUnlock: false, avatar: '头像2' },
+    settings: {
+      speed: 'normal', wait: 60, bgm: false, sfx: true, autoUnlock: false,
+      avatar: '头像1',
+      npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
+    },
     auto: false,
     skipAll: false,
     busy: false,
@@ -30,6 +34,7 @@
 
   /* ---------------- 存档 ---------------- */
   function save() {
+    if (st.importing) return;   // 导入后正在重载，别让 beforeunload 把旧进度写回去
     try {
       var data = {
         chapterId: st.chapterId,
@@ -51,7 +56,11 @@
       var d = JSON.parse(raw);
       if (d.unlock) st.unlock = { dict: d.unlock.dict || {}, gal: d.unlock.gal || {}, dyn: d.unlock.dyn || {} };
       if (d.done) st.done = d.done || {};
-      if (d.settings) Object.assign(st.settings, d.settings);
+      if (d.settings) {
+        var npc = d.settings.npc || {};
+        Object.assign(st.settings, d.settings);
+        st.settings.npc = Object.assign({ 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }, npc);
+      }
       return d;
     } catch (e) { return null; }
   }
@@ -127,11 +136,15 @@
   function asset(p) { return 'assets/' + p; }
 
   /* ---------------- 头像 ---------------- */
+  var NPC_DEFAULT = { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' };
+
   function avatarFor(who) {
-    if (who === '我') return asset('icon/' + (st.settings.avatar || '头像2') + '.webp');
-    if (who === 'Lily') return asset('icon/Lily.webp');
-    if (who === '未知用户') return asset('icon/未知用户.webp');
-    return null; // 其他角色用字母头像
+    if (who === '我') return asset('icon/' + (st.settings.avatar || '头像1') + '.webp');
+    var pick = (st.settings.npc || {})[who];
+    if (pick === 'letter') return null;
+    if (pick) return asset('icon/' + pick + '.webp');
+    var d = NPC_DEFAULT[who];
+    return d ? asset('icon/' + d + '.webp') : null;
   }
 
   function letterAvatar(who, right) {
@@ -290,8 +303,9 @@
     if (tags.indexOf('动态') >= 0) {
       el = document.createElement('div');
       el.className = 'msg';
+      var mikoAva = avatarFor('Miko') || asset('icon/icon.webp');
       el.innerHTML =
-        '<img class="ava" src="' + esc(asset('icon/icon.webp')) + '" alt="">' +
+        '<img class="ava" src="' + esc(mikoAva) + '" alt="">' +
         '<div class="col"><div class="name">Miko 发布了动态</div>' +
         '<div class="bubble">' + esc(row.text || '') + '</div></div>';
       list.appendChild(el);
@@ -325,7 +339,7 @@
       if (!ra) el.insertBefore(letterAvatar('我', true), el.firstChild);
     } else {
       var na = avatarFor(who);
-      var av = na ? '<img class="ava" src="' + esc(na) + '" alt="">'
+      var av = na ? '<img class="ava" data-who="' + esc(who) + '" src="' + esc(na) + '" alt="">'
         : '<span class="ava ava-txt" style="background:linear-gradient(135deg,#3a3550,#26233a)">' + esc((who || '·').slice(0, 1)) + '</span>';
       el.innerHTML = av +
         '<div class="col"><div class="name">' + esc(who) + '</div>' +
@@ -390,6 +404,11 @@
         unlockFrom(row);
         save();
 
+        if (!st.skipAll) {
+          await sleep(readDelay(row));
+          if (myGen !== st.gen) break;
+        }
+
         if (row.wait && row.wait > 0) {
           await waitCard(row.wait, myGen);
           if (myGen !== st.gen) break;
@@ -408,10 +427,6 @@
         st.cur++;
         save();
 
-        if (st.auto && !st.skipAll) {
-          await sleep(700);
-          if (myGen !== st.gen) break;
-        }
       }
     } finally {
       st.busy = false;
@@ -419,6 +434,14 @@
       // 否则 tick() 因 busy 而跳过、旧循环又因 gen 不匹配退出 → 剧情卡住不动。
       if (myGen !== st.gen && $('#view-chat').classList.contains('active')) run(st.gen);
     }
+  }
+
+  // 每条消息的停留时间：越长的消息停留越久，模拟真人聊天节奏
+  function readDelay(row) {
+    var n = String(row.text || '').length;
+    var base = 320 + Math.min(1500, n * 24);
+    if (row.dir === 'right' || row.dir === 'center') base = 220 + Math.min(600, n * 12);
+    return st.auto ? Math.max(1100, base) : base;
   }
 
   function typingHint(row, myGen) {
@@ -430,7 +453,7 @@
       b.appendChild(div);
       scrollBottom();
       var per = SPEED[st.settings.speed] || 24;
-      var ms = Math.max(180, Math.min(1500, (row.text || '').length * per));
+      var ms = Math.max(260, Math.min(3200, (row.text || '').length * per));
       var t0 = Date.now();
       var iv = setInterval(function () {
         if (myGen !== st.gen) { done(); return; }
@@ -649,7 +672,91 @@
   }
 
   /* ---------------- 设置 ---------------- */
+  function avatarOptions() { return AVATARS.concat(['Lily', '未知用户']); }
+
+  function renderAvatarPicker() {
+    var box = $('#ava-pick');
+    if (box) {
+      box.innerHTML = '';
+      avatarOptions().forEach(function (n) {
+        var b = document.createElement('button');
+        b.className = 'ava-opt' + ((st.settings.avatar || '头像1') === n ? ' on' : '');
+        b.title = n;
+        b.innerHTML = '<img src="' + esc(asset('icon/' + n + '.webp')) + '" alt="' + esc(n) + '">';
+        b.onclick = function () { st.settings.avatar = n; save(); renderAvatarPicker(); refreshAvatars('我'); };
+        box.appendChild(b);
+      });
+    }
+    $$('#view-settings select[data-npc]').forEach(function (sel) {
+      var who = sel.getAttribute('data-npc');
+      sel.innerHTML = '<option value="letter">字母</option>' +
+        avatarOptions().map(function (n) {
+          return '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+        }).join('');
+      sel.value = (st.settings.npc || {})[who] || (NPC_DEFAULT[who] || 'letter');
+      sel.onchange = function () {
+        st.settings.npc[who] = this.value;
+        save();
+        refreshAvatars(who);
+      };
+    });
+  }
+
+  // 换头像后让聊天里已有的气泡立即换图
+  function refreshAvatars(who) {
+    var p = avatarFor(who);
+    $$('#msg-list img.ava[data-who="' + who + '"]').forEach(function (img) {
+      if (p) { img.src = p; }
+      else {
+        var sp = letterAvatar(who, who === '我');
+        if (img.parentNode) img.parentNode.replaceChild(sp, img);
+      }
+    });
+  }
+
+  function exportSave() {
+    var payload = {
+      app: 'miko-web', v: 1, ts: Date.now(),
+      chapterId: st.chapterId, cur: st.cur,
+      ctx: st.ctx ? { labels: Array.from(st.ctx.labels), resume: st.ctx.resume, target: st.ctx.target } : null,
+      unlock: st.unlock, done: st.done, settings: st.settings
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    var t = new Date();
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    a.download = 'miko-save-' + t.getFullYear() + p2(t.getMonth() + 1) + p2(t.getDate()) +
+      '-' + p2(t.getHours()) + p2(t.getMinutes()) + '.json';
+    a.href = URL.createObjectURL(blob);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    toast('已导出存档文件');
+  }
+
+  function importSave(file) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      var d;
+      try { d = JSON.parse(fr.result); } catch (e) { toast('不是合法的 JSON 文件'); return; }
+      if (!d || typeof d !== 'object') { toast('存档内容为空'); return; }
+      var payload = (d.unlock || d.chapterId) ? d : null;
+      if (!payload) { toast('不是本作的存档文件'); return; }
+      payload.ts = Date.now();
+      st.importing = true;
+      try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
+      } catch (e) { toast('写入失败：浏览器存储不可用'); return; }
+      toast('导入成功，正在重新载入…');
+      setTimeout(function () { location.reload(); }, 800);
+    };
+    fr.onerror = function () { toast('读取文件失败'); };
+    fr.readAsText(file);
+  }
+
   function syncSettings() {
+    renderAvatarPicker();
     $('#set-speed').value = st.settings.speed;
     $('#set-wait').value = String(st.settings.wait);
     $('#set-bgm').checked = !!st.settings.bgm;
@@ -676,6 +783,13 @@
         toast('已解锁全部词典与图鉴（可在设置里关闭）');
       }
       save(); syncSettings();
+    };
+    $('#btn-export').onclick = exportSave;
+    $('#btn-import').onclick = function () { $('#file-import').click(); };
+    $('#file-import').onchange = function () {
+      var f = this.files && this.files[0];
+      if (f) importSave(f);
+      this.value = '';
     };
     $('#btn-reset').onclick = function () {
       if (!confirm('确定清空全部进度与解锁记录？')) return;

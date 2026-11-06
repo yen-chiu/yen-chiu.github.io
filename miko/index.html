@@ -150,6 +150,39 @@
 
     <div class="set-card">
       <div class="set-row set-plain">
+        <span>我的头像</span>
+        <span class="set-hint">聊天里显示</span>
+      </div>
+      <div class="avatar-row" id="ava-pick"></div>
+      <div class="set-row set-plain" style="margin-top:6px">
+        <span>角色头像</span>
+        <span class="set-hint">按喜好更换</span>
+      </div>
+      <div class="npc-row">
+        <label><span>Miko</span><select data-npc="Miko"></select></label>
+        <label><span>Iris</span><select data-npc="Iris"></select></label>
+        <label><span>Lily</span><select data-npc="Lily"></select></label>
+        <label><span>未知用户</span><select data-npc="未知用户"></select></label>
+      </div>
+    </div>
+
+    <div class="set-card">
+      <div class="set-row set-plain">
+        <span>存档</span>
+        <span class="set-hint">导出 / 导入进度</span>
+      </div>
+      <div class="two-btn">
+        <button class="ghost-btn" id="btn-export">导出存档</button>
+        <button class="ghost-btn" id="btn-import">导入存档</button>
+        <input type="file" id="file-import" accept="application/json,.json" hidden>
+      </div>
+      <p class="set-note" style="margin:8px 2px 0;text-align:left">
+        导出包含当前章节进度、词典 / 图鉴 / 动态解锁记录与全部设置，可换设备或换浏览器导入。
+      </p>
+    </div>
+
+    <div class="set-card">
+      <div class="set-row set-plain">
         <span>已解锁</span>
         <span id="set-stats"></span>
       </div>
