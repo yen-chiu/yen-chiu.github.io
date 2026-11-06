@@ -483,9 +483,12 @@
   // 没有对应条目时用原版 966 条的拟合模型 wait_ms ≈ 523 + 175 × 字数。
   function msgDelay(row) {
     var text = String(row.text || '');
-    var map = (st.meta && st.meta.delayMap) || {};
+    var byCh = (st.meta && st.meta.delayMap) || {};
+    var map = byCh[st.chapterId] || {};
     var t = text.trim();
     var ms = map[t];
+    // 原版把「离线等待」也记在 busyWaitTime 里（最长 4 小时）；超过 60s 的一律交给「等待」指令，按模型估
+    if (ms && ms > 60000) ms = 0;
     if (!ms) {
       var tm = (st.meta && st.meta.timing) || { base: 523, per: 175 };
       ms = tm.base + tm.per * text.length;
