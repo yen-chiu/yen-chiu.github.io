@@ -50,5 +50,17 @@
     </details>
   </aside>
 
+  {% if page.comments and site.comments.provider %}
+  <aside class="yb-comments">
+    <h2 class="yb-comments__head">讨论</h2>
+    <p class="yb-comments__hint">
+      评论经由 GitHub Discussions 保存，需登录 GitHub 账号；与本文无关的留言不保证保留。
+    </p>
+    <script>window.ModeToggle = window.ModeToggle || { ID: 'mode-toggle', DARK_MODE: 'dark' };</script>
+    <div id="tail-wrapper"></div>
+    {% include comments.html %}
+  </aside>
+  {% endif %}
+
 </body>
 </html>

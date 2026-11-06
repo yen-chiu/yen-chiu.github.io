@@ -57,3 +57,6 @@ yenchiu.com.pem
 assets/img/favicons/一版/
 assets/img/favicons/二版/
 assets/img/favicons/其他素材/
+
+# 期刊 PDF 构建产物（发布件在 WendellManual 仓库 assets/files/yubai/）
+bin/journal/out/

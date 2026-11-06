@@ -562,3 +562,33 @@ body.yb-paper-body {
   margin: 0 0 2rem;
   opacity: 0.7;
 }
+
+/* ---------- 评论区（正文之外，不参与纸面排版） ---------- */
+.yb-comments {
+  width: min(100% - 2rem, 720px);
+  margin: 2.5rem auto 4rem;
+  padding: 1.4rem 1.5rem 1.6rem;
+  border: 1px solid rgba(128, 128, 128, 0.22);
+  border-radius: 14px;
+  background: #fff;
+  font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.yb-comments__head {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.yb-comments__hint {
+  margin: 0 0 1rem;
+  color: #7a7a7a;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+@media print {
+  .yb-comments {
+    display: none !important;
+  }
+}
