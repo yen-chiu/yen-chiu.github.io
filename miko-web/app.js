@@ -723,6 +723,13 @@
         var row = ch.rows[st.cur];
 
         if (row.choice !== undefined) {
+          // 对方刚说完最后一句就立刻弹选项会很突兀：等一会儿再出，且淡入
+          if (!st.skipAll) {
+            st.choiceWait = true;
+            await sleep(st.auto ? 650 : 1000);
+            st.choiceWait = false;
+            if (myGen !== st.gen) break;
+          }
           showChoices(ch, st.cur);
           break;                      // 等玩家点选
         }
@@ -869,6 +876,8 @@
     var g = choiceGroup(ch, idx);
     var box = $('#choices');
     box.innerHTML = '';
+    box.classList.remove('in');
+    void box.offsetWidth;
     var labels = new Set();
     var targets = [];
     g.forEach(function (i) {
@@ -884,7 +893,7 @@
       b.className = 'choice-btn';
       b.textContent = r.text;
       b.onclick = function () {
-        box.hidden = true; box.innerHTML = '';
+        box.hidden = true; box.classList.remove('in'); box.innerHTML = '';
         var t = resolveLabel(ch, r.choice, i);
         if (t === null || t === undefined) { st.cur = i + 1; tick(); return; }
         var lab = new Set();
@@ -902,6 +911,7 @@
       box.appendChild(b);
     });
     box.hidden = false;
+    requestAnimationFrame(function () { box.classList.add('in'); });
     scrollBottom();
     if (!g.length) { st.cur = idx + 1; tick(); }
   }
