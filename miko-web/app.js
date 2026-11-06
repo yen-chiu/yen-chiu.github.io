@@ -189,6 +189,21 @@
     '<path d="M12 15.2v2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
 
   // 「头像随剧情解锁」：没认出来之前，NPC 头像显示问号（原作设定）
+  // 存档补算：已经读到揭示点之后的，直接算「已认识」（切章/读档时补上）
+  function syncReveals() {
+    var rv = (st.meta && st.meta.reveals) || {};
+    Object.keys(rv).forEach(function (who) {
+      if (st.revealed[who]) return;
+      var hit = rv[who];
+      var far = Math.max(
+        (st.progress || {})[hit.chapter] || 0,
+        ((st.marks || {})[hit.chapter] || {}).cur || 0,
+        st.chapterId === hit.chapter ? st.cur : 0
+      );
+      if (far > Number(hit.row)) st.revealed[who] = true;
+    });
+  }
+
   function isRevealed(who) {
     if (st.settings.revealLock === false) return true;
     return !!(st.revealed || {})[who];
@@ -233,6 +248,7 @@
   }
 
   function route() {
+    if (st.meta) syncReveals();
     var h = (location.hash || '#/').replace(/^#\/?/, '');
     var parts = h.split('/');
     var name = parts[0] || 'home';
@@ -432,6 +448,7 @@
       }
     }
 
+    syncReveals();
     $('#chat-title').textContent = chatWho(ch);
     st.typing = false;
     updateChatStatus();
