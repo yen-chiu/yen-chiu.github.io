@@ -43,6 +43,8 @@
     lastOnline: 0,      // 0 = 在线；否则为她最后下线的时间戳
     likes: {},
     comments: {},
+    replies: {},        // {postKey: [{to, text, t}]} 对某条评论的回复
+    mikoSaid: {},       // {postKey: {commentIndex: true}} Miko 已经接过话
     after: [],
     logOpen: {},
     progress: {},       // 每章读到的最远行号
@@ -71,6 +73,8 @@
         revealed: st.revealed,
         likes: st.likes,
         comments: st.comments,
+        replies: st.replies,
+        mikoSaid: st.mikoSaid,
         after: st.after,
         progress: st.progress,
         marks: st.marks,
@@ -101,6 +105,8 @@
     } catch (e) { return null; }
       if (d.progress) st.progress = d.progress;
       if (d.marks) st.marks = d.marks;
+      if (d.replies) st.replies = d.replies;
+      if (d.mikoSaid) st.mikoSaid = d.mikoSaid;
   }
 
   function chapter(id) {
@@ -1114,12 +1120,34 @@
     slice.forEach(function (d) { list.appendChild(logPost(d, prof, who)); });
   }
 
+  function socialOf(key) {
+    var all = ((st.meta && st.meta.social) || {})[key];
+    if (!all) return { likes: [], comments: [] };
+    var need = all.need;
+    var reached = !need || orderOf(st.chapterId) >= orderOf(need) ||
+      !!(st.progress || {})[need] || !!st.done[need];
+    if (!reached) return { likes: [], comments: [] };
+    return { likes: all.likes || [], comments: all.comments || [] };
+  }
+
   function logPost(d, prof, who) {
     var el = document.createElement('div');
     el.className = 'qz-post';
     var key = d.image || ('x' + d.row);
     var liked = !!st.likes[key];
-    var cmts = st.comments[key] || [];
+    var soc = socialOf(key);
+    var replies = (st.replies && st.replies[key]) || [];
+    var said = (st.mikoSaid && st.mikoSaid[key]) || {};
+    var total = soc.comments.length + replies.length;
+
+    var cmtHtml = soc.comments.map(function (c, i) {
+      var mine = replies.filter(function (r) { return r.to === i; });
+      var miko = (said[i] && c.miko) ? '<div class="qz-cmt by-npc"><b>Miko</b>' + esc(c.miko) + '</div>' : '';
+      return '<div class="qz-cmt by-npc" data-ci="' + i + '"><b>' + esc(c.who) + '</b>' + esc(c.text) +
+        '<button class="qz-reply" data-reply="' + i + '">回复</button></div>' +
+        mine.map(function (r) { return '<div class="qz-cmt sub"><b>我</b>' + esc(r.text) + '</div>'; }).join('') + miko;
+    }).join('');
+
     el.innerHTML =
       '<div class="qz-post-head">' +
         '<img src="' + esc(avatarFor(who)) + '" alt="">' +
@@ -1135,11 +1163,14 @@
           '<span>' + (liked ? '已赞' : '赞') + '</span></button>' +
         '<button class="qz-act cmt" data-cmt="' + esc(key) + '">' +
           '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-4 3z"/></svg>' +
-          '<span>评论' + (cmts.length ? ' ' + cmts.length : '') + '</span></button>' +
+          '<span>评论' + (total ? ' ' + total : '') + '</span></button>' +
       '</div>' +
-      '<div class="qz-cmts"' + (cmts.length ? '' : ' hidden') + '>' +
-        cmts.map(function (c) { return '<div class="qz-cmt"><b>我</b>' + esc(c.text) + '</div>'; }).join('') +
-      '</div>' +
+      (soc.likes.length
+        ? '<div class="qz-likers">' + soc.likes.map(function (w) {
+            return '<span class="qz-liker"><img src="' + esc(avatarFor(w)) + '" alt="">' + esc(w) + '</span>';
+          }).join('<span class="qz-liker-sep">、</span>') + '<span class="qz-liker-txt">觉得这条不错</span></div>'
+        : '') +
+      '<div class="qz-cmts"' + (total ? '' : ' hidden') + '>' + cmtHtml + '</div>' +
       '<div class="qz-cmt-box" hidden><input type="text" maxlength="120" placeholder="说点什么…"><button>发送</button></div>');
     return el;
   }
@@ -1162,10 +1193,22 @@
         save();
         return;
       }
+      var rp = e.target.closest('[data-reply]');
+      if (rp) {
+        var pst = rp.closest('.qz-post');
+        var bx = pst.querySelector('.qz-cmt-box');
+        bx.dataset.to = rp.getAttribute('data-reply');
+        bx.hidden = false;
+        var pin = bx.querySelector('input');
+        pin.placeholder = '回复 ' + rp.parentNode.querySelector('b').textContent + '…';
+        pin.focus();
+        return;
+      }
       var cb = e.target.closest('[data-cmt]');
       if (cb) {
         var box = cb.closest('.qz-post').querySelector('.qz-cmt-box');
         box.hidden = !box.hidden;
+        box.dataset.to = '';
         if (!box.hidden) box.querySelector('input').focus();
         return;
       }
@@ -1177,12 +1220,30 @@
         var cm = post.querySelector('[data-cmt]');
         var key = cm.getAttribute('data-cmt');
         if (!txt) return;
-        (st.comments[key] = st.comments[key] || []).push({ text: txt, t: Date.now() });
-        inp.value = '';
-        var wrap = post.querySelector('.qz-cmts');
-        wrap.hidden = false;
-        wrap.insertAdjacentHTML('beforeend', '<div class="qz-cmt"><b>我</b>' + esc(txt) + '</div>');
-        cm.querySelector('span').textContent = '评论 ' + st.comments[key].length;
+        var to = post.querySelector('.qz-cmt-box').dataset.to;
+        if (to === '' || to === undefined) {
+          // 直接评论这条动态
+          (st.comments[key] = st.comments[key] || []).push({ text: txt, t: Date.now() });
+          inp.value = '';
+          var wrap = post.querySelector('.qz-cmts');
+          wrap.hidden = false;
+          wrap.insertAdjacentHTML('beforeend', '<div class="qz-cmt"><b>我</b>' + esc(txt) + '</div>');
+          var n0 = (st.comments[key] || []).length;
+          cm.querySelector('span').textContent = '评论 ' + n0;
+        } else {
+          // 回复某一条（对方会顺着接一句）
+          var idx = Number(to);
+          var arr = (st.replies[key] = st.replies[key] || []);
+          arr.push({ to: idx, text: txt, t: Date.now() });
+          st.mikoSaid[key] = st.mikoSaid[key] || {};
+          st.mikoSaid[key][idx] = true;
+          inp.value = '';
+          post.querySelector('.qz-cmt-box').dataset.to = '';
+          inp.placeholder = '说点什么…';
+          renderFeed(st.profileWho || 'Miko');
+          save();
+          return;
+        }
         save();
       }
     });
@@ -1620,6 +1681,11 @@
     }).catch(function (err) {
       document.body.innerHTML = '<pre style="color:#f88;padding:20px">数据加载失败：' + esc(err && err.message) + '</pre>';
     });
+  }
+
+  // 调试手柄：仅 ?debug=1 时暴露，便于本地验证状态
+  if (location.search.indexOf('debug=1') >= 0) {
+    window.MIKO_DEBUG = { st: st, save: save, route: route, render: renderFeed };
   }
 
   boot();
