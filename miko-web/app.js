@@ -16,7 +16,7 @@
   var PUNCT_HEAVY = '。！？!?';
   var PUNCT_LIGHT = '，、；：,;:';
   var SAVE_KEY = 'miko.web.save.v1';
-  var AVATARS = ['头像1', '头像2', '头像3', '头像4', '头像5', '头像6', '头像7', '头像8'];
+  var AVATARS = ['头像-黑白', '头像1', '头像2', '头像3', '头像4', '头像5', '头像6', '头像7', '头像8'];
 
   var st = {
     story: null,
@@ -269,7 +269,7 @@
     var pick = (st.settings.npc || {})[who];
     if (pick === 'letter') return null;                        // 手动选「字母」时才用字母头像
     if (pick) return asset('icon/' + pick + '.webp');          // 设置里手动指定优先
-    if (!hasAvatar(who)) return asset('icon/' + (((st.meta && st.meta.avatarDefault) || '头像1')) + '.webp');  // ② 知道名字、还没发照片：黑白无脸剪影
+    if (!hasAvatar(who)) return asset('icon/' + (((st.meta && st.meta.avatarDefault) || '头像-黑白')) + '.webp');  // ② 知道名字、还没发照片：黑白无脸剪影
     var th = (st.theme || {})[who];
     if (th) return asset('icon/' + th + '.webp');              // ③ 发过照片：换成对应主题的头像
     var d = NPC_DEFAULT[who];
