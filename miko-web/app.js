@@ -370,20 +370,54 @@
   function renderHome() {
     var grid = $('#chapter-grid');
     grid.innerHTML = '';
-    orderedChapters().forEach(function (c) {
+    var extras = (st.meta && st.meta.extras) || {};
+
+    function cardHtml(c, ex) {
       var n = (c.rows || []).length;
       var pr = chapterProgress(c);
-      var b = document.createElement('button');
-      b.className = 'chapter-card';
-      b.innerHTML =
+      if (ex) {
+        return '<button class="chapter-card cc-extra" data-cid="' + esc(c.id) + '">' +
+          '<span class="cc-branch">└</span>' +
+          '<div class="cc-body"><div class="cc-name">番外 · ' + esc(ex.title) + '</div>' +
+          '<div class="cc-meta">' + (pr.label ? pr.label : (n ? n + ' 行对话' : '')) + '</div>' +
+          '</div>' +
+          (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
+          '</button>';
+      }
+      var pr2 = pr;
+      return '<button class="chapter-card" data-cid="' + esc(c.id) + '">' +
         '<img src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="' + esc(c.id) + '" loading="lazy">' +
         '<div class="cc-body"><div class="cc-name">' + esc(c.id) + '</div>' +
-        '<div class="cc-meta">' + (pr.label ? pr.label : (n ? n + ' 行对话' : '')) + '</div>' +
-        (pr.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr.pct + '%"></i></div>' : '') +
+        '<div class="cc-meta">' + (pr2.label ? pr2.label : (n ? n + ' 行对话' : '')) + '</div>' +
+        (pr2.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr2.pct + '%"></i></div>' : '') +
         '</div>' +
-        (st.done[c.id] ? '<span class="cc-done">已读</span>' : '');
-      b.onclick = function () { pickChapter(c.id); };
-      grid.appendChild(b);
+        (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
+        '</button>';
+    }
+
+    // 主章节和它的番外放进同一个格子，形成「第一章 └ 番外」的树状
+    var list = orderedChapters();
+    var groups = [];
+    var cur = null;
+    list.forEach(function (c) {
+      if (extras[c.id]) {                       // 先出现的是番外，挂到上一个主章节
+        if (cur) cur.extras.push(c);
+        else groups.push((cur = { main: null, extras: [c] }));
+      } else {
+        groups.push((cur = { main: c, extras: [] }));
+      }
+    });
+
+    groups.forEach(function (g) {
+      var wrap = document.createElement('div');
+      wrap.className = 'cc-group';
+      wrap.innerHTML = (g.main ? cardHtml(g.main, null) : '') +
+        g.extras.map(function (c) { return cardHtml(c, extras[c.id]); }).join('');
+      grid.appendChild(wrap);
+    });
+
+    grid.querySelectorAll('[data-cid]').forEach(function (b) {
+      b.onclick = function () { pickChapter(b.getAttribute('data-cid')); };
     });
 
     var bar = $('#continue-bar');
@@ -1136,7 +1170,8 @@
     };
   }
 
-  var STORY_ORDER = ['第一章', '第二章', '第三章', '第四章', '第五章', '第六章', '番外一', '番外二'];
+  // 阅读顺序：每个主章节后面紧跟它的番外
+  var STORY_ORDER = ['第一章', '番外一', '第二章', '番外二', '第三章', '第四章', '第五章', '第六章'];
 
   function myDynamics(who) {
     var mine = ((st.meta && st.meta.dynamics) || []).filter(function (d) {
