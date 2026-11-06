@@ -43,7 +43,9 @@
     lastOnline: 0,      // 0 = 在线；否则为她最后下线的时间戳
     likes: {},
     comments: {},
-    after: []
+    after: [],
+    logOpen: {},
+    profileWho: 'Miko'
   };
 
   /* ---------------- 存档 ---------------- */
@@ -220,7 +222,11 @@
     }
     if (name === 'dict') { $('#view-dict').classList.add('active'); renderDict(); return; }
     if (name === 'gallery') { $('#view-gallery').classList.add('active'); renderGallery(); return; }
-    if (name === 'feed') { $('#view-feed').classList.add('active'); renderFeed(parts[1] ? decodeURIComponent(parts[1]) : ''); return; }
+    if (name === 'feed' || name === 'user') {
+      $('#view-feed').classList.add('active');
+      renderFeed(parts[1] ? decodeURIComponent(parts[1]) : '');
+      return;
+    }
     if (name === 'settings') { $('#view-settings').classList.add('active'); syncSettings(); return; }
 
     $('#view-home').classList.add('active');
@@ -508,10 +514,11 @@
         '<div class="col"><div class="name">' + esc(who) + '</div>' +
         '<div class="bubble">' + esc(row.text || '') + '</div></div>';
       var avEl = el.querySelector('.ava');
-      if (avEl && CHARA_WHO.indexOf(who) >= 0) {
+      var target = who === '未知用户' ? 'Miko' : who;
+      if (avEl && (CHARA_WHO.indexOf(who) >= 0 || who === '未知用户')) {
         avEl.classList.add('ava-link');
-        avEl.title = '进入 ' + who + ' 的空间';
-        avEl.onclick = function () { go('feed/' + encodeURIComponent(who)); };
+        avEl.title = '进入' + (who === '未知用户' ? '对方' : ' ' + who) + '的资料页';
+        avEl.onclick = function () { go('user/' + encodeURIComponent(target)); };
       }
     }
     list.appendChild(el);
@@ -870,93 +877,131 @@
       name: who,
       sig: p.sig || '',
       tags: p.tags || [],
+      interests: p.interests || [],
+      age: p.age || '',
       cover: p.cover || 'images/聊天背景.webp'
     };
   }
 
-  function renderFeed(who) {
-    who = who || 'Miko';
-    if (CHARA_WHO.indexOf(who) < 0) who = 'Miko';
-    var box = $('#feed-list');
-    if (!box) return;
-    var prof = profileOf(who);
+  var STORY_ORDER = ['第一章', '第二章', '第三章', '第四章', '第五章', '第六章', '番外一', '番外二'];
+
+  function myDynamics(who) {
     var mine = ((st.meta && st.meta.dynamics) || []).filter(function (d) {
       return (d.who || 'Miko') === who;
     });
     var shown = mine.filter(function (d) { return st.unlock.dyn[d.image]; });
-    var head = document.querySelector('#view-feed h1');
-    if (head) head.textContent = who + ' 的空间';
-    $('#feed-count').textContent = shown.length + ' / ' + mine.length;
-    box.className = 'page-body qz';
-    box.innerHTML =
-      '<div class="qz-cover">' +
-        '<div class="qz-cover-bg" style="background-image:url(\'' + esc(asset(prof.cover)) + '\')"></div>' +
-        '<div class="qz-cover-mask"></div>' +
-        '<div class="qz-me">' +
-          '<img class="qz-ava" src="' + esc(avatarFor(who)) + '" alt="">' +
-          '<div class="qz-name">' + esc(prof.name) + '</div>' +
-          (prof.sig ? '<div class="qz-sig">' + esc(prof.sig) + '</div>' : '') +
-        '</div>' +
-      '</div>' +
-      (prof.tags.length
-        ? '<div class="qz-tags">' + prof.tags.map(function (t) {
-            return '<span>' + esc(t) + '</span>';
-          }).join('') + '</div>'
-        : '') +
-      '<div class="qz-list"></div>';
-
-    var list = box.querySelector('.qz-list');
-    bindFeed(list);
-    if (!shown.length) {
-      var tip = mine.length ? '还没有解锁的动态，去剧情里看看吧' : '这个人还没有发过动态';
-      list.innerHTML = '<p class="qz-empty">' + tip + '</p>';
-      return;
-    }
-    // 按故事顺序排：第一→六章，番外最后
-    var ORDER = ['第一章', '第二章', '第三章', '第四章', '第五章', '第六章', '番外一', '番外二'];
     shown.sort(function (a, b) {
-      var ia = ORDER.indexOf(a.chapter), ib = ORDER.indexOf(b.chapter);
+      var ia = STORY_ORDER.indexOf(a.chapter), ib = STORY_ORDER.indexOf(b.chapter);
       if (ia < 0) ia = 99;
       if (ib < 0) ib = 99;
       if (ia !== ib) return ia - ib;
       return (a.row || 0) - (b.row || 0);
     });
-    shown.forEach(function (d) {
-      var el = document.createElement('div');
-      el.className = 'qz-post';
-      var key = d.image || ('x' + d.row);
-      var liked = !!st.likes[key];
-      var cmts = st.comments[key] || [];
-      el.innerHTML =
-        '<div class="qz-post-head">' +
-          '<img src="' + esc(avatarFor(who)) + '" alt="">' +
-          '<div><div class="qz-post-name">' + esc(prof.name) + '</div>' +
-          '<div class="qz-post-when">' + esc(d.chapter || '') + '</div></div>' +
+    return { mine: mine, shown: shown };
+  }
+
+  var ICON_TAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="7.5" r="1.4"/></svg>';
+  var ICON_HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.3C5 7.9 7 6 9.4 6c1.4 0 2.3.7 2.6 1.4C12.3 6.7 13.2 6 14.6 6 17 6 19 7.9 19 10.7 19 15.4 12 20 12 20z"/></svg>';
+  var ICON_LIST = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>';
+
+  function renderFeed(who) {
+    who = who || 'Miko';
+    if (CHARA_WHO.indexOf(who) < 0) who = 'Miko';
+    st.profileWho = who;
+    var box = $('#feed-list');
+    if (!box) return;
+    var prof = profileOf(who);
+    var pair = myDynamics(who);
+    var shown = pair.shown;
+    var head = document.querySelector('#view-feed h1');
+    if (head) head.textContent = '资料';
+    $('#feed-count').textContent = shown.length + ' / ' + pair.mine.length;
+
+    var open = !!(st.logOpen && st.logOpen[who]);
+    var slice = open ? shown : shown.slice(0, 3);
+
+    box.className = 'page-body pf';
+    box.innerHTML =
+      '<div class="pf-hero">' +
+        '<div class="pf-hero-bg" style="background-image:url(\'' + esc(asset(prof.cover)) + '\')"></div>' +
+        '<div class="pf-hero-mask"></div>' +
+        '<div class="pf-id">' +
+          '<img class="pf-ava" src="' + esc(avatarFor(who)) + '" alt="" data-who="' + esc(who) + '">' +
+          '<div class="pf-name">' + esc(prof.name) +
+            (prof.age ? '<span class="pf-age">' + esc(prof.age) + '</span>' : '') + '</div>' +
+          (prof.sig ? '<div class="pf-sig">' + esc(prof.sig) + '</div>' : '') +
         '</div>' +
-        '<div class="qz-post-text">' + esc(d.text || '') + '</div>';
-      el.appendChild(imageCard(d.image, false));
-      el.insertAdjacentHTML('beforeend',
-        '<div class="qz-actions">' +
-          '<button class="qz-act like' + (liked ? ' on' : '') + '" data-like="' + esc(key) + '">' +
-            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.3C5 7.9 7 6 9.4 6c1.4 0 2.3.7 2.6 1.4C12.3 6.7 13.2 6 14.6 6 17 6 19 7.9 19 10.7 19 15.4 12 20 12 20z"/></svg>' +
-            '<span>' + (liked ? '已赞' : '赞') + '</span>' +
-          '</button>' +
-          '<button class="qz-act cmt" data-cmt="' + esc(key) + '">' +
-            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-4 3z"/></svg>' +
-            '<span>评论' + (cmts.length ? ' ' + cmts.length : '') + '</span>' +
-          '</button>' +
+      '</div>' +
+      '<div class="pf-rows">' +
+        '<div class="pf-row"><span class="pf-lab">' + ICON_TAG + '标签</span>' +
+          '<span class="pf-pills">' + (prof.tags.length ? prof.tags.map(function (t) {
+            return '<span>' + esc(t) + '</span>';
+          }).join('') : '<i class="pf-none">未公开</i>') + '</span></div>' +
+        '<div class="pf-row"><span class="pf-lab">' + ICON_HEART + '兴趣</span>' +
+          '<span class="pf-pills hot">' + (prof.interests && prof.interests.length
+            ? prof.interests.map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('')
+            : '<i class="pf-none">未公开</i>') + '</span></div>' +
+      '</div>' +
+      '<div class="pf-logs">' +
+        '<div class="pf-logs-head"><span>' + ICON_LIST + '日志</span>' +
+          (shown.length > 3
+            ? '<button class="pf-more" data-log="' + (open ? 'less' : 'more') + '">' +
+              (open ? '收起' : '查看全部 ' + shown.length) + '</button>'
+            : '') +
         '</div>' +
-        '<div class="qz-cmts"' + (cmts.length ? '' : ' hidden') + '>' +
-          cmts.map(function (c) {
-            return '<div class="qz-cmt"><b>我</b>' + esc(c.text) + '</div>';
-          }).join('') +
-        '</div>' +
-        '<div class="qz-cmt-box" hidden><input type="text" maxlength="120" placeholder="说点什么…"><button>发送</button></div>');
-      list.appendChild(el);
-    });
+        '<div class="qz-list" id="qz-list"></div>' +
+      '</div>';
+
+    var list = box.querySelector('#qz-list');
+    bindFeed(list);
+
+    if (!shown.length) {
+      list.innerHTML = '<p class="qz-empty">' +
+        (pair.mine.length ? '还没有解锁的日志，去剧情里看看吧' : '还没开始写日志哦') + '</p>';
+      return;
+    }
+
+    slice.forEach(function (d) { list.appendChild(logPost(d, prof, who)); });
+  }
+
+  function logPost(d, prof, who) {
+    var el = document.createElement('div');
+    el.className = 'qz-post';
+    var key = d.image || ('x' + d.row);
+    var liked = !!st.likes[key];
+    var cmts = st.comments[key] || [];
+    el.innerHTML =
+      '<div class="qz-post-head">' +
+        '<img src="' + esc(avatarFor(who)) + '" alt="">' +
+        '<div><div class="qz-post-name">' + esc(prof.name.toUpperCase()) + '</div>' +
+        '<div class="qz-post-when">' + esc(d.chapter || '') + '</div></div>' +
+      '</div>' +
+      '<div class="qz-post-text">' + esc(d.text || '') + '</div>';
+    el.appendChild(imageCard(d.image, false));
+    el.insertAdjacentHTML('beforeend',
+      '<div class="qz-actions">' +
+        '<button class="qz-act like' + (liked ? ' on' : '') + '" data-like="' + esc(key) + '">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.3C5 7.9 7 6 9.4 6c1.4 0 2.3.7 2.6 1.4C12.3 6.7 13.2 6 14.6 6 17 6 19 7.9 19 10.7 19 15.4 12 20 12 20z"/></svg>' +
+          '<span>' + (liked ? '已赞' : '赞') + '</span></button>' +
+        '<button class="qz-act cmt" data-cmt="' + esc(key) + '">' +
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-4 3z"/></svg>' +
+          '<span>评论' + (cmts.length ? ' ' + cmts.length : '') + '</span></button>' +
+      '</div>' +
+      '<div class="qz-cmts"' + (cmts.length ? '' : ' hidden') + '>' +
+        cmts.map(function (c) { return '<div class="qz-cmt"><b>我</b>' + esc(c.text) + '</div>'; }).join('') +
+      '</div>' +
+      '<div class="qz-cmt-box" hidden><input type="text" maxlength="120" placeholder="说点什么…"><button>发送</button></div>');
+    return el;
   }
 
   function bindFeed(list) {
+    var more = document.querySelector('.pf-more');
+    if (more) more.onclick = function (e) {
+      e.stopPropagation();
+      st.logOpen = st.logOpen || {};
+      st.logOpen[st.profileWho || 'Miko'] = more.getAttribute('data-log') === 'more';
+      renderFeed(st.profileWho || 'Miko');
+    };
     list.addEventListener('click', function (e) {
       var lb = e.target.closest('[data-like]');
       if (lb) {
