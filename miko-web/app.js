@@ -30,7 +30,7 @@
     named: {},          // 已知名字（第二态：黑色字母头像）
     avaUp: {},          // 已上传头像（第三态：人物立绘）
     settings: {
-      speed: 'normal', wait: 1, bgm: false, bgmTrack: 'new', sfx: true, autoUnlock: false,
+      speed: 'normal', wait: 1, bgm: false, bgmTrack: 'new', sfx: true, autoUnlock: false, autosave: 60,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
       revealLock: true,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
@@ -87,6 +87,107 @@
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(data));
     } catch (e) { /* 隐私模式忽略 */ }
+  }
+
+  /* ---------------- 自动存档 ---------------- */
+  var autoTimer = null;
+  var fileHandle = null;
+  var lastAuto = 0;
+
+  function startAutosave() {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    var sec = Number(st.settings.autosave || 0);
+    if (!sec) return;
+    autoTimer = setInterval(function () {
+      if (st.importing) return;
+      save();
+      lastAuto = Date.now();
+      writeBackup();
+    }, sec * 1000);
+  }
+
+  // ---- 本地文件备份（Chrome/Edge 的 File System Access API）----
+  function idb() {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open('miko-web', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('h'); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+
+  function idbSet(k, v) {
+    return idb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction('h', 'readwrite');
+        tx.objectStore('h').put(v, k);
+        tx.oncomplete = function () { res(1); };
+        tx.onerror = function () { rej(tx.error); };
+      });
+    });
+  }
+
+  function idbGet(k) {
+    return idb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction('h', 'readonly');
+        var q = tx.objectStore('h').get(k);
+        q.onsuccess = function () { res(q.result); };
+        q.onerror = function () { rej(q.error); };
+      });
+    });
+  }
+
+  function setAutoFileState(txt) {
+    var el = $('#autofile-state');
+    if (el) el.textContent = txt;
+  }
+
+  function writeBackup() {
+    if (!fileHandle) return;
+    try {
+      save();
+      var data = localStorage.getItem(SAVE_KEY) || '{}';
+      fileHandle.createWritable().then(function (w) {
+        return w.write(new Blob([data], { type: 'application/json' })).then(function () { return w.close(); });
+      }).then(function () {
+        setAutoFileState('已写入 · ' + new Date().toLocaleTimeString('zh-CN'));
+      }).catch(function () {
+        setAutoFileState('写入失败（可能权限已失效）');
+      });
+    } catch (e) {}
+  }
+
+  function pickBackupFile() {
+    if (!window.showSaveFilePicker) {
+      toast('这个浏览器不支持自动写文件，请用「导出存档」手动存');
+      return;
+    }
+    window.showSaveFilePicker({
+      suggestedName: 'miko-save.json',
+      types: [{ description: '存档 JSON', accept: { 'application/json': ['.json'] } }]
+    }).then(function (h) {
+      fileHandle = h;
+      return idbSet('saveFile', h);
+    }).then(function () {
+      setAutoFileState('已连接，开始自动写入');
+      writeBackup();
+      toast('已连接本地存档文件');
+    }).catch(function (e) {
+      if (e && e.name !== 'AbortError') toast('没选文件，已取消');
+    });
+  }
+
+  function restoreBackupFile() {
+    if (!window.showSaveFilePicker) return;
+    idbGet('saveFile').then(function (h) {
+      if (!h) { setAutoFileState('未启用'); return; }
+      fileHandle = h;
+      return h.queryPermission({ mode: 'readwrite' }).then(function (st2) {
+        if (st2 === 'granted') { setAutoFileState('已连接（' + (h.name || 'save.json') + '）'); writeBackup(); }
+        else setAutoFileState('需点「选一个文件」重新授权');
+      });
+    }).catch(function () { setAutoFileState('未启用'); });
   }
 
   function loadSave() {
@@ -1606,6 +1707,7 @@
     $('#set-wait').value = String(st.settings.wait);
     $('#set-bgm').checked = !!st.settings.bgm;
     if ($('#set-bgm-track')) $('#set-bgm-track').value = st.settings.bgmTrack || 'new';
+    if ($('#set-autosave')) $('#set-autosave').value = String(st.settings.autosave || 0);
     syncNpcBlock();
     $('#set-sfx').checked = !!st.settings.sfx;
     $('#set-auto-unlock').checked = !!st.settings.autoUnlock;
@@ -1624,6 +1726,15 @@
     };
     if ($('#set-bgm-track')) $('#set-bgm-track').onchange = function () {
       st.settings.bgmTrack = this.value; save(); applyBgm();
+    };
+    if ($('#set-autosave')) $('#set-autosave').onchange = function () {
+      st.settings.autosave = Number(this.value) || 0; save(); startAutosave();
+      toast(st.settings.autosave ? ('自动存档：每 ' + st.settings.autosave + ' 秒') : '自动存档已关闭');
+    };
+    if ($('#btn-autofile')) $('#btn-autofile').onclick = pickBackupFile;
+    if ($('#btn-autofile-off')) $('#btn-autofile-off').onclick = function () {
+      fileHandle = null; idbSet('saveFile', null).catch(function () {});
+      setAutoFileState('未启用');
     };
     $('#set-sfx').onchange = function () { st.settings.sfx = this.checked; save(); };
     $('#set-reveal-lock').onchange = function () {
@@ -1679,6 +1790,15 @@
   }
 
   /* ---------------- 音频 ---------------- */
+  var bgmArmed = false;
+
+  // 浏览器不允许无手势自动播放：在第一次点击/按键时补上
+  function armBgm() {
+    if (bgmArmed) return;
+    bgmArmed = true;
+    if (st.settings.bgm) applyBgm();
+  }
+
   function bgmFile() {
     return st.settings.bgmTrack === 'old' ? 'music/oldBgm.ogg' : 'music/bgm.ogg';
   }
@@ -1709,6 +1829,22 @@
     }
   }
 
+  var lastSfx = 0;
+
+  // 界面按键音（button.ogg），与语音共用「音效 / 语音」开关
+  function playClick() {
+    if (!st.settings.sfx) return;
+    var now = Date.now();
+    if (now - lastSfx < 90) return;
+    lastSfx = now;
+    var a = $('#au-click');
+    if (!a) return;
+    try {
+      a.currentTime = 0;
+      a.play().catch(function () {});
+    } catch (e) {}
+  }
+
   function playVoice(name) {
     if (!st.settings.sfx) return;
     var a = $('#au-sfx');
@@ -1718,6 +1854,18 @@
 
   /* ---------------- 事件绑定 ---------------- */
   function bind() {
+    // 第一次交互才允许出声：补播 BGM
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) {
+      document.addEventListener(ev, armBgm, { passive: true });
+    });
+
+    // 按键音：按钮 / 选项 / 卡片 / 菜单 / 导航
+    document.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.choice-btn, .chapter-card, .menu-item, .npc-pick, .ava-opt, .diff-wrap summary, .tab, .btn, button, .end-back')) {
+        playClick();
+      }
+    }, { passive: true });
+
     document.addEventListener('click', function (e) {
       var t = e.target.closest('[data-go]');
       if (t) {
@@ -1870,4 +2018,6 @@
   }
 
   boot();
+  startAutosave();
+  restoreBackupFile();
 })();
