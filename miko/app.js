@@ -20,9 +20,11 @@
     ctx: null,          // {labels:Set, resume:Number, target:Number}
     unlock: { dict: {}, gal: {}, dyn: {} },
     done: {},
+    revealed: {},       // 已认识的角色（原作：未认识时显示问号头像）
     settings: {
       speed: 'normal', wait: 60, bgm: false, sfx: true, autoUnlock: false,
       avatar: '头像1',
+      revealLock: true,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
     },
     auto: false,
@@ -42,6 +44,7 @@
         ctx: st.ctx ? { labels: Array.from(st.ctx.labels), resume: st.ctx.resume, target: st.ctx.target } : null,
         unlock: st.unlock,
         done: st.done,
+        revealed: st.revealed,
         settings: st.settings,
         ts: Date.now()
       };
@@ -56,6 +59,7 @@
       var d = JSON.parse(raw);
       if (d.unlock) st.unlock = { dict: d.unlock.dict || {}, gal: d.unlock.gal || {}, dyn: d.unlock.dyn || {} };
       if (d.done) st.done = d.done || {};
+      if (d.revealed) st.revealed = d.revealed || {};
       if (d.settings) {
         var npc = d.settings.npc || {};
         Object.assign(st.settings, d.settings);
@@ -138,13 +142,33 @@
   /* ---------------- 头像 ---------------- */
   var NPC_DEFAULT = { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' };
 
+  // 「头像随剧情解锁」：没认出来之前，NPC 头像显示问号（原作设定）
+  function isRevealed(who) {
+    if (st.settings.revealLock === false) return true;
+    return !!(st.revealed || {})[who];
+  }
+
   function avatarFor(who) {
     if (who === '我') return asset('icon/' + (st.settings.avatar || '头像1') + '.webp');
+    if (!isRevealed(who) && who !== '未知用户') return asset('icon/未知用户.webp');
     var pick = (st.settings.npc || {})[who];
     if (pick === 'letter') return null;
     if (pick) return asset('icon/' + pick + '.webp');
     var d = NPC_DEFAULT[who];
     return d ? asset('icon/' + d + '.webp') : null;
+  }
+
+  // 走到「自报姓名」那一行时揭示头像
+  function checkReveal(row) {
+    var rv = (st.meta && st.meta.reveals) || {};
+    var hit = rv[row.who];
+    if (!hit || hit.chapter !== st.chapterId || Number(hit.row) !== Number(st.cur)) return;
+    st.revealed = st.revealed || {};
+    if (st.revealed[row.who]) return;
+    st.revealed[row.who] = true;
+    save();
+    refreshAvatars(row.who);
+    toast('已认识对方 · ' + row.who);
   }
 
   function letterAvatar(who, right) {
@@ -402,6 +426,7 @@
         }
         appendRow(row, st.skipAll);
         unlockFrom(row);
+        checkReveal(row);
         save();
 
         if (!st.skipAll) {
@@ -762,6 +787,7 @@
     $('#set-bgm').checked = !!st.settings.bgm;
     $('#set-sfx').checked = !!st.settings.sfx;
     $('#set-auto-unlock').checked = !!st.settings.autoUnlock;
+    $('#set-reveal-lock').checked = st.settings.revealLock !== false;
     $('#set-stats').textContent =
       '词典 ' + Object.keys(st.unlock.dict).length + ' · 图鉴 ' + Object.keys(st.unlock.gal).length +
       ' · 动态 ' + Object.keys(st.unlock.dyn).length;
@@ -774,6 +800,11 @@
       st.settings.bgm = this.checked; save(); applyBgm();
     };
     $('#set-sfx').onchange = function () { st.settings.sfx = this.checked; save(); };
+    $('#set-reveal-lock').onchange = function () {
+      st.settings.revealLock = this.checked;
+      save();
+      $$('.ava[data-who]').forEach(function (el) { refreshAvatars(el.getAttribute('data-who')); });
+    };
     $('#set-auto-unlock').onchange = function () {
       st.settings.autoUnlock = this.checked;
       if (this.checked) {
