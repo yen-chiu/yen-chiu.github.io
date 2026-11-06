@@ -64,18 +64,21 @@
   </div>
 
   <div class="chat-foot">
-    <button class="foot-btn" id="btn-auto">自动</button>
-    <button class="foot-btn" id="btn-skip">跳过</button>
     <div class="foot-hint" id="foot-hint">轻触消息区继续</div>
   </div>
 
   <div class="menu-sheet" id="menu-sheet" hidden>
-    <button data-go="home">返回章节</button>
-    <button data-go="dict">词典</button>
-    <button data-go="gallery">图鉴</button>
-    <button data-go="feed">动态</button>
-    <button data-go="settings">设置</button>
-    <button id="btn-restart">重开本章</button>
+    <button class="menu-item" data-go="home">返回章节</button>
+    <button class="menu-item" id="btn-auto"><span>自动播放</span><em>逐条自动推进，选项自动选第一个</em></button>
+    <button class="menu-item" id="btn-skip"><span>立即显示</span><em>跳过打字动画与等待</em></button>
+    <button class="menu-item" id="btn-jumpday"><span>跳到某天</span><em id="jumpday-sub">本章没有分天</em></button>
+    <div class="day-list" id="day-list" hidden></div>
+    <button class="menu-item" data-go="dict">词典</button>
+    <button class="menu-item" data-go="gallery">图鉴</button>
+    <button class="menu-item" data-go="feed">动态</button>
+    <button class="menu-item" id="btn-after"><span>后日谈</span><em>结局之后，还能继续和她说话</em></button>
+    <button class="menu-item" data-go="settings">设置</button>
+    <button class="menu-item" id="btn-restart">重开本章</button>
   </div>
 </section>
 
@@ -180,11 +183,12 @@
         <span class="set-hint">按喜好更换</span>
       </div>
       <div class="npc-row">
-        <label><img class="npc-prev" data-prev="Miko" src="assets/icon/头像2.webp" alt="Miko"><span>Miko</span><select data-npc="Miko"></select></label>
-        <label><img class="npc-prev" data-prev="Iris" src="assets/icon/头像3.webp" alt="Iris"><span>Iris</span><select data-npc="Iris"></select></label>
-        <label><img class="npc-prev" data-prev="Lily" src="assets/icon/Lily.webp" alt="Lily"><span>Lily</span><select data-npc="Lily"></select></label>
-        <label><img class="npc-prev" data-prev="未知用户" src="assets/icon/未知用户.webp" alt="未知用户"><span>未知用户</span><select data-npc="未知用户"></select></label>
+        <button class="npc-pick" data-npc="Miko"><img class="npc-prev" data-prev="Miko" src="assets/icon/头像2.webp" alt=""><span class="npc-name">Miko</span><span class="npc-cur" data-cur="Miko">头像2</span><i class="chev"></i></button>
+        <button class="npc-pick" data-npc="Iris"><img class="npc-prev" data-prev="Iris" src="assets/icon/头像3.webp" alt=""><span class="npc-name">Iris</span><span class="npc-cur" data-cur="Iris">头像3</span><i class="chev"></i></button>
+        <button class="npc-pick" data-npc="Lily"><img class="npc-prev" data-prev="Lily" src="assets/icon/Lily.webp" alt=""><span class="npc-name">Lily</span><span class="npc-cur" data-cur="Lily">Lily</span><i class="chev"></i></button>
+        <button class="npc-pick" data-npc="未知用户"><img class="npc-prev" data-prev="未知用户" src="assets/icon/未知用户.webp" alt=""><span class="npc-name">未知用户</span><span class="npc-cur" data-cur="未知用户">未知用户</span><i class="chev"></i></button>
       </div>
+      <div class="ava-pop" id="ava-pop" hidden></div>
     </div>
 
     <div class="set-card">
@@ -215,7 +219,8 @@
         <span>本页与原版的差别</span>
         <span class="set-hint">静态逆向 + 重写引擎</span>
       </div>
-      <table class="diff">
+      <details class="diff-wrap"><summary>展开对照表 · 15 项</summary>
+        <table class="diff">
         <thead><tr><th></th><th>原版（APK 1.5.4 / 2016 原作）</th><th>网页版</th></tr></thead>
         <tbody>
         <tr><th>运行形态</th><td class="orig">Flutter / Dart AOT 安卓包（libapp.so 三个 ABI 各 ~5MB）</td><td>纯静态网页，无构建、无后端，GitHub Pages 托管</td></tr>
@@ -223,7 +228,10 @@
         <tr><th>头像</th><td class="orig">未认识时隐藏（问号），自报姓名后才出现；重置版把「我」的头像取自 QQ</td><td>保留问号→揭示；「我」可填 QQ 号取 qlogo 头像或上传本地图片（也可不显示），角色头像可逐个更换</td></tr>
         <tr><th>消息节奏</th><td class="orig">逐条 <code>busyWaitTime</code> / <code>nextMessageDelayTime</code>（中位 2.4–3.1 秒，≈0.52s + 0.175s/字），最长 4 小时</td><td>按章加载原版时长：前三章 + 两番外共 <b>2,882 句</b>逐字命中取原值，其余用拟合模型；4–6 章原版为服务器下发（服务已停）故走拟合；慢/中/快 = 1.35×/1×/0.6×，等待按倍速折算</td></tr>
         <tr><th>存档</th><td class="orig">本机 SharedPreferences</td><td>localStorage，并可导出 / 导入 JSON，换设备接着玩</td></tr>
-        <tr><th>阅读辅助</th><td class="orig">无</td><td>新增「自动播放」「跳过」</td></tr>
+        <tr><th>阅读辅助</th><td class="orig">无</td><td>右上角菜单里：<b>自动播放</b>（逐条推进、选项自动选第一个）、<b>立即显示</b>（跳过打字与等待）、<b>跳到某天</b></td></tr>
+        <tr><th>聊天头部</th><td class="orig">显示对象名；「对方正在输入…」在消息区顶部</td><td>顶部固定「名字 + 状态」：输入时显示「对方正在输入…」，对方下线后显示「上次在线 N 分钟前 / N 小时前 / N 天前」</td></tr>
+        <tr><th>动态互动</th><td class="orig">只能看，不能赞也不能评论</td><td>每条可点赞、可评论（存在本机，随存档导出）</td></tr>
+        <tr><th>后日谈</th><td class="orig">结局即结束</td><td>菜单里新增「后日谈」：结局之后仍可继续说话；预留 <code>window.MIKO_AI</code> 接口，接上模型即可自动回复</td></tr>
         <tr><th>词典</th><td class="orig">111 条，id → 释义硬编码在 Dart 快照（UTF-16）</td><td>109 条（按词条去重），释义静态只能恢复 30 条，标注「静态提取」</td></tr>
         <tr><th>图鉴</th><td class="orig">按章分组、显示 n/m；未解锁是黑封面加锁；43 个键，缺 -n 版本时回退基名</td><td>还原本法（三列缩略图 + 黑封面挂锁 + 分章计数），点击看大图</td></tr>
         <tr><th>动态 / 语音</th><td class="orig">34 条照片动态、2 条语音；动态以个人空间呈现（封面 + 头像 + 签名 + 标签）</td><td>做成 QQ 空间式个人页，点聊天里的头像即可进入；图片限高可放大，语音可播放</td></tr>
@@ -231,6 +239,7 @@
         <tr><th>数据修正</th><td class="orig">第六章 106 行、第四章 760 行两处 CSV 列错位</td><td>已修正，图鉴有效键 42 → 43</td></tr>
         </tbody>
       </table>
+        </details>
       <p class="set-note" style="margin:8px 2px 0;text-align:left">
         剧本、插画、语音、音乐都取自原包；剧情引擎、界面与上面这些交互是重新实现的。
       </p>
@@ -259,6 +268,19 @@
 </div>
 
 <!-- 图片查看 -->
+  <div class="modal" id="after-modal" hidden>
+    <div class="modal-card after-card">
+      <h3>后日谈</h3>
+      <p class="after-hint" id="after-hint">结局之后的时间线。接入 AI 之前，这里只记录你想说的话。</p>
+      <div class="after-log" id="after-log"></div>
+      <div class="after-form">
+        <input id="after-input" placeholder="想对她说什么…" autocomplete="off">
+        <button id="after-send">发送</button>
+      </div>
+      <div class="modal-actions"><button class="ghost-btn" data-go="close">关闭</button></div>
+    </div>
+  </div>
+
 <div class="lightbox" id="lightbox" hidden><img id="lightbox-img" src="assets/icon/icon.webp" alt="图片预览"></div>
 
 <audio id="au-bgm" loop preload="none"></audio>

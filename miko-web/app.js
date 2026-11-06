@@ -37,7 +37,13 @@
     skipAll: false,
     busy: false,
     gen: 0,
-    restored: false
+    restored: false,
+    typing: false,
+    typingSkip: false,
+    lastOnline: 0,      // 0 = 在线；否则为她最后下线的时间戳
+    likes: {},
+    comments: {},
+    after: []
   };
 
   /* ---------------- 存档 ---------------- */
@@ -51,6 +57,9 @@
         unlock: st.unlock,
         done: st.done,
         revealed: st.revealed,
+        likes: st.likes,
+        comments: st.comments,
+        after: st.after,
         settings: st.settings,
         ts: Date.now()
       };
@@ -66,6 +75,9 @@
       if (d.unlock) st.unlock = { dict: d.unlock.dict || {}, gal: d.unlock.gal || {}, dyn: d.unlock.dyn || {} };
       if (d.done) st.done = d.done || {};
       if (d.revealed) st.revealed = d.revealed || {};
+      if (d.likes) st.likes = d.likes;
+      if (d.comments) st.comments = d.comments;
+      if (d.after) st.after = d.after;
       if (d.settings) {
         var npc = d.settings.npc || {};
         Object.assign(st.settings, d.settings);
@@ -269,8 +281,9 @@
       }
     }
 
-    $('#chat-title').textContent = id;
-    $('#chat-sub').textContent = dayLabel(ch, st.cur) || '';
+    $('#chat-title').textContent = chatWho(ch);
+    st.typing = false;
+    updateChatStatus();
     $('#msg-list').innerHTML = '';
     $('#choices').hidden = true;
     $('#choices').innerHTML = '';
@@ -280,6 +293,116 @@
     st.paused = false;
     st.skipAll = false;
     tick();
+  }
+
+  /* ---------------- 聊天头部：对方名字 + 在线状态 ---------------- */
+  function chapterDays(ch) {
+    var days = [];
+    if (!ch) return days;
+    (ch.rows || []).forEach(function (r) {
+      if (r.tags && r.tags.indexOf('无') >= 0) days.push({ label: r.day || r.text || '天', idx: r.i });
+    });
+    return days;
+  }
+
+  function refreshDayEntry() {
+    var ch = chapter(st.chapterId);
+    var days = chapterDays(ch);
+    var sub = $('#jumpday-sub');
+    var list = $('#day-list');
+    var btn = $('#btn-jumpday');
+    if (list) list.hidden = true;
+    if (!days.length) {
+      if (sub) sub.textContent = '本章没有分天';
+      if (btn) btn.classList.add('off');
+      return;
+    }
+    if (btn) btn.classList.remove('off');
+    if (sub) sub.textContent = '共 ' + days.length + ' 天，点这里选';
+  }
+
+  function chatWho(ch) {
+    if (!ch) return '对方';
+    var cnt = {}, best = '', n = -1;
+    (ch.rows || []).forEach(function (r) {
+      var w = r.who || '';
+      if (!w || w === '我' || w.indexOf('-') >= 0 || w.indexOf('_') >= 0) return;
+      cnt[w] = (cnt[w] || 0) + 1;
+    });
+    Object.keys(cnt).forEach(function (w) { if (cnt[w] > n) { n = cnt[w]; best = w; } });
+    if (!best) return '对方';
+    if (best === 'Miko' && !isRevealed('Miko')) return '未知用户';
+    return best;
+  }
+
+  function relTime(ms) {
+    var m = Math.floor(ms / 60000);
+    if (m < 1) return '刚刚';
+    if (m < 60) return m + ' 分钟前';
+    var h = Math.floor(m / 60);
+    if (h < 24) return h + ' 小时前';
+    var d = Math.floor(h / 24);
+    return d + ' 天前';
+  }
+
+  function updateChatStatus() {
+    var el = $('#chat-sub');
+    if (!el) return;
+    if (st.typing) {
+      el.innerHTML = '<span class="st-typing">对方正在输入</span>' +
+        '<span class="dots"><i></i><i></i><i></i></span>';
+      return;
+    }
+    el.textContent = st.lastOnline ? ('上次在线 ' + relTime(Date.now() - st.lastOnline)) : '在线';
+  }
+
+  setInterval(function () {
+    if (st.lastOnline && $('#view-chat') && $('#view-chat').classList.contains('active')) updateChatStatus();
+  }, 30000);
+
+  /* ---------------- 后日谈（AI 未接入时的本地记事） ---------------- */
+  function renderAfter() {
+    var log = $('#after-log');
+    if (!log) return;
+    if (!st.after.length) {
+      log.innerHTML = '<p class="after-empty">还没有说过话。等接入 AI 之后，这里能接着结局往下聊。</p>';
+      return;
+    }
+    log.innerHTML = st.after.map(function (m) {
+      return '<div class="after-line ' + (m.role === 'me' ? 'me' : 'her') + '">' +
+        '<span>' + esc(m.text) + '</span></div>';
+    }).join('');
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function openAfter() {
+    $('#after-modal').hidden = false;
+    var hint = $('#after-hint');
+    if (hint) {
+      hint.textContent = (typeof window.MIKO_AI === 'function')
+        ? '已接入 AI：她的回复由你配置的接口生成。'
+        : '结局之后的时间线。接入 AI 之前，这里只记录你想说的话（设置 window.MIKO_AI = async (history, text) => "..." 即可接上）。';
+    }
+    renderAfter();
+    setTimeout(function () { var i = $('#after-input'); if (i) i.focus(); }, 60);
+  }
+
+  function sendAfter() {
+    var el = $('#after-input');
+    var text = (el.value || '').trim();
+    if (!text) return;
+    el.value = '';
+    st.after.push({ role: 'me', text: text, t: Date.now() });
+    renderAfter();
+    save();
+    if (typeof window.MIKO_AI === 'function') {
+      Promise.resolve(window.MIKO_AI(st.after.slice(0, -1), text)).then(function (reply) {
+        if (!reply) return;
+        st.after.push({ role: 'her', text: String(reply), t: Date.now() });
+        renderAfter();
+        save();
+      });
+    }
   }
 
   function dayLabel(ch, idx) {
@@ -311,6 +434,11 @@
   function appendRow(row, instant) {
     var list = $('#msg-list');
     var who = row.who || '';
+    if (row.dir === 'center') {
+      var tx = String(row.text || '');
+      if (tx.indexOf('下线') >= 0) { st.lastOnline = Date.now(); updateChatStatus(); }
+      else if (tx.indexOf('上线') >= 0) { st.lastOnline = 0; updateChatStatus(); }
+    }
     var tags = row.tags || [];
     var el;
     if (!String(row.text || '').trim() && !tags.length) return null;
@@ -372,7 +500,6 @@
       el.innerHTML =
         (ra ? '<img class="ava" src="' + esc(ra) + '" alt="">' : '') +
         '<div class="col"><div class="bubble">' + esc(row.text || '') + '</div></div>';
-      if (!ra) el.insertBefore(letterAvatar('我', true), el.firstChild);
     } else {
       var na = avatarFor(who);
       var av = na ? '<img class="ava" data-who="' + esc(who) + '" src="' + esc(na) + '" alt="">'
@@ -511,24 +638,21 @@
 
   function typingHint(row, myGen) {
     return new Promise(function (resolve) {
-      var b = $('#chat-body');
-      var div = document.createElement('div');
-      div.className = 'typing';
-      div.innerHTML = '<span>' + esc(row.who || '对方') + ' 输入中</span><span class="dots"><i></i><i></i><i></i></span>';
-      b.appendChild(div);
-      scrollBottom();
       var ms = row._delay || msgDelay(row);
+      st.typing = true;
+      st.typingSkip = false;
+      updateChatStatus();
       var t0 = Date.now();
       var iv = setInterval(function () {
-        if (myGen !== st.gen) { done(); return; }
+        if (myGen !== st.gen || st.skipAll || st.typingSkip) return done();
         if (Date.now() - t0 >= ms) done();
-      }, 40);
+      }, 60);
       function done() {
         clearInterval(iv);
-        if (div.parentNode) div.parentNode.removeChild(div);
+        st.typing = false;
+        updateChatStatus();
         resolve();
       }
-      div._skip = done;
     });
   }
 
@@ -782,14 +906,27 @@
       '<div class="qz-list"></div>';
 
     var list = box.querySelector('.qz-list');
+    bindFeed(list);
     if (!shown.length) {
       var tip = mine.length ? '还没有解锁的动态，去剧情里看看吧' : '这个人还没有发过动态';
       list.innerHTML = '<p class="qz-empty">' + tip + '</p>';
       return;
     }
+    // 按故事顺序排：第一→六章，番外最后
+    var ORDER = ['第一章', '第二章', '第三章', '第四章', '第五章', '第六章', '番外一', '番外二'];
+    shown.sort(function (a, b) {
+      var ia = ORDER.indexOf(a.chapter), ib = ORDER.indexOf(b.chapter);
+      if (ia < 0) ia = 99;
+      if (ib < 0) ib = 99;
+      if (ia !== ib) return ia - ib;
+      return (a.row || 0) - (b.row || 0);
+    });
     shown.forEach(function (d) {
       var el = document.createElement('div');
       el.className = 'qz-post';
+      var key = d.image || ('x' + d.row);
+      var liked = !!st.likes[key];
+      var cmts = st.comments[key] || [];
       el.innerHTML =
         '<div class="qz-post-head">' +
           '<img src="' + esc(avatarFor(who)) + '" alt="">' +
@@ -798,7 +935,67 @@
         '</div>' +
         '<div class="qz-post-text">' + esc(d.text || '') + '</div>';
       el.appendChild(imageCard(d.image, false));
+      el.insertAdjacentHTML('beforeend',
+        '<div class="qz-actions">' +
+          '<button class="qz-act like' + (liked ? ' on' : '') + '" data-like="' + esc(key) + '">' +
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.6-7-9.3C5 7.9 7 6 9.4 6c1.4 0 2.3.7 2.6 1.4C12.3 6.7 13.2 6 14.6 6 17 6 19 7.9 19 10.7 19 15.4 12 20 12 20z"/></svg>' +
+            '<span>' + (liked ? '已赞' : '赞') + '</span>' +
+          '</button>' +
+          '<button class="qz-act cmt" data-cmt="' + esc(key) + '">' +
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-4 3z"/></svg>' +
+            '<span>评论' + (cmts.length ? ' ' + cmts.length : '') + '</span>' +
+          '</button>' +
+        '</div>' +
+        '<div class="qz-cmts"' + (cmts.length ? '' : ' hidden') + '>' +
+          cmts.map(function (c) {
+            return '<div class="qz-cmt"><b>我</b>' + esc(c.text) + '</div>';
+          }).join('') +
+        '</div>' +
+        '<div class="qz-cmt-box" hidden><input type="text" maxlength="120" placeholder="说点什么…"><button>发送</button></div>');
       list.appendChild(el);
+    });
+  }
+
+  function bindFeed(list) {
+    list.addEventListener('click', function (e) {
+      var lb = e.target.closest('[data-like]');
+      if (lb) {
+        var k = lb.getAttribute('data-like');
+        st.likes[k] = !st.likes[k];
+        lb.classList.toggle('on', !!st.likes[k]);
+        lb.querySelector('span').textContent = st.likes[k] ? '已赞' : '赞';
+        save();
+        return;
+      }
+      var cb = e.target.closest('[data-cmt]');
+      if (cb) {
+        var box = cb.closest('.qz-post').querySelector('.qz-cmt-box');
+        box.hidden = !box.hidden;
+        if (!box.hidden) box.querySelector('input').focus();
+        return;
+      }
+      var send = e.target.closest('.qz-cmt-box button');
+      if (send) {
+        var post = send.closest('.qz-post');
+        var inp = post.querySelector('.qz-cmt-box input');
+        var txt = (inp.value || '').trim();
+        var cm = post.querySelector('[data-cmt]');
+        var key = cm.getAttribute('data-cmt');
+        if (!txt) return;
+        (st.comments[key] = st.comments[key] || []).push({ text: txt, t: Date.now() });
+        inp.value = '';
+        var wrap = post.querySelector('.qz-cmts');
+        wrap.hidden = false;
+        wrap.insertAdjacentHTML('beforeend', '<div class="qz-cmt"><b>我</b>' + esc(txt) + '</div>');
+        cm.querySelector('span').textContent = '评论 ' + st.comments[key].length;
+        save();
+      }
+    });
+    list.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target.matches('.qz-cmt-box input')) {
+        e.preventDefault();
+        e.target.closest('.qz-cmt-box').querySelector('button').click();
+      }
     });
   }
 
@@ -821,25 +1018,61 @@
   }
 
   function renderAvatarPicker() {
-    $$('#view-settings select[data-npc]').forEach(function (sel) {
-      var who = sel.getAttribute('data-npc');
-      sel.innerHTML = '<option value="letter">字母</option>' +
-        avatarOptions().map(function (n) {
-          return '<option value="' + esc(n) + '">' + esc(n) + '</option>';
-        }).join('');
-      sel.value = (st.settings.npc || {})[who] || (NPC_DEFAULT[who] || 'letter');
-      syncNpcPrev(who, sel.value);
-      sel.onchange = function () {
-        st.settings.npc[who] = this.value;
-        syncNpcPrev(who, this.value);
-        save();
-        refreshAvatars(who);
-      };
+    function label(name) {
+      if (!name || name === 'letter') return '字母';
+      if (name === 'Lily') return 'Lily';
+      if (name === '未知用户') return '未知用户';
+      return name;
+    }
+    $$('.npc-pick').forEach(function (btn) {
+      var who = btn.getAttribute('data-npc');
+      var cur = (st.settings.npc || {})[who] || NPC_DEFAULT[who] || 'letter';
+      syncNpcPrev(who, cur);
+      var lab = btn.querySelector('.npc-cur');
+      if (lab) lab.textContent = label(cur);
     });
     renderMyAvatar();
   }
 
+  function openAvaPop(who, btn) {
+    var pop = $('#ava-pop');
+    var cur = (st.settings.npc || {})[who] || NPC_DEFAULT[who] || 'letter';
+    var list = avatarOptions();
+    pop.innerHTML = list.map(function (n) {
+      return '<button class="ava-opt' + (n === cur ? ' on' : '') + '" data-name="' + esc(n) + '">' +
+        '<img src="' + esc(asset('icon/' + n + '.webp')) + '" alt="">' +
+        '<span>' + esc(n.replace('头像', '头像 ')) + '</span></button>';
+    }).join('') +
+      '<button class="ava-opt letter' + (cur === 'letter' ? ' on' : '') + '" data-name="letter"><span class="lt">A</span><span>字母</span></button>';
+    pop.hidden = false;
+    pop.setAttribute('data-who', who);
+    var r = btn.getBoundingClientRect();
+    pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 236)) + 'px';
+    var top = r.bottom + 6;
+    if (top + 300 > window.innerHeight) top = Math.max(8, r.top - Math.min(pop.offsetHeight || 300, 320));
+    pop.style.top = top + 'px';
+    $$('.npc-pick').forEach(function (b) { b.classList.toggle('open', b === btn); });
+    pop.onclick = function (e) {
+      var b = e.target.closest('[data-name]');
+      if (!b) return;
+      e.stopPropagation();
+      var name = b.getAttribute('data-name');
+      var w = pop.getAttribute('data-who');
+      st.settings.npc[w] = name;
+      syncNpcPrev(w, name);
+      var lab = document.querySelector('.npc-pick[data-npc="' + w + '"] .npc-cur');
+      if (lab) lab.textContent = (name === 'letter' ? '字母' : name);
+      save();
+      refreshAvatars(w);
+      closeAvaPop();
+    };
+  }
 
+  function closeAvaPop() {
+    var pop = $('#ava-pop');
+    if (pop) pop.hidden = true;
+    $$('.npc-pick').forEach(function (b) { b.classList.remove('open'); });
+  }
 
   /* ---- 我的形象：QQ 头像 / 本地上传 / 不显示 ---- */
   function myAvatarSrc() {
@@ -1050,7 +1283,16 @@
   function bind() {
     document.addEventListener('click', function (e) {
       var t = e.target.closest('[data-go]');
-      if (t) { go(t.getAttribute('data-go')); return; }
+      if (t) {
+        var dest = t.getAttribute('data-go');
+        if (dest === 'close') {
+          e.preventDefault();
+          $$('.modal, .lightbox').forEach(function (m) { m.hidden = true; });
+          return;
+        }
+        go(dest);
+        return;
+      }
       var v = e.target.closest('[data-voice]');
       if (v) { playVoice(v.getAttribute('data-voice')); return; }
       if (e.target.id === 'lightbox' || e.target.id === 'lightbox-img') {
@@ -1062,31 +1304,69 @@
       e.stopPropagation();
       var s = $('#menu-sheet');
       s.hidden = !s.hidden;
+      if (!s.hidden) refreshDayEntry();
     };
     $('#btn-restart').onclick = function () {
       st.cur = 0; st.ctx = null; $('#msg-list').innerHTML = '';
       $('#menu-sheet').hidden = true;
       save(); tick();
     };
-    $('#btn-auto').onclick = function () {
+    $('#btn-auto').onclick = function (e) {
+      e.stopPropagation();
       st.auto = !st.auto;
       this.classList.toggle('on', st.auto);
-      toast(st.auto ? '自动播放：开' : '自动播放：关');
+      toast(st.auto ? '自动播放：开（自动推进 + 自动选第一个）' : '自动播放：关');
       if (st.auto) tick();
     };
-    $('#btn-skip').onclick = function () {
+    $('#btn-skip').onclick = function (e) {
+      e.stopPropagation();
       st.skipAll = !st.skipAll;
       this.classList.toggle('on', st.skipAll);
+      toast(st.skipAll ? '立即显示：开' : '立即显示：关');
       if (st.skipAll) {
         var w = $('#wait-card');
         if (!w.hidden && w._skip) w._skip();
+        st.typingSkip = true;
         tick();
       }
     };
+    $('#btn-jumpday').onclick = function (e) {
+      e.stopPropagation();
+      var ch = chapter(st.chapterId);
+      if (!ch) return;
+      var days = chapterDays(ch);
+      var list = $('#day-list');
+      if (!days.length) { toast('本章没有分天'); return; }
+      list.innerHTML = days.map(function (d) {
+        return '<button data-jump="' + d.idx + '">' + esc(d.label) + '</button>';
+      }).join('');
+      list.hidden = !list.hidden;
+      $('#jumpday-sub').textContent = list.hidden ? days.length + ' 天可选' : '选择要跳到的天';
+    };
+    $('#day-list').onclick = function (e) {
+      var b = e.target.closest('[data-jump]');
+      if (!b) return;
+      e.stopPropagation();
+      var idx = Number(b.getAttribute('data-jump'));
+      st.gen++;
+      st.busy = false;
+      st.cur = idx;
+      st.ctx = null;
+      st.typingSkip = true;
+      $('#msg-list').innerHTML = '';
+      $('#day-list').hidden = true;
+      $('#menu-sheet').hidden = true;
+      save();
+      tick();
+    };
+    $('#btn-after').onclick = function (e) {
+      e.stopPropagation();
+      $('#menu-sheet').hidden = true;
+      openAfter();
+    };
     $('#chat-body').addEventListener('click', function (e) {
       if (e.target.closest('button') || e.target.closest('.img-card')) return;
-      var t = $('.typing');
-      if (t && t._skip) t._skip();
+      st.typingSkip = true;
     });
     $('#wait-skip').onclick = function () {
       var w = $('#wait-card');
@@ -1096,6 +1376,32 @@
       var s = $('#menu-sheet');
       if (!s.hidden && !e.target.closest('#menu-sheet') && !e.target.closest('#btn-menu')) s.hidden = true;
     });
+    // 角色头像：点按钮弹出竖排头像列
+    $$('.npc-pick').forEach(function (btn) {
+      btn.onclick = function (e) {
+        e.stopPropagation();
+        var pop = $('#ava-pop');
+        if (!pop.hidden && pop.getAttribute('data-who') === btn.getAttribute('data-npc')) {
+          closeAvaPop();
+          return;
+        }
+        openAvaPop(btn.getAttribute('data-npc'), btn);
+      };
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#ava-pop') && !e.target.closest('.npc-pick')) closeAvaPop();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { closeAvaPop(); $('#after-modal').hidden = true; }
+    });
+
+    // 后日谈
+    $('#after-send').onclick = function (e) { e.stopPropagation(); sendAfter(); };
+    $('#after-input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); sendAfter(); }
+    });
+    var ac = $('#after-close');
+    if (ac) ac.onclick = function () { $('#after-modal').hidden = true; };
 
     window.addEventListener('hashchange', route);
     window.addEventListener('beforeunload', save);
