@@ -52,6 +52,10 @@ a:hover{text-decoration:underline}
   padding:calc(26px + env(safe-area-inset-top,0px)) 20px calc(20px + var(--safe-b));
   display:flex;flex-direction:column;align-items:center;
 }
+.logo-sub-text{
+  margin-top:6px;font-size:12px;letter-spacing:.34em;color:#7ec8ff;opacity:.85;
+  text-shadow:0 0 12px rgba(80,170,255,.55);
+}
 .logo{width:230px;margin-top:6px}
 .logo-sub{width:150px;margin-top:8px;opacity:.95}
 .tagline{margin:12px 0 20px;color:var(--dim);font-size:12.5px;letter-spacing:.4px}
