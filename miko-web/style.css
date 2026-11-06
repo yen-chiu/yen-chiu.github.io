@@ -210,7 +210,8 @@ a:hover{text-decoration:underline}
 .foot-hint{margin-left:auto;font-size:11.5px;color:#6b6880}
 
 .menu-sheet{
-  position:absolute;right:10px;top:56px;z-index:20;width:150px;padding:6px;
+  position:absolute;right:10px;top:56px;z-index:20;width:212px;padding:6px;
+  max-height:calc(100% - 70px);overflow-y:auto;
   border-radius:14px;background:#20202c;border:1px solid var(--line);
   box-shadow:0 18px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;
 }
@@ -433,3 +434,129 @@ select{
 .npc-prev.empty{
   color:#6b6880;font-size:12.5px;display:flex;align-items:center;justify-content:center;
 }
+
+
+/* ---------- 角色头像：点箭头弹出竖排头像列 ---------- */
+.npc-row{display:flex;flex-direction:column;gap:8px}
+.npc-pick{
+  display:flex;align-items:center;gap:10px;width:100%;
+  padding:6px 10px 6px 6px;border-radius:12px;
+  background:#12121c;border:1px solid var(--line);color:#e6e2f3;
+  font-size:13.5px;font-family:inherit;text-align:left;
+}
+.npc-pick:hover{background:#171722}
+.npc-pick.open{border-color:#6a5ba6;background:#171722}
+.npc-pick .npc-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.npc-pick .npc-cur{color:#8f8aa8;font-size:12.5px}
+.npc-pick .chev{
+  width:0;height:0;border-left:4.5px solid transparent;border-right:4.5px solid transparent;
+  border-top:5.5px solid #7c7893;margin-left:2px;transition:transform .16s;
+}
+.npc-pick.open .chev{transform:rotate(180deg)}
+.ava-pop{
+  position:fixed;z-index:70;width:186px;max-height:330px;overflow-y:auto;
+  background:#14141f;border:1px solid rgba(255,255,255,.12);border-radius:14px;
+  box-shadow:0 18px 50px rgba(0,0,0,.55);padding:6px;
+  display:flex;flex-direction:column;gap:3px;
+}
+.ava-opt{
+  display:flex;flex-direction:row;align-items:center;gap:10px;
+  padding:5px 8px;border-radius:10px;background:transparent;border:1px solid transparent;
+  color:#b9b4cc;font-size:12.5px;font-family:inherit;text-align:left;
+}
+.ava-opt:hover{background:#1d1d2a}
+.ava-opt.on{border-color:#6a5ba6;background:#1b1b2a}
+.ava-opt img{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#0e0e16}
+.ava-opt .lt{
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:#1b1b28;border:1px dashed rgba(255,255,255,.2);font-size:14px;color:#8f8aa8;
+}
+
+/* ---------- 抽屉菜单（自动 / 跳过 / 跳到某天 收进这里） ---------- */
+.menu-item{
+  display:flex;flex-direction:column;gap:2px;width:100%;
+  padding:11px 14px;border-radius:12px;background:transparent;border:0;
+  color:#ddd9ee;font-size:14px;font-family:inherit;text-align:left;
+}
+.menu-item:hover{background:#191926}
+.menu-item .mi-sub,.menu-item em{font-style:normal;font-size:11.5px;color:#7c7893;margin-top:3px}
+.menu-item.on{background:#1e1b33;color:#cbb8ff}
+.day-list{display:flex;flex-wrap:wrap;gap:6px;padding:2px 14px 10px}
+.day-list button{
+  padding:6px 12px;border-radius:999px;background:#191926;border:1px solid var(--line);
+  color:#cfcbe0;font-size:12.5px;font-family:inherit;
+}
+.day-list button:hover{background:#232333}
+
+/* ---------- 聊天头部：在线状态 ---------- */
+#chat-sub .st-typing{color:#a99cf0}
+#chat-sub .dots i{background:#a99cf0}
+
+/* ---------- 差别表：折叠 ---------- */
+.diff-wrap{border-radius:12px;border:1px solid var(--line);background:#101019;padding:0}
+.diff-wrap summary{
+  list-style:none;cursor:pointer;padding:12px 14px;font-size:13.5px;color:#cfcbe0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.diff-wrap summary::-webkit-details-marker{display:none}
+.diff-wrap summary::after{content:'▾';color:#7c7893;transition:transform .16s}
+.diff-wrap[open] summary::after{transform:rotate(180deg)}
+.diff-wrap table.diff{margin:0}
+
+/* ---------- 动态：点赞 / 评论 ---------- */
+.qz-actions{display:flex;gap:16px;padding:9px 0 2px}
+.qz-act{
+  display:flex;align-items:center;gap:6px;background:transparent;border:0;padding:0;
+  color:#8b87a4;font-size:12.5px;font-family:inherit;
+}
+.qz-act svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+.qz-act:hover{color:#cfcbe0}
+.qz-act.on{color:#ff6b8b}
+.qz-act.on svg{fill:#ff6b8b;stroke:#ff6b8b}
+.qz-cmts{padding:2px 0 4px}
+.qz-cmt{
+  font-size:12.5px;color:#cfcbe0;background:#15151f;border-radius:8px;
+  padding:6px 9px;margin-top:6px;line-height:1.5;
+}
+.qz-cmt b{color:#8f8aa8;font-weight:600;margin-right:6px}
+.qz-cmt-box{display:flex;gap:8px;margin-top:8px}
+.qz-cmt-box input{
+  flex:1;min-width:0;background:#141420;border:1px solid var(--line);border-radius:9px;
+  color:#e6e2f3;font-size:13px;padding:7px 10px;outline:none;font-family:inherit;
+}
+.qz-cmt-box button{
+  padding:0 14px;border-radius:9px;background:#2a2350;border:1px solid #4b3f86;
+  color:#d6c9ff;font-size:12.5px;font-family:inherit;
+}
+
+/* ---------- 后日谈 ---------- */
+.after-card{
+  width:100%;max-width:460px;background:#1b1b26;border:1px solid var(--line);
+  border-radius:18px;padding:18px 18px 14px;display:flex;flex-direction:column;gap:6px;
+}
+.after-card h3{margin:0;font-size:16px;color:#e8e4f7}
+.after-card .modal-actions{display:flex;justify-content:flex-end;margin-top:8px}
+.after-hint{font-size:12.5px;color:#8b87a4;line-height:1.6;margin:2px 0 10px}
+.after-log{
+  max-height:44vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;
+  padding:4px 2px 8px;
+}
+.after-line{max-width:86%;padding:8px 12px;border-radius:12px;font-size:13.5px;line-height:1.6}
+.after-line.me{align-self:flex-end;background:#3a2f6e;color:#efeaff}
+.after-line.her{align-self:flex-start;background:#1c1c29;color:#ddd9ee}
+.after-empty{font-size:12.5px;color:#6f6b86;text-align:center;padding:16px 0}
+.after-form{display:flex;gap:8px;margin-top:6px}
+.after-form input{
+  flex:1;min-width:0;background:#141420;border:1px solid var(--line);border-radius:10px;
+  color:#e6e2f3;font-size:13.5px;padding:9px 12px;outline:none;font-family:inherit;
+}
+.after-form button{
+  padding:0 16px;border-radius:10px;background:#2a2350;border:1px solid #4b3f86;
+  color:#d6c9ff;font-size:13px;font-family:inherit;
+}
+@media (max-width:560px){
+  .ava-pop{width:176px}
+  .npc-pick{font-size:13px}
+}
+
+.menu-item.off{opacity:.45}
