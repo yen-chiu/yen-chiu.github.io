@@ -377,8 +377,10 @@
       var pr = chapterProgress(c);
       if (ex) {
         return '<button class="chapter-card cc-extra" data-cid="' + esc(c.id) + '">' +
+          '<img class="cc-thumb" src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="" loading="lazy">' +
           '<span class="cc-branch">└</span>' +
-          '<div class="cc-body"><div class="cc-name">番外 · ' + esc(ex.title) + '</div>' +
+          '<div class="cc-body"><div class="cc-name">' + esc(ex.parent || '') + '番外' +
+          '<span class="cc-sub">' + esc(ex.title) + '</span></div>' +
           '<div class="cc-meta">' + (pr.label ? pr.label : (n ? n + ' 行对话' : '')) + '</div>' +
           '</div>' +
           (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
