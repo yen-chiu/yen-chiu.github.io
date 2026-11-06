@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title | strip_html | strip }} · {{ site.data.journal.title }}</title>
+  <meta name="description" content="{{ page.abstract | strip_html | strip | truncate: 160 }}">
+  <meta name="author" content="{{ page.authors }}">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ page.title | strip_html | strip }}">
+  <meta property="og:description" content="{{ page.abstract | strip_html | strip | truncate: 160 }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  {% if page.pdf %}
+  <link rel="alternate" type="application/pdf" href="{{ site.data.journal.docs_base }}/{{ page.pdf }}">
+  {% endif %}
+  <link rel="stylesheet" href="{{ '/assets/css/journal.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+</head>
+<body class="yb-paper-body">
+
+  <div class="yb-topbar">
+    <a href="{{ '/journal/' | relative_url }}">&larr; {{ site.data.journal.title }}</a>
+    <nav>
+      <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      {% if page.pdf %}
+      <a class="yb-pdf-btn" href="{{ site.data.journal.docs_base }}/{{ page.pdf }}">PDF</a>
+      {% endif %}
+    </nav>
+  </div>
+
+  <article class="yb-sheet">
+    {{ content }}
+  </article>
+
+  <aside class="yb-cite">
+    <h2>引用格式</h2>
+    <code>{{ page.authors }}. {{ page.title | strip_html | strip }}. {{ site.data.journal.title }}, {{ page.year }}, {{ page.volume }}({{ page.issue }}): {{ page.pages }}.</code>
+    <details>
+      <summary>BibTeX</summary>
+      <code>@article{yubai-{{ page.year }}-{{ page.issue_key }},
+  title   = { {{ page.title | strip_html | strip }} },
+  author  = { {{ page.authors }} },
+  journal = { {{ site.data.journal.title }} },
+  volume  = { {{ page.volume }} },
+  number  = { {{ page.issue }} },
+  pages   = { {{ page.pages }} },
+  year    = { {{ page.year }} },
+  note    = { {{ site.data.journal.license }} }
+}</code>
+    </details>
+  </aside>
+
+</body>
+</html>

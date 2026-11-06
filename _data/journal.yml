@@ -1,0 +1,36 @@
+# 《余白》Margin —— 刊名、卷期、许可等信息的唯一改动点。
+# 改名 / 改卷期只需要动这个文件（文章页的刊头用 Liquid 从档案里读）。
+
+name_zh: 余白
+name_en: Margin
+title: 《余白》Margin # 页面与刊头显示的全称
+short: 余白 # 侧栏、面包屑用的短名
+
+volume: 1
+issue: 1
+year: 2026
+
+issn: "" # 暂无；留空即不渲染。不要写"申请中"。
+license: CC BY 4.0
+license_url: https://creativecommons.org/licenses/by/4.0/
+publisher: Wendell · 独立研究者
+contact: yenchiu.he@gmail.com
+
+tagline: 一份关于「机器如何看」的自出版学术期刊。
+description: >-
+  《余白》是一份独立出版的中文学术期刊，关注多模态模型、视觉表征与语言模型之间的接口问题。
+  开放获取，按卷期出版，文章附 A4 版 PDF。
+
+# 文档（PDF、补充材料等）统一存放在子站「研究文库」WendellManual 的文件库里，
+# 不随博客仓库走：仓库只留排版与页面的源码，大文件归文档库。
+# 文章 front matter 里的 pdf 填相对路径，链接由这里拼接。
+docs_base: https://yenchiu.com/WendellManual/assets/files
+docs_repo: https://github.com/yen-chiu/WendellManual
+
+# 关于本刊的说明（期刊首页「关于本刊」一节直接渲染这几条）
+statement:
+  - 本刊为个人自出版，非商业运营，暂未申请 ISSN。
+  - 全部文章开放获取，按 CC BY 4.0 许可发布，允许在署名前提下转载与再使用。
+  - 稿件由作者自校，暂未实行外部同行评审；每篇文章标注收稿与接受日期，便于读者判断时效。
+  - 排版依 Springer LNCS 顺序编码制，图件为矢量重绘，数据图注明计算依据。
+  - 排版模板与文章源文件存放于本站仓库，欢迎复用与报错。

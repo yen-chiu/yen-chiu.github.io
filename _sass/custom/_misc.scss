@@ -36,11 +36,19 @@
 
 /* ---------- 页脚 ---------- */
 
-footer {
+/*
+  两行式：上行「版权 + 站点信息」，下行「站内链接 + 运行时长」。
+  每段整块不折行（中文避免逐字断开），窄屏时两行各自竖排。
+*/
+footer.wx-foot {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
   margin-top: 2.5rem;
   padding-top: 1.25rem;
   border-top: 1px solid var(--main-border-color);
+  color: var(--text-muted-color);
 
   &::before {
     position: absolute;
@@ -61,26 +69,45 @@ footer {
     }
   }
 
-  .wx-uptime {
-    display: inline-flex;
+  .wx-foot-row {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.45rem;
-    margin: 0.5rem 0 0;
-    color: var(--text-muted-color);
-    font-size: 0.82rem;
-    letter-spacing: 0.02em;
+    justify-content: space-between;
+    column-gap: 1.5rem;
+    row-gap: 0.25rem;
+
+    > p {
+      min-width: 0;
+      margin: 0;
+      white-space: nowrap;
+    }
   }
 
   .wx-foot-links {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.45rem;
-    margin: 0.5rem 0 0;
+    gap: 0.3rem 0.5rem;
     font-size: 0.8rem;
+
+    a,
+    button {
+      white-space: nowrap;
+    }
 
     span {
       opacity: 0.45;
     }
+  }
+
+  .wx-uptime {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
   }
 
   /* 「刷新缓存」：看起来像页脚链接，但实际是个按钮 */
@@ -114,6 +141,15 @@ footer {
     background: #22c55e;
     box-shadow: 0 0 0 0 rgb(34 197 94 / 60%);
     animation: wx-pulse-dot 2.4s ease-out infinite;
+  }
+
+  /* 窄屏：两行各自竖排，左对齐 */
+  @media (max-width: 575px) {
+    .wx-foot-row {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
   }
 }
 
@@ -229,5 +265,25 @@ html[data-mode='dark'] {
 
   #main-wrapper::before {
     display: none !important;
+  }
+}
+
+/* ==========================================================================
+   期刊 tab 图标：iconfont 里没有书本字形，这里用内联 SVG 蒙版补一个同尺寸图标。
+   颜色随文字（currentColor），视觉宽度与 iconfont 图标一致（1em），
+   因此不会破坏侧栏的文字左对齐，hover / active 的缩放与着色动画照常生效。
+   ========================================================================== */
+.iconfont.icon-journal {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  font-size: 1rem;
+  vertical-align: -0.145em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6.6C10.4 5.4 8.5 4.9 5.8 4.9H3.4v13.2h2.4c2.7 0 4.6.5 6.2 1.7 1.6-1.2 3.5-1.7 6.2-1.7h2.4V4.9h-2.4c-2.7 0-4.6.5-6.2 1.7Z'/%3E%3Cpath d='M12 6.6v13.2'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6.6C10.4 5.4 8.5 4.9 5.8 4.9H3.4v13.2h2.4c2.7 0 4.6.5 6.2 1.7 1.6-1.2 3.5-1.7 6.2-1.7h2.4V4.9h-2.4c-2.7 0-4.6.5-6.2 1.7Z'/%3E%3Cpath d='M12 6.6v13.2'/%3E%3C/svg%3E") center / contain no-repeat;
+
+  &::before {
+    content: none;
   }
 }
