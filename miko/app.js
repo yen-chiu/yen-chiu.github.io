@@ -8,7 +8,11 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  var SPEED = { slow: 95, normal: 55, fast: 25 };   // 每字毫秒（比上一版慢，接近原作的等待感）
+  // 打字时长：按字数 + 标点停顿 + 少量随机起伏，模拟真人敲字，而不是「字数 × 固定值」
+  var SPEED = { slow: 170, normal: 110, fast: 65 };         // 每字基准毫秒（慢≈6字/秒，中≈9，快≈15）
+  var SPEED_CAP = { slow: 8000, normal: 5500, fast: 3000 }; // 单条上限（长段不再线性膨胀）
+  var PUNCT_HEAVY = '。！？!?';
+  var PUNCT_LIGHT = '，、；：,;:';
   var SAVE_KEY = 'miko.web.save.v1';
   var AVATARS = ['头像1', '头像2', '头像3', '头像4', '头像5', '头像6', '头像7', '头像8'];
 
@@ -469,6 +473,22 @@
     return st.auto ? Math.max(1100, base) : base;
   }
 
+  // 一条消息「对方输入中」的时长：起手 0.2–0.6s，每字 0.85–1.15 倍基准，标点另加停顿
+  function typingMs(row) {
+    var text = String(row.text || '');
+    var per = SPEED[st.settings.speed] || SPEED.normal;
+    var ms = 200 + Math.random() * 400;
+    for (var i = 0; i < text.length; i++) {
+      var c = text.charAt(i);
+      ms += per * (0.85 + Math.random() * 0.30);
+      if (PUNCT_HEAVY.indexOf(c) >= 0) ms += per * 2.4;
+      else if (PUNCT_LIGHT.indexOf(c) >= 0) ms += per * 1.1;
+      else if (c === '…') ms += per * 0.9;
+    }
+    var cap = SPEED_CAP[st.settings.speed] || SPEED_CAP.normal;
+    return Math.max(450, Math.min(cap, ms));
+  }
+
   function typingHint(row, myGen) {
     return new Promise(function (resolve) {
       var b = $('#chat-body');
@@ -477,8 +497,7 @@
       div.innerHTML = '<span>' + esc(row.who || '对方') + ' 输入中</span><span class="dots"><i></i><i></i><i></i></span>';
       b.appendChild(div);
       scrollBottom();
-      var per = SPEED[st.settings.speed] || 24;
-      var ms = Math.max(260, Math.min(3200, (row.text || '').length * per));
+      var ms = typingMs(row);
       var t0 = Date.now();
       var iv = setInterval(function () {
         if (myGen !== st.gen) { done(); return; }
