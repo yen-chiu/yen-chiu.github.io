@@ -30,7 +30,7 @@
     named: {},          // 已知名字（第二态：黑色字母头像）
     avaUp: {},          // 已上传头像（第三态：人物立绘）
     settings: {
-      speed: 'normal', wait: 1, bgm: false, sfx: true, autoUnlock: false,
+      speed: 'normal', wait: 1, bgm: false, bgmTrack: 'new', sfx: true, autoUnlock: false,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
       revealLock: true,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
@@ -110,6 +110,7 @@
       if (d.comments) st.comments = d.comments;
       if (d.after) st.after = d.after;
       if (d.settings) {
+        if (!d.settings.bgmTrack) d.settings.bgmTrack = 'new';
         var npc = d.settings.npc || {};
         Object.assign(st.settings, d.settings);
         st.settings.npc = Object.assign({ 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }, npc);
@@ -1604,6 +1605,8 @@
     $('#set-speed').value = st.settings.speed;
     $('#set-wait').value = String(st.settings.wait);
     $('#set-bgm').checked = !!st.settings.bgm;
+    if ($('#set-bgm-track')) $('#set-bgm-track').value = st.settings.bgmTrack || 'new';
+    syncNpcBlock();
     $('#set-sfx').checked = !!st.settings.sfx;
     $('#set-auto-unlock').checked = !!st.settings.autoUnlock;
     $('#set-reveal-lock').checked = st.settings.revealLock !== false;
@@ -1619,10 +1622,14 @@
     $('#set-bgm').onchange = function () {
       st.settings.bgm = this.checked; save(); applyBgm();
     };
+    if ($('#set-bgm-track')) $('#set-bgm-track').onchange = function () {
+      st.settings.bgmTrack = this.value; save(); applyBgm();
+    };
     $('#set-sfx').onchange = function () { st.settings.sfx = this.checked; save(); };
     $('#set-reveal-lock').onchange = function () {
       st.settings.revealLock = this.checked;
       save();
+      syncNpcBlock();
       $$('.ava[data-who]').forEach(function (el) { refreshAvatars(el.getAttribute('data-who')); });
     };
     $('#set-auto-unlock').onchange = function () {
@@ -1672,12 +1679,31 @@
   }
 
   /* ---------------- 音频 ---------------- */
+  function bgmFile() {
+    return st.settings.bgmTrack === 'old' ? 'music/oldBgm.ogg' : 'music/bgm.ogg';
+  }
+
+
+  // 「头像随剧情解锁」开着时，角色头像由剧情决定，把手动选择收起来
+  function syncNpcBlock() {
+    var block = $('#npc-block');
+    var hint = $('#npc-hint');
+    if (!block) return;
+    var locked = st.settings.revealLock !== false;
+    block.hidden = locked;
+    if (hint) hint.hidden = !locked;
+  }
+
   function applyBgm() {
     var a = $('#au-bgm');
+    var want = asset(bgmFile());
+    if (a.getAttribute('data-src') !== want) {
+      a.src = want;
+      a.setAttribute('data-src', want);
+    }
     if (st.settings.bgm) {
-      if (!a.src) a.src = asset('music/bgm.ogg');
-      a.volume = 0.35;
-      a.play().catch(function () { /* 需用户交互 */ });
+      a.volume = st.settings.bgmTrack === 'old' ? 0.3 : 0.35;
+      a.play().catch(function () { /* 需用户交互后才允许播放 */ });
     } else {
       a.pause();
     }
