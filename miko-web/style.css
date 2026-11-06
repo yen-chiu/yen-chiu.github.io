@@ -126,6 +126,15 @@ a:hover{text-decoration:underline}
 
 .msg{display:flex;gap:8px;align-items:flex-end;max-width:100%;animation:pop .22s ease}
 @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ava-txt{
+  display:flex;align-items:center;justify-content:center;flex:none;
+  width:34px;height:34px;border-radius:50%;
+  background:#101018;border:1px solid rgba(255,255,255,.10);
+  color:#e9e6f5;font-size:14px;font-weight:600;letter-spacing:0;line-height:1;
+  text-transform:uppercase;user-select:none;
+}
+.ava-txt.me{background:#101018}
+.msg .ava-txt{margin-top:0}
 .msg .ava{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none;background:#2a2a3a}
 .msg .col{max-width:calc(100% - 46px);display:flex;flex-direction:column;gap:3px}
 .msg .name{font-size:11px;color:var(--dim);padding-left:4px}
