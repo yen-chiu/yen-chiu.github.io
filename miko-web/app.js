@@ -30,7 +30,7 @@
     named: {},          // 已知名字（第二态：黑色字母头像）
     avaUp: {},          // 已上传头像（第三态：人物立绘）
     settings: {
-      speed: 'normal', wait: 60, bgm: false, sfx: true, autoUnlock: false,
+      speed: 'normal', wait: 1, bgm: false, sfx: true, autoUnlock: false,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
       revealLock: true,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
@@ -920,9 +920,15 @@
         if (myGen !== st.gen) { stop(); return; }
         var left = end - Date.now();
         if (left <= 0) { stop(); return; }
-        txt.textContent = '对方暂时不在 · 还剩 ' + Math.ceil(left / 1000) + ' 秒';
+        var sec = Math.ceil(left / 1000);
+        var show = sec >= 60
+          ? Math.floor(sec / 60) + ' 分 ' + String(sec % 60) + ' 秒'
+          : sec + ' 秒';
+        txt.textContent = '对方暂时不在 · 还剩 ' + show;
       }, 200);
-      txt.textContent = '对方暂时不在 · 还需等待 ' + minutes + ' 分钟';
+      txt.textContent = minutes >= 60
+        ? '对方暂时不在 · 还需等待 ' + Math.floor(minutes / 60) + ' 小时 ' + (minutes % 60 ? (minutes % 60) + ' 分' : '')
+        : '对方暂时不在 · 还需等待 ' + minutes + ' 分钟';
       function stop() {
         clearInterval(iv);
         card.hidden = true;
