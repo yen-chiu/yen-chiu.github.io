@@ -319,6 +319,46 @@
 
   /* ---------------- 章节切换：封面 + 提示 ---------------- */
   function pickChapter(id) {
+    openIntro(id);
+  }
+
+  /* 章节预览卡：大图 + 钩子（原文）+ 一起进入 */
+  function openIntro(id) {
+    var box = $('#intro');
+    if (!box) { enterChapter(id); return; }
+    var ch = chapter(id);
+    var info = ((st.meta && st.meta.intro) || {})[id] || {};
+    var pr = chapterProgress(ch || { id: id, rows: [] });
+    var img = $('#intro-img');
+    if (img) { img.src = asset('chapter/' + id + '.webp'); img.alt = id; }
+    $('#intro-title').textContent = id;
+    var tag = $('#intro-tag');
+    if (tag) { tag.textContent = info.tag || ''; tag.hidden = !info.tag; }
+    var hook = $('#intro-hook');
+    var lines = (info.hook || []).slice(0, 3);
+    hook.innerHTML = lines.map(function (t, i) {
+      return i === 0 ? '<b>' + esc(t) + '</b>' : esc(t);
+    }).join('\n');
+    var days = chapterDays(ch).length;
+    $('#intro-meta').textContent =
+      (days ? days + ' 天 · ' : '') + ((ch && ch.rows ? ch.rows.length : 0) + ' 行对话') +
+      (pr.pct ? ' · ' + pr.label : '');
+    // 还不知道她是谁的时候（第一章开头），别在按钮上剧透名字
+    var known = isRevealed('Miko') || id === '番外一' || id === '番外二';
+    var goBtn = $('#intro-go');
+    goBtn.textContent = known ? '与 Miko 一起进入这段冒险' : '进入这段冒险';
+    box.hidden = false;
+    goBtn.onclick = function () { closeIntro(); enterChapter(id); };
+    $('#intro-back').onclick = function () { closeIntro(); };
+    box.onclick = function (e) { if (e.target === box) closeIntro(); };
+  }
+
+  function closeIntro() {
+    var b = $('#intro');
+    if (b) b.hidden = true;
+  }
+
+  function enterChapter(id) {
     var cur = st.chapterId ? orderOf(st.chapterId) : -1;
     var target = orderOf(id);
     if (cur >= 0 && target !== cur) {
