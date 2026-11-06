@@ -45,6 +45,8 @@
     comments: {},
     after: [],
     logOpen: {},
+    progress: {},       // 每章读到的最远行号
+    marks: {},          // 每章的书签 {cur, ctx}
     profileWho: 'Miko'
   };
 
@@ -52,6 +54,14 @@
   function save() {
     if (st.importing) return;   // 导入后正在重载，别让 beforeunload 把旧进度写回去
     try {
+      if (st.chapterId) {
+        var prev = st.progress[st.chapterId] || 0;
+        st.progress[st.chapterId] = Math.max(prev, st.cur);
+        st.marks[st.chapterId] = {
+          cur: st.cur,
+          ctx: st.ctx ? { labels: Array.from(st.ctx.labels), resume: st.ctx.resume, target: st.ctx.target } : null
+        };
+      }
       var data = {
         chapterId: st.chapterId,
         cur: st.cur,
@@ -62,6 +72,8 @@
         likes: st.likes,
         comments: st.comments,
         after: st.after,
+        progress: st.progress,
+        marks: st.marks,
         settings: st.settings,
         ts: Date.now()
       };
@@ -87,6 +99,8 @@
       }
       return d;
     } catch (e) { return null; }
+      if (d.progress) st.progress = d.progress;
+      if (d.marks) st.marks = d.marks;
   }
 
   function chapter(id) {
@@ -207,7 +221,10 @@
   }
 
   /* ---------------- 路由 ---------------- */
-  function go(route) { location.hash = '#/' + route; }
+  function go(route) {
+    st.autoHome = String(route).indexOf('home') === 0;   // 用户主动回章节列表
+    location.hash = '#/' + route;
+  }
 
   function route() {
     var h = (location.hash || '#/').replace(/^#\/?/, '');
@@ -217,7 +234,14 @@
 
     if (name === 'chat' && parts[1]) {
       $('#view-chat').classList.add('active');
-      startChapter(decodeURIComponent(parts[1]));
+      var cid = decodeURIComponent(parts[1]);
+      st.autoHome = false;
+      if (st.coverFor !== cid) {
+        st.coverFor = cid;
+        startChapter(cid, true);
+        return;
+      }
+      startChapter(cid, false);
       return;
     }
     if (name === 'dict') { $('#view-dict').classList.add('active'); renderDict(); return; }
@@ -229,24 +253,52 @@
     }
     if (name === 'settings') { $('#view-settings').classList.add('active'); syncSettings(); return; }
 
+    if (st.booted && (h === '' || h === '/') && !st.autoHome) {
+      // 直接进最近一章（默认第一章），不先停在章节列表
+      var first = st.chapterId || (orderedChapters()[0] || {}).id;
+      if (first) { go('chat/' + encodeURIComponent(first)); return; }
+    }
     $('#view-home').classList.add('active');
     renderHome();
   }
 
   /* ---------------- 首页 ---------------- */
+  function orderOf(id) {
+    var k = STORY_ORDER.indexOf(id);
+    return k < 0 ? 99 : k;
+  }
+
+  function orderedChapters() {
+    return st.story.chapters.slice().sort(function (a, b) {
+      return orderOf(a.id) - orderOf(b.id);
+    });
+  }
+
+  function chapterProgress(c) {
+    var p = (st.progress || {})[c.id];
+    if (st.done[c.id]) return { pct: 100, label: '已读完' };
+    if (!p && !(p === 0)) return { pct: 0, label: '' };
+    var n = (c.rows || []).length || 1;
+    var pct = Math.min(99, Math.round(p / n * 100));
+    return { pct: pct, label: '进度 ' + pct + '%' };
+  }
+
   function renderHome() {
     var grid = $('#chapter-grid');
     grid.innerHTML = '';
-    st.story.chapters.forEach(function (c) {
+    orderedChapters().forEach(function (c) {
       var n = (c.rows || []).length;
+      var pr = chapterProgress(c);
       var b = document.createElement('button');
       b.className = 'chapter-card';
       b.innerHTML =
         '<img src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="' + esc(c.id) + '" loading="lazy">' +
         '<div class="cc-body"><div class="cc-name">' + esc(c.id) + '</div>' +
-        '<div class="cc-meta">' + (n ? n + ' 行对话' : '') + '</div></div>' +
+        '<div class="cc-meta">' + (pr.label ? pr.label : (n ? n + ' 行对话' : '')) + '</div>' +
+        (pr.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr.pct + '%"></i></div>' : '') +
+        '</div>' +
         (st.done[c.id] ? '<span class="cc-done">已读</span>' : '');
-      b.onclick = function () { go('chat/' + encodeURIComponent(c.id)); };
+      b.onclick = function () { pickChapter(c.id); };
       grid.appendChild(b);
     });
 
@@ -265,8 +317,51 @@
     }
   }
 
+  /* ---------------- 章节切换：封面 + 提示 ---------------- */
+  function pickChapter(id) {
+    var cur = st.chapterId ? orderOf(st.chapterId) : -1;
+    var target = orderOf(id);
+    if (cur >= 0 && target !== cur) {
+      var ahead = target > cur;
+      var msg = ahead
+        ? '跳到《' + id + '》会跳过前面的剧情，' + (st.done[st.chapterId] ? '' : '当前章节还没读完。') + '确定继续？'
+        : '回到前面的《' + id + '》，已读进度会保留。确定？';
+      if (!confirm(msg)) return;
+      if (!ahead) {
+        var pr = chapterProgress(chapter(id) || { id: id, rows: [] });
+        toast('往前跳：回到《' + id + '》' + (pr.pct ? '（已读 ' + pr.pct + '%）' : ''));
+      }
+    }
+    st.restored = true;
+    go('chat/' + encodeURIComponent(id));
+  }
+
+  function showCover(id, done) {
+    var cv = $('#cover');
+    if (!cv) { done(); return; }
+    var title = $('#cover-title'), sub = $('#cover-sub');
+    if (title) title.textContent = id;   // 供读屏；视觉上已由封面图自带
+    if (sub) {
+      var p = (st.progress || {})[id];
+      sub.textContent = p ? '继续上次的对话' : '新的对话';
+    }
+    var img = $('#cover-img');
+    if (img) img.src = asset('chapter/' + id + '.webp');
+    cv.hidden = false;
+    cv.classList.add('in');
+    var t = setTimeout(finish, 2400);
+    function finish() {
+      clearTimeout(t);
+      cv.classList.remove('in');
+      cv.hidden = true;
+      cv.onclick = null;
+      done();
+    }
+    cv.onclick = finish;
+  }
+
   /* ---------------- 章节启动 ---------------- */
-  function startChapter(id) {
+  function startChapter(id, withCover) {
     var ch = chapter(id);
     if (!ch) { go('home'); return; }
     prep(ch);
@@ -281,7 +376,11 @@
       st.restored = false;
       var d = null;
       try { d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { d = null; }
-      if (d && d.chapterId === id) {
+      var mk = st.marks[id];
+      if (mk) {
+        st.cur = mk.cur || 0;
+        st.ctx = mk.ctx ? { labels: new Set(mk.ctx.labels), resume: mk.ctx.resume, target: mk.ctx.target } : null;
+      } else if (d && d.chapterId === id) {
         st.cur = d.cur || 0;
         st.ctx = d.ctx ? { labels: new Set(d.ctx.labels), resume: d.ctx.resume, target: d.ctx.target } : null;
       }
@@ -298,7 +397,12 @@
     restoreHistory(ch);
     st.paused = false;
     st.skipAll = false;
-    tick();
+    if (withCover) {
+      st.paused = true;
+      showCover(id, function () { st.paused = false; tick(); });
+    } else {
+      tick();
+    }
   }
 
   /* ---------------- 聊天头部：对方名字 + 在线状态 ---------------- */
@@ -355,11 +459,18 @@
     var el = $('#chat-sub');
     if (!el) return;
     if (st.typing) {
+      el.className = 'chat-sub on typing';
       el.innerHTML = '<span class="st-typing">对方正在输入</span>' +
         '<span class="dots"><i></i><i></i><i></i></span>';
       return;
     }
-    el.textContent = st.lastOnline ? ('上次在线 ' + relTime(Date.now() - st.lastOnline)) : '在线';
+    if (st.lastOnline) {
+      el.className = 'chat-sub off';
+      el.innerHTML = '<i class="dot"></i>上次在线 ' + relTime(Date.now() - st.lastOnline);
+    } else {
+      el.className = 'chat-sub on';
+      el.innerHTML = '<i class="dot"></i>在线';
+    }
   }
 
   setInterval(function () {
@@ -511,8 +622,7 @@
       var av = na ? '<img class="ava" data-who="' + esc(who) + '" src="' + esc(na) + '" alt="">'
         : '<span class="ava ava-txt" style="background:linear-gradient(135deg,#3a3550,#26233a)">' + esc((who || '·').slice(0, 1)) + '</span>';
       el.innerHTML = av +
-        '<div class="col"><div class="name">' + esc(who) + '</div>' +
-        '<div class="bubble">' + esc(row.text || '') + '</div></div>';
+        '<div class="col"><div class="bubble">' + esc(row.text || '') + '</div></div>';
       var avEl = el.querySelector('.ava');
       var target = who === '未知用户' ? 'Miko' : who;
       if (avEl && (CHARA_WHO.indexOf(who) >= 0 || who === '未知用户')) {
@@ -1463,6 +1573,8 @@
     ]).then(function (res) {
       st.story = res[0];
       st.meta = res[1];
+      st.booted = true;
+      if (!st.chapterId) st.chapterId = (orderedChapters()[0] || {}).id || null;
       route();
       applyBgm();
     }).catch(function (err) {
