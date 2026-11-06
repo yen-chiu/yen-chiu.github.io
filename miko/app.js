@@ -11,6 +11,8 @@
   // 打字时长：按字数 + 标点停顿 + 少量随机起伏，模拟真人敲字，而不是「字数 × 固定值」
   var SPEED = { slow: 170, normal: 110, fast: 65 };         // 每字基准毫秒（慢≈6字/秒，中≈9，快≈15）
   var SPEED_CAP = { slow: 8000, normal: 5500, fast: 3000 }; // 单条上限（长段不再线性膨胀）
+  // 原版节奏系数：慢 1.35× / 中 1× / 快 0.6×（时长基准来自原版 busyWaitTime）
+  var PACE = { slow: 1.35, normal: 1, fast: 0.6 };
   var PUNCT_HEAVY = '。！？!?';
   var PUNCT_LIGHT = '，、；：,;:';
   var SAVE_KEY = 'miko.web.save.v1';
@@ -477,28 +479,31 @@
     }
   }
 
-  // 每条消息的停留时间：越长的消息停留越久，模拟真人聊天节奏
-  function readDelay(row) {
-    var n = String(row.text || '').length;
-    var base = 320 + Math.min(1500, n * 24);
-    if (row.dir === 'right' || row.dir === 'center') base = 220 + Math.min(600, n * 12);
-    return st.auto ? Math.max(1100, base) : base;
+  // 「对方输入中」的时长：优先用原版实测的 busyWaitTime（逐条），
+  // 没有对应条目时用原版 966 条的拟合模型 wait_ms ≈ 523 + 175 × 字数。
+  function msgDelay(row) {
+    var text = String(row.text || '');
+    var map = (st.meta && st.meta.delayMap) || {};
+    var t = text.trim();
+    var ms = map[t];
+    if (!ms) {
+      var tm = (st.meta && st.meta.timing) || { base: 523, per: 175 };
+      ms = tm.base + tm.per * text.length;
+    }
+    var k = PACE[st.settings.speed] || 1;
+    if (st.auto) k *= 0.75;
+    return Math.max(600, Math.min(20000, ms * k));
   }
 
-  // 一条消息「对方输入中」的时长：起手 0.2–0.6s，每字 0.85–1.15 倍基准，标点另加停顿
+  // 气泡之间的呼吸停顿（很短，主要节奏交给 msgDelay）
+  function readDelay(row) {
+    if (row.dir === 'right' || row.dir === 'center') return 120;
+    return st.auto ? 260 : 180;
+  }
+
+  // 旧的字数×固定毫秒模型：仅作兜底（原版时长取不到时）
   function typingMs(row) {
-    var text = String(row.text || '');
-    var per = SPEED[st.settings.speed] || SPEED.normal;
-    var ms = 200 + Math.random() * 400;
-    for (var i = 0; i < text.length; i++) {
-      var c = text.charAt(i);
-      ms += per * (0.85 + Math.random() * 0.30);
-      if (PUNCT_HEAVY.indexOf(c) >= 0) ms += per * 2.4;
-      else if (PUNCT_LIGHT.indexOf(c) >= 0) ms += per * 1.1;
-      else if (c === '…') ms += per * 0.9;
-    }
-    var cap = SPEED_CAP[st.settings.speed] || SPEED_CAP.normal;
-    return Math.max(450, Math.min(cap, ms));
+    return msgDelay(row);
   }
 
   function typingHint(row, myGen) {
@@ -509,7 +514,7 @@
       div.innerHTML = '<span>' + esc(row.who || '对方') + ' 输入中</span><span class="dots"><i></i><i></i><i></i></span>';
       b.appendChild(div);
       scrollBottom();
-      var ms = typingMs(row);
+      var ms = row._delay || msgDelay(row);
       var t0 = Date.now();
       var iv = setInterval(function () {
         if (myGen !== st.gen) { done(); return; }
