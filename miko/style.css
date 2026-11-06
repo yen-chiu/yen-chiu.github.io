@@ -326,3 +326,21 @@ select{
 .ghost-btn:hover{background:#212132}
 
 .set-sub{display:block;margin-top:3px;font-size:11.5px;color:#6f6b86;font-style:normal;line-height:1.4}
+
+.diff{width:100%;border-collapse:collapse;font-size:12.3px;line-height:1.5;margin-top:2px}
+.diff th,.diff td{text-align:left;vertical-align:top;padding:6px 7px;border-top:1px solid rgba(255,255,255,.07)}
+.diff thead th{font-size:11.5px;color:#8d89a4;font-weight:600;border-top:none;padding-top:0}
+.diff tbody th{width:5.6em;font-weight:600;color:#cfcbe2;white-space:nowrap}
+.diff td{color:#b9b5cd}
+.diff td.orig{color:#8b87a1}
+
+@media (max-width:560px){
+  .diff thead{display:none}
+  .diff tbody tr{display:block;padding:7px 0;border-top:1px solid rgba(255,255,255,.07)}
+  .diff tbody th,.diff tbody td{display:block;border:none;padding:1px 8px}
+  .diff tbody th{width:auto;font-size:12.5px;color:#d5d1e6}
+  .diff tbody td{font-size:12.2px}
+  .diff tbody td.orig::before{content:"原版 · ";color:#5f5b75}
+  .diff tbody td:not(.orig)::before{content:"网页版 · ";color:#5f5b75}
+  .diff tbody td:not(.orig){color:#c2bed6}
+}
