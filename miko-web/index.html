@@ -142,6 +142,13 @@
         <label class="switch"><input type="checkbox" id="set-bgm"><i></i></label>
       </div>
       <div class="set-row">
+        <span>曲目</span>
+        <select id="set-bgm-track" class="set-select">
+          <option value="new">重置版 · Chill Bells</option>
+          <option value="old">2016 原版 · 旧版音乐</option>
+        </select>
+      </div>
+      <div class="set-row">
         <span>音效 / 语音</span>
         <label class="switch"><input type="checkbox" id="set-sfx"><i></i></label>
       </div>
@@ -178,16 +185,22 @@
         原版是读取 QQ 头像作为「我」。这里按 QQ 号从 qlogo 取图（只加载图片，不上传任何数据）；
         也可以上传本地图片，裁成方形存在本机浏览器里。不设置则右侧不显示头像。
       </p>
+      <div id="npc-block">
       <div class="set-row set-plain" style="margin-top:10px">
         <span>角色头像</span>
         <span class="set-hint">按喜好更换</span>
       </div>
+      <p class="set-note" id="npc-hint" hidden style="margin:0 2px 8px;text-align:left">
+        已开启「头像随剧情解锁」：角色头像由剧情自动更换（问号 → 黑白 → 主题头像）。
+        想手动指定，先把上面那个开关关掉。
+      </p>
       <div class="npc-row">
         <button class="npc-pick" data-npc="Miko"><img class="npc-prev" data-prev="Miko" src="assets/icon/头像2.webp" alt=""><span class="npc-name">Miko</span><span class="npc-cur" data-cur="Miko">头像2</span><i class="chev"></i></button>
         <button class="npc-pick" data-npc="Iris"><img class="npc-prev" data-prev="Iris" src="assets/icon/头像3.webp" alt=""><span class="npc-name">Iris</span><span class="npc-cur" data-cur="Iris">头像3</span><i class="chev"></i></button>
         <button class="npc-pick" data-npc="Lily"><img class="npc-prev" data-prev="Lily" src="assets/icon/Lily.webp" alt=""><span class="npc-name">Lily</span><span class="npc-cur" data-cur="Lily">Lily</span><i class="chev"></i></button>
         <button class="npc-pick" data-npc="未知用户"><img class="npc-prev" data-prev="未知用户" src="assets/icon/未知用户.webp" alt=""><span class="npc-name">未知用户</span><span class="npc-cur" data-cur="未知用户">未知用户</span><i class="chev"></i></button>
       </div>
+      </div><!-- /#npc-block -->
       <div class="ava-pop" id="ava-pop" hidden></div>
     </div>
 
