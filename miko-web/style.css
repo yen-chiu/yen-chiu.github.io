@@ -626,3 +626,31 @@ select{
 .pf .qz-post{padding:12px 0 14px;border-bottom:1px solid rgba(255,255,255,.06)}
 .pf .qz-post:last-child{border-bottom:0}
 .pf .qz-post-name{font-size:13px;letter-spacing:.4px}
+
+/* ---------- 章节封面 ---------- */
+.cover{
+  position:fixed;inset:0;z-index:120;
+  background:
+    radial-gradient(120% 70% at 50% 36%, #141425 0%, #0a0a12 58%, #06060b 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  opacity:0;transition:opacity .5s ease;cursor:pointer;
+}
+.cover.in{opacity:1}
+.cover img{
+  width:min(86vw,470px);height:auto;display:block;border-radius:14px;
+  box-shadow:0 26px 70px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06);
+  transform:translateY(-6px) scale(.985);transition:transform .6s ease;
+}
+.cover.in img{transform:translateY(0) scale(1)}
+.cover-mask{display:none}
+.cover-txt{text-align:center;color:#cfcbe3}
+.cover-txt #cover-title{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.cover-txt #cover-sub{margin-top:0;font-size:11.5px;letter-spacing:.3em;color:#6e6a86}
+
+/* ---------- 在线状态 ---------- */
+.chat-sub{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11.5px;line-height:1.2;margin-top:2px}
+.chat-sub .dot{width:6px;height:6px;border-radius:50%;display:inline-block;background:#6b6880}
+.chat-sub.on{color:#5fd08a}
+.chat-sub.on .dot{background:#5fd08a;box-shadow:0 0 6px rgba(95,208,138,.8)}
+.chat-sub.off{color:#77738d}
+.chat-sub.typing{color:#8ec9ff}
