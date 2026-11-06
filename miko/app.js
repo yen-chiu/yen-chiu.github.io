@@ -27,7 +27,7 @@
     revealed: {},       // 已认识的角色（原作：未认识时显示问号头像）
     settings: {
       speed: 'normal', wait: 60, bgm: false, sfx: true, autoUnlock: false,
-      avatar: '头像1',
+      myAvatar: { type: 'none' },   // 我的形象：none / qq / data
       revealLock: true,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
     },
@@ -145,6 +145,12 @@
 
   /* ---------------- 头像 ---------------- */
   var NPC_DEFAULT = { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' };
+  var CHARA_WHO = ['Miko', 'Iris', 'Lily'];
+  var LOCK_SVG = '<svg class="lock" viewBox="0 0 24 24" aria-hidden="true">' +
+    '<path d="M7.6 10V7.4a4.4 4.4 0 0 1 8.8 0V10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>' +
+    '<rect x="5.2" y="10" width="13.6" height="9.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/>' +
+    '<circle cx="12" cy="14.2" r="1.15" fill="currentColor"/>' +
+    '<path d="M12 15.2v2.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
 
   // 「头像随剧情解锁」：没认出来之前，NPC 头像显示问号（原作设定）
   function isRevealed(who) {
@@ -200,7 +206,7 @@
     }
     if (name === 'dict') { $('#view-dict').classList.add('active'); renderDict(); return; }
     if (name === 'gallery') { $('#view-gallery').classList.add('active'); renderGallery(); return; }
-    if (name === 'feed') { $('#view-feed').classList.add('active'); renderFeed(); return; }
+    if (name === 'feed') { $('#view-feed').classList.add('active'); renderFeed(parts[1] ? decodeURIComponent(parts[1]) : ''); return; }
     if (name === 'settings') { $('#view-settings').classList.add('active'); syncSettings(); return; }
 
     $('#view-home').classList.add('active');
@@ -360,7 +366,7 @@
     if (row.dir === 'center') {
       el.innerHTML = '<div class="pill">' + esc(row.text || '') + '</div>';
     } else if (row.dir === 'right') {
-      var ra = avatarFor('我');
+      var ra = myAvatarSrc();
       el.innerHTML =
         (ra ? '<img class="ava" src="' + esc(ra) + '" alt="">' : '') +
         '<div class="col"><div class="bubble">' + esc(row.text || '') + '</div></div>';
@@ -372,6 +378,12 @@
       el.innerHTML = av +
         '<div class="col"><div class="name">' + esc(who) + '</div>' +
         '<div class="bubble">' + esc(row.text || '') + '</div></div>';
+      var avEl = el.querySelector('.ava');
+      if (avEl && CHARA_WHO.indexOf(who) >= 0) {
+        avEl.classList.add('ava-link');
+        avEl.title = '进入 ' + who + ' 的空间';
+        avEl.onclick = function () { go('feed/' + encodeURIComponent(who)); };
+      }
     }
     list.appendChild(el);
     scrollBottom();
@@ -674,44 +686,111 @@
 
   function renderGallery() {
     var box = $('#gallery-list');
+    if (!box) return;
     var gal = (st.meta && st.meta.gallery) || [];
-    var got = Object.keys(st.unlock.gal).length;
+    var got = gal.filter(function (g) { return st.unlock.gal[g.key]; }).length;
     $('#gallery-count').textContent = got + ' / ' + gal.length;
-    box.className = 'page-body gal-grid';
+    box.className = 'page-body';
     box.innerHTML = '';
+
+    var order = ((st.meta && st.meta.chapters) || []).map(function (c) { return c.id; });
+    var groups = {};
     gal.forEach(function (g) {
-      var unlocked = !!st.unlock.gal[g.key];
-      var el = document.createElement('div');
-      el.className = 'gal-item' + (unlocked ? '' : ' locked');
-      var src = unlocked ? photoPath(g.key) : asset('dictionary/未解锁词典.webp');
-      el.innerHTML = '<img src="' + esc(src) + '" alt="' + esc(g.key) + '" loading="lazy">' +
-        '<span class="glk">' + esc(unlocked ? g.key : '未解锁') + '</span>';
-      if (unlocked) el.querySelector('img').onclick = function () { openLightbox(photoPath(g.key)); };
-      box.appendChild(el);
+      var c = g.chapter || '其他';
+      (groups[c] = groups[c] || []).push(g);
+    });
+    var names = order.filter(function (c) { return groups[c]; })
+      .concat(Object.keys(groups).filter(function (c) { return order.indexOf(c) < 0; }));
+
+    names.forEach(function (c) {
+      var list = groups[c];
+      var n = list.filter(function (g) { return st.unlock.gal[g.key]; }).length;
+      var sec = document.createElement('section');
+      sec.className = 'gal-sec';
+      sec.innerHTML = '<div class="gal-sec-head"><span>' + esc(c) + '</span>' +
+        '<span class="gal-sec-n">' + n + ' / ' + list.length + '</span></div>' +
+        '<div class="gal-grid"></div>';
+      var grid = sec.querySelector('.gal-grid');
+      list.forEach(function (g) {
+        var unlocked = !!st.unlock.gal[g.key];
+        var el = document.createElement('div');
+        el.className = 'gal-item' + (unlocked ? '' : ' locked');
+        if (unlocked) {
+          el.innerHTML = '<img src="' + esc(photoPath(g.key)) + '" alt="' + esc(g.key) + '" loading="lazy">' +
+            '<span class="glk">' + esc(g.key) + '</span>';
+          el.querySelector('img').onclick = function () { openLightbox(photoPath(g.key)); };
+        } else {
+          el.innerHTML = '<div class="gal-blind"></div>' + LOCK_SVG +
+            '<span class="glk">未解锁</span>';
+        }
+        grid.appendChild(el);
+      });
+      box.appendChild(sec);
     });
   }
 
-  function renderFeed() {
+  // 个人空间：封面 + 头像 + 昵称 + 签名 + 标签 + 动态
+  function profileOf(who) {
+    var p = ((st.meta && st.meta.profiles) || {})[who] || {};
+    // 名字与签名始终显示（剧情里「动态」提示本来就叫得出名字），只有头像受「随剧情解锁」控制
+    return {
+      who: who,
+      name: who,
+      sig: p.sig || '',
+      tags: p.tags || [],
+      cover: p.cover || 'images/聊天背景.webp'
+    };
+  }
+
+  function renderFeed(who) {
+    who = who || 'Miko';
+    if (CHARA_WHO.indexOf(who) < 0) who = 'Miko';
     var box = $('#feed-list');
-    var dyn = (st.meta && st.meta.dynamics) || [];
-    var got = Object.keys(st.unlock.dyn).length;
-    $('#feed-count').textContent = got + ' / ' + dyn.length;
-    box.className = 'page-body';
-    box.innerHTML = '';
-    if (!got) {
-      box.innerHTML = '<p style="color:#8d89a8;font-size:13px;text-align:center;margin-top:40px">还没有动态，去剧情里看看吧</p>';
+    if (!box) return;
+    var prof = profileOf(who);
+    var mine = ((st.meta && st.meta.dynamics) || []).filter(function (d) {
+      return (d.who || 'Miko') === who;
+    });
+    var shown = mine.filter(function (d) { return st.unlock.dyn[d.image]; });
+    var head = document.querySelector('#view-feed h1');
+    if (head) head.textContent = who + ' 的空间';
+    $('#feed-count').textContent = shown.length + ' / ' + mine.length;
+    box.className = 'page-body qz';
+    box.innerHTML =
+      '<div class="qz-cover">' +
+        '<div class="qz-cover-bg" style="background-image:url(\'' + esc(asset(prof.cover)) + '\')"></div>' +
+        '<div class="qz-cover-mask"></div>' +
+        '<div class="qz-me">' +
+          '<img class="qz-ava" src="' + esc(avatarFor(who)) + '" alt="">' +
+          '<div class="qz-name">' + esc(prof.name) + '</div>' +
+          (prof.sig ? '<div class="qz-sig">' + esc(prof.sig) + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+      (prof.tags.length
+        ? '<div class="qz-tags">' + prof.tags.map(function (t) {
+            return '<span>' + esc(t) + '</span>';
+          }).join('') + '</div>'
+        : '') +
+      '<div class="qz-list"></div>';
+
+    var list = box.querySelector('.qz-list');
+    if (!shown.length) {
+      var tip = mine.length ? '还没有解锁的动态，去剧情里看看吧' : '这个人还没有发过动态';
+      list.innerHTML = '<p class="qz-empty">' + tip + '</p>';
       return;
     }
-    dyn.forEach(function (d) {
-      if (!st.unlock.dyn[d.image]) return;
+    shown.forEach(function (d) {
       var el = document.createElement('div');
-      el.className = 'feed-item';
+      el.className = 'qz-post';
       el.innerHTML =
-        '<div class="feed-head"><img src="' + esc(asset('icon/icon.webp')) + '" alt="">' +
-        '<div><div class="feed-name">Miko</div><div class="feed-when">' + esc(d.chapter || '') + '</div></div></div>' +
-        '<div class="feed-text">' + esc(d.text || '') + '</div>';
+        '<div class="qz-post-head">' +
+          '<img src="' + esc(avatarFor(who)) + '" alt="">' +
+          '<div><div class="qz-post-name">' + esc(prof.name) + '</div>' +
+          '<div class="qz-post-when">' + esc(d.chapter || '') + '</div></div>' +
+        '</div>' +
+        '<div class="qz-post-text">' + esc(d.text || '') + '</div>';
       el.appendChild(imageCard(d.image, false));
-      box.appendChild(el);
+      list.appendChild(el);
     });
   }
 
@@ -719,18 +798,6 @@
   function avatarOptions() { return AVATARS.concat(['Lily', '未知用户']); }
 
   function renderAvatarPicker() {
-    var box = $('#ava-pick');
-    if (box) {
-      box.innerHTML = '';
-      avatarOptions().forEach(function (n) {
-        var b = document.createElement('button');
-        b.className = 'ava-opt' + ((st.settings.avatar || '头像1') === n ? ' on' : '');
-        b.title = n;
-        b.innerHTML = '<img src="' + esc(asset('icon/' + n + '.webp')) + '" alt="' + esc(n) + '">';
-        b.onclick = function () { st.settings.avatar = n; save(); renderAvatarPicker(); refreshAvatars('我'); };
-        box.appendChild(b);
-      });
-    }
     $$('#view-settings select[data-npc]').forEach(function (sel) {
       var who = sel.getAttribute('data-npc');
       sel.innerHTML = '<option value="letter">字母</option>' +
@@ -744,6 +811,70 @@
         refreshAvatars(who);
       };
     });
+    renderMyAvatar();
+  }
+
+
+
+  /* ---- 我的形象：QQ 头像 / 本地上传 / 不显示 ---- */
+  function myAvatarSrc() {
+    var a = st.settings.myAvatar || {};
+    if (a.type === 'qq' && a.qq) return 'https://q1.qlogo.cn/g?b=qq&nk=' + encodeURIComponent(a.qq) + '&s=100';
+    if (a.type === 'data' && a.data) return a.data;
+    return '';
+  }
+
+  function renderMyAvatar() {
+    var box = $('#my-ava-preview');
+    if (!box) return;
+    var src = myAvatarSrc();
+    box.innerHTML = src
+      ? '<img src="' + esc(src) + '" alt="我的头像">'
+      : '<span class="ava-empty">无</span>';
+    var a = st.settings.myAvatar || {};
+    var qq = $('#my-qq');
+    if (qq && a.type === 'qq') qq.value = a.qq || '';
+  }
+
+  function setMyAvatarQQ() {
+    var qq = ($('#my-qq').value || '').trim();
+    if (!/^[1-9]\d{4,11}$/.test(qq)) { toast('请输入 5–12 位 QQ 号'); return; }
+    st.settings.myAvatar = { type: 'qq', qq: qq };
+    save();
+    renderMyAvatar();
+    refreshMyAvatar();
+    toast('已使用 QQ 头像');
+  }
+
+  function refreshMyAvatar() {
+    var src = myAvatarSrc();
+    $$('.ava[data-who="我"]').forEach(function (img) {
+      if (src) img.src = src;
+    });
+  }
+
+  function uploadAvatar(file) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var size = 200;
+        var cv = document.createElement('canvas');
+        cv.width = size; cv.height = size;
+        var ctx = cv.getContext('2d');
+        var m = Math.min(im.width, im.height);
+        ctx.drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, size, size);
+        var data = cv.toDataURL('image/jpeg', 0.85);
+        st.settings.myAvatar = { type: 'data', data: data };
+        try { save(); } catch (e) { toast('图片太大，存不下'); }
+        renderMyAvatar();
+        toast('头像已更新（仅存在本机）');
+      };
+      im.onerror = function () { toast('图片读不出来'); };
+      im.src = fr.result;
+    };
+    fr.onerror = function () { toast('读取文件失败'); };
+    fr.readAsDataURL(file);
   }
 
   // 换头像后让聊天里已有的气泡立即换图
@@ -807,6 +938,7 @@
     $('#set-sfx').checked = !!st.settings.sfx;
     $('#set-auto-unlock').checked = !!st.settings.autoUnlock;
     $('#set-reveal-lock').checked = st.settings.revealLock !== false;
+    renderMyAvatar();
     $('#set-stats').textContent =
       '词典 ' + Object.keys(st.unlock.dict).length + ' · 图鉴 ' + Object.keys(st.unlock.gal).length +
       ' · 动态 ' + Object.keys(st.unlock.dyn).length;
@@ -833,6 +965,24 @@
         toast('已解锁全部词典与图鉴（可在设置里关闭）');
       }
       save(); syncSettings();
+    };
+    $('#btn-qq').onclick = setMyAvatarQQ;
+    $('#my-qq').onkeydown = function (e) { if (e.key === 'Enter') setMyAvatarQQ(); };
+    $('#btn-ava-upload').onclick = function () { $('#file-ava').click(); };
+    $('#file-ava').onchange = function () {
+      var f = this.files && this.files[0];
+      if (f) uploadAvatar(f);
+      this.value = '';
+    };
+    $('#btn-ava-clear').onclick = function () {
+      st.settings.myAvatar = { type: 'none' }; save();
+      renderMyAvatar();
+      $$('.ava[data-who="我"]').forEach(function (img) {
+        var p = img.parentNode;
+        if (p) p.classList.add('right');
+        img.remove();
+      });
+      toast('已清除我的头像');
     };
     $('#btn-export').onclick = exportSave;
     $('#btn-import').onclick = function () { $('#file-import').click(); };
