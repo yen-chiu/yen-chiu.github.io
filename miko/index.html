@@ -154,11 +154,28 @@
 
     <div class="set-card">
       <div class="set-row set-plain">
-        <span>我的头像</span>
-        <span class="set-hint">聊天里显示</span>
+        <span>我的形象</span>
+        <span class="set-hint">聊天右侧显示</span>
       </div>
-      <div class="avatar-row" id="ava-pick"></div>
-      <div class="set-row set-plain" style="margin-top:6px">
+      <div class="my-ava">
+        <div class="my-ava-box" id="my-ava-preview"></div>
+        <div class="my-ava-form">
+          <div class="qq-row">
+            <input id="my-qq" inputmode="numeric" maxlength="12" placeholder="输入 QQ 号取头像">
+            <button class="ghost-btn" id="btn-qq">获取</button>
+          </div>
+          <div class="two-btn">
+            <button class="ghost-btn" id="btn-ava-upload">上传图片</button>
+            <button class="ghost-btn" id="btn-ava-clear">清除</button>
+            <input type="file" id="file-ava" accept="image/*" hidden>
+          </div>
+        </div>
+      </div>
+      <p class="set-note" style="margin:8px 2px 0;text-align:left">
+        原版是读取 QQ 头像作为「我」。这里按 QQ 号从 qlogo 取图（只加载图片，不上传任何数据）；
+        也可以上传本地图片，裁成方形存在本机浏览器里。不设置则右侧不显示头像。
+      </p>
+      <div class="set-row set-plain" style="margin-top:10px">
         <span>角色头像</span>
         <span class="set-hint">按喜好更换</span>
       </div>
@@ -169,7 +186,6 @@
         <label><span>未知用户</span><select data-npc="未知用户"></select></label>
       </div>
     </div>
-
 
     <div class="set-card">
       <div class="set-row set-plain">
@@ -204,13 +220,13 @@
         <tbody>
         <tr><th>运行形态</th><td class="orig">Flutter / Dart AOT 安卓包（libapp.so 三个 ABI 各 ~5MB）</td><td>纯静态网页，无构建、无后端，GitHub Pages 托管</td></tr>
         <tr><th>剧情数据</th><td class="orig">assets/story/*.csv 明文，18 种指令 + 跳转表</td><td>同一份 CSV 编译成 story.json，引擎按块跳转重写</td></tr>
-        <tr><th>头像</th><td class="orig">未认识时隐藏（问号），自报姓名后才出现</td><td>保留该设定；另可手动指定角色/玩家头像，也能整体关闭解锁</td></tr>
+        <tr><th>头像</th><td class="orig">未认识时隐藏（问号），自报姓名后才出现；重置版把「我」的头像取自 QQ</td><td>保留问号→揭示；「我」可填 QQ 号取 qlogo 头像或上传本地图片（也可不显示），角色头像可逐个更换</td></tr>
         <tr><th>消息节奏</th><td class="orig">打字提示 + 按真实时间等待（单条最长 840 分钟）</td><td>打字按字数与标点节奏模拟真人（慢 170 / 中 110 / 快 65ms 每字，标点另加停顿），单条 0.45–5.5s；等待 1–120× 可调</td></tr>
         <tr><th>存档</th><td class="orig">本机 SharedPreferences</td><td>localStorage，并可导出 / 导入 JSON，换设备接着玩</td></tr>
         <tr><th>阅读辅助</th><td class="orig">无</td><td>新增「自动播放」「跳过」</td></tr>
         <tr><th>词典</th><td class="orig">111 条，id → 释义硬编码在 Dart 快照（UTF-16）</td><td>109 条（按词条去重），释义静态只能恢复 30 条，标注「静态提取」</td></tr>
-        <tr><th>图鉴</th><td class="orig">43 个键，缺 -n 版本时回退基名</td><td>同规则，另有网格页 + 点击放大</td></tr>
-        <tr><th>动态 / 语音</th><td class="orig">34 条照片动态、2 条语音</td><td>保留；图片限高、点击放大，语音可播放</td></tr>
+        <tr><th>图鉴</th><td class="orig">按章分组、显示 n/m；未解锁是黑封面加锁；43 个键，缺 -n 版本时回退基名</td><td>还原本法（三列缩略图 + 黑封面挂锁 + 分章计数），点击看大图</td></tr>
+        <tr><th>动态 / 语音</th><td class="orig">34 条照片动态、2 条语音；动态以个人空间呈现（封面 + 头像 + 签名 + 标签）</td><td>做成 QQ 空间式个人页，点聊天里的头像即可进入；图片限高可放大，语音可播放</td></tr>
         <tr><th>本地通知</th><td class="orig">flutter_local_notifications（上线/下线提醒）</td><td>未实现（浏览器通知）</td></tr>
         <tr><th>数据修正</th><td class="orig">第六章 106 行、第四章 760 行两处 CSV 列错位</td><td>已修正，图鉴有效键 42 → 43</td></tr>
         </tbody>

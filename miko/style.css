@@ -231,14 +231,34 @@ a:hover{text-decoration:underline}
   background:#141420;border:1px dashed rgba(255,255,255,.18);color:#4b4763;font-size:20px;font-weight:700;
 }
 
-.gal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;align-content:start;grid-auto-rows:max-content}
-.gal-item{
-  position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);
-  background:#101018;
+.gal-sec{margin:0 0 14px}
+.gal-sec-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:2px 8px 8px;font-size:13px;color:#cfcbe2;font-weight:600;
 }
-.gal-item img{width:100%;aspect-ratio:3/4;object-fit:cover;cursor:zoom-in;display:block}
-.gal-item.locked img{filter:grayscale(1) brightness(.35)}
-.gal-item .glk{position:absolute;left:8px;bottom:7px;font-size:10.5px;color:#d6d2ea;text-shadow:0 1px 3px #000}
+.gal-sec-n{font-size:11.5px;color:#7c7893;font-weight:400}
+
+/* 三列缩略图，未解锁 = 黑封面 + 锁（对齐原版图鉴页） */
+.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 6px}
+.gal-item{
+  position:relative;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.06);
+  background:#0a0a10;aspect-ratio:3/4;
+}
+.gal-item img{width:100%;height:100%;object-fit:cover;cursor:zoom-in;display:block}
+.gal-item .glk{
+  position:absolute;left:0;right:0;bottom:0;padding:16px 5px 5px;
+  font-size:10px;color:#e6e3f2;letter-spacing:.2px;text-align:left;
+  background:linear-gradient(transparent,rgba(0,0,0,.8));
+}
+.gal-item.locked{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px}
+.gal-blind{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 34%,#16161f 0%,#0a0a0f 62%,#060609 100%);
+}
+.gal-item .lock{position:relative;width:25px;height:25px;color:#4b4761}
+.gal-item.locked .glk{
+  position:relative;padding:0;background:none;text-align:center;font-size:10px;color:#5c5873;
+}
 
 .feed-item{background:var(--panel-2);border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}
 .feed-head{display:flex;gap:9px;align-items:center;margin-bottom:8px}
@@ -344,3 +364,61 @@ select{
   .diff tbody td:not(.orig)::before{content:"网页版 · ";color:#5f5b75}
   .diff tbody td:not(.orig){color:#c2bed6}
 }
+
+/* ---------- 动态：QQ 空间式个人页 ---------- */
+.qz{padding:0}
+.qz-cover{position:relative;height:200px;overflow:hidden}
+.qz-cover-bg{
+  position:absolute;inset:0;background-size:cover;background-position:center 30%;
+  filter:blur(1.5px) brightness(.5) saturate(.85);transform:scale(1.06);
+}
+.qz-cover-mask{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,12,.1),rgba(10,10,16,.94))}
+.qz-me{position:absolute;left:0;right:0;bottom:12px;text-align:center}
+.qz-ava{
+  display:block;margin:0 auto;
+  width:66px;height:66px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(255,255,255,.22);box-shadow:0 6px 20px rgba(0,0,0,.5);
+  background:#1a1a24;
+}
+.qz-name{margin-top:7px;font-size:15.5px;color:#f2effa;font-weight:600;letter-spacing:.3px}
+.qz-sig{margin-top:4px;font-size:12px;color:#a8a4bf;padding:0 26px;line-height:1.5}
+.qz-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:10px 12px 2px}
+.qz-tags span{
+  font-size:11px;color:#cac5de;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);padding:2.5px 10px;border-radius:999px;
+}
+.qz-list{padding:8px 12px 22px}
+.qz-post{padding:13px 2px 15px;border-bottom:1px solid rgba(255,255,255,.06)}
+.qz-post:last-child{border-bottom:none}
+.qz-post-head{display:flex;gap:9px;align-items:center}
+.qz-post-head img{width:34px;height:34px;border-radius:50%;object-fit:cover}
+.qz-post-name{font-size:13px;color:#ded9ee;font-weight:600}
+.qz-post-when{font-size:11px;color:#6f6b86;margin-top:1px}
+.qz-post-text{
+  margin:9px 0 10px;font-size:14px;line-height:1.66;color:#eae7f5;
+  white-space:pre-wrap;word-break:break-word;
+}
+.qz-post .img-card{margin-top:2px}
+.qz-post .img-card img{max-height:430px;width:100%;object-fit:cover;object-position:top center}
+.qz-empty{color:#8d89a8;font-size:13px;text-align:center;margin:44px 0}
+
+/* ---------- 我的形象 ---------- */
+.my-ava{display:flex;gap:14px;align-items:center;padding:4px 2px 2px}
+.my-ava-box{
+  width:72px;height:72px;border-radius:18px;flex:none;overflow:hidden;
+  background:#12121b;border:1px dashed rgba(255,255,255,.14);
+  display:flex;align-items:center;justify-content:center;
+}
+.my-ava-box img{width:100%;height:100%;object-fit:cover}
+.my-ava-box .ava-empty{font-size:12px;color:#565273}
+.my-ava-form{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.qq-row{display:flex;gap:8px}
+.qq-row input{
+  flex:1;min-width:0;background:#141420;border:1px solid var(--line);border-radius:10px;
+  color:#e6e2f3;font-size:13px;padding:8px 11px;outline:none;font-family:inherit;
+}
+.qq-row input:focus{border-color:#5b53a0}
+.my-ava-form .two-btn{margin:0}
+.my-ava-form .ghost-btn{padding:8px 10px;font-size:12.5px}
+.ava.ava-link{cursor:pointer}
+.ava.ava-link:hover{box-shadow:0 0 0 2px rgba(122,92,255,.55)}
