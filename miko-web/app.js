@@ -27,6 +27,8 @@
     unlock: { dict: {}, gal: {}, dyn: {} },
     done: {},
     revealed: {},       // 已认识的角色（原作：未认识时显示问号头像）
+    named: {},          // 已知名字（第二态：黑色字母头像）
+    avaUp: {},          // 已上传头像（第三态：人物立绘）
     settings: {
       speed: 'normal', wait: 60, bgm: false, sfx: true, autoUnlock: false,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
@@ -71,6 +73,8 @@
         unlock: st.unlock,
         done: st.done,
         revealed: st.revealed,
+        named: st.named,
+        avaUp: st.avaUp,
         likes: st.likes,
         comments: st.comments,
         replies: st.replies,
@@ -93,6 +97,14 @@
       if (d.unlock) st.unlock = { dict: d.unlock.dict || {}, gal: d.unlock.gal || {}, dyn: d.unlock.dyn || {} };
       if (d.done) st.done = d.done || {};
       if (d.revealed) st.revealed = d.revealed || {};
+      if (d.named) {
+        var profKeys = Object.keys((st.meta && st.meta.profiles) || {});
+        st.named = {};
+        Object.keys(d.named || {}).forEach(function (k) {
+          if (profKeys.indexOf(k) >= 0) st.named[k] = true;   // 丢掉历史脏键（如词典编号）
+        });
+      }
+      if (d.avaUp) st.avaUp = d.avaUp || {};
       if (d.likes) st.likes = d.likes;
       if (d.comments) st.comments = d.comments;
       if (d.after) st.after = d.after;
@@ -202,6 +214,19 @@
       );
       if (far > Number(hit.row)) st.revealed[who] = true;
     });
+    var av = (st.meta && st.meta.avatars) || {};
+    st.avaUp = st.avaUp || {};
+    Object.keys(av).forEach(function (who) {
+      if (st.avaUp[who]) return;
+      var hit = av[who];
+      var far = Math.max(
+        (st.progress || {})[hit.chapter] || 0,
+        ((st.marks || {})[hit.chapter] || {}).cur || 0,
+        st.chapterId === hit.chapter ? st.cur : 0,
+        st.done && st.done[hit.chapter] ? 1e9 : 0
+      );
+      if (far > Number(hit.row)) st.avaUp[who] = true;
+    });
   }
 
   function isRevealed(who) {
@@ -209,14 +234,52 @@
     return !!(st.revealed || {})[who];
   }
 
+  // 名字是否已知：自报姓名/首次被点名 之后算已知
+  function nameKnown(who) {
+    if (!who || who === '未知用户') return false;
+    if (isRevealed(who)) return true;
+    if ((st.avaUp || {})[who]) return true;     // 都换头像了，名字自然知道
+    return !!(st.named || {})[who];
+  }
+
+  // 是否已经「上传头像」：剧情走到她第一次发图（动态/图鉴）之后
+  function hasAvatar(who) {
+    return !!(st.avaUp || {})[who];
+  }
+
   function avatarFor(who) {
-    if (who === '我') return asset('icon/' + (st.settings.avatar || '头像1') + '.webp');
-    if (!isRevealed(who) && who !== '未知用户') return asset('icon/未知用户.webp');
-    var pick = (st.settings.npc || {})[who];
+    if (who === '我') return myAvatarSrc();
+    if (who === '未知用户') return asset('icon/未知用户.webp');
+    if (!nameKnown(who)) return asset('icon/未知用户.webp');   // ① 未知：问号
+    if (!hasAvatar(who)) return null;                          // ② 知道名字但没头像：黑色字母
+    var pick = (st.settings.npc || {})[who];                   // ③ 有头像：人物立绘
     if (pick === 'letter') return null;
     if (pick) return asset('icon/' + pick + '.webp');
     var d = NPC_DEFAULT[who];
     return d ? asset('icon/' + d + '.webp') : null;
+  }
+
+  // 出现过名字就算「已知」，用于字母头像态
+  function markNamed(who) {
+    if (!who || who === '我' || who === '未知用户') return;
+    var profs = (st.meta && st.meta.profiles) || {};
+    if (!profs[who]) return;          // 只认角色表里的名字（词典行第 1 列是编号）
+    if (!st.named) st.named = {};
+    if (!st.named[who]) { st.named[who] = true; }
+  }
+
+  // 走到「她第一次发图」那一行时，把字母头像换成人物头像
+  function checkAvatar(row) {
+    var av = (st.meta && st.meta.avatars) || {};
+    var hit = av[row.who];
+    if (!hit || hit.chapter !== st.chapterId) return;
+    if (Number(st.cur) < Number(hit.row)) return;
+    if (!st.avaUp) st.avaUp = {};
+    if (st.avaUp[row.who]) return;
+    st.avaUp[row.who] = true;
+    save();
+    refreshAvatars(row.who);
+    toast('对方换上了头像 · ' + row.who);
   }
 
   // 走到「自报姓名」那一行时揭示头像
@@ -234,10 +297,9 @@
 
   function letterAvatar(who, right) {
     var d = document.createElement('div');
-    d.className = 'ava ava-txt';
-    d.textContent = (who || '?').slice(0, 1);
-    d.style.background = right ? 'linear-gradient(135deg,#6a5ae0,#4b3fb0)'
-      : 'linear-gradient(135deg,#3a3550,#26233a)';
+    d.className = 'ava ava-txt' + (right ? ' me' : '');
+    d.textContent = (who || '?').slice(0, 1).toUpperCase();
+    d.setAttribute('data-who', who || '');
     return d;
   }
 
@@ -504,7 +566,7 @@
     });
     Object.keys(cnt).forEach(function (w) { if (cnt[w] > n) { n = cnt[w]; best = w; } });
     if (!best) return '对方';
-    if (best === 'Miko' && !isRevealed('Miko')) return '未知用户';
+    if (!nameKnown(best)) return '未知用户';
     return best;
   }
 
@@ -756,9 +818,11 @@
           await typingHint(row, myGen);
           if (myGen !== st.gen) break;
         }
+        markNamed(row.who);
         appendRow(row, st.skipAll);
         unlockFrom(row);
         checkReveal(row);
+        checkAvatar(row);
         save();
 
         if (!st.skipAll) {
@@ -1712,7 +1776,7 @@
 
   // 调试手柄：仅 ?debug=1 时暴露，便于本地验证状态
   if (location.search.indexOf('debug=1') >= 0) {
-    window.MIKO_DEBUG = { st: st, save: save, route: route, render: renderFeed };
+    window.MIKO_DEBUG = { st: st, save: save, route: route, render: renderFeed, markNamed: markNamed, nameKnown: nameKnown, avatarFor: avatarFor };
   }
 
   boot();
