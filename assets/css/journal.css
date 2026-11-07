@@ -70,6 +70,24 @@ body.yb-paper-body {
   border-color: var(--yb-ink) !important;
 }
 
+/* 明暗切换按钮（与主题共用同一份偏好，见 _layouts/paper.html） */
+.yb-mode-btn {
+  border: 1px solid transparent !important;
+  border-radius: 3px;
+  background: none;
+  color: var(--yb-muted);
+  font: inherit;
+  line-height: 1.5;
+  padding: 0.05rem 0.4rem;
+  cursor: pointer;
+}
+
+.yb-mode-btn:hover,
+.yb-mode-btn:focus {
+  color: var(--yb-ink);
+  border-color: var(--yb-rule) !important;
+}
+
 /* 纸张 ------------------------------------------------------------------ */
 .yb-sheet {
   box-sizing: border-box;
@@ -383,6 +401,76 @@ body.yb-paper-body {
   .yb-sheet p {
     orphans: 2;
     widows: 2;
+  }
+}
+
+/* ==========================================================================
+   暗色纸面（只作用于屏幕）
+   —— 打印与 PDF 必须保持白纸黑字，所以这一整块包在 @media screen 里：
+   变量、硬编码的灰色、纸张底色都只在屏幕上覆盖，@media print 一行都不用改。
+   ========================================================================== */
+
+@media screen {
+  html.yb-paper-root[data-mode="dark"] {
+    --yb-ink: #d8d8dc;
+    --yb-rule: #3b3b43;
+    --yb-muted: #9a9aa3;
+    --yb-paper: #1e1e22;
+    --yb-accent: #7aa7d9;
+  }
+
+  /* html 只认纸面页（.yb-paper-root 见 _layouts/paper.html）：期刊首页也会加载这份
+     样式，若只按 [data-mode] 命中的话，暗色下会把主题页的画布也刷成纸面暗色。 */
+  html.yb-paper-root[data-mode="dark"],
+  html.yb-paper-root[data-mode="dark"] body.yb-paper-body {
+    background: #131315;
+  }
+
+  html[data-mode="dark"] .yb-sheet {
+    background: var(--yb-paper);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  html[data-mode="dark"] .yb-sheet .masthead {
+    color: #b4b4bb;
+  }
+
+  html[data-mode="dark"] .yb-sheet .subtitle {
+    color: #cfcfd5;
+  }
+
+  html[data-mode="dark"] .yb-sheet .affil,
+  html[data-mode="dark"] .yb-sheet .dates,
+  html[data-mode="dark"] .yb-sheet .footer-note {
+    color: #a9a9b1;
+  }
+
+  /* 论文配图是 SVG，线条写死成 #1a1a1a、底色写死成 #ededed/#ffffff：
+     直接放到暗色纸面上会整张糊掉。反相 + 色相回正，黑线变浅、底色变暗，
+     蓝/橙/绿这些强调色的色相大致保住，看起来仍是同一张图。 */
+  html[data-mode="dark"] .yb-sheet figure svg {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  html[data-mode="dark"] .yb-sheet th,
+  html[data-mode="dark"] .yb-sheet td,
+  html[data-mode="dark"] .yb-sheet thead th {
+    border-color: #6d6d77;
+  }
+
+  html[data-mode="dark"] .yb-cite code {
+    background: #232328;
+    color: #cfcfd5;
+    border-left-color: #47474f;
+  }
+
+  html[data-mode="dark"] .yb-comments {
+    background: #1b1b1f;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  html[data-mode="dark"] .yb-comments__hint {
+    color: #9a9aa3;
   }
 }
 

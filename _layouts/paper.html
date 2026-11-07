@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ site.lang }}">
+<html lang="{{ site.lang }}" class="yb-paper-root">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,6 +14,21 @@
   {% if page.pdf %}
   <link rel="alternate" type="application/pdf" href="{{ site.data.journal.docs_base }}/{{ page.pdf }}">
   {% endif %}
+  <!-- 与主题同一套偏好：localStorage['theme'] = dark | light；没有记录就跟随系统。
+       必须在样式表之前执行，否则暗色下会先闪一下白纸。 -->
+  <script type="text/javascript">
+    (function () {
+      var stored = null;
+      try {
+        stored = localStorage.getItem('theme');
+      } catch (e) {
+        stored = null;
+      }
+      var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var dark = stored === 'dark' || (stored !== 'light' && systemDark);
+      document.documentElement.setAttribute('data-mode', dark ? 'dark' : 'light');
+    })();
+  </script>
   <link rel="stylesheet" href="{{ '/assets/css/journal.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 </head>
 <body class="yb-paper-body">
@@ -22,6 +37,7 @@
     <a href="{{ '/journal/' | relative_url }}">&larr; {{ site.data.journal.title }}</a>
     <nav>
       <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+      <button type="button" class="yb-mode-btn" id="yb-mode"></button>
       {% if page.pdf %}
       <a class="yb-pdf-btn" href="{{ site.data.journal.docs_base }}/{{ page.pdf }}">PDF</a>
       {% endif %}
@@ -61,6 +77,39 @@
     {% include comments.html %}
   </aside>
   {% endif %}
+
+  <script type="text/javascript">
+    (function () {
+      var html = document.documentElement;
+      var btn = document.getElementById('yb-mode');
+      if (!btn) {
+        return;
+      }
+
+      function paint() {
+        var dark = html.getAttribute('data-mode') === 'dark';
+        btn.textContent = dark ? '☀' : '☾';
+        btn.setAttribute('aria-label', dark ? '切换到浅色' : '切换到深色');
+        btn.setAttribute('title', btn.getAttribute('aria-label'));
+      }
+
+      btn.addEventListener('click', function () {
+        var dark = html.getAttribute('data-mode') === 'dark';
+        var next = dark ? 'light' : 'dark';
+        html.setAttribute('data-mode', next);
+        try {
+          localStorage.setItem('theme', next);
+        } catch (e) {
+          /* 隐私模式下写不进去也无妨，本次会话仍然生效 */
+        }
+        // 主题页靠这条消息同步 giscus 的配色
+        window.postMessage({ direction: 'mode-toggle', message: next }, '*');
+        paint();
+      });
+
+      paint();
+    })();
+  </script>
 
 </body>
 </html>
