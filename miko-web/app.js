@@ -543,10 +543,9 @@
             (lock ? ' title="' + esc(lockReason(c.id)) + '"' : '') + '>' +
           '<span class="cc-branch">└</span>' +
           '<div class="cc-body"><div class="cc-name">' + esc(ex.parent || '') + '番外' +
-          '<span class="cc-sub">' + esc(ex.title) + '</span></div>' +
+          (lock ? '' : '<span class="cc-sub">' + esc(ex.title) + '</span>') + '</div>' +
           '<div class="cc-meta">' + (lock ? '需先读完《' + esc(ex.parent || '') + '》' : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
           '</div>' +
-          (lock ? '<span class="cc-lock cc-lock-sm">' + LOCK_ICON + '</span>' : '') +
           (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
           '</button>';
       }

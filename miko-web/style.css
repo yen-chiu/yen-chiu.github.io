@@ -788,3 +788,6 @@ select{
 }
 .cc-lock.cc-lock-sm svg{width:12px;height:12px}
 .chapter-card.is-locked .cc-lock{opacity:.95}
+/* 锁定番外：不显示副标题，标题完整单行，右侧不再留空 */
+.chapter-card.cc-extra.is-locked .cc-name{white-space:normal;overflow:visible;text-overflow:clip}
+.chapter-card.cc-extra.is-locked{padding-right:12px}
