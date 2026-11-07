@@ -82,6 +82,7 @@
         after: st.after,
         progress: st.progress,
         marks: st.marks,
+        chatlog: st.chatlog,
         settings: st.settings,
         ts: Date.now()
       };
@@ -208,6 +209,7 @@
       if (d.avaUp) st.avaUp = d.avaUp || {};
       if (d.theme) st.theme = d.theme || {};
       if (d.likes) st.likes = d.likes;
+      if (d.chatlog) st.chatlog = d.chatlog;
       if (d.comments) st.comments = d.comments;
       if (d.after) st.after = d.after;
       if (d.settings) {
@@ -491,6 +493,32 @@
     return { pct: pct, label: '进度 ' + pct + '%' };
   }
 
+
+  /* ---------------- 章节解锁 ---------------- */
+  var MAIN_ORDER = ['第一章', '第二章', '第三章', '第四章', '第五章', '第六章'];
+
+  // 番外 -> 需要先读完的主线章节
+  function needOf(id) {
+    var extras = (st.meta && st.meta.extras) || {};
+    if (extras[id]) return extras[id].parent;
+    var i = MAIN_ORDER.indexOf(id);
+    if (i <= 0) return null;          // 第一章永远可玩
+    return MAIN_ORDER[i - 1];
+  }
+
+  function isUnlocked(id) {
+    if (st.settings.unlockAll) return true;
+    if (id === '第一章') return true;
+    var need = needOf(id);
+    if (!need) return true;
+    return !!(st.done[need] || st.progress[need] >= 2000);   // 已读完才算解锁
+  }
+
+  function lockReason(id) {
+    var need = needOf(id);
+    return need ? ('先读完《' + need + '》才能解锁') : '未解锁';
+  }
+
   function renderHome() {
     var grid = $('#chapter-grid');
     grid.innerHTML = '';
@@ -499,21 +527,23 @@
     function cardHtml(c, ex) {
       var n = (c.rows || []).length;
       var pr = chapterProgress(c);
+      var lock = !isUnlocked(c.id);
+      var lockAttr = lock ? ' data-locked="1"' : '';
       if (ex) {
-        return '<button class="chapter-card cc-extra" data-cid="' + esc(c.id) + '">' +
+        return '<button class="chapter-card cc-extra' + (lock ? ' is-locked' : '') + '" data-cid="' + esc(c.id) + '"' + lockAttr + '>' +
           '<span class="cc-branch">└</span>' +
           '<div class="cc-body"><div class="cc-name">' + esc(ex.parent || '') + '番外' +
           '<span class="cc-sub">' + esc(ex.title) + '</span></div>' +
-          '<div class="cc-meta">' + (pr.label ? pr.label : (n ? n + ' 行对话' : '')) + '</div>' +
+          '<div class="cc-meta">' + (lock ? '锁定 · ' + esc(lockReason(c.id)) : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
           '</div>' +
           (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
           '</button>';
       }
       var pr2 = pr;
-      return '<button class="chapter-card" data-cid="' + esc(c.id) + '">' +
+      return '<button class="chapter-card' + (lock ? ' is-locked' : '') + '" data-cid="' + esc(c.id) + '"' + lockAttr + '>' +
         '<img src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="' + esc(c.id) + '" loading="lazy">' +
         '<div class="cc-body"><div class="cc-name">' + esc(c.id) + '</div>' +
-        '<div class="cc-meta">' + (pr2.label ? pr2.label : (n ? n + ' 行对话' : '')) + '</div>' +
+        '<div class="cc-meta">' + (lock ? '锁定 · ' + esc(lockReason(c.id)) : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
         (pr2.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr2.pct + '%"></i></div>' : '') +
         '</div>' +
         (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
@@ -542,13 +572,17 @@
     });
 
     grid.querySelectorAll('[data-cid]').forEach(function (b) {
-      b.onclick = function () { pickChapter(b.getAttribute('data-cid')); };
+      b.onclick = function () {
+        var cid = b.getAttribute('data-cid');
+        if (!isUnlocked(cid)) { toast(lockReason(cid)); return; }
+        pickChapter(cid);
+      };
     });
 
     var bar = $('#continue-bar');
     var d = null;
     try { d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { d = null; }
-    if (d && d.chapterId && d.cur > 0) {
+    if (d && d.chapterId && d.cur > 0 && isUnlocked(d.chapterId)) {
       bar.hidden = false;
       bar.firstElementChild.textContent = '上次停在「' + d.chapterId + '」';
       $('#continue-btn').onclick = function () {
@@ -814,8 +848,50 @@
     return '';
   }
 
+
+  /* ---------------- 每章聊天记录 ---------------- */
+  var LOG_CAP = 6000;
+
+  function chapterLog(id) {
+    id = id || st.chapterId;
+    if (!st.chatlog[id]) st.chatlog[id] = [];
+    return st.chatlog[id];
+  }
+
+  function logRow(row) {
+    var L = chapterLog();
+    var last = L[L.length - 1];
+    if (last && last.r === row.i) return;          // 重复渲染去重
+    L.push({ r: row.i });
+    if (L.length > LOG_CAP) L.splice(0, L.length - LOG_CAP);
+  }
+
+  function logChoice(i, text) {
+    var L = chapterLog();
+    L.push({ c: { i: i, t: text } });
+    if (L.length > LOG_CAP) L.splice(0, L.length - LOG_CAP);
+  }
+
+  // 重进本章：把这一章真实的对话（含选过的选项）整段放回去
+  function replayLog(ch) {
+    var L = chapterLog(ch.id);
+    if (!L.length) return false;
+    L.forEach(function (e) {
+      if (e.c) {
+        appendRow({ i: e.c.i, who: '我', text: e.c.t, dir: 'right', tags: [] }, true);
+      } else {
+        var r = ch.rows[e.r];
+        if (!r) return;
+        if (r.choice !== undefined) return;
+        appendRow(r, true);
+      }
+    });
+    return true;
+  }
+
   function restoreHistory(ch) {
-    // 回看最近若干行，仅作视觉衔接（不重放跳转）
+    if (replayLog(ch)) return;      // 有完整记录就整段放回
+    // 老存档没有记录：退回最近若干行做视觉衔接
     var start = Math.max(0, st.cur - 14);
     for (var i = start; i < st.cur; i++) {
       var r = ch.rows[i];
@@ -978,6 +1054,7 @@
           if (myGen !== st.gen) break;
         }
         markNamed(row.who);
+        logRow(row);
         appendRow(row, st.skipAll);
         unlockFrom(row);
         checkReveal(row);
@@ -1149,8 +1226,10 @@
         });
         st.cur = t;
         st.ctx = { labels: lab, resume: afterSiblings(ch, lab, blockEnd(ch, t)), target: t };
-        // 让玩家自己的话出现在聊天里
-        appendRow({ i: i, who: r.who, text: r.text, dir: r.dir, tags: [] }, true);
+        // 让玩家自己的话出现在聊天里，并记进本章聊天记录
+        var picked = { i: i, who: r.who, text: r.text, dir: r.dir, tags: [] };
+        logChoice(i, r.text);
+        appendRow(picked, true);
         save();
         tick();
       };
@@ -1708,6 +1787,7 @@
     $('#set-bgm').checked = !!st.settings.bgm;
     if ($('#set-bgm-track')) $('#set-bgm-track').value = st.settings.bgmTrack || 'new';
     if ($('#set-autosave')) $('#set-autosave').value = String(st.settings.autosave || 0);
+    if ($('#set-unlock-all')) $('#set-unlock-all').checked = !!st.settings.unlockAll;
     syncNpcBlock();
     $('#set-sfx').checked = !!st.settings.sfx;
     $('#set-auto-unlock').checked = !!st.settings.autoUnlock;
@@ -1726,6 +1806,11 @@
     };
     if ($('#set-bgm-track')) $('#set-bgm-track').onchange = function () {
       st.settings.bgmTrack = this.value; save(); applyBgm();
+    };
+    if ($('#set-unlock-all')) $('#set-unlock-all').onchange = function () {
+      st.settings.unlockAll = this.checked; save();
+      toast(this.checked ? '已解锁全部章节' : '已恢复按顺序解锁');
+      if (location.hash.indexOf('/home') >= 0) renderHome();
     };
     if ($('#set-autosave')) $('#set-autosave').onchange = function () {
       st.settings.autosave = Number(this.value) || 0; save(); startAutosave();
@@ -1859,8 +1944,20 @@
       document.addEventListener(ev, armBgm, { passive: true });
     });
 
-    // 按键音：按钮 / 选项 / 卡片 / 菜单 / 导航
-    document.addEventListener('pointerdown', function (e) {
+    // 按键音：只在「真的点了一下」时响——用 click，不用 pointerdown，
+    // 否则手机上滑动列表/滚动屏幕（以 pointerdown 开始）也会响
+    var touchStartX = 0, touchStartY = 0, touchMoved = false;
+    document.addEventListener('touchstart', function (e) {
+      var t = e.touches && e.touches[0];
+      if (t) { touchStartX = t.clientX; touchStartY = t.clientY; touchMoved = false; }
+    }, { passive: true });
+    document.addEventListener('touchmove', function (e) {
+      var t = e.touches && e.touches[0];
+      if (!t) return;
+      if (Math.abs(t.clientX - touchStartX) > 8 || Math.abs(t.clientY - touchStartY) > 8) touchMoved = true;
+    }, { passive: true });
+    document.addEventListener('click', function (e) {
+      if (touchMoved) { touchMoved = false; return; }   // 是滑动，不是点击
       if (e.target.closest('.choice-btn, .chapter-card, .menu-item, .npc-pick, .ava-opt, .diff-wrap summary, .tab, .btn, button, .end-back')) {
         playClick();
       }

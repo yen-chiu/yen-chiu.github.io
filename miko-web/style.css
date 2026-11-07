@@ -747,3 +747,13 @@ select{
 /* 选项面板淡入：避免对方说完最后一句就硬弹出 */
 #choices{transition:opacity .28s ease, transform .28s ease;opacity:0;transform:translateY(6px)}
 #choices.in{opacity:1;transform:translateY(0)}
+
+/* 锁定章节 */
+.chapter-card.is-locked{opacity:.55;cursor:not-allowed}
+.chapter-card.is-locked > img{filter:grayscale(1) brightness(.55) blur(1px)}
+.chapter-card.is-locked::after{
+  content:"🔒";position:absolute;right:10px;top:10px;font-size:15px;
+  background:rgba(0,0,0,.55);border-radius:9px;padding:3px 7px;line-height:1.2;
+}
+.chapter-card.is-locked .cc-meta{color:#8a7f95}
+.chapter-card.cc-extra.is-locked{opacity:.5}
