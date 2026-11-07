@@ -33,6 +33,7 @@
       speed: 'normal', wait: 1, bgm: false, bgmTrack: 'new', sfx: true, autoUnlock: false, autosave: 60,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
       revealLock: true,
+      unlockAll: false,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
     },
     auto: false,
@@ -51,6 +52,8 @@
     logOpen: {},
     progress: {},       // 每章读到的最远行号
     marks: {},          // 每章的书签 {cur, ctx}
+    chatlog: {},        // 每章实际播放过的内容（含玩家选过的选项），用于重进章节时整段重放
+    theme: {},          // 每个角色当前的主题头像（随她发的照片变化）
     profileWho: 'Miko'
   };
 
@@ -854,6 +857,7 @@
 
   function chapterLog(id) {
     id = id || st.chapterId;
+    if (!st.chatlog) st.chatlog = {};
     if (!st.chatlog[id]) st.chatlog[id] = [];
     return st.chatlog[id];
   }
