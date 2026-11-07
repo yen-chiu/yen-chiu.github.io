@@ -12,7 +12,10 @@
   --yb-accent: #1f5c99;
 }
 
-html,
+/* 底色只写在纸面 body 上，不要写到 html：
+   期刊首页（_tabs/journal.md）是主题页，也会加载这份样式；
+   一旦给 html 刷了浅色，暗色模式下页面滚到底时，body 与画布之间那十几像素
+   就会露出浅色边。body 的底色会自然铺到画布上，不需要 html 兜底。 */
 body.yb-paper-body {
   background: #f5f4f1;
 }
