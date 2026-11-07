@@ -749,12 +749,9 @@ select{
 #choices.in{opacity:1;transform:translateY(0)}
 
 /* 锁定章节 */
-.chapter-card.is-locked{opacity:.55;cursor:not-allowed}
+.chapter-card.is-locked{cursor:not-allowed}
 .chapter-card.is-locked > img{filter:grayscale(1) brightness(.55) blur(1px)}
-.chapter-card.is-locked::after{
-  content:"🔒";position:absolute;right:10px;top:10px;font-size:15px;
-  background:rgba(0,0,0,.55);border-radius:9px;padding:3px 7px;line-height:1.2;
-}
+
 .chapter-card.is-locked .cc-meta{color:#8a7f95}
 .chapter-card.cc-extra.is-locked{opacity:.5}
 
@@ -770,3 +767,24 @@ select{
 .set-card-warn{border-color:rgba(255,107,150,.22);background:rgba(60,20,34,.28)}
 .set-card-warn .set-row{border-bottom-color:rgba(255,255,255,.05)}
 .set-note-left{margin:2px 2px 8px;text-align:left}
+
+.chapter-card.is-locked{cursor:not-allowed}
+.chapter-card.is-locked img{filter:grayscale(1) brightness(.42) contrast(.95)}
+.chapter-card.is-locked .cc-name{color:#a7a2bb}
+.chapter-card.is-locked .cc-meta{color:#7d7894}
+.chapter-card.is-locked:active{transform:none}
+
+/* 锁定徽章：描边圆角底 + 线性锁，跟常见的 UI 图标一致 */
+.cc-lock{
+  position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(9,9,14,.68);border:1px solid rgba(255,255,255,.14);
+  color:#d6d2e6;backdrop-filter:blur(4px);
+}
+.cc-lock svg{width:14px;height:14px;display:block}
+.cc-lock.cc-lock-sm{
+  position:static;width:22px;height:22px;border-radius:7px;flex:none;margin-left:auto;
+  align-self:flex-start;background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08);color:#8f8aa8;
+}
+.cc-lock.cc-lock-sm svg{width:12px;height:12px}
+.chapter-card.is-locked .cc-lock{opacity:.95}

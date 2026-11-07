@@ -527,28 +527,38 @@
     grid.innerHTML = '';
     var extras = (st.meta && st.meta.extras) || {};
 
-    function cardHtml(c, ex) {
+    var LOCK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="4.2" y="10.4" width="15.6" height="9.4" rx="2.6"/>' +
+    '<path d="M8 10.4V7.7a4 4 0 0 1 8 0v2.7"/>' +
+    '<circle cx="12" cy="15.1" r="1.05" fill="currentColor" stroke="none"/></svg>';
+
+  function cardHtml(c, ex) {
       var n = (c.rows || []).length;
       var pr = chapterProgress(c);
       var lock = !isUnlocked(c.id);
       var lockAttr = lock ? ' data-locked="1"' : '';
       if (ex) {
-        return '<button class="chapter-card cc-extra' + (lock ? ' is-locked' : '') + '" data-cid="' + esc(c.id) + '"' + lockAttr + '>' +
+        return '<button class="chapter-card cc-extra' + (lock ? ' is-locked' : '') + '" data-cid="' + esc(c.id) + '"' + lockAttr +
+            (lock ? ' title="' + esc(lockReason(c.id)) + '"' : '') + '>' +
           '<span class="cc-branch">└</span>' +
           '<div class="cc-body"><div class="cc-name">' + esc(ex.parent || '') + '番外' +
           '<span class="cc-sub">' + esc(ex.title) + '</span></div>' +
-          '<div class="cc-meta">' + (lock ? '锁定 · ' + esc(lockReason(c.id)) : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
+          '<div class="cc-meta">' + (lock ? '需先读完《' + esc(ex.parent || '') + '》' : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
           '</div>' +
+          (lock ? '<span class="cc-lock cc-lock-sm">' + LOCK_ICON + '</span>' : '') +
           (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
           '</button>';
       }
       var pr2 = pr;
-      return '<button class="chapter-card' + (lock ? ' is-locked' : '') + '" data-cid="' + esc(c.id) + '"' + lockAttr + '>' +
+      return '<button class="chapter-card' + (lock ? ' is-locked' : '') + '" data-cid="' + esc(c.id) + '"' + lockAttr +
+        (lock ? ' title="' + esc(lockReason(c.id)) + '" aria-label="' + esc(c.id) + '（未解锁）"' : '') + '>' +
         '<img src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="' + esc(c.id) + '" loading="lazy">' +
         '<div class="cc-body"><div class="cc-name">' + esc(c.id) + '</div>' +
-        '<div class="cc-meta">' + (lock ? '锁定 · ' + esc(lockReason(c.id)) : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
+        '<div class="cc-meta">' + (lock ? '需先读完《' + esc(needOf(c.id) || '') + '》' : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
         (pr2.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr2.pct + '%"></i></div>' : '') +
         '</div>' +
+        (lock ? '<span class="cc-lock">' + LOCK_ICON + '</span>' : '') +
         (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
         '</button>';
     }
