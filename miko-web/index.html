@@ -120,51 +120,39 @@
   </header>
   <div class="page-body">
     <div class="set-card">
+      <h3 class="set-title">阅读</h3>
       <div class="set-row">
         <span>打字速度</span>
-        <select id="set-speed">
-          <option value="slow">慢</option>
-          <option value="normal">中</option>
-          <option value="fast">快</option>
-        </select>
+        <select id="set-speed"><option value="slow">慢</option><option value="normal">中</option><option value="fast">快</option></select>
       </div>
       <div class="set-row">
         <span>等待倍速</span>
-        <select id="set-wait">
-          <option value="1">真实时长（1×，和剧情里一样）</option>
-          <option value="10">10 倍速</option>
-          <option value="60">60 倍速</option>
-          <option value="0">不等待（瞬间跳过）</option>
-        </select>
+        <select id="set-wait" class="set-select"><option value="1">真实时长（1×，和剧情里一样）</option><option value="10">10 倍速</option><option value="60">60 倍速</option><option value="0">不等待（瞬间跳过）</option></select>
       </div>
+    </div>
+
+    <div class="set-card">
+      <h3 class="set-title">声音</h3>
       <div class="set-row">
         <span>背景音乐</span>
         <label class="switch"><input type="checkbox" id="set-bgm"><i></i></label>
       </div>
       <div class="set-row">
         <span>曲目</span>
-        <select id="set-bgm-track" class="set-select">
-          <option value="new">重置版 · Chill Bells</option>
-          <option value="old">2016 原版 · 旧版音乐</option>
-        </select>
+        <select id="set-bgm-track" class="set-select"><option value="new">重置版 · Chill Bells</option><option value="old">2016 原版 · 旧版音乐</option></select>
       </div>
       <div class="set-row">
-        <span>解锁全部章节</span>
-        <label class="switch"><input type="checkbox" id="set-unlock-all"><i></i></label>
+        <span>音效 / 语音</span>
+        <label class="switch"><input type="checkbox" id="set-sfx"><i></i></label>
       </div>
-      <p class="set-note" style="margin:0 2px 8px;text-align:left">
-        关闭时按顺序解锁：第一章 → 第一章番外 → 第二章 → 第二章番外 → …；
-        番外要等对应主线读完才出现。
-      </p>
+      <p class="set-note set-note-left">浏览器要求先点一下页面才能出声，进游戏后随手点一下即可。</p>
+    </div>
+
+    <div class="set-card">
+      <h3 class="set-title">进度与存档</h3>
       <div class="set-row">
         <span>自动存档间隔</span>
-        <select id="set-autosave" class="set-select">
-          <option value="0">关闭</option>
-          <option value="30">每 30 秒</option>
-          <option value="60">每 1 分钟</option>
-          <option value="180">每 3 分钟</option>
-          <option value="300">每 5 分钟</option>
-        </select>
+        <select id="set-autosave" class="set-select"><option value="0">关闭</option><option value="30">每 30 秒</option><option value="60">每 1 分钟</option><option value="180">每 3 分钟</option><option value="300">每 5 分钟</option></select>
       </div>
       <div class="set-row">
         <span>本地备份文件</span>
@@ -174,18 +162,29 @@
         <button id="btn-autofile" class="ghost-btn">选一个文件，自动写盘</button>
         <button id="btn-autofile-off" class="ghost-btn">停止</button>
       </div>
+      <div class="two-btn" style="margin:2px 0 6px">
+        <button class="ghost-btn" id="btn-export">导出存档</button>
+        <button class="ghost-btn" id="btn-import">导入存档</button>
+        <input type="file" id="file-import" accept="application/json,.json" hidden>
+      </div>
+      <p class="set-note set-note-left">导出包含章节进度、解锁记录、聊天记录与全部设置；导入后可换设备接着玩。</p>
+    </div>
+
+    <div class="set-card set-card-warn">
+      <h3 class="set-title">解锁与剧透 <span class="set-badge">谨慎开启</span></h3>
       <div class="set-row">
-        <span>音效 / 语音</span>
-        <label class="switch"><input type="checkbox" id="set-sfx"><i></i></label>
+        <span>解锁全部章节<em class="set-sub">开启后所有章节直接可玩，会跳过原本的顺序解锁</em></span>
+        <label class="switch"><input type="checkbox" id="set-unlock-all"><i></i></label>
       </div>
       <div class="set-row">
-        <span>自动解锁全部词典图鉴</span>
+        <span>自动解锁全部词典图鉴<em class="set-sub">开启后词典与图鉴会全部显示（含未读到的内容）</em></span>
         <label class="switch"><input type="checkbox" id="set-auto-unlock"><i></i></label>
       </div>
       <div class="set-row">
-        <span>头像随剧情解锁<em class="set-sub">未认识时显示问号，自报姓名后揭示</em></span>
+        <span>头像随剧情解锁<em class="set-sub">关闭后未认识的角色也会立刻显示真头像</em></span>
         <label class="switch"><input type="checkbox" id="set-reveal-lock"><i></i></label>
       </div>
+      <p class="set-note set-note-left">这三项默认关闭 / 默认锁定，开启或关闭时都会再确认一次。</p>
     </div>
 
     <div class="set-card">
@@ -228,21 +227,6 @@
       </div>
       </div><!-- /#npc-block -->
       <div class="ava-pop" id="ava-pop" hidden></div>
-    </div>
-
-    <div class="set-card">
-      <div class="set-row set-plain">
-        <span>存档</span>
-        <span class="set-hint">导出 / 导入进度</span>
-      </div>
-      <div class="two-btn">
-        <button class="ghost-btn" id="btn-export">导出存档</button>
-        <button class="ghost-btn" id="btn-import">导入存档</button>
-        <input type="file" id="file-import" accept="application/json,.json" hidden>
-      </div>
-      <p class="set-note" style="margin:8px 2px 0;text-align:left">
-        导出包含当前章节进度、词典 / 图鉴 / 动态解锁记录与全部设置，可换设备或换浏览器导入。
-      </p>
     </div>
 
     <div class="set-card">

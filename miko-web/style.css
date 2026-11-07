@@ -757,3 +757,16 @@ select{
 }
 .chapter-card.is-locked .cc-meta{color:#8a7f95}
 .chapter-card.cc-extra.is-locked{opacity:.5}
+
+/* ---------- 设置：分组标题 / 警示卡 ---------- */
+.set-title{
+  margin:2px 2px 8px;font-size:12px;letter-spacing:.16em;color:#8f8aa8;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+}
+.set-badge{
+  font-size:10.5px;letter-spacing:.08em;color:#ffb4c6;background:rgba(255,107,150,.14);
+  border:1px solid rgba(255,107,150,.35);border-radius:999px;padding:2px 7px;font-weight:500;
+}
+.set-card-warn{border-color:rgba(255,107,150,.22);background:rgba(60,20,34,.28)}
+.set-card-warn .set-row{border-bottom-color:rgba(255,255,255,.05)}
+.set-note-left{margin:2px 2px 8px;text-align:left}

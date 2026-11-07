@@ -30,7 +30,7 @@
     named: {},          // 已知名字（第二态：黑色字母头像）
     avaUp: {},          // 已上传头像（第三态：人物立绘）
     settings: {
-      speed: 'normal', wait: 1, bgm: false, bgmTrack: 'new', sfx: true, autoUnlock: false, autosave: 60,
+      speed: 'normal', wait: 1, bgm: true, bgmTrack: 'new', sfx: true, autoUnlock: false, autosave: 60,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
       revealLock: true,
       unlockAll: false,
@@ -1812,8 +1812,12 @@
       st.settings.bgmTrack = this.value; save(); applyBgm();
     };
     if ($('#set-unlock-all')) $('#set-unlock-all').onchange = function () {
-      st.settings.unlockAll = this.checked; save();
-      toast(this.checked ? '已解锁全部章节' : '已恢复按顺序解锁');
+      var el = this;
+      if (el.checked && !confirm('解锁全部章节？\n\n开启后 6 章与两个番外都能直接进入，原本「读完上一章才解锁」的顺序会被跳过，可能看到还没铺垫到的剧情。')) {
+        el.checked = false; st.settings.unlockAll = false; save(); return;
+      }
+      st.settings.unlockAll = el.checked; save();
+      toast(el.checked ? '已解锁全部章节（谨慎使用）' : '已恢复按顺序解锁');
       if (location.hash.indexOf('/home') >= 0) renderHome();
     };
     if ($('#set-autosave')) $('#set-autosave').onchange = function () {
@@ -1827,13 +1831,21 @@
     };
     $('#set-sfx').onchange = function () { st.settings.sfx = this.checked; save(); };
     $('#set-reveal-lock').onchange = function () {
-      st.settings.revealLock = this.checked;
+      var el = this;
+      if (!el.checked && !confirm('关闭「头像随剧情解锁」？\n\n关闭后，还没认识的角色的真实头像会立刻显示，等于提前剧透人物身份。')) {
+        el.checked = true; st.settings.revealLock = true; save(); return;
+      }
+      st.settings.revealLock = el.checked;
       save();
       syncNpcBlock();
       $$('.ava[data-who]').forEach(function (el) { refreshAvatars(el.getAttribute('data-who')); });
     };
     $('#set-auto-unlock').onchange = function () {
-      st.settings.autoUnlock = this.checked;
+      var el = this;
+      if (el.checked && !confirm('自动解锁全部词典与图鉴？\n\n开启后会直接显示全部词条和插画（含还没读到的章节），会剧透剧情与谜底。')) {
+        el.checked = false; st.settings.autoUnlock = false; save(); return;
+      }
+      st.settings.autoUnlock = el.checked;
       if (this.checked) {
         ((st.meta && st.meta.dictionary) || []).forEach(function (d) { st.unlock.dict[d.term] = 1; });
         ((st.meta && st.meta.gallery) || []).forEach(function (g) { st.unlock.gal[g.key] = 1; });
