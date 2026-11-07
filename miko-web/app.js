@@ -519,7 +519,7 @@
 
   function lockReason(id) {
     var need = needOf(id);
-    return need ? ('需完成《' + need + '》解锁') : '未解锁';
+    return need ? ('完成《' + need + '》解锁') : '未解锁';
   }
 
   function renderHome() {
@@ -544,7 +544,7 @@
           '<span class="cc-branch">└</span>' +
           '<div class="cc-body"><div class="cc-name">' + esc(ex.parent || '') + '番外' +
           (lock ? '' : '<span class="cc-sub">' + esc(ex.title) + '</span>') + '</div>' +
-          '<div class="cc-meta">' + (lock ? '需先完成《' + esc(ex.parent || '') + '》' : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
+          '<div class="cc-meta">' + (lock ? '需完成《' + esc(ex.parent || '') + '》' : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
           '</div>' +
           (st.done[c.id] ? '<span class="cc-done">完成</span>' : '') +
           '</button>';
@@ -554,7 +554,7 @@
         (lock ? ' title="' + esc(lockReason(c.id)) + '" aria-label="' + esc(c.id) + '（未解锁）"' : '') + '>' +
         '<img src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="' + esc(c.id) + '" loading="lazy">' +
         '<div class="cc-body"><div class="cc-name">' + esc(c.id) + '</div>' +
-        '<div class="cc-meta">' + (lock ? '需先完成《' + esc(needOf(c.id) || '') + '》' : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
+        '<div class="cc-meta">' + (lock ? '需完成《' + esc(needOf(c.id) || '') + '》' : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
         (pr2.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr2.pct + '%"></i></div>' : '') +
         '</div>' +
         (lock ? '<span class="cc-lock">' + LOCK_ICON + '</span>' : '') +
