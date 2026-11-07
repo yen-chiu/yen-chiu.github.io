@@ -489,7 +489,7 @@
 
   function chapterProgress(c) {
     var p = (st.progress || {})[c.id];
-    if (st.done[c.id]) return { pct: 100, label: '已读完' };
+    if (st.done[c.id]) return { pct: 100, label: '已完成' };
     if (!p && !(p === 0)) return { pct: 0, label: '' };
     var n = (c.rows || []).length || 1;
     var pct = Math.min(99, Math.round(p / n * 100));
@@ -500,7 +500,7 @@
   /* ---------------- 章节解锁 ---------------- */
   var MAIN_ORDER = ['第一章', '第二章', '第三章', '第四章', '第五章', '第六章'];
 
-  // 番外 -> 需要先读完的主线章节
+  // 番外 -> 需要先完成的主线章节
   function needOf(id) {
     var extras = (st.meta && st.meta.extras) || {};
     if (extras[id]) return extras[id].parent;
@@ -514,12 +514,12 @@
     if (id === '第一章') return true;
     var need = needOf(id);
     if (!need) return true;
-    return !!(st.done[need] || st.progress[need] >= 2000);   // 已读完才算解锁
+    return !!(st.done[need] || st.progress[need] >= 2000);   // 已完成章节才算解锁
   }
 
   function lockReason(id) {
     var need = needOf(id);
-    return need ? ('先读完《' + need + '》才能解锁') : '未解锁';
+    return need ? ('需完成《' + need + '》解锁') : '未解锁';
   }
 
   function renderHome() {
@@ -544,9 +544,9 @@
           '<span class="cc-branch">└</span>' +
           '<div class="cc-body"><div class="cc-name">' + esc(ex.parent || '') + '番外' +
           (lock ? '' : '<span class="cc-sub">' + esc(ex.title) + '</span>') + '</div>' +
-          '<div class="cc-meta">' + (lock ? '需先读完《' + esc(ex.parent || '') + '》' : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
+          '<div class="cc-meta">' + (lock ? '需先完成《' + esc(ex.parent || '') + '》' : (pr.label ? pr.label : (n ? n + ' 行对话' : ''))) + '</div>' +
           '</div>' +
-          (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
+          (st.done[c.id] ? '<span class="cc-done">完成</span>' : '') +
           '</button>';
       }
       var pr2 = pr;
@@ -554,11 +554,11 @@
         (lock ? ' title="' + esc(lockReason(c.id)) + '" aria-label="' + esc(c.id) + '（未解锁）"' : '') + '>' +
         '<img src="' + esc(asset('chapter/' + c.id + '.webp')) + '" alt="' + esc(c.id) + '" loading="lazy">' +
         '<div class="cc-body"><div class="cc-name">' + esc(c.id) + '</div>' +
-        '<div class="cc-meta">' + (lock ? '需先读完《' + esc(needOf(c.id) || '') + '》' : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
+        '<div class="cc-meta">' + (lock ? '需先完成《' + esc(needOf(c.id) || '') + '》' : (pr2.label ? pr2.label : (n ? n + ' 行对话' : ''))) + '</div>' +
         (pr2.pct > 0 ? '<div class="cc-bar"><i style="width:' + pr2.pct + '%"></i></div>' : '') +
         '</div>' +
         (lock ? '<span class="cc-lock">' + LOCK_ICON + '</span>' : '') +
-        (st.done[c.id] ? '<span class="cc-done">已读</span>' : '') +
+        (st.done[c.id] ? '<span class="cc-done">完成</span>' : '') +
         '</button>';
     }
 
@@ -653,12 +653,12 @@
     if (cur >= 0 && target !== cur) {
       var ahead = target > cur;
       var msg = ahead
-        ? '跳到《' + id + '》会跳过前面的剧情，' + (st.done[st.chapterId] ? '' : '当前章节还没读完。') + '确定继续？'
-        : '回到前面的《' + id + '》，已读进度会保留。确定？';
+        ? '跳到《' + id + '》会跳过前面的剧情，' + (st.done[st.chapterId] ? '' : '当前章节还未完成。') + '确定继续？'
+        : '回到前面的《' + id + '》，已完成进度会保留。确定？';
       if (!confirm(msg)) return;
       if (!ahead) {
         var pr = chapterProgress(chapter(id) || { id: id, rows: [] });
-        toast('往前跳：回到《' + id + '》' + (pr.pct ? '（已读 ' + pr.pct + '%）' : ''));
+        toast('往前跳：回到《' + id + '》' + (pr.pct ? '（已完成 ' + pr.pct + '%）' : ''));
       }
     }
     st.restored = true;
@@ -1822,7 +1822,7 @@
     };
     if ($('#set-unlock-all')) $('#set-unlock-all').onchange = function () {
       var el = this;
-      if (el.checked && !confirm('解锁全部章节？\n\n开启后 6 章与两个番外都能直接进入，原本「读完上一章才解锁」的顺序会被跳过，可能看到还没铺垫到的剧情。')) {
+      if (el.checked && !confirm('解锁全部章节？\n\n开启后 6 章与两个番外都能直接进入，原本「完成上一章才解锁」的顺序会被跳过，可能看到还没铺垫到的剧情。')) {
         el.checked = false; st.settings.unlockAll = false; save(); return;
       }
       st.settings.unlockAll = el.checked; save();
