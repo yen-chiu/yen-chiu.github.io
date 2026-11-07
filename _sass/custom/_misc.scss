@@ -44,6 +44,12 @@ footer.wx-foot {
   position: relative;
   display: flex;
   flex-direction: column;
+  /*
+    主题给 footer 定了一个固定高度（6rem），只够原来那两行文字；
+    这里改成两行式后内容更高，第二行（链接 + 运行时长）会溢出到卡片外面。
+    高度交给内容自己算，页脚才会把「本站已运行…」一起包住。
+  */
+  height: auto;
   gap: 0.3rem;
   margin-top: 2.5rem;
   padding-top: 1.25rem;
