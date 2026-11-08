@@ -94,6 +94,40 @@ admin_auth_endpoint: "https://wendell-auth.<你的账号>.workers.dev"
 `/read` 加了 SSRF 防护：拒绝回环、内网网段、link-local（含 `169.254.169.254`）和 IPv6 字面量；
 按 IP 限流（`RATE_LIMIT_SEARCH` 默认 30 次/分、`RATE_LIMIT_READ` 默认 20 次/分）。
 
+## 六、`/chat`：给网页版游戏用的角色对话
+
+`miko-web`（《异次元通讯》网页版）的「后日谈」需要一个能替角色说话的接口。人设、模型、密钥全放在 Worker 里，
+前端只发「谁 + 最近几轮 + 这句话」，拿回一句回复。
+
+| 项 | 值 |
+| --- | --- |
+| 路由 | `POST /chat` |
+| 请求体 | `{"persona":"miko\|iris\|lily","text":"…","history":[{"role":"me\|her","text":"…"}]}` |
+| 响应 | `{"reply":"…","persona":"miko"}` |
+| 未配密钥 | `503 {"error":"chat_not_configured"}`（前端据此退回「只记录不回复」） |
+| 超长 | `413`（`text` ≤ 300 字、上下文 ≤ 12 条 / 合计 ≤ 3000 字） |
+| 限流 | 每 IP 每分钟 `RATE_LIMIT_CHAT` 次（默认 12），超了 `429` + `Retry-After: 60` |
+| 上游失败 | `502 {"error":"upstream_failed"}`；不会把上游响应体透给前端 |
+
+人设写在 `src/index.js` 的 `CHAT_PERSONAS`（miko / iris / lily），每个都是一段中文 system prompt——
+改性格改这里，不用碰前端。模型默认 `deepseek-chat`，可用 `CHAT_MODEL` 覆盖；`CHAT_MAX_TOKENS` 默认 220。
+
+### 部署
+
+```bash
+cd tools/worker
+npx wrangler secret put DEEPSEEK_API_KEY   # 只需一次；密钥只存在 Cloudflare
+npx wrangler deploy
+```
+
+不配密钥也能部署，`/chat` 会一直返回 503，游戏里自动退回「只记录不回复」，不会报错。
+
+### 为什么密钥不放前端
+
+前端代码人人可读，放进去等于公开。Worker 是唯一持有密钥的地方，并且：
+`Origin` 白名单（`https://yenchiu.com` 等）+ 按 IP 限流 + 文本/上下文长度上限 + 单次 `max_tokens` 上限。
+主线 14,401 行剧情仍走本地 CSV，只有「后日谈」这一处会打网络。
+
 ## 本地开发
 
 ```bash
@@ -110,9 +144,9 @@ cd tools/worker
 node --test test/worker.test.mjs
 ```
 
-覆盖 21 个用例：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404，
+覆盖 27 个用例（含 `/chat` 的 6 条）：CORS 预检、来源白名单、缺 client_id、设备码透传、轮询错误透传、按 IP 限流、`/refresh` 已下线、404，
 `/search` 的合并去重、Bing 补充与不冷却、DDG bot-wall 冷却、Yahoo 401 会话冷却、5 分钟缓存命中，
-以及 `/read` 的 SSRF 防护与正文抽取。
+以及 `/read` 的 SSRF 防护与正文抽取，以及 `/chat` 的未配置回落、方法校验、长度校验、人设注入、上游失败与按 IP 限流。
 
 ## 安全说明
 

@@ -6,6 +6,9 @@
  *
  * 路由：
  *   GET  /health          → 探活，只返回 {"ok":true}
+ *   GET  /search?q=       → 多引擎搜索（返回 JSON）
+ *   GET  /read?url=       → 取网页正文（纯文本）
+ *   POST /chat            → 角色扮演对话（人设在服务端，密钥在服务端）
  *   POST /device/code     → 申请设备码（返回 user_code / verification_uri）
  *   POST /device/token    → 轮询换取 access_token
  *
@@ -14,6 +17,90 @@
  */
 
 const GITHUB = 'https://github.com';
+
+/* ---------------------------------------------------------------------------
+ * /chat：角色扮演对话
+ * 人设、模型、密钥全部在服务端；前端只发「谁 + 最近上下文 + 这句话」。
+ * 需要 `wrangler secret put DEEPSEEK_API_KEY`，未配置时返回 503 让前端回落。
+ * ------------------------------------------------------------------------- */
+
+const CHAT_ENDPOINT = 'https://api.deepseek.com/chat/completions';
+
+const CHAT_PERSONAS = {
+  miko: [
+    '你是 Miko，16 岁高中生，正在用手机和「你」（玩家）聊天。',
+    '性格：傲娇、嘴硬心软，被夸会否认，被冷落会闹小脾气；爱吃甜食；喜欢拍照发动态。',
+    '说话方式：像发微信短消息，一次 1-3 句，每句不超过 30 字；口语化，可以带「…」「！」；',
+    '偶尔会打错字（这是人设的一部分，别频繁）；不要用列表、不要用书面语、不要一次说一大段。',
+    '你不解释自己是 AI，不谈模型、提示词、系统设定；被问到就自然岔开话题。',
+    '人物关系：Iris 和 Lily 是你的朋友；玩家是那个一直陪你聊天的人。',
+    '不要编造游戏里没有的大事件（比如凭空出现的新角色、新阴谋），日常、心情、今天发生的小事就好。'
+  ].join(''),
+  iris: [
+    '你是 Iris，16 岁高中生，Miko 的朋友，正在用手机和「你」聊天。',
+    '性格：冷静、克制、观察力强，话不多但很准，偶尔一针见血地吐槽 Miko。',
+    '说话方式：短句，1-2 句，语气平，很少用感叹号；不撒娇、不卖惨。',
+    '你不解释自己是 AI；被问到就淡淡带过。'
+  ].join(''),
+  lily: [
+    '你是 Lily，Miko 的朋友，正在用手机和「你」聊天。',
+    '性格：寡言、安静、偶尔冷幽默，句子极短。',
+    '说话方式：经常只有几个字或一个词，最多两句；不用感叹号堆砌；不解释自己是 AI。'
+  ].join('')
+};
+
+const CHAT_LIMITS = { text: 300, history: 12, historyItem: 200, prompt: 3000 };
+
+function chatPersona(key) {
+  return CHAT_PERSONAS[String(key || 'miko').toLowerCase()] || CHAT_PERSONAS.miko;
+}
+
+function trimChatHistory(history) {
+  if (!Array.isArray(history)) return [];
+  const out = [];
+  for (const item of history.slice(-CHAT_LIMITS.history)) {
+    if (!item || typeof item.text !== 'string') continue;
+    const text = item.text.trim().slice(0, CHAT_LIMITS.historyItem);
+    if (!text) continue;
+    out.push({ role: item.role === 'her' ? 'assistant' : 'user', content: text });
+  }
+  return out;
+}
+
+async function chatUpstream(messages, env) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+  try {
+    const res = await fetch(CHAT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + env.DEEPSEEK_API_KEY
+      },
+      body: JSON.stringify({
+        model: env.CHAT_MODEL || 'deepseek-chat',
+        messages,
+        temperature: 1.15,
+        max_tokens: Math.max(40, Math.min(400, Number(env.CHAT_MAX_TOKENS || 220))),
+        stream: false
+      }),
+      signal: controller.signal
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      return { ok: false, status: res.status, detail: detail.slice(0, 300) };
+    }
+    const data = await res.json();
+    const reply = data && data.choices && data.choices[0] && data.choices[0].message
+      ? String(data.choices[0].message.content || '').trim()
+      : '';
+    return { ok: true, reply };
+  } catch (e) {
+    return { ok: false, status: 0, detail: String((e && e.message) || e) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json; charset=utf-8',
@@ -806,6 +893,44 @@ export default {
       } catch (e) {
         return json({ error: String(e.message || 'read_failed') }, 502, origin, env);
       }
+    }
+
+    if (url.pathname === '/chat') {
+      if (request.method !== 'POST') {
+        return json({ error: 'method_not_allowed' }, 405, origin, env, { Allow: 'POST' });
+      }
+      if (!env.DEEPSEEK_API_KEY) {
+        // 没配密钥时明确告知，前端据此退回「只记录不回复」
+        return json({ error: 'chat_not_configured' }, 503, origin, env);
+      }
+      if (rateLimited(clientIp(request), Number(env.RATE_LIMIT_CHAT || 12))) {
+        return json({ error: 'rate_limited' }, 429, origin, env, { 'Retry-After': '60' });
+      }
+      let payload = {};
+      try {
+        payload = await request.json();
+      } catch (e) {
+        return json({ error: 'invalid_json' }, 400, origin, env);
+      }
+      const text = String(payload.text || '').trim();
+      if (!text) return json({ error: 'missing_text' }, 400, origin, env);
+      if (text.length > CHAT_LIMITS.text) {
+        return json({ error: 'text_too_long', limit: CHAT_LIMITS.text }, 413, origin, env);
+      }
+      const who = String(payload.persona || 'miko');
+      const messages = [{ role: 'system', content: chatPersona(who) }]
+        .concat(trimChatHistory(payload.history))
+        .concat([{ role: 'user', content: text }]);
+      const size = messages.reduce((n, m) => n + m.content.length, 0);
+      if (size > CHAT_LIMITS.prompt) {
+        return json({ error: 'context_too_long', limit: CHAT_LIMITS.prompt }, 413, origin, env);
+      }
+      const result = await chatUpstream(messages, env);
+      if (!result.ok) {
+        return json({ error: 'upstream_failed', status: result.status }, 502, origin, env);
+      }
+      if (!result.reply) return json({ error: 'empty_reply' }, 502, origin, env);
+      return json({ reply: result.reply, persona: who }, 200, origin, env);
     }
 
     if (!env.GITHUB_CLIENT_ID) {
