@@ -1035,8 +1035,12 @@
     var last = -1, seen = {};
     L.forEach(function (e) {
       var key = e.c ? ('c' + e.c.i) : ('r' + e.r);
-      if (seen[key]) return;          // 同一行/同一选项只显示一次，避免旧存档里的重复段落
+      var ct = e.c ? ('我|' + e.c.t) : (function () {
+        var rr = ch.rows[e.r]; return rr ? ((rr.who || '') + '|' + (rr.text || '')) : '';
+      })();
+      if (seen[key] || (ct && seen['t' + ct])) return;   // 索引或内容已出现过：旧存档里的重复段落不再显示
       seen[key] = 1;
+      if (ct) seen['t' + ct] = 1;
       if (e.c) {
         last = e.c.i;
         appendRow({ i: e.c.i, who: '我', text: e.c.t, dir: 'right', tags: [] }, true);
@@ -1054,8 +1058,8 @@
   function restoreHistory(ch) {
     var last = replayLog(ch);       // 有完整记录就整段放回
     if (last >= 0) {
-      // 没有书签（例如从首页卡片重新进入）时，用日志末尾校正续播位置，避免从第 0 行重播
-      if (!st.marks[ch.id] && last + 1 > st.cur) st.cur = last + 1;
+      // 续播位置至少推进到日志末尾，避免带着旧书签重播已显示的段落
+      if (last + 1 > st.cur) st.cur = last + 1;
       return;
     }
     // 老存档没有记录：退回最近若干行做视觉衔接
