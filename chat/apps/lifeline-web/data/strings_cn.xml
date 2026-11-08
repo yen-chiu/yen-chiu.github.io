@@ -1,0 +1,84 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+
+    <!--HUD Strings-->
+    <string name="app_name">Lifeline</string>
+    <string name="hud_turn_sound_on">开启音效</string>
+    <string name="hud_turn_sound_off">关闭音效</string>
+    <string name="hud_turn_music_on">开启音乐</string>
+    <string name="hud_turn_music_off">关闭音乐</string>
+    <string name="hud_rate_the_game">给游戏打分</string>
+    <string name="hud_rewind_story">要返回故事的某一天吗？</string>
+    <string name="hud_privacy_policy">!!! Privacy Policy</string>
+    <string name="hud_turn_fast_mode_on">开启快速模式</string>
+    <string name="hud_turn_fast_mode_off">关闭快速模式</string>
+    <string name="hud_change_language">更改语言</string>
+    <string name="hud_notification_settings">警告设置</string>
+    <string name="credits">制作人员</string>
+    <string name="more_games">更多游戏</string>
+
+    <!--Generic Strings-->
+    <string name="dialog_no">否</string>
+    <string name="dialog_yes">是</string>
+
+    <!-- Story Specific Strings -->
+    <string name="story_taylor_is_busy">[泰勒繁忙]</string>
+    <string name="story_connection_lost">[连接丢失]</string>
+    <string name="story_taylor_is_waiting_for_you">[泰勒在等你。]</string>
+    <string name="story_restart_the_story">[要重新开始故事吗？]</string>
+    <string name="story_respond">[回复……]</string>
+    <string name="story_incoming_communication">[有新消息]</string>
+    <string name="story_incoming_message">[有新消息]</string>
+    <string name="story_data_filename">StoryData_cn.txt</string>
+
+    <!-- Dialog Strings -->
+    <string name="dialog_notification_settings">《生命线》是一款用几天时间讲述的互动故事。\n\n泰勒将通过适用于您的设备的通知方式与您保持联系。您希望每条通知消息单独提示以免遗漏信息，还是希望各条通知消息集中在一起以节省空间？\n\n{您可以在设置菜单中随时编辑此选项。}</string>
+    <string name="credits_dialog">《生命线》创作人员：\n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\n本地化团队：\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock</string>
+    <string name="dialog_game_over">泰勒已经走到了这段冒险经历的尽头。\n\n您现在可以点击任何过去的选项更改回复，或返回某一时间段，去探索其余的故事进程。\n\n您也可以在主菜单中激活“快速模式”。</string>
+    <string name="display_system_message">显示系统消息</string>
+    <string name="dialog_game_over_rate">给游戏打分</string>
+    <string name="dialog_notification_separate">通知消息\n分开</string>
+    <string name="dialog_notification_clustered">通知消息\n集中</string>
+    <string name="dialog_change_language_text">更改语言</string>
+
+    <!--Fast & Rewind Strings -->
+    <string name="dialog_fast_confirmation">Lifeline不推荐使用“快速模式”，但是此模式有助于您跳过之前已体验过的等待部分。\n\n“快速模式”将在您下次在故事中选择或修改选项时生效。\n\n您希望选用吗？</string>
+    <string name="dialog_rewind_story">要返回故事的某一天吗？</string>
+    <string name="dialog_rewind_time">确定要将故事返回此时重新开始吗？</string>
+    <string name="dialog_rewind_confirmation">您希望返回到故事的哪段时间重新开始？</string>
+    <string name="dialog_rewind_start_of_story">故事开头</string>
+    <string name="dialog_rewind_dawn_day2">第2天黎明</string>
+    <string name="dialog_rewind_dawn_day3">第3天黎明</string>
+
+    <!-- License checking status messages -->
+    <string name="check_license">Check license</string>
+    <string name="checking_license">Checking license...</string>
+    <string name="allow">Allow the user access</string>
+    <string name="application_error">Application error: %1$s</string>
+
+    <!-- Unlicensed dialog messages -->
+    <string name="unlicensed_dialog_title">Application not licensed</string>
+    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Google Play.</string>
+    <string name="unlicensed_dialog_retry_body">Unable to validate license. Check to see if a network connection is available.</string>
+    <string name="buy_button">Buy app</string>
+    <string name="retry_button">Retry</string>
+    <string name="quit_button">Exit</string>
+
+    <string name="tablet_font_size">18</string>
+    <string name="phone_font_size">12</string>
+
+    <!-- Cross Promotional Update And Bridge Content -->
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline: Silent Night</string>
+    <string name="dialog_game_over_upsell">泰勒已经走到了这段冒险经历的尽头，但是故事还没有结束！\n\n泰勒的下一次生命线冒险会发生什么？快来游玩独家额外故事一睹为快吧。\n\n您也可以在主菜单中启用快速模式，或重返故事的某一环节。</string>
+    <string name="dialog_game_over_offer_upsell_button">开始额外故事！</string>
+    <string name="dialog_upsell_confirmation">泰勒的故事会在《生命线：静夜》中延续，现已上架App Store！\n\n你即将看到的是下一章故事的独家预览，准备好开始了吗？</string>
+    <string name="dialog_upsell_option_1">开始吧！</string>
+    <string name="dialog_upsell_option_2">我还没准备好。</string>
+    <string name="story_mel_is_busy">[梅兰妮繁忙]</string>
+    <string name="story_mel_is_waiting_for_you">[梅兰妮在等你。]</string>
+    <string name="story_display_system_message">显示系统消息</string>
+    <string name="story_display_upsell_system_message">看看故事的结局是什么！</string>
+    <string name="sneak_peek">新游试玩</string>
+
+</resources>

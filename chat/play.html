@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#12121a">
+    <meta name="description" content="抽屉里的两个网页版游戏：异次元通讯与生命线。">
+    <meta name="robots" content="noindex">
+    <title>异次元通讯 · 念真的小站</title>
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link href="css/shell.css?v=3ccc727c8f" rel="stylesheet">
+    <link href="css/play.css?v=3ccc727c8f" rel="stylesheet">
+    <script src="js/shell.js?v=3ccc727c8f"></script>
+</head>
+
+<body class="wd-page">
+    <div class="wd-play-app">
+        <header class="wd-play-bar">
+            <a class="wd-icon-btn" href="index.html" aria-label="回到念真" title="回到念真">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M15 5l-7 7 7 7" />
+                </svg>
+            </a>
+
+            <div class="wd-play-bar__title">
+                <strong id="play-title">正在打开…</strong>
+                <span class="wd-chip" id="play-chip">网页版</span>
+            </div>
+
+            <span data-wd-apps-slot></span>
+
+            <button type="button" class="wd-icon-btn" id="play-reload" aria-label="重新载入" title="重新载入">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20 12a8 8 0 1 1-2.4-5.7" />
+                    <path d="M20 4.5V10h-5.5" />
+                </svg>
+            </button>
+        </header>
+
+        <main class="wd-play-frame" id="play-stage">
+            <iframe id="play-frame" title="应用" allow="autoplay; fullscreen; clipboard-write"
+                allowfullscreen referrerpolicy="same-origin"></iframe>
+        </main>
+    </div>
+
+    <script>
+        /* 一个极小的「应用装载器」：
+           ?a=miko / ?a=lifeline 选应用，地址栏哈希原样带给 iframe（异次元通讯用 #/ 做内部路由）。 */
+        (function () {
+            'use strict';
+
+            var APPS = {
+                miko: {
+                    name: '异次元通讯',
+                    note: '网页版 · 剧情对话',
+                    src: 'apps/miko-web/index.html',
+                    theme: '#12121a',
+                    title: '异次元通讯 · 念真的小站'
+                },
+                lifeline: {
+                    name: '生命线',
+                    note: '网页版 · 文字冒险',
+                    src: 'apps/lifeline-web/index.html',
+                    theme: '#0a0a10',
+                    title: '生命线 · 念真的小站'
+                }
+            };
+
+            var KEY_ORDER = ['miko', 'lifeline'];
+            var frame = document.getElementById('play-frame');
+            var stage = document.getElementById('play-stage');
+            var titleEl = document.getElementById('play-title');
+            var chipEl = document.getElementById('play-chip');
+            var reloadBtn = document.getElementById('play-reload');
+
+            function queryApp() {
+                var m = /[?&]a=([\w-]+)/.exec(window.location.search);
+                return m && APPS[m[1]] ? m[1] : '';
+            }
+
+            function miss(name) {
+                if (frame) frame.remove();
+                reloadBtn.hidden = true;
+                titleEl.textContent = '没有这个应用';
+                chipEl.hidden = true;
+
+                var box = document.createElement('div');
+                box.className = 'wd-play-miss';
+                box.innerHTML =
+                    '<strong>找不到「' + (name || '这个应用') + '」</strong>' +
+                    '<p>抽屉里现在有两个网页版游戏，挑一个开始吧。</p>' +
+                    '<p class="wd-play-miss__links">' + KEY_ORDER.map(function (id) {
+                        return '<a href="play.html?a=' + id + '">' + APPS[id].name + '</a>';
+                    }).join('') + '</p>' +
+                    '<p><a href="index.html">回到念真</a></p>';
+                stage.appendChild(box);
+                document.title = '没有这个应用 · 念真的小站';
+            }
+
+            var id = queryApp();
+            if (!id) {
+                miss('');
+                return;
+            }
+
+            var app = APPS[id];
+
+            titleEl.textContent = app.name;
+            chipEl.textContent = app.note;
+            document.title = app.title;
+
+            var theme = document.querySelector('meta[name="theme-color"]');
+            if (theme) theme.setAttribute('content', app.theme);
+
+            // 哈希交给内层应用：异次元通讯用 #/user/Miko 这类内部路由
+            var hash = window.location.hash && window.location.hash !== '#' ? window.location.hash : '';
+            frame.src = app.src + hash;
+            frame.setAttribute('title', app.name);
+
+            reloadBtn.addEventListener('click', function () {
+                frame.src = app.src + hash;
+            });
+
+            // 内层应用自己跳了路由时，把哈希同步回地址栏，刷新/分享不会丢
+            frame.addEventListener('load', function () {
+                try {
+                    var inner = frame.contentWindow.location.hash;
+                    if (inner && inner !== window.location.hash) {
+                        history.replaceState(null, '', 'play.html?a=' + id + inner);
+                    }
+                } catch (e) { /* 跨域时安静放弃 */ }
+            });
+        })();
+    </script>
+</body>
+
+</html>

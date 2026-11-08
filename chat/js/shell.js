@@ -111,7 +111,11 @@
     story2:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',
     story3:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 3v18M15 12h.01"/></svg>'
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 3v18M15 12h.01"/></svg>',
+    miko:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-4 3.2v-3.2A2.5 2.5 0 0 1 4 13.5z"/><path d="M12 7.4l.85 2.15L15 10.4l-2.15.85L12 13.4l-.85-2.15L9 10.4l2.15-.85z"/></svg>',
+    lifeline:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.4h3.6l1.9-4.2 2.6 7.9 2.3-5.4 1.7 1.7H21"/><circle cx="12" cy="12" r="9.2" opacity=".45"/></svg>'
   };
 
   var APPS = [
@@ -150,6 +154,22 @@
       desc: '第七夜，站会在 05:00 停。'
     },
     {
+      id: 'miko',
+      name: '异次元通讯',
+      href: 'play.html?a=miko',
+      tone: 'violet',
+      note: '网页版',
+      desc: '和 Miko 的跨次元对话，原版与「次元复苏」的剧情都在里面。'
+    },
+    {
+      id: 'lifeline',
+      name: '生命线',
+      href: 'play.html?a=lifeline',
+      tone: 'space',
+      note: '网页版',
+      desc: '坠毁在陌生星球上的泰勒，只能靠一条断断续续的信号和你说话。'
+    },
+    {
       id: 'ai',
       name: '自带模型的 AI',
       href: 'ai.html',
@@ -186,6 +206,11 @@
   function currentAppId() {
     var file = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
     if (!file || file === 'index.html') return 'chat';
+    // 内嵌应用页：一个页面装两个游戏，靠 ?a= 区分
+    if (file === 'play.html') {
+      var m = /[?&]a=([\w-]+)/.exec(window.location.search);
+      return m ? m[1] : '';
+    }
     return file.replace(/\.html$/, '');
   }
 

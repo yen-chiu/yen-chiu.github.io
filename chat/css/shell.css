@@ -437,6 +437,17 @@ html[data-theme="dark"] .wd-page {
   box-shadow: 0 10px 22px rgba(227, 93, 124, 0.28);
 }
 
+/* 两个搬进来的网页版游戏，用它们自己主色调的一档 */
+.wd-tile[data-tone="violet"] .wd-tile__icon {
+  background: linear-gradient(160deg, #b18cf6 0%, #6d4bd8 100%);
+  box-shadow: 0 10px 22px rgba(109, 75, 216, 0.3);
+}
+
+.wd-tile[data-tone="space"] .wd-tile__icon {
+  background: linear-gradient(160deg, #7fbdf7 0%, #2f6bcc 100%);
+  box-shadow: 0 10px 22px rgba(47, 107, 204, 0.3);
+}
+
 /* 抽屉底部：主题切换 + 站外链接 */
 .wd-drawer__foot {
   display: flex;

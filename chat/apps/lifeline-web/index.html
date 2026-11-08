@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>生命线 · Lifeline</title>
+<meta name="description" content="《生命线》网页版：与坠落在陌生星球上的泰勒通过消息保持联系。">
+<link rel="icon" href="assets/img/notification_icon.png">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+
+<div id="app" class="app" hidden>
+  <header class="bar">
+    <div class="brand">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span class="brand-cn">生命线</span>
+      <span class="brand-en">LIFELINE</span>
+    </div>
+    <div class="tools">
+      <button id="btn-speed" class="tool" type="button" title="切换等待时间：快速 / 真实">快进 · 开</button>
+      <button id="btn-sound" class="tool" type="button" title="开关声音">声音 · 开</button>
+      <button id="btn-save" class="tool" type="button" title="存档、导入导出">存档</button>
+      <button id="btn-restart" class="tool" type="button" title="从故事开头重新开始">重开</button>
+    </div>
+  </header>
+
+  <main id="chat" class="chat" aria-live="polite"></main>
+
+  <div id="typing" class="typing" hidden aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <div id="choices" class="choices" hidden></div>
+
+  <div id="inputRow" class="input-row" hidden>
+    <input id="freeInput" type="text" autocomplete="off" placeholder="回复……" maxlength="64">
+    <button id="inputSend" class="send" type="button">发送</button>
+  </div>
+
+  <footer class="foot">
+    <span id="foot-hint">信号已接入 · 回复会传回地面</span>
+    <span class="credit">同人网页移植 · 原作 © 3 Minute Games</span>
+  </footer>
+</div>
+
+<div id="splash" class="splash">
+  <div class="splash-inner">
+    <p class="kicker">SOS · 一条来自未知星球的信号</p>
+    <h1>生命线</h1>
+    <p class="sub">LIFELINE</p>
+    <p class="intro">
+      一艘飞船坠毁在陌生的星球上。通讯器另一头，一个叫泰勒的人还活着。<br>
+      你收到的每一条消息都来自他——回复，或者等一等。
+    </p>
+    <div class="splash-actions">
+      <button id="btn-continue" class="primary" type="button" hidden>继续上次的故事</button>
+      <button id="btn-start" class="primary" type="button">开始新故事</button>
+    </div>
+    <p class="disclaimer">
+      本页为非商业同人移植，剧情与美术版权归 3 Minute Games / Big Fish Games 所有。
+    </p>
+  </div>
+</div>
+
+<div id="saveModal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="saveTitle">
+    <header class="modal-head">
+      <h2 id="saveTitle">存档</h2>
+      <button id="saveClose" class="icon-btn" type="button" aria-label="关闭">×</button>
+    </header>
+
+    <section class="modal-sec">
+      <h3>当前进度</h3>
+      <p id="autoInfo" class="muted">—</p>
+      <div class="row">
+        <button id="btn-export-file" class="ghost" type="button">导出文件</button>
+        <button id="btn-import-file" class="ghost" type="button">导入文件</button>
+        <input id="fileInput" type="file" accept=".json,application/json" hidden>
+      </div>
+    </section>
+
+    <section class="modal-sec">
+      <h3>手动存档</h3>
+      <div id="slots" class="slots"></div>
+    </section>
+
+    <section class="modal-sec">
+      <h3>进度码</h3>
+      <p class="muted">进度码只含变量与当前位置，不含聊天记录，适合跨设备继续。</p>
+      <div class="row">
+        <button id="btn-copy-code" class="ghost" type="button">复制进度码</button>
+        <button id="btn-paste-code" class="ghost" type="button">粘贴进度码</button>
+      </div>
+      <textarea id="codeBox" rows="3" spellcheck="false" placeholder="把进度码粘贴到这里，再点“从进度码导入”"></textarea>
+      <div class="row">
+        <button id="btn-import-code" class="primary sm" type="button">从进度码导入</button>
+      </div>
+    </section>
+
+    <p id="saveMsg" class="save-msg" role="status"></p>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+/* ==========================================================================
+   内嵌应用页（play.html）
+   --------------------------------------------------------------------------
+   抽屉里的「游戏」不是本小站的页面，而是两套独立的静态应用：
+     apps/miko-web/    异次元通讯 · 网页版
+     apps/lifeline-web/ 生命线 · 网页版
+   它们各自带完整样式与剧情引擎，所以这里不碰它们的任何规则，
+   只用一层「手机式的框」把它们装进来：上面一条顶栏（返回 / 标题 / 抽屉 / 重载），
+   下面一块 iframe 占满剩下的空间。
+
+   版式沿用 ai.html 的手机卡片：桌面端居中一张圆角卡片，窄屏铺满。
+   ========================================================================== */
+
+.wd-play-app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 860px;
+  height: min(900px, calc(100dvh - 48px));
+  overflow: hidden;
+  border-radius: 26px;
+  background: #0b0b11;
+  box-shadow: var(--wd-shadow);
+}
+
+/* 窄屏铺满；矮屏（横过来的手机、小窗口）也一样铺满：
+   这两个游戏都是按整屏写的，边框和卡片留白越少，它们自己的版式越不会挤坏。 */
+@media (max-width: 520px), (max-height: 620px) {
+  .wd-play-app {
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* 铺满时把 .wd-page 的卡片留白也去掉，否则外围会露出一圈底色 */
+  .wd-page {
+    padding: 0;
+    align-items: stretch;
+  }
+}
+
+/* ---------- 顶栏 ---------- */
+
+.wd-play-bar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  padding: calc(8px + var(--wd-safe-top)) 12px 8px;
+  border-bottom: 1px solid var(--wd-line);
+  background: var(--wd-panel);
+  z-index: 5;
+}
+
+.wd-play-bar__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.wd-play-bar__title strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 14.5px/1.3 var(--wd-font);
+  color: var(--wd-ink);
+}
+
+.wd-play-bar__title .wd-chip {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  padding: 2px 8px;
+}
+
+/* 矮屏把顶栏压成一行，把高度让给游戏本体 */
+@media (max-height: 620px) {
+  .wd-play-bar {
+    gap: 4px;
+    padding: calc(3px + var(--wd-safe-top)) 8px 3px;
+  }
+
+  .wd-play-bar__title {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .wd-play-bar__title strong {
+    font-size: 13.5px;
+  }
+
+  .wd-play-bar__title .wd-chip {
+    display: none;
+  }
+}
+
+/* ---------- 舞台 ---------- */
+
+.wd-play-frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: #05050a;
+}
+
+.wd-play-frame > iframe {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ---------- 兜底：链接带了个不认识的应用 ---------- */
+
+.wd-play-miss {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px 24px;
+  text-align: center;
+  color: #d9d6ea;
+  font: 400 14px/1.7 var(--wd-font);
+}
+
+.wd-play-miss strong {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.wd-play-miss a {
+  color: #7ec8ff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(126, 200, 255, 0.35);
+}
+
+.wd-play-miss__links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
