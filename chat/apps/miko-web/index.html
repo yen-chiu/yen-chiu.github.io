@@ -7,6 +7,8 @@
 <title>异次元通讯 · 网页版</title>
 <meta name="description" content="《异次元通讯》网页移植版：与 Miko 的跨次元对话。">
 <link rel="icon" href="assets/icon/icon.webp">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon/icon-192.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -77,6 +79,9 @@
     <button class="menu-item" data-go="gallery">图鉴</button>
     <button class="menu-item" data-go="user/Miko">动态</button>
     <button class="menu-item" id="btn-after"><span>后日谈</span><em>结局之后，还能继续和她说话</em></button>
+    <button class="menu-item" id="btn-notify"><span>通知</span><em>页面在后台时，有新消息会提醒你</em></button>
+    <button class="menu-item" id="btn-gist"><span>云存档</span><em>上传到 GitHub Gist，或从分享链接恢复</em></button>
+    <button class="menu-item" id="btn-stats"><span>本机统计</span><em>游玩次数 / 消息 / 选择 / 到访段落 / 结局</em></button>
     <button class="menu-item" data-go="settings">设置</button>
     <button class="menu-item" id="btn-restart">重开本章</button>
   </div>
@@ -229,6 +234,25 @@
       <div class="ava-pop" id="ava-pop" hidden></div>
     </div>
 
+
+    <div class="set-card">
+      <h3 class="set-title">本机统计</h3>
+      <div id="stats-body"></div>
+      <button class="ghost-btn" id="btn-stats-clear">清空本机统计</button>
+    </div>
+
+    <div class="set-card">
+      <h3 class="set-title">调试</h3>
+      <div class="set-row">
+        <span>记忆来源</span>
+        <select id="set-memory-mode" class="set-select">
+          <option value="read">已读章节</option>
+          <option value="all">全部章节</option>
+        </select>
+      </div>
+      <p class="set-note-left">调试模式默认开启、不提供开关。记忆来源决定「后日谈」里 AI 能引用多少剧情：<b>已读</b>只用你读过的章节与本章最近的对话；<b>全部章节</b>会把八章标题与各章开头一并交给它（可能剧透）。</p>
+    </div>
+
     <div class="set-card">
       <div class="set-row set-plain">
         <span>已解锁</span>
@@ -326,6 +350,40 @@
     <div class="cover-mask"></div>
     <div class="cover-txt"><div id="cover-title">第一章</div><div id="cover-sub">新的对话</div></div>
   </div>
+
+
+<div class="modal" id="notify-modal" hidden>
+  <div class="modal-card">
+    <h3>通知</h3>
+    <p id="notify-state">未开启</p>
+    <p class="set-note-left">开启后，页面在后台时她会用系统通知提醒你；等待结束时也会提醒。全部在本机完成，不上传任何内容。</p>
+    <div class="modal-actions">
+      <button class="ghost-btn" id="btn-notify-close">关闭</button>
+      <button class="btn-primary" id="btn-notify-toggle">开启通知</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="gist-modal" hidden>
+  <div class="modal-card gist-card">
+    <h3>云存档</h3>
+    <label class="gist-lab">GitHub 令牌（只需 gist 权限）</label>
+    <input id="gist-token" type="password" placeholder="ghp_… 或 github_pat_…" autocomplete="off">
+    <label class="gist-check"><input type="checkbox" id="gist-remember"> 记住令牌（存在本机 localStorage）</label>
+    <div class="gist-btns">
+      <button class="btn-primary" id="btn-gist-up">上传为私密 Gist</button>
+      <button class="ghost-btn" id="btn-gist-share">复制分享链接</button>
+    </div>
+    <label class="gist-lab">Gist ID 或链接</label>
+    <input id="gist-id" type="text" placeholder="粘贴 gist id / 分享链接" autocomplete="off">
+    <div class="gist-btns">
+      <button class="ghost-btn" id="btn-gist-down">从 Gist 恢复</button>
+      <button class="ghost-btn" id="btn-gist-close">关闭</button>
+    </div>
+    <p class="gist-msg" id="gist-msg"></p>
+    <p class="set-note-left">令牌只用于直接请求 api.github.com，不会写进存档或上传到别处；勾选「记住」才保存在本机。</p>
+  </div>
+</div>
 
 <div class="lightbox" id="lightbox" hidden><img id="lightbox-img" src="assets/icon/icon.webp" alt="图片预览"></div>
 

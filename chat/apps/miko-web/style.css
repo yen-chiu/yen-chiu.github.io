@@ -791,3 +791,37 @@ select{
 /* 锁定番外：不显示副标题，标题完整单行，右侧不再留空 */
 .chapter-card.cc-extra.is-locked .cc-name{white-space:normal;overflow:visible;text-overflow:clip}
 .chapter-card.cc-extra.is-locked{padding-right:12px}
+
+
+/* ---------- 通知 / 云存档 / 统计（新增） ---------- */
+.modal-card{
+  width:100%;max-width:430px;background:#1b1b26;border:1px solid var(--line);
+  border-radius:18px;padding:18px 18px 14px;text-align:left;
+}
+.modal-card h3{margin:0 0 8px;font-size:16px;color:#e8e4f7}
+.modal-card p{margin:0 0 10px;font-size:13px;color:#b9b5d0;line-height:1.7}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:10px}
+.btn-primary{
+  padding:10px 18px;border-radius:11px;border:0;cursor:pointer;
+  background:linear-gradient(135deg,#7b5cff,#a855f7);color:#fff;font-size:13.5px;font-family:inherit;
+}
+.btn-primary:hover{filter:brightness(1.08)}
+.gist-card{max-width:460px}
+.gist-lab{display:block;margin:10px 0 5px;font-size:12px;color:#8f8aa8}
+.gist-card input[type=password],.gist-card input[type=text]{
+  width:100%;box-sizing:border-box;padding:9px 11px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);background:#12121a;color:#e8e4f7;font-size:13px;font-family:inherit;
+}
+.gist-card input:focus{outline:none;border-color:rgba(123,92,255,.7)}
+.gist-check{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12.5px;color:#8f8aa8}
+.gist-btns{display:flex;gap:9px;margin-top:10px;flex-wrap:wrap}
+.gist-btns > button{flex:1;min-width:120px}
+.gist-msg{margin:12px 0 2px;font-size:12.5px;color:#9ad0a5;line-height:1.6;word-break:break-all}
+.gist-msg.err{color:#ff9dc0}
+.stat-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 2px;border-bottom:1px solid rgba(255,255,255,.055);font-size:13.5px;color:#cfcbe3;
+}
+.stat-row:last-of-type{border-bottom:0}
+.stat-row b{font-size:16px;color:#e8e4f7;font-variant-numeric:tabular-nums}
+#stats-body{margin-bottom:8px}

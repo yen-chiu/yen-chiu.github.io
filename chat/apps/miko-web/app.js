@@ -16,6 +16,29 @@
   var PUNCT_HEAVY = '。！？!?';
   var PUNCT_LIGHT = '，、；：,;:';
   var SAVE_KEY = 'miko.web.save.v1';
+  var STATS_KEY = 'miko.web.stats.v1';
+  var GIST_KEY = 'miko.web.gist.v1';
+  var DEBUG = true;            // 调试模式：默认开启（暂时不提供界面开关）
+  var stats = null;
+  var gistInfo = null;
+  var lastNotifyAt = 0;
+
+  function blankStats() {
+    return { plays: 0, msgs: 0, choices: 0, passages: 0, endings: 0, firstAt: Date.now(), lastAt: Date.now() };
+  }
+  function loadStats() {
+    try { stats = Object.assign(blankStats(), JSON.parse(localStorage.getItem(STATS_KEY) || '{}')); }
+    catch (e) { stats = blankStats(); }
+  }
+  function saveStats() {
+    try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {}
+  }
+  function bump(key, n) {
+    if (!stats) loadStats();
+    stats[key] = (stats[key] || 0) + (n || 1);
+    stats.lastAt = Date.now();
+    saveStats();
+  }
   var AVATARS = ['头像-黑白', '头像1', '头像2', '头像3', '头像4', '头像5', '头像6', '头像7', '头像8'];
 
   var st = {
@@ -32,6 +55,8 @@
     settings: {
       speed: 'normal', wait: 1, bgm: true, bgmTrack: 'new', sfx: true, autoUnlock: false, autosave: 60,
       myAvatar: { type: 'none' },   // 我的形象：none / qq / data
+      notify: false,                 // 系统通知（页面在后台时提醒）
+      memoryMode: 'read',            // 记忆来源：read=已读 / all=全部章节（调试模式）
       revealLock: true,
       unlockAll: false,
       npc: { 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }
@@ -217,16 +242,17 @@
       if (d.after) st.after = d.after;
       if (d.settings) {
         if (!d.settings.bgmTrack) d.settings.bgmTrack = 'new';
+        if (!d.settings.memoryMode) d.settings.memoryMode = 'read';
         var npc = d.settings.npc || {};
         Object.assign(st.settings, d.settings);
         st.settings.npc = Object.assign({ 'Miko': '头像2', 'Iris': '头像3', 'Lily': 'Lily', '未知用户': '未知用户' }, npc);
       }
-      return d;
-    } catch (e) { return null; }
       if (d.progress) st.progress = d.progress;
       if (d.marks) st.marks = d.marks;
       if (d.replies) st.replies = d.replies;
       if (d.mikoSaid) st.mikoSaid = d.mikoSaid;
+      return d;
+    } catch (e) { return null; }
   }
 
   function chapter(id) {
@@ -918,11 +944,32 @@
   function storyMemory() {
     var parts = [];
     parts.push('【世界观】这是《异次元通讯》：玩家用手机和一个叫 Miko 的女孩聊天，两个人一起被卷进城市里的怪事。她 16 岁，说话短、口语、傲娇。');
-    var done = [];
-    Object.keys(CHAPTER_TITLE).forEach(function (id) {
-      if (st.done && st.done[id]) done.push(id + '《' + CHAPTER_TITLE[id] + '》');
-    });
-    if (done.length) parts.push('【你们一起经历过的】' + done.join('、') + '。这些是共同记忆，可以自然提起。');
+    var mode = (DEBUG && st.settings.memoryMode === 'all') ? 'all' : 'read';
+    if (mode === 'all') {
+      var all = [];
+      Object.keys(CHAPTER_TITLE).forEach(function (id) {
+        var tag = (st.done && st.done[id]) ? '已读完'
+          : ((st.progress && st.progress[id]) ? '读过一部分' : '还没读');
+        all.push(id + '《' + CHAPTER_TITLE[id] + '》' + tag);
+      });
+      parts.push('【全部章节】\n' + all.join('\n'));
+      var heads = [];
+      Object.keys(CHAPTER_TITLE).forEach(function (id) {
+        var L2 = (st.chatlog && st.chatlog[id]) || [];
+        if (!L2.length) return;
+        var hs = L2.slice(0, 4).map(function (e) { return e.c ? ('我：' + String(e.c.t || '').slice(0, 40)) : e.t; })
+          .filter(Boolean);
+        if (hs.length) heads.push(id + '：' + hs.join(' / '));
+      });
+      if (heads.length) parts.push('【各章开头】\n' + heads.join('\n'));
+      parts.push('【说明】调试模式允许使用全部章节的记忆；没写在上面的具体细节仍然不要编造。');
+    } else {
+      var done = [];
+      Object.keys(CHAPTER_TITLE).forEach(function (id) {
+        if (st.done && st.done[id]) done.push(id + '《' + CHAPTER_TITLE[id] + '》');
+      });
+      if (done.length) parts.push('【你们一起经历过的】' + done.join('、') + '。这些是共同记忆，可以自然提起。');
+    }
     var lines = [];
     chapterLog(st.chapterId).slice(-36).forEach(function (e) {
       if (e.c) { lines.push('我：' + String(e.c.t || '').slice(0, 60)); return; }
@@ -949,6 +996,7 @@
     var last = L[L.length - 1];
     if (last && last.r === row.i) return;          // 重复渲染去重
     L.push({ r: row.i, t: String(row.text || '').slice(0, 120) });
+    bump('passages');
     if (L.length > LOG_CAP) L.splice(0, L.length - LOG_CAP);
   }
 
@@ -1005,6 +1053,10 @@
     var tags = row.tags || [];
     var el;
     if (!String(row.text || '').trim() && !tags.length) return null;
+    if (!instant && row.dir === 'left' && String(row.text || '').trim()) {
+      bump('msgs');
+      notifySoft(row.who || '对方', String(row.text || ''));
+    }
 
     if (tags.indexOf('无') >= 0) {
       el = document.createElement('div');
@@ -1255,6 +1307,7 @@
         clearInterval(iv);
         card.hidden = true;
         card._skip = null;
+        notifySoft('等待结束', '对方回来了，继续聊吧。');
         resolve();
       }
       card._skip = stop;
@@ -1315,6 +1368,7 @@
         // 让玩家自己的话出现在聊天里，并记进本章聊天记录
         var picked = { i: i, who: r.who, text: r.text, dir: r.dir, tags: [] };
         logChoice(i, r.text);
+        bump('choices');
         appendRow(picked, true);
         save();
         tick();
@@ -1356,6 +1410,7 @@
   }
 
   function endChapter() {
+    if (!st.done[st.chapterId]) bump('endings');
     st.done[st.chapterId] = true;
     save();
     var list = $('#msg-list');
@@ -1826,12 +1881,7 @@
   }
 
   function exportSave() {
-    var payload = {
-      app: 'miko-web', v: 1, ts: Date.now(),
-      chapterId: st.chapterId, cur: st.cur,
-      ctx: st.ctx ? { labels: Array.from(st.ctx.labels), resume: st.ctx.resume, target: st.ctx.target } : null,
-      unlock: st.unlock, done: st.done, settings: st.settings
-    };
+    var payload = snapshotSave();
     var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     var a = document.createElement('a');
     var t = new Date();
@@ -1854,13 +1904,7 @@
       if (!d || typeof d !== 'object') { toast('存档内容为空'); return; }
       var payload = (d.unlock || d.chapterId) ? d : null;
       if (!payload) { toast('不是本作的存档文件'); return; }
-      payload.ts = Date.now();
-      st.importing = true;
-      try {
-        localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
-      } catch (e) { toast('写入失败：浏览器存储不可用'); return; }
-      toast('导入成功，正在重新载入…');
-      setTimeout(function () { location.reload(); }, 800);
+      applySaveObject(payload, '导入成功');
     };
     fr.onerror = function () { toast('读取文件失败'); };
     fr.readAsText(file);
@@ -1879,6 +1923,9 @@
     $('#set-auto-unlock').checked = !!st.settings.autoUnlock;
     $('#set-reveal-lock').checked = st.settings.revealLock !== false;
     renderMyAvatar();
+    if ($('#set-memory-mode')) $('#set-memory-mode').value = st.settings.memoryMode || 'read';
+    renderNotifyState();
+    renderStats();
     $('#set-stats').textContent =
       '词典 ' + Object.keys(st.unlock.dict).length + ' · 图鉴 ' + Object.keys(st.unlock.gal).length +
       ' · 动态 ' + Object.keys(st.unlock.dyn).length;
@@ -1912,6 +1959,12 @@
       setAutoFileState('未启用');
     };
     $('#set-sfx').onchange = function () { st.settings.sfx = this.checked; save(); };
+    if ($('#set-memory-mode')) $('#set-memory-mode').onchange = function () {
+      st.settings.memoryMode = this.value === 'all' ? 'all' : 'read';
+      save();
+      toast(st.settings.memoryMode === 'all' ? '记忆来源：全部章节' : '记忆来源：已读章节');
+    };
+    if ($('#btn-stats-clear')) $('#btn-stats-clear').onclick = clearStats;
     $('#set-reveal-lock').onchange = function () {
       var el = this;
       if (!el.checked && !confirm('关闭「头像随剧情解锁」？\n\n关闭后，还没认识的角色的真实头像会立刻显示，等于提前剧透人物身份。')) {
@@ -2183,13 +2236,243 @@
     var ac = $('#after-close');
     if (ac) ac.onclick = function () { $('#after-modal').hidden = true; };
 
+    if ($('#btn-notify')) $('#btn-notify').onclick = openNotify;
+    if ($('#btn-gist')) $('#btn-gist').onclick = openGist;
+    if ($('#btn-stats')) $('#btn-stats').onclick = function () { go('settings'); };
+
+    if ($('#btn-notify-toggle')) $('#btn-notify-toggle').onclick = toggleNotify;
+    if ($('#btn-notify-close')) $('#btn-notify-close').onclick = function () { $('#notify-modal').hidden = true; renderNotifyState(); };
+
+    if ($('#btn-gist-close')) $('#btn-gist-close').onclick = function () { $('#gist-modal').hidden = true; };
+    if ($('#btn-gist-up')) $('#btn-gist-up').onclick = gistUpload;
+    if ($('#btn-gist-share')) $('#btn-gist-share').onclick = gistShare;
+    if ($('#btn-gist-down')) $('#btn-gist-down').onclick = function () { gistDownload(($('#gist-id') || {}).value, false); };
+
     window.addEventListener('hashchange', route);
     window.addEventListener('beforeunload', save);
+  }
+
+
+  /* ---------------- 系统通知 ---------------- */
+
+  function notifySupported() { return ('Notification' in window); }
+
+  function notifySoft(title, body) {
+    if (!st.settings.notify) return;
+    if (document.visibilityState === 'visible') return;
+    if (!notifySupported() || Notification.permission !== 'granted') return;
+    var now = Date.now();
+    if (now - lastNotifyAt < 2500) return;      // 连着几条只弹一次
+    lastNotifyAt = now;
+    try {
+      new Notification(title, {
+        body: String(body || '').slice(0, 80),
+        tag: 'miko-web',
+        icon: 'assets/icon/icon-192.png'
+      });
+    } catch (e) {}
+  }
+
+  function renderNotifyState() {
+    if (!$('#notify-state')) return;
+    var s = '未开启';
+    if (!notifySupported()) s = '此浏览器不支持通知';
+    else if (Notification.permission === 'denied') s = '已被浏览器拒绝，请在站点设置里允许';
+    else if (st.settings.notify && Notification.permission === 'granted') s = '已开启（页面在后台时提醒）';
+    else if (Notification.permission === 'granted') s = '已授权，但当前关闭';
+    $('#notify-state').textContent = s;
+    if ($('#btn-notify-toggle')) {
+      $('#btn-notify-toggle').textContent = st.settings.notify ? '关闭通知' : '开启通知';
+    }
+  }
+
+  async function toggleNotify() {
+    if (!notifySupported()) { renderNotifyState(); toast('此浏览器不支持系统通知'); return; }
+    if (!st.settings.notify) {
+      if (Notification.permission !== 'granted') {
+        try { await Notification.requestPermission(); } catch (e) {}
+      }
+      if (Notification.permission !== 'granted') { renderNotifyState(); toast('没有拿到通知权限'); return; }
+      st.settings.notify = true;
+      save();
+      try { new Notification('异次元通讯', { body: '通知已开启：页面在后台时，新消息会提醒你。', icon: 'assets/icon/icon-192.png' }); } catch (e) {}
+    } else {
+      st.settings.notify = false;
+      save();
+    }
+    renderNotifyState();
+  }
+
+  function openNotify() {
+    if ($('#menu-sheet') && !$('#menu-sheet').hidden) $('#menu-sheet').hidden = true;
+    $('#notify-modal').hidden = false;
+    renderNotifyState();
+  }
+
+  function openGist() {
+    if ($('#menu-sheet') && !$('#menu-sheet').hidden) $('#menu-sheet').hidden = true;
+    $('#gist-modal').hidden = false;
+    try {
+      var g = JSON.parse(localStorage.getItem(GIST_KEY) || '{}');
+      if (g.token) { $('#gist-token').value = g.token; $('#gist-remember').checked = true; }
+    } catch (e) {}
+    if (gistInfo && gistInfo.id && !$('#gist-id').value) $('#gist-id').value = gistInfo.id;
+    if (!$('#gist-msg').textContent) setGistMsg('令牌只用来发 Gist 请求，不写进存档；勾选「记住」才会留在本机。');
+  }
+
+  /* ---------------- 云存档（GitHub Gist） ---------------- */
+
+  function snapshotSave() {
+    return {
+      app: 'miko-web', v: 1, ts: Date.now(),
+      chapterId: st.chapterId, cur: st.cur,
+      ctx: st.ctx ? { labels: Array.from(st.ctx.labels), resume: st.ctx.resume, target: st.ctx.target } : null,
+      unlock: st.unlock, done: st.done, settings: st.settings,
+      revealed: st.revealed, named: st.named, avaUp: st.avaUp, theme: st.theme,
+      progress: st.progress, marks: st.marks,
+      likes: st.likes, comments: st.comments, replies: st.replies, mikoSaid: st.mikoSaid,
+      after: st.after
+    };
+  }
+
+  function setGistMsg(text, isErr) {
+    var el = $('#gist-msg');
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'gist-msg' + (isErr ? ' err' : '');
+  }
+
+  function gistRemember(token) {
+    try {
+      if ($('#gist-remember') && $('#gist-remember').checked && token) {
+        localStorage.setItem(GIST_KEY, JSON.stringify({ token: token }));
+      } else {
+        localStorage.removeItem(GIST_KEY);
+      }
+    } catch (e) {}
+  }
+
+  async function gistUpload() {
+    var token = (($('#gist-token') || {}).value || '').trim();
+    if (!token) { setGistMsg('先填入 GitHub 令牌（只需 gist 权限）', true); return; }
+    setGistMsg('正在上传…');
+    try {
+      var res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: {
+          Authorization: 'token ' + token,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          description: '异次元通讯 · 网页版存档',
+          public: false,
+          files: { 'miko-save.json': { content: JSON.stringify(snapshotSave(), null, 2) } }
+        })
+      });
+      if (!res.ok) throw new Error('GitHub 返回 HTTP ' + res.status);
+      var j = await res.json();
+      gistInfo = { id: j.id, url: j.html_url };
+      gistRemember(token);
+      $('#gist-id').value = j.id;
+      setGistMsg('已上传（私密）：' + j.html_url);
+    } catch (err) {
+      setGistMsg('上传失败：' + (err.message || '网络错误'), true);
+    }
+  }
+
+  function gistShareUrl(id) {
+    var u = new URL(location.href);
+    u.hash = '';
+    u.search = '';
+    u.searchParams.set('gist', id);
+    return u.toString();
+  }
+
+  async function gistShare() {
+    var id = (gistInfo && gistInfo.id) || (($('#gist-id') || {}).value || '').trim();
+    if (!id) { setGistMsg('还没有可分享的 Gist，先上传或填入 ID', true); return; }
+    var url = gistShareUrl(id);
+    try {
+      await navigator.clipboard.writeText(url);
+      $('#gist-id').value = url;
+      setGistMsg('分享链接已复制：' + url);
+    } catch (e) {
+      $('#gist-id').value = url;
+      setGistMsg('链接已生成，请手动复制：' + url);
+    }
+  }
+
+  async function gistDownload(idOrUrl, auto) {
+    var raw = String(idOrUrl || '').trim();
+    var id = (raw.match(/[0-9a-f]{20,}/i) || [raw])[0];
+    if (!id) { setGistMsg('请填入 Gist ID 或链接', true); return false; }
+    setGistMsg('正在读取…');
+    try {
+      var res = await fetch('https://api.github.com/gists/' + id, {
+        headers: { Accept: 'application/vnd.github+json' }
+      });
+      if (!res.ok) throw new Error('GitHub 返回 HTTP ' + res.status);
+      var j = await res.json();
+      var file = j.files['miko-save.json'] || Object.values(j.files)[0];
+      if (!file) throw new Error('这个 Gist 里没有存档文件');
+      var content = file.content;
+      if (file.truncated && file.raw_url) content = await (await fetch(file.raw_url)).text();
+      var data = JSON.parse(content);
+      if (!data || (!data.unlock && !data.chapterId)) throw new Error('不是本作的存档');
+      gistInfo = { id: j.id, url: j.html_url };
+      $('#gist-id').value = j.id;
+      applySaveObject(data, auto ? '已从分享链接恢复' : '已从 Gist 恢复');
+      return true;
+    } catch (err) {
+      setGistMsg('读取失败：' + (err.message || '网络错误'), true);
+      return false;
+    }
+  }
+
+  function applySaveObject(data, okText) {
+    data.ts = Date.now();
+    st.importing = true;
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
+    catch (e) { st.importing = false; toast('写入失败：浏览器存储不可用'); return false; }
+    toast(okText + '，正在重新载入…');
+    setTimeout(function () { location.reload(); }, 700);
+    return true;
+  }
+
+  /* ---------------- 本机统计 ---------------- */
+
+  function renderStats() {
+    if (!stats) loadStats();
+    var box = $('#stats-body');
+    if (!box) return;
+    var rows = [
+      ['游玩次数', stats.plays],
+      ['收到消息', stats.msgs],
+      ['做出选择', stats.choices],
+      ['到访段落', stats.passages],
+      ['到达结局', stats.endings]
+    ];
+    box.innerHTML = rows.map(function (r) {
+      return '<div class="stat-row"><span>' + esc(r[0]) + '</span><b>' + Number(r[1] || 0) + '</b></div>';
+    }).join('') +
+      '<p class="set-note-left">只统计这台设备上的次数，存在浏览器 localStorage，不上传。' +
+      (stats.firstAt ? '首次游玩：' + new Date(stats.firstAt).toLocaleString() : '') + '</p>';
+  }
+
+  function clearStats() {
+    if (!confirm('清空本机统计？\n\n只删掉次数记录，不影响剧情进度与存档。')) return;
+    stats = blankStats();
+    saveStats();
+    renderStats();
+    toast('本机统计已清空');
   }
 
   /* ---------------- 启动 ---------------- */
   function boot() {
     loadSave();
+    loadStats();
+    bump('plays');
     bind();
     bindSettings();
     Promise.all([
@@ -2202,6 +2485,13 @@
       if (!st.chapterId) st.chapterId = (orderedChapters()[0] || {}).id || null;
       route();
       applyBgm();
+      renderNotifyState();
+      renderStats();
+      // ?gist=<id> 分享链接：自动从 Gist 恢复
+      try {
+        var gid = new URLSearchParams(location.search).get('gist');
+        if (gid && !st.restored) gistDownload(gid, true);
+      } catch (e) {}
     }).catch(function (err) {
       document.body.innerHTML = '<pre style="color:#f88;padding:20px">数据加载失败：' + esc(err && err.message) + '</pre>';
     });
@@ -2215,4 +2505,7 @@
   boot();
   startAutosave();
   restoreBackupFile();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function () { /* 本地 http 或旧浏览器忽略 */ });
+  }
 })();

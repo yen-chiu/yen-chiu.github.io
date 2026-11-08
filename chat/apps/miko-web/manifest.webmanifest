@@ -1,0 +1,32 @@
+{
+  "name": "异次元通讯 · 网页版",
+  "short_name": "异次元通讯",
+  "description": "与 Miko 的跨次元对话——《异次元通讯》网页移植版。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0b11",
+  "theme_color": "#0b0b11",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "assets/icon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
