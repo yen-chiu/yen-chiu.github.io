@@ -741,6 +741,11 @@
       }
     }
 
+    if (!st.restored && st.marks[id]) {
+      st.cur = st.marks[id].cur || 0;
+      st.ctx = st.marks[id].ctx ? { labels: new Set(st.marks[id].ctx.labels), resume: st.marks[id].ctx.resume, target: st.marks[id].ctx.target } : null;
+    }
+
     syncReveals();
     $('#chat-title').textContent = chatWho(ch);
     st.typing = false;
@@ -1009,22 +1014,34 @@
   // 重进本章：把这一章真实的对话（含选过的选项）整段放回去
   function replayLog(ch) {
     var L = chapterLog(ch.id);
-    if (!L.length) return false;
+    if (!L.length) return -1;
+    var last = -1, prevR = -1, prevC = -1;
     L.forEach(function (e) {
       if (e.c) {
+        if (e.c.i === prevC) return;     // 历史存档里可能已有重复记录，重放时折叠
+        prevC = e.c.i; prevR = -1;
+        last = e.c.i;
         appendRow({ i: e.c.i, who: '我', text: e.c.t, dir: 'right', tags: [] }, true);
       } else {
         var r = ch.rows[e.r];
         if (!r) return;
+        if (e.r === prevR) return;
+        prevR = e.r; prevC = -1;
+        last = e.r;
         if (r.choice !== undefined) return;
         appendRow(r, true);
       }
     });
-    return true;
+    return last;
   }
 
   function restoreHistory(ch) {
-    if (replayLog(ch)) return;      // 有完整记录就整段放回
+    var last = replayLog(ch);       // 有完整记录就整段放回
+    if (last >= 0) {
+      // 没有书签（例如从首页卡片重新进入）时，用日志末尾校正续播位置，避免从第 0 行重播
+      if (!st.marks[ch.id] && last + 1 > st.cur) st.cur = last + 1;
+      return;
+    }
     // 老存档没有记录：退回最近若干行做视觉衔接
     var start = Math.max(0, st.cur - 14);
     for (var i = start; i < st.cur; i++) {
