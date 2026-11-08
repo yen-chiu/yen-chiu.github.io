@@ -127,6 +127,15 @@
       desc: '原来的那个聊天页，她按写好的剧本回你。'
     },
     {
+      id: 'ai',
+      name: '念真 · AI',
+      href: 'ai.html',
+      tone: 'amber',
+      badge: 'BYOK',
+      note: '自带模型',
+      desc: '填自己的 API Key，接任何 OpenAI 兼容接口，还带本地工具。'
+    },
+    {
       id: 'stories',
       name: '三个夜晚',
       href: 'stories.html',
@@ -153,15 +162,6 @@
       icon: 'img/apps/lifeline.webp',
       note: '网页版',
       desc: '坠毁在陌生星球上的泰勒，只能靠一条断断续续的信号和你说话。'
-    },
-    {
-      id: 'ai',
-      name: '自带模型的 AI',
-      href: 'ai.html',
-      tone: 'amber',
-      badge: 'BYOK',
-      note: 'AI 模块',
-      desc: '填自己的 API Key，接任何 OpenAI 兼容接口，还带本地工具。'
     },
     {
       id: 'game',
