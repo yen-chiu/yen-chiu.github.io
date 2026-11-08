@@ -1032,18 +1032,17 @@
   function replayLog(ch) {
     var L = chapterLog(ch.id);
     if (!L.length) return -1;
-    var last = -1, prevR = -1, prevC = -1;
+    var last = -1, seen = {};
     L.forEach(function (e) {
+      var key = e.c ? ('c' + e.c.i) : ('r' + e.r);
+      if (seen[key]) return;          // 同一行/同一选项只显示一次，避免旧存档里的重复段落
+      seen[key] = 1;
       if (e.c) {
-        if (e.c.i === prevC) return;     // 历史存档里可能已有重复记录，重放时折叠
-        prevC = e.c.i; prevR = -1;
         last = e.c.i;
         appendRow({ i: e.c.i, who: '我', text: e.c.t, dir: 'right', tags: [] }, true);
       } else {
         var r = ch.rows[e.r];
         if (!r) return;
-        if (e.r === prevR) return;
-        prevR = e.r; prevC = -1;
         last = e.r;
         if (r.choice !== undefined) return;
         appendRow(r, true);
