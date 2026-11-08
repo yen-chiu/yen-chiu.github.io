@@ -1,12 +1,12 @@
 // sw.js —— 离线缓存
 //   代码（html/js/css）网络优先：更新即时生效，离线时回退缓存；
 //   数据与素材（data/ assets/）缓存优先：首次用过即可离线。
-const VERSION = 'miko-v2';
+const VERSION = 'miko-v3';
 const CORE = [
   './',
   './index.html',
-  './style.css',
-  './app.js',
+  './style.css?v=20261109b',
+  './app.js?v=20261109b',
   './manifest.webmanifest',
   './data/story.json',
   './data/meta.json',
