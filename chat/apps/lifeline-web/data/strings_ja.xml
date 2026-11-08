@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lifeline</string>
+    <string name="allow">ユーザーアクセスを許可</string>
+    <string name="application_error">アプリのエラー</string>
+    <string name="buy_button">アプリを購入</string>
+    <string name="check_license">ライセンスを確認</string>
+    <string name="checking_license">ライセンスを確認中…</string>
+    <string name="credits">クレジット</string>
+    <string name="credits_dialog">Lifeline 制作：\n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\nローカリゼーションチーム：\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock\n\n日本語ローカリゼーション： \n\nEriko Gardner\nMiho Lyon\nNaoko Isenhart</string>
+    <string name="unlicensed_dialog_retry_body">ライセンスを確認できません。ネットワーク接続をご確認ください。</string>
+    <string name="unlicensed_dialog_title">不明アプリライセンス</string>
+    <string name="unlicensed_dialog_body">こちらのアプリのライセンスをお持ちでありません。Google Play よりお買い求めください。</string>
+    <string name="hud_notification_settings">通知設定</string>
+    <string name="dialog_notification_clustered">まとめて通知</string>
+    <string name="dialog_notification_separate">個別に通知</string>
+    <string name="retry_button">再試行 </string>
+    <string name="quit_button">終了</string>
+    <string name="dialog_notification_settings">Lifeline は数日間にわたる冒険をインタラクティブに体験できるストーリーです。\n\nテキストメッセージを通じてタイラーと通信しましょう。1つ1つのメッセージを見逃さないように別々に受信しますか？それともスペースを節約するため、まとめて受信しますか？\n\n（この設定は設定メニューからいつでも変更できます。）</string>
+    <string name="dialog_change_language_text">通信言語を変更</string>
+    <string name="dialog_fast_confirmation">高速モードは Lifeline をプレイする際のお勧めのモードではありませんが、以前は待たなければならなかった待機時間をスキップできます。\n\n高速モードは次に返答を選択したときまたは返答を変更したときから実行されます。\n\n実行しますか？</string>
+    <string name="dialog_game_over">このストーリーはここで終了です。\n\n過去の選択をタップして返答を変更したり特定の日に戻り、別の道を選んで冒険を続けられます。\n\nメインメニューから高速モードをオンにすることもできます。</string>
+    <string name="dialog_game_over_rate">アプリを評価</string>
+    <string name="dialog_rewind_confirmation">ストーリーのどの時点まで戻りますか？</string>
+    <string name="dialog_no">いいえ</string>
+    <string name="dialog_rewind_dawn_day2">2日目の夜明け</string>
+    <string name="dialog_rewind_dawn_day3">3日目の夜明け</string>
+    <string name="dialog_rewind_start_of_story">一番最初</string>
+    <string name="hud_rewind_story">時間を戻しますか？</string>
+    <string name="dialog_rewind_story">時間を戻す</string>
+    <string name="dialog_yes">はい</string>
+    <string name="story_taylor_is_waiting_for_you">[タイラーが応答を待っています]</string>
+    <string name="story_taylor_is_busy">[取り込み中]</string>
+    <string name="story_restart_the_story">[ストーリーを最初からプレイしますか？]</string>
+    <string name="story_incoming_communication">[着信中]</string>
+    <string name="story_incoming_message">[メッセージ着信中]</string>
+    <string name="story_respond">[応答…]</string>
+    <string name="story_connection_lost">[通信切断]</string>
+    <string name="hud_turn_music_off">音楽\nオフ</string>
+    <string name="hud_privacy_policy">プライバシーポリシー</string>
+    <string name="hud_turn_music_on">音楽\nオン</string>
+    <string name="hud_turn_sound_off">効果音\nオフ</string>
+    <string name="hud_turn_sound_on">効果音\nオン</string>
+    <string name="hud_turn_fast_mode_on">高速モード オン</string>
+    <string name="hud_turn_fast_mode_off">高速モード オフ</string>
+    <string name="hud_rate_the_game">ゲームを評価</string>
+    <string name="hud_change_language">言語を変更</string>
+    <string name="story_data_filename">StoryData_ja.txt</string>
+    <string name="dialog_rewind_time">この時点までストーリーを戻しますか？</string>
+    <string name="display_system_message">システムメッセージを表示</string>
+    <string name="tablet_font_size">18</string>
+    <string name="phone_font_size">12</string>
+    <string name="more_games">その他のゲーム</string>
+
+
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline：サイレント・ナイト</string>
+    <string name="dialog_game_over_offer_upsell_button">Lifeline：サイレント・ナイト プレビュー</string>
+    <string name="dialog_upsell_confirmation">タイラーの新しい冒険、Lifeline：サイレント・ナイトが App Store に登場！\n\nこの後、Lifeline の次の章へと続く独占プレビューが始まります。よろしいですか？</string>
+    <string name="dialog_upsell_option_1">はい</string>
+    <string name="dialog_upsell_option_2">後で</string>
+    <string name="story_mel_is_busy">[メラニーは取り込み中です。]</string>
+    <string name="story_mel_is_waiting_for_you">[メラニーが応答を待っています。]</string>
+    <string name="story_display_system_message">システムメッセージを表示</string>
+    <string name="story_display_upsell_system_message">物語のエンディングを見届けましょう！</string>
+    <string name="dialog_game_over_upsell">このストーリーはここで終了です。しかしタイラーの物語はまだ続きます！\n\nLifeline 続編プレビューをプレイして前作から続編が始まるまでの間に何が起こるか見届けましょう！\n\nまた、メインメニューから高速モードをオンにしたり、ストーリーの前の部分に戻ることができます。</string>
+
+    <string name="sneak_peek">続編プレビュー</string>
+
+</resources>

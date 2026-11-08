@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lifeline</string>
+    <string name="allow">Разрешить доступ</string>
+    <string name="application_error">Ошибка в приложении</string>
+    <string name="buy_button">Купить приложение</string>
+    <string name="check_license">Проверить лицензию</string>
+    <string name="checking_license">Проверка лицензии...</string>
+    <string name="credits">Создатели</string>
+    <string name="credits_dialog"> Создатели игры "Шанс на спасение":\n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\nПеревод и редакция:\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock\n\nПеревод:\n\nDarya Melekhova\nJulia Ochs\nAleksandra Marenich </string>
+    <string name="unlicensed_dialog_retry_body">Не удалось подтвердить лицензию. Проверьте соединение с сетью.</string>
+    <string name="unlicensed_dialog_title">Приложение не лицензионное</string>
+    <string name="unlicensed_dialog_body">Это не лицензионное приложение. Пожалуйста, купите его на Google Play.</string>
+    <string name="dialog_notification_separate">Отдельные уведомления</string>
+    <string name="dialog_notification_clustered">Сгруппированные уведомления</string>
+    <string name="dialog_notification_settings">"Шанс на спасение" - это интерактивная история продолжительностью в несколько дней.\n\nВы будете получать уведомления от Тейлора.\n\n{Вы можете изменить свой выбор в любой момент в опциях меню.}</string>
+    <string name="hud_notification_settings">Настройки уведомлений</string>
+    <string name="retry_button">Повторить попытку</string>
+    <string name="quit_button">Выход</string>
+    <string name="dialog_change_language_text">Изменить язык?</string>
+    <string name="dialog_fast_confirmation">Ускоренный режим не рекомендован для игры, но его можно использовать для пропуска пауз, которые вы уже пережидали раньше.\n\nУскоренный режим включится, когда вы сделаете или измените сюжетный выбор.\n\nВы уверены?</string>
+    <string name="dialog_game_over">Тейлор дошел до конца пути.\n\nТеперь можно узнать остальные варианты сюжета. Для этого коснитесь любого своего предыдущего ответа, чтобы его изменить, или перемотайте на определенный день.\n\nВы также можете выбрать ускоренный режим в главном меню.</string>
+    <string name="dialog_game_over_rate">Оценить приложение</string>
+    <string name="dialog_rewind_story">Отмотать сюжет</string>
+    <string name="dialog_no">Нет</string>
+    <string name="dialog_rewind_confirmation">Как далеко (по сюжету) вы хотели бы вернуться?</string>
+    <string name="dialog_rewind_start_of_story">Начало сюжета</string>
+    <string name="dialog_rewind_dawn_day2">Конец 2 дня</string>
+    <string name="dialog_rewind_dawn_day3">Конец 3 дня</string>
+    <string name="dialog_yes">Да</string>
+    <string name="hud_change_language">Изменить язык</string>
+    <string name="hud_rate_the_game">Оценить игру</string>
+    <string name="hud_rewind_story">Отмотать сюжет?</string>
+    <string name="hud_turn_fast_mode_on">Ускоренный режим ВКЛ.</string>
+    <string name="hud_turn_fast_mode_off">Ускоренный режим ВЫКЛ.</string>
+    <string name="hud_turn_music_off">Музыка\nВЫКЛ.</string>
+    <string name="hud_turn_music_on">Музыка\nВКЛ.</string>
+    <string name="hud_privacy_policy">Конфиденциальность</string>
+    <string name="hud_turn_sound_off">Звук\nВЫКЛ.</string>
+    <string name="hud_turn_sound_on">Звук\nВКЛ.</string>
+    <string name="story_connection_lost">[Соединение прервалось]</string>
+    <string name="story_data_filename">StoryData_ru.txt</string>
+    <string name="story_incoming_communication">[Входящее сообщение]</string>
+    <string name="story_incoming_message">[входящее сообщение]</string>
+    <string name="story_respond">[Ответьте…]</string>
+    <string name="story_restart_the_story">[Начать историю заново?]</string>
+    <string name="story_taylor_is_busy">[Тейлор занят]</string>
+    <string name="story_taylor_is_waiting_for_you">[Тейлор ждет вас.]</string>
+    <string name="dialog_rewind_time">Вы уверены, что хотите отмотать сюжет на этот момент?</string>
+    <string name="display_system_message">Система отображения данных</string>
+    <string name="tablet_font_size">16</string>
+    <string name="phone_font_size">11</string>
+    <string name="more_games">Другие игры</string>
+
+
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline. Тихая ночь.</string>
+    <string name="dialog_game_over_offer_upsell_button">Lifeline. Тихая ночь. Анонс</string>
+    <string name="dialog_upsell_confirmation">История Тейлора продолжается в игре \"Lifeline. Тихая ночь\", которая доступна в App Store уже сейчас! \n\n Вы готовы узнать о событиях, которые привели к продолжению истории в следующей главе?</string>
+    <string name="dialog_upsell_option_1">Давайте!</string>
+    <string name="dialog_upsell_option_2">Не сейчас.</string>
+    <string name="story_mel_is_busy">[Мел занята.]</string>
+    <string name="story_mel_is_waiting_for_you">[Мел ждет вас.]</string>
+    <string name="story_display_system_message">Система отображения данных</string>
+    <string name="story_display_upsell_system_message">Узнайте, чем все это закончится!</string>
+    <string name="dialog_game_over_upsell">Тейлор дошел до конца пути, но история еще не закончена! \n\nСыграйте в короткую игру-анонс, чтобы узнать о событиях, которые и привели к следующему приключению Тейлора. \n\nУскоренный режим и перемотка сюжета доступны в главном меню.</string>
+
+    <string name="sneak_peek">Анонс</string>
+
+</resources>

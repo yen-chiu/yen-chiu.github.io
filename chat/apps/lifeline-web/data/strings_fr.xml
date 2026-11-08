@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lifeline</string>
+    <string name="story_taylor_is_busy">[Taylor est occupé]</string>
+    <string name="dialog_change_language_text">Changer le language de transmission ?</string>
+    <string name="dialog_fast_confirmation">Le mode rapide n'est pas recommandé pour profiter pleinement du jeu, mais il peut être utile pour passer les moments où vous avez attendu auparavant.\n\nLe mode rapide prendra effet la prochaine fois que vous ferez ou modifierez un choix dans l'histoire.\n\nÊtes-vous sûr ?</string>
+    <string name="dialog_game_over">Taylor est au bout de son chemin.\n\nVous pouvez maintenant explorer le reste de l'histoire : sélectionnez n'importe quel choix passé pour modifier votre réponse, ou revenez à un jour donné.\n\nVous pouvez aussi activer le mode rapide dans le menu principal.</string>
+    <string name="dialog_game_over_rate">Noter l'App</string>
+    <string name="dialog_no">Non</string>
+    <string name="dialog_rewind_confirmation">Jusqu'où voulez-vous revenir en arrière dans l'histoire ?</string>
+    <string name="dialog_rewind_start_of_story">Début de l'histoire</string>
+    <string name="dialog_rewind_dawn_day2">Aube du jour 2</string>
+    <string name="dialog_rewind_dawn_day3">Aube du jour 3</string>
+    <string name="dialog_rewind_story">Retour arrière dans l'histoire</string>
+    <string name="dialog_rewind_time">Êtes-vous sûr de vouloir reprendre l'histoire à partir de cet endroit ?</string>
+    <string name="dialog_yes">Oui</string>
+    <string name="display_system_message">Afficher le message système</string>
+    <string name="hud_change_language">Changer la langue</string>
+    <string name="hud_rate_the_game">Noter le jeu</string>
+    <string name="hud_rewind_story">Revenir en arrière dans l'histoire ?</string>
+    <string name="hud_turn_fast_mode_off">Désactiver le mode rapide</string>
+    <string name="hud_turn_fast_mode_on">Activer le mode rapide</string>
+    <string name="hud_turn_music_off">Musique :\nNON</string>
+    <string name="hud_turn_music_on">Musique :\nOUI</string>
+    <string name="hud_privacy_policy">Politique de confidentialité</string>
+    <string name="hud_turn_sound_off">Son :\nNON</string>
+    <string name="hud_turn_sound_on">Son :\nOUI</string>
+    <string name="story_connection_lost">[connexion perdue]</string>
+    <string name="story_incoming_communication">[communication entrante]</string>
+    <string name="story_incoming_message">[nouveau message]</string>
+    <string name="story_respond">[Répondre…]</string>
+    <string name="story_restart_the_story">[Recommencer l'histoire ?]</string>
+    <string name="story_taylor_is_waiting_for_you">[Taylor vous attend.]</string>
+    <string name="story_data_filename">StoryData_fr.txt</string>
+    <string name="allow">Autoriser l'accès utilisateur</string>
+    <string name="application_error">Erreur application: %1$s</string>
+    <string name="credits">Crédits</string>
+    <string name="credits_dialog">Lifeline a été créée par :\n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\nÉquipe de localisation :\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock\n\nÉquipe de localisation de Lifeline :\n\nIsabelle Zanchetta \nNicolas Tchemitcheff</string>
+    <string name="checking_license">Vérification licence... </string>
+    <string name="check_license">Vérifier licence </string>
+    <string name="buy_button">Acheter</string>
+    <string name="dialog_notification_clustered">Notifications groupées </string>
+    <string name="dialog_notification_separate">Notifications séparées </string>
+    <string name="dialog_notification_settings">Lifeline est une histoire interactive qui se déroule sur plusieurs jours.\n\nTaylor vous contactera via des notifications. Préférez-vous que chaque message arrive séparément pour ne pas en manquer un seul, ou qu'ils soient groupés pour prendre moins d'espace ?\n\n{Vous pouvez modifier ce choix à tout moment dans le menu des paramètres.}</string>
+    <string name="quit_button">Quitter</string>
+    <string name="retry_button">Réessayer</string>
+    <string name="unlicensed_dialog_retry_body">Impossible de valider la licence. Vérifiez votre connexion internet. </string>
+    <string name="unlicensed_dialog_title">Pas de licence pour cette application. </string>
+    <string name="unlicensed_dialog_body">Vous n'avez pas de licence pour cette application. Veuillez l'acheter dans Google Play. </string>
+    <string name="hud_notification_settings">Paramètres de notification </string>
+    <string name="tablet_font_size">16</string>
+    <string name="phone_font_size">11</string>
+    <string name="more_games">Plus de jeux</string>
+
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline: Douce Nuit</string>
+    <string name="dialog_game_over_offer_upsell_button">Lifeline: Silent Night Sneak Peek!</string>
+    <string name="dialog_upsell_confirmation">L'histoire de Taylor continue dans Lifeline: Douce Nuit, maintenant disponible dans l'App Store !\n\nVous allez voir un aperçu exclusif des événements qui mènent au chapitre suivant. Êtes-vous prêt ? </string>
+    <string name="dialog_upsell_option_1">Allons-y !</string>
+    <string name="dialog_upsell_option_2">Pas encore.</string>
+    <string name="story_mel_is_busy">[Mel est occupée.]</string>
+    <string name="story_mel_is_waiting_for_you">[Mel vous attend.]</string>
+    <string name="story_display_system_message">Afficher le message système</string>
+    <string name="story_display_upsell_system_message">Découvrez la fin !</string>
+    <string name="dialog_game_over_upsell">Taylor est au bout de son chemin, mais l'histoire n'est pas finie !\n\nDécouvrez la suite en jouant à un aperçu menant à la prochaine aventure de Taylor.\n\nVous pouvez activer le mode rapide dans le menu ou revenir en arrière.</string>
+
+    <string name="sneak_peek">Aperçu</string>
+
+</resources>

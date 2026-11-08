@@ -6,6 +6,9 @@
 <title>生命线 · Lifeline</title>
 <meta name="description" content="《生命线》网页版：与坠落在陌生星球上的泰勒通过消息保持联系。">
 <link rel="icon" href="assets/img/notification_icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#05080c">
+<link rel="apple-touch-icon" href="assets/img/icon-192.png">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -22,6 +25,7 @@
       <button id="btn-speed" class="tool" type="button" title="切换等待时间：快速 / 真实">快进 · 开</button>
       <button id="btn-sound" class="tool" type="button" title="开关声音">声音 · 开</button>
       <button id="btn-save" class="tool" type="button" title="存档、导入导出">存档</button>
+      <button id="btn-more" class="tool" type="button" title="语言、回溯、词典与设置">更多</button>
       <button id="btn-restart" class="tool" type="button" title="从故事开头重新开始">重开</button>
     </div>
   </header>
@@ -98,6 +102,84 @@
     </section>
 
     <p id="saveMsg" class="save-msg" role="status"></p>
+  </div>
+</div>
+
+<div id="moreModal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="moreTitle">
+    <header class="modal-head">
+      <h2 id="moreTitle">更多</h2>
+      <button id="moreClose" class="icon-btn" type="button" aria-label="关闭">×</button>
+    </header>
+
+    <section class="modal-sec">
+      <h3>语言 / Language</h3>
+      <select id="langSel" class="select">
+        <option value="cn">中文</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+        <option value="de">Deutsch</option>
+        <option value="ru">Русский</option>
+      </select>
+      <p class="muted">切换语言会重新载入故事；进度会保留，若该段落在新语言里不存在则回到开头。</p>
+    </section>
+
+    <section class="modal-sec">
+      <h3>回溯 / Rewind</h3>
+      <p class="muted">回到之前做过的选择点，重新选一次。当前进度会被覆盖。</p>
+      <div id="rewindList" class="rewind-list"></div>
+    </section>
+
+    <section class="modal-sec" id="dictSec">
+      <h3>词典 / Glossary</h3>
+      <input id="termSearch" class="text-input" type="search" placeholder="搜索人物、飞船、术语…" autocomplete="off">
+      <div id="termList" class="term-list"></div>
+    </section>
+
+    <section class="modal-sec">
+      <h3>通知 / Notifications</h3>
+      <div class="row">
+        <button id="btn-notify" class="ghost" type="button">开启通知</button>
+        <span id="notifyState" class="muted"></span>
+      </div>
+      <p class="muted">页面在后台时，收到新消息会弹一条系统通知。只在本地触发，不上传任何内容。</p>
+    </section>
+
+    <section class="modal-sec">
+      <h3>云存档 / GitHub Gist</h3>
+      <p class="muted">把当前存档传到你的 GitHub Gist（私密），换设备用链接取回。令牌只保存在本机，且只需 gist 权限。</p>
+      <input id="gistToken" class="text-input" type="password" placeholder="GitHub Personal Access Token（gist 权限）" autocomplete="off">
+      <label class="check"><input id="gistRemember" type="checkbox"> 在本机记住令牌</label>
+      <div class="row">
+        <button id="btn-gist-up" class="ghost" type="button">上传到 Gist</button>
+        <button id="btn-gist-share" class="ghost" type="button">复制分享链接</button>
+      </div>
+      <input id="gistId" class="text-input" type="text" placeholder="Gist ID 或链接" autocomplete="off">
+      <div class="row">
+        <button id="btn-gist-down" class="ghost" type="button">从 Gist 恢复</button>
+      </div>
+      <p id="gistMsg" class="save-msg" role="status"></p>
+    </section>
+
+    <section class="modal-sec">
+      <h3>本机统计 / Local stats</h3>
+      <div id="statsBox" class="stats"></div>
+      <p class="muted">只统计在这台设备上的游玩，不上传、不包含任何个人信息。</p>
+      <div class="row">
+        <button id="btn-clear-local" class="ghost" type="button">清除本机数据</button>
+      </div>
+    </section>
+
+    <section class="modal-sec">
+      <h3>应用 / App</h3>
+      <div class="row">
+        <button id="btn-install" class="ghost" type="button" hidden>安装到桌面</button>
+        <span class="muted">离线可用：首次打开后，资源会缓存到本机。</span>
+      </div>
+    </section>
   </div>
 </div>
 

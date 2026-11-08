@@ -1,0 +1,84 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+
+    <!--HUD Strings-->
+    <string name="app_name">Lifeline</string>
+    <string name="hud_turn_sound_on">Act.\nsonido</string>
+    <string name="hud_turn_sound_off">Desact.\nsonido</string>
+    <string name="hud_turn_music_on">Act.\nmúsica</string>
+    <string name="hud_turn_music_off">Desact.\nmúsica</string>
+    <string name="hud_rate_the_game">Puntúa el juego</string>
+    <string name="hud_rewind_story">¿Retroceder en la historia?</string>
+    <string name="hud_privacy_policy">!!! Privacy Policy</string>
+    <string name="hud_turn_fast_mode_on">Act. modo Rápido</string>
+    <string name="hud_turn_fast_mode_off">Desact. modo Rápido</string>
+    <string name="hud_change_language">Cambiar idioma</string>
+    <string name="hud_notification_settings">Ajustes de alertas</string>
+    <string name="credits">Créditos</string>
+    <string name="more_games">Más juegos</string>
+
+    <!--Generic Strings-->
+    <string name="dialog_no">No</string>
+    <string name="dialog_yes">Sí</string>
+
+    <!-- Story Specific Strings -->
+    <string name="story_taylor_is_busy">[Taylor no puede ponerse]</string>
+    <string name="story_connection_lost">[Conexión perdida]</string>
+    <string name="story_taylor_is_waiting_for_you">[Taylor te está esperando]</string>
+    <string name="story_restart_the_story">[¿Quieres reiniciar la historia?]</string>
+    <string name="story_respond">[Responder…]</string>
+    <string name="story_incoming_communication">[Mensaje entrante]</string>
+    <string name="story_incoming_message">[Mensaje entrante]</string>
+    <string name="story_data_filename">StoryData_es.txt</string>
+
+    <!-- Dialog Strings -->
+    <string name="dialog_notification_settings">Lifeline es una historia interactiva que se narra a lo largo de varios días.\n\nTaylor se pondrá en contacto contigo a través de notificaciones. ¿Prefieres que los mensajes lleguen por separado para no perderte ninguno, o agrupados para ahorrar espacio?\n\n(Puedes editar esta opción en cualquier momento en el menú de Ajustes).</string>
+    <string name="credits_dialog">Lifeline ha sido creado por:\n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\nEquipo de localización:\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock</string>
+    <string name="dialog_game_over">Taylor ha llegado al final de este camino.\n\nAhora puedes explorar el resto de la historia: toca sobre cualquier decisión anterior para cambiar tu respuesta o retrocede a un día específico.\n\nTambién puedes activar el modo Rápido en el menú principal.</string>
+    <string name="display_system_message">Mostrar mensaje de sistema</string>
+    <string name="dialog_game_over_rate">Puntúa el juego</string>
+    <string name="dialog_notification_separate">Notificaciones\nseparadas</string>
+    <string name="dialog_notification_clustered">Notificaciones\nagrupadas</string>
+    <string name="dialog_change_language_text">¿Quieres cambiar el idioma de la retransmisión?</string>
+
+    <!--Fast & Rewind Strings -->
+    <string name="dialog_fast_confirmation">El modo Rápido no es la experiencia más recomendada para Lifeline, pero puede ser útil para saltarte esperas por las que ya has pasado.\n\nEl modo Rápido surtirá efecto la próxima vez que tomes o revises una decisión en la historia.\n\n¿Seguro que quieres continuar?</string>
+    <string name="dialog_rewind_story">¿Retroceder en la historia?</string>
+    <string name="dialog_rewind_time">¿Seguro que quieres retroceder hasta este punto de la historia?</string>
+    <string name="dialog_rewind_confirmation">¿Cuánto quieres retroceder en la historia?</string>
+    <string name="dialog_rewind_start_of_story">Comienzo de la historia</string>
+    <string name="dialog_rewind_dawn_day2">Amanecer del día 2</string>
+    <string name="dialog_rewind_dawn_day3">Amanecer del día 3</string>
+
+    <!-- License checking status messages -->
+    <string name="check_license">Check license</string>
+    <string name="checking_license">Checking license...</string>
+    <string name="allow">Allow the user access</string>
+    <string name="application_error">Application error: %1$s</string>
+
+    <!-- Unlicensed dialog messages -->
+    <string name="unlicensed_dialog_title">Application not licensed</string>
+    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Google Play.</string>
+    <string name="unlicensed_dialog_retry_body">Unable to validate license. Check to see if a network connection is available.</string>
+    <string name="buy_button">Buy app</string>
+    <string name="retry_button">Retry</string>
+    <string name="quit_button">Exit</string>
+
+    <string name="tablet_font_size">18</string>
+    <string name="phone_font_size">12</string>
+
+    <!-- Cross Promotional Update And Bridge Content -->
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline: Silent Night</string>
+    <string name="dialog_game_over_upsell">Taylor ha llegado al final de su aventura, ¡pero la historia sigue!\n\nDescubre qué pasa después jugando a una historia adicional que lleva a la siguiente aventura de Taylor en Lifeline.\n\nTambién puedes activar el modo Rápido en el menú principal o retroceder en la historia.</string>
+    <string name="dialog_game_over_offer_upsell_button">¡Comienza la historia adicional!</string>
+    <string name="dialog_upsell_confirmation">La historia de Taylor continúa en Lifeline: Silent Night, ¡ya disponible en la Play Store!\n\nEstás a punto de ver una previsualización exclusiva de los eventos que llevan al siguiente capítulo. ¿Quieres continuar?</string>
+    <string name="dialog_upsell_option_1">¡Adelante!</string>
+    <string name="dialog_upsell_option_2">Aún no.</string>
+    <string name="story_mel_is_busy">[Mel no puede ponerse]</string>
+    <string name="story_mel_is_waiting_for_you">[Mel te está esperando]</string>
+    <string name="story_display_system_message">Mostrar mensaje de sistema</string>
+    <string name="story_display_upsell_system_message">¡Mira cómo termina!</string>
+    <string name="sneak_peek">Adelanto</string>
+
+</resources>

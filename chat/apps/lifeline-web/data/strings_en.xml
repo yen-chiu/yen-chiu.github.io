@@ -1,0 +1,84 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
+
+    <!--HUD Strings-->
+    <string name="app_name">Lifeline</string>
+    <string name="hud_turn_sound_on">Turn Sound\n ON</string>
+    <string name="hud_turn_sound_off">Turn Sound\n OFF</string>
+    <string name="hud_turn_music_on">Turn Music\n ON</string>
+    <string name="hud_turn_music_off">Turn Music\n OFF</string>
+    <string name="hud_rate_the_game">Rate the Game</string>
+    <string name="hud_rewind_story">Rewind Story?</string>
+    <string name="hud_privacy_policy">Privacy Policy</string>
+    <string name="hud_turn_fast_mode_on">Turn Fast Mode On</string>
+    <string name="hud_turn_fast_mode_off">Turn Fast Mode Off</string>
+    <string name="hud_change_language">Change Language</string>
+    <string name="hud_notification_settings">Notification Settings</string>
+    <string name="credits">Credits</string>
+    <string name="more_games">More Games</string>
+
+    <!--Generic Strings-->
+    <string name="dialog_no">No</string>
+    <string name="dialog_yes">Yes</string>
+
+    <!-- Story Specific Strings -->
+    <string name="story_taylor_is_busy">[Taylor is busy]</string>
+    <string name="story_connection_lost">[connection lost]</string>
+    <string name="story_taylor_is_waiting_for_you">[Taylor is waiting for you.]</string>
+    <string name="story_restart_the_story">[Restart the story?]</string>
+    <string name="story_respond">[Respond…]</string>
+    <string name="story_incoming_communication">[incoming communication]</string>
+    <string name="story_incoming_message">[incoming message]</string>
+    <string name="story_data_filename">StoryData_en.txt</string>
+
+    <!-- Dialog Strings -->
+    <string name="dialog_notification_settings">Lifeline is an interactive story told over the course of several days.\n\nTaylor will stay in touch with you via notifications. Would you prefer each message to arrive separately so none can be missed, or for them to be clustered together to save space?\n\n{You can edit this choice at any time in the settings menu.}</string>
+    <string name="credits_dialog">Lifeline was created by:\n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\nLocalization team:\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock </string>
+    <string name="dialog_game_over">Taylor has reached the end of this path.\n\nYou can now explore the rest of the story: tap on any past choice to change your response, or rewind to a specific day.\n\nYou may also activate Fast Mode in the main menu.</string>
+    <string name="display_system_message">Display System Message</string>
+    <string name="dialog_game_over_rate">Rate App</string>
+    <string name="dialog_notification_separate">Separate\nNotifications</string>
+    <string name="dialog_notification_clustered">Clustered\nNotifications</string>
+    <string name="dialog_change_language_text">Change transmission language?</string>
+
+    <!--Fast & Rewind Strings -->
+    <string name="dialog_fast_confirmation">Fast Mode is not the recommended Lifeline experience, but it can be useful for skipping delays that you’ve waited through before.\n\nFast Mode will take effect the next time you make or revise a choice in the story.\n\nAre you sure?</string>
+    <string name="dialog_rewind_story">Rewind Story</string>
+    <string name="dialog_rewind_time">Are you sure you want to reset the story back to this point?</string>
+    <string name="dialog_rewind_confirmation">How far back in the story would you like to rewind?</string>
+    <string name="dialog_rewind_start_of_story">Start of Story</string>
+    <string name="dialog_rewind_dawn_day2">Dawn of Day 2</string>
+    <string name="dialog_rewind_dawn_day3">Dawn of Day 3</string>
+
+    <!-- License checking status messages -->
+    <string name="check_license">Check license</string>
+    <string name="checking_license">Checking license...</string>
+    <string name="allow">Allow the user access</string>
+    <string name="application_error">Application error: %1$s</string>
+
+    <!-- Unlicensed dialog messages -->
+    <string name="unlicensed_dialog_title">Application not licensed</string>
+    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Google Play.</string>
+    <string name="unlicensed_dialog_retry_body">Unable to validate license. Check to see if a network connection is available.</string>
+    <string name="buy_button">Buy app</string>
+    <string name="retry_button">Retry</string>
+    <string name="quit_button">Exit</string>
+
+    <string name="tablet_font_size">18</string>
+    <string name="phone_font_size">12</string>
+
+    <!-- Cross Promotional Update And Bridge Content -->
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline: Silent Night</string>
+    <string name="dialog_game_over_upsell">Taylor has reached the end of this path, but the story is not over!\n\nFind out what happens next by playing a sneak peek of the next Taylor Lifeline adventure.\n\nYou may also activate Fast Mode in the main menu or rewind the story.</string>
+    <string name="dialog_game_over_offer_upsell_button">Lifeline: Silent Night Sneak Peek!</string>
+    <string name="dialog_upsell_confirmation">Taylor’s story continues in Lifeline: Silent Night, now available in the App Store!\n\nYou’re about to see an exclusive preview of the events leading to the next chapter. Are you ready?</string>
+    <string name="dialog_upsell_option_1">Let’s do it!</string>
+    <string name="dialog_upsell_option_2">I’m not ready yet.</string>
+    <string name="story_mel_is_busy">[Mel is busy]</string>
+    <string name="story_mel_is_waiting_for_you">[Mel is waiting for you.]</string>
+    <string name="story_display_system_message">Display System Message</string>
+    <string name="story_display_upsell_system_message">See how it ends!</string>
+    <string name="sneak_peek">Sneak Peek</string>
+
+</resources>

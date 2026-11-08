@@ -1,0 +1,17 @@
+{
+  "name": "生命线 · Lifeline",
+  "short_name": "生命线",
+  "description": "与坠落在陌生星球上的泰勒通过消息保持联系的网页版同人移植。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05080c",
+  "theme_color": "#05080c",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

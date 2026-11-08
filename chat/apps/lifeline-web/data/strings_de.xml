@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lifeline</string>
+    <string name="story_taylor_is_busy">[Taylor ist beschäftigt]</string>
+    <string name="dialog_change_language_text">Möchtest Du die Sprache ändern?</string>
+    <string name="dialog_rewind_confirmation">Wie weit möchtest Du in der Story zurückgehen?</string>
+    <string name="dialog_rewind_dawn_day3">Bis zum Tagesanbruch Tag 3</string>
+    <string name="dialog_rewind_start_of_story">Bis zum Beginn der Geschichte</string>
+    <string name="dialog_rewind_dawn_day2">Bis zum Tagesanbruch Tag 2</string>
+    <string name="dialog_yes">Ja</string>
+    <string name="dialog_fast_confirmation">Der Schnellmodus wird nicht für den gesamten Spielablauf empfohlen, aber er ist nützlich, wenn Du Stellen überspringen willst, an denen Du zuvor schon warst.\n\nDer Schnellmodus wird aktiviert, wenn Du das nächste Mal eine Entscheidung triffst oder eine vorherige änderst.\n\nBist Du sicher?</string>
+    <string name="dialog_game_over">Taylor hat das Ende dieser Story erreicht.\n\nErlebe eine andere Wendung: Wähle eine vorherige Antwort aus oder gehe zu einem bestimmten Tag zurück.\n\nDen Schnellmodus kannst Du im Menü aktivieren.</string>
+    <string name="dialog_game_over_rate">App bewerten</string>
+    <string name="dialog_no">Nein</string>
+    <string name="dialog_rewind_story">Zurück</string>
+    <string name="dialog_rewind_time">Bist Du sicher, dass Du so weit in der Story zurückgehen möchtest?</string>
+    <string name="display_system_message">Systemmeldung anzeigen</string>
+    <string name="hud_change_language">Sprache ändern</string>
+    <string name="hud_rate_the_game">Spiel bewerten</string>
+    <string name="hud_rewind_story">Zurück?</string>
+    <string name="hud_turn_fast_mode_on">Schnellmodus AN</string>
+    <string name="hud_turn_fast_mode_off">Schnellmodus AUS</string>
+    <string name="hud_turn_music_off">Musik\nAUS</string>
+    <string name="hud_turn_music_on">Musik\nAN</string>
+    <string name="hud_turn_sound_off">Sound\nAUS</string>
+    <string name="hud_privacy_policy">Datenschutzerklärung</string>
+    <string name="hud_turn_sound_on">Sound\nAN</string>
+    <string name="story_taylor_is_waiting_for_you">[Taylor wartet auf eine Antwort von Dir]</string>
+    <string name="story_connection_lost">[Verbindung unterbrochen]</string>
+    <string name="story_incoming_communication">[Eingehende Kommunikation]</string>
+    <string name="story_incoming_message">[Eingehende Nachricht]</string>
+    <string name="story_respond">[Antwort…]</string>
+    <string name="story_restart_the_story">[Story von vorne beginnen?]</string>
+    <string name="story_data_filename">StoryData_de.txt</string>
+    <string name="allow">Zugriff erlauben </string>
+    <string name="application_error">Fehler: %1$s</string>
+    <string name="buy_button">App kaufen </string>
+    <string name="check_license">Lizenz überprüfen </string>
+    <string name="checking_license">Lizenz wird geprüft ... </string>
+    <string name="credits">Team</string>
+    <string name="credits_dialog">Lifeline ist ein Spiel von: \n\nDave Justus\nMars Jokela\nDan Selleck\nColin Liotta\nJackie Steege\nWilson Bull\nJason Nowak\nGhia Mercado\nBen Schwartz\n\nLeitung, Lokalisierung:\n\nMatt Decker\nSteen Groennebaek\nArne Twigt\nYumi Okubo-Shuman\nLauren Warnock\n\nLokalisierung:\n\nAnnette Neeb\nDiana Bracken\nVesna Coleman</string>
+    <string name="dialog_notification_clustered">Benachrichti-\ngungen stapeln </string>
+    <string name="dialog_notification_separate">Benachrichti-\ngungen einzeln </string>
+    <string name="dialog_notification_settings">Lifeline ist eine interaktive Story, die über den Lauf mehrerer Tage erzählt wird.\n\nTaylor bleibt über Textnachrichten ständig mit Dir in Kontakt. Möchtest Du jede Benachrichtigung einzeln erhalten, damit Du keine verpasst? Oder möchtest sie lieber als Stapel erhalten, um Platz zu sparen?\n\n{Diese Auswahl kannst Du jederzeit in den Einstellungen ändern.}</string>
+    <string name="hud_notification_settings">Einstellungen Benachrichti-\ngungen </string>
+    <string name="quit_button">Beenden</string>
+    <string name="retry_button">Erneut versuchen </string>
+    <string name="unlicensed_dialog_retry_body">Lizenz wurde nicht erkannt. Überprüfe bitte Deine Netzwerkverbindung. </string>
+    <string name="unlicensed_dialog_title">App nicht lizensiert </string>
+    <string name="unlicensed_dialog_body">Diese App ist nicht lizensiert. Kaufe sie bitte bei Google Play. </string>
+    <string name="tablet_font_size">16</string>
+    <string name="phone_font_size">11</string>
+
+    <!-- Cross Promotional Update And Bridge Content -->
+    <string name="more_games">Weitere Spiele</string>
+    <string name="lifeline2">Lifeline 2</string>
+    <string name="lifelineX">Lifeline: Stille Nacht</string>
+    <string name="dialog_game_over_offer_upsell_button">Vorschau zu »Lifeline:Stille Nacht«</string>
+    <string name="dialog_upsell_confirmation">Begleite ihn weiterhin in »Lifeline:Stille Nacht«! Die Fortsetzung ist ab sofort im App Store erhältlich!\n\n Wir zeigen Dir gleich eine exklusive Vorschau ins nächste Kapitel. Bist Du bereit?</string>
+    <string name="dialog_upsell_option_1">Ja! Los geht´s.</string>
+    <string name="dialog_upsell_option_2">Ich bin noch nicht bereit.</string>
+    <string name="story_mel_is_busy">[Mel ist beschäftigt.]</string>
+    <string name="story_mel_is_waiting_for_you">[Mel wartet auf eine Antwort von Dir.]</string>ng>
+    <string name="story_display_system_message">Systemmeldung anzeigen</string>
+    <string name="story_display_upsell_system_message">Finde heraus, wie das Abenteuer endet.</string>
+    <string name="dialog_game_over_upsell">Taylors Abenteuer ist noch lange nicht vorbei!\n\n Spiele die Vorschau, um herauszufinden, wie es weitergeht.\n\n Im »Hauptmenü« kannst Du den Schnellmodus aktivieren oder zu einem beliebigen Punkt in der Geschichte zurückgehen.</string>
+
+    <string name="sneak_peek">Vorschau</string>
+
+</resources>

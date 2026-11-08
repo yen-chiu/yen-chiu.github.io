@@ -44,7 +44,7 @@ async function inflate(bytes) {
   return new Uint8Array(await new Response(stream).arrayBuffer());
 }
 
-export function capture({ passage, idx, vars, log }) {
+export function capture({ passage, idx, vars, log, checkpoints }) {
   return {
     ver: SAVE_VERSION,
     app: APP_ID,
@@ -52,6 +52,14 @@ export function capture({ passage, idx, vars, log }) {
     idx: Number(idx) || 0,
     vars: { ...vars },
     log: (log || []).map((m) => ({ k: m.k, t: m.t })),
+    checkpoints: (checkpoints || []).map((c) => ({
+      passage: c.passage,
+      idx: Number(c.idx) || 0,
+      vars: { ...(c.vars || {}) },
+      choice: String(c.choice || ''),
+      at: Number(c.at) || 0,
+      logLen: Number(c.logLen) || 0,
+    })),
     savedAt: new Date().toISOString(),
   };
 }
@@ -88,6 +96,20 @@ export function validate(raw, story) {
         .map((m) => ({ k: m.k, t: m.t }))
     : [];
 
+  const checkpoints = Array.isArray(raw.checkpoints)
+    ? raw.checkpoints
+        .filter((c) => c && typeof c.passage === 'string' && story && story.has(c.passage))
+        .map((c) => ({
+          passage: c.passage,
+          idx: Number.isFinite(Number(c.idx)) ? Math.max(0, Math.floor(Number(c.idx))) : 0,
+          vars: c.vars && typeof c.vars === 'object' && !Array.isArray(c.vars) ? c.vars : {},
+          choice: String(c.choice || ''),
+          at: Number(c.at) || 0,
+          logLen: Number.isFinite(Number(c.logLen)) ? Math.max(0, Math.floor(Number(c.logLen))) : 0,
+        }))
+        .slice(-80)
+    : [];
+
   return {
     ok: true,
     save: {
@@ -97,6 +119,7 @@ export function validate(raw, story) {
       idx,
       vars,
       log,
+      checkpoints,
       savedAt: typeof raw.savedAt === 'string' ? raw.savedAt : (typeof raw.ts === 'number' ? new Date(raw.ts).toISOString() : new Date().toISOString()),
     },
     slim: raw.slim === true || log.length === 0,
