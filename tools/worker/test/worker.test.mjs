@@ -395,3 +395,83 @@ test('/read 抓回网页并转成纯文本', async (t) => {
   assert.match(text, /正文 加粗/);
   assert.doesNotMatch(text, /x\(\)/);
 });
+
+/* ---------------- /chat：角色扮演对话 ---------------- */
+
+test('/chat 未配置密钥时返回 503，前端据此回落', async () => {
+  const res = await worker.fetch(makeRequest('/chat', { body: { text: '在吗' } }), ENV);
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).error, 'chat_not_configured');
+});
+
+test('/chat 只接受 POST', async () => {
+  const res = await worker.fetch(makeRequest('/chat', { method: 'GET' }), { ...ENV, DEEPSEEK_API_KEY: 'k' });
+  assert.equal(res.status, 405);
+});
+
+test('/chat 校验文本长度与缺失', async () => {
+  const env = { ...ENV, DEEPSEEK_API_KEY: 'k' };
+  const empty = await worker.fetch(makeRequest('/chat', { body: {} }), env);
+  assert.equal(empty.status, 400);
+  assert.equal((await empty.json()).error, 'missing_text');
+  const long = await worker.fetch(makeRequest('/chat', { body: { text: 'a'.repeat(301) } }), env);
+  assert.equal(long.status, 413);
+});
+
+test('/chat 把上下文映射成 user/assistant，并用人设作为 system', async () => {
+  const env = { ...ENV, DEEPSEEK_API_KEY: 'k', RATE_LIMIT_CHAT: 100 };
+  resetEngineState();
+  let seen = null;
+  const restore = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    assert.match(String(url), /^https:\/\/api\.deepseek\.com\//);
+    assert.equal(init.headers.Authorization, 'Bearer k');
+    seen = JSON.parse(init.body);
+    return new Response(JSON.stringify({ choices: [{ message: { content: '哼。' } }] }), { status: 200 });
+  };
+  try {
+    const res = await worker.fetch(makeRequest('/chat', {
+      body: { persona: 'miko', text: '今天怎么样', history: [{ role: 'me', text: '在吗' }, { role: 'her', text: '……在' }] }
+    }), env);
+    assert.equal(res.status, 200);
+    assert.equal((await res.json()).reply, '哼。');
+    assert.equal(seen.messages[0].role, 'system');
+    assert.match(seen.messages[0].content, /Miko/);
+    assert.deepEqual(seen.messages.map((m) => m.role), ['system', 'user', 'assistant', 'user']);
+    assert.equal(seen.stream, false);
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
+
+test('/chat 上游失败时返回 502', async () => {
+  const env = { ...ENV, DEEPSEEK_API_KEY: 'k', RATE_LIMIT_CHAT: 100 };
+  resetEngineState();
+  const restore = globalThis.fetch;
+  globalThis.fetch = async () => new Response('boom', { status: 500 });
+  try {
+    const res = await worker.fetch(makeRequest('/chat', { body: { text: '嗨' } }), env);
+    assert.equal(res.status, 502);
+    assert.equal((await res.json()).error, 'upstream_failed');
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
+
+test('/chat 按 IP 限流', async () => {
+  const env = { ...ENV, DEEPSEEK_API_KEY: 'k', RATE_LIMIT_CHAT: 2 };
+  resetEngineState();
+  const restore = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({ choices: [{ message: { content: '嗯' } }] }), { status: 200 });
+  try {
+    const a = await worker.fetch(makeRequest('/chat', { body: { text: '1' }, ip: '198.51.100.30' }), env);
+    const b = await worker.fetch(makeRequest('/chat', { body: { text: '2' }, ip: '198.51.100.30' }), env);
+    const c = await worker.fetch(makeRequest('/chat', { body: { text: '3' }, ip: '198.51.100.30' }), env);
+    assert.deepEqual([a.status, b.status, c.status], [200, 200, 429]);
+    assert.equal(c.headers.get('Retry-After'), '60');
+    const other = await worker.fetch(makeRequest('/chat', { body: { text: '4' }, ip: '198.51.100.31' }), env);
+    assert.equal(other.status, 200);
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
