@@ -49,7 +49,7 @@ const CHAT_PERSONAS = {
   ].join('')
 };
 
-const CHAT_LIMITS = { text: 300, history: 12, historyItem: 200, prompt: 3000 };
+const CHAT_LIMITS = { text: 300, history: 12, historyItem: 200, memory: 1800, prompt: 5000 };
 
 function chatPersona(key) {
   return CHAT_PERSONAS[String(key || 'miko').toLowerCase()] || CHAT_PERSONAS.miko;
@@ -918,7 +918,11 @@ export default {
         return json({ error: 'text_too_long', limit: CHAT_LIMITS.text }, 413, origin, env);
       }
       const who = String(payload.persona || 'miko');
-      const messages = [{ role: 'system', content: chatPersona(who) }]
+      const memory = String(payload.memory || '').trim().slice(0, CHAT_LIMITS.memory);
+      const system = memory
+        ? chatPersona(who) + '\n\n下面是你们之间真实发生过的记忆，回答时以它为准，不要编造记忆里没有的剧情：\n' + memory
+        : chatPersona(who);
+      const messages = [{ role: 'system', content: system }]
         .concat(trimChatHistory(payload.history))
         .concat([{ role: 'user', content: text }]);
       const size = messages.reduce((n, m) => n + m.content.length, 0);
