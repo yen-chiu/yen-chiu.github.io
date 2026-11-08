@@ -328,6 +328,22 @@ html[data-theme="dark"] .wd-page {
   margin-bottom: 16px;
 }
 
+/* 抽屉里的她：头像是这个站的主人 */
+.wd-drawer__avatar {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  object-fit: cover;
+  object-position: 50% 30%;
+  box-shadow: 0 0 0 1px var(--wd-line-strong), 0 6px 14px -8px rgba(12, 32, 28, 0.5);
+}
+
+.wd-drawer__intro {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .wd-drawer__title {
   margin: 0;
   font: 700 19px/1.3 var(--wd-font);
@@ -387,6 +403,20 @@ html[data-theme="dark"] .wd-page {
   stroke-linejoin: round;
 }
 
+/* 用真图当图标的应用（念真、两个网页版游戏）：图自己撑满，圆角跟着容器 */
+.wd-tile[data-icon="img"] .wd-tile__icon {
+  background: var(--wd-panel);
+  box-shadow: 0 0 0 1px var(--wd-line), 0 10px 22px -10px rgba(12, 32, 28, 0.45);
+}
+
+.wd-tile__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
 .wd-tile:hover .wd-tile__icon,
 .wd-tile:focus-visible .wd-tile__icon {
   transform: translateY(-2px);
@@ -402,6 +432,18 @@ html[data-theme="dark"] .wd-page {
   color: var(--wd-ink-2);
   text-align: center;
   word-break: break-word;
+}
+
+/* 窄屏（360/375/390）四列挤，名字缩一点，「凌晨两点十七分」才不至于折行 */
+@media (max-width: 419px) {
+  .wd-app-grid {
+    gap: 16px 8px;
+  }
+
+  .wd-tile__name {
+    font-size: 11px;
+    letter-spacing: -0.01em;
+  }
 }
 
 .wd-tile__badge {

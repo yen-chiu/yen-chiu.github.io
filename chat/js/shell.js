@@ -108,10 +108,8 @@
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H18a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5z"/><path d="M5 17.5h14M9 7.5h6M9 11h6"/></svg>',
     story:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17.5 3.5v4M15.5 5.5h4"/></svg>',
-    story2:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',
-    story3:
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 3v18M15 12h.01"/></svg>',
+    stories:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17.5 3.5v4M15.5 5.5h4"/></svg>',
     miko:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-4 3.2v-3.2A2.5 2.5 0 0 1 4 13.5z"/><path d="M12 7.4l.85 2.15L15 10.4l-2.15.85L12 13.4l-.85-2.15L9 10.4l2.15-.85z"/></svg>',
     lifeline:
@@ -124,40 +122,26 @@
       name: '与念真聊天',
       href: 'index.html',
       tone: 'teal',
+      icon: 'img/apps/nianzhen.webp',
       note: '脚本对话',
       desc: '原来的那个聊天页，她按写好的剧本回你。'
     },
     {
-      id: 'story',
-      name: '第一季',
-      href: 'story.html',
+      id: 'stories',
+      name: '三个夜晚',
+      href: 'stories.html',
       tone: 'indigo',
+      icon: 'img/apps/stories.webp',
+      badge: '三季',
       note: '对话故事',
-      desc: '三个夜晚，一盏没关的灯。第一季已完结。'
-    },
-    {
-      id: 'story2',
-      name: '第二季',
-      href: 'story-s2.html',
-      tone: 'indigo',
-      badge: '新',
-      note: '对话故事',
-      desc: '第三个杯子，四个房间，一个不肯放手的人。'
-    },
-    {
-      id: 'story3',
-      name: '第三季',
-      href: 'story-s3.html',
-      tone: 'indigo',
-      badge: '终',
-      note: '对话故事',
-      desc: '第七夜，站会在 05:00 停。'
+      desc: '三个夜晚，一盏没关的灯。第一夜到第七夜，三季都在里面。'
     },
     {
       id: 'miko',
       name: '异次元通讯',
       href: 'play.html?a=miko',
       tone: 'violet',
+      icon: 'img/apps/miko.webp',
       note: '网页版',
       desc: '和 Miko 的跨次元对话，原版与「次元复苏」的剧情都在里面。'
     },
@@ -166,6 +150,7 @@
       name: '生命线',
       href: 'play.html?a=lifeline',
       tone: 'space',
+      icon: 'img/apps/lifeline.webp',
       note: '网页版',
       desc: '坠毁在陌生星球上的泰勒，只能靠一条断断续续的信号和你说话。'
     },
@@ -211,6 +196,8 @@
       var m = /[?&]a=([\w-]+)/.exec(window.location.search);
       return m ? m[1] : '';
     }
+    // 三季共用一个图标：入口页与三个季页都算「三个夜晚」
+    if (file === 'stories.html' || /^story(-s[23])?\.html$/.test(file)) return 'stories';
     return file.replace(/\.html$/, '');
   }
 
@@ -263,12 +250,18 @@
 
     var appItems = APPS.map(function (app) {
       var active = app.id === currentAppId();
+      // 有图用图（游戏/念真自己的图标），没图回落到内联字形
+      var isImg = !!app.icon;
+      var face = isImg
+        ? '<img class="wd-tile__img" src="' + app.icon + '" alt="" width="60" height="60" loading="lazy" decoding="async">'
+        : (ICONS[app.id] || '');
       return (
         '<li>' +
-        '<a class="wd-tile" data-tone="' + app.tone + '" href="' + app.href + '"' +
+        '<a class="wd-tile" data-tone="' + app.tone + '"' + (isImg ? ' data-icon="img"' : '') +
+        ' href="' + app.href + '"' +
         ' data-app="' + app.id + '" title="' + escapeAttr(app.desc) + '"' +
         (active ? ' aria-current="page"' : '') + '>' +
-        '<span class="wd-tile__icon">' + (ICONS[app.id] || '') +
+        '<span class="wd-tile__icon">' + face +
         (app.badge ? '<span class="wd-tile__badge">' + app.badge + '</span>' : '') +
         '</span>' +
         '<span class="wd-tile__name">' + app.name + '</span>' +
@@ -291,9 +284,10 @@
       '<section class="wd-drawer__sheet" role="dialog" aria-modal="true" aria-labelledby="wd-drawer-title">' +
       '<div class="wd-drawer__grabber" aria-hidden="true"></div>' +
       '<header class="wd-drawer__head">' +
-      '<div>' +
-      '<h2 class="wd-drawer__title" id="wd-drawer-title">Wendell 的小站</h2>' +
-      '<p class="wd-drawer__sub">选一个模块 · 纯静态 · 不登录、不上传</p>' +
+      '<img class="wd-drawer__avatar" src="img/apps/nianzhen.webp" alt="" width="40" height="40" decoding="async">' +
+      '<div class="wd-drawer__intro">' +
+      '<h2 class="wd-drawer__title" id="wd-drawer-title">念真的小站</h2>' +
+      '<p class="wd-drawer__sub">她住在这里 · 纯静态 · 不登录、不上传</p>' +
       '</div>' +
       '<button type="button" class="wd-icon-btn" data-wd-close aria-label="关闭">' +
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
