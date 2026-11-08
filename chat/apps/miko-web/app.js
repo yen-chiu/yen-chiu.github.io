@@ -989,11 +989,28 @@
   /* ---------------- 每章聊天记录 ---------------- */
   var LOG_CAP = 6000;
 
+  // 旧版写坏过的存档里同一段对话可能被整段重复记录多份（X+X+X）：
+  // 若日志正好等于某个前缀的整数倍，只保留一份。
+  function trimPeriodicLog(L) {
+    var n = L ? L.length : 0;
+    if (n < 6) return L;
+    var key = function (e) { return e.c ? ('c' + e.c.i) : ('r' + e.r); };
+    for (var p = 3; p <= Math.floor(n / 2); p++) {
+      if (n % p !== 0) continue;
+      var same = true;
+      for (var i = p; i < n; i++) {
+        if (key(L[i]) !== key(L[i - p])) { same = false; break; }
+      }
+      if (same) return L.slice(0, p);
+    }
+    return L;
+  }
+
   function chapterLog(id) {
     id = id || st.chapterId;
     if (!st.chatlog) st.chatlog = {};
     if (!st.chatlog[id]) st.chatlog[id] = [];
-    return st.chatlog[id];
+    return trimPeriodicLog(st.chatlog[id]);
   }
 
   function logRow(row) {
