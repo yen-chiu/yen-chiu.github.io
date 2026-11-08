@@ -1926,6 +1926,13 @@
     if ($('#set-memory-mode')) $('#set-memory-mode').value = st.settings.memoryMode || 'read';
     renderNotifyState();
     renderStats();
+    if ($('#gist-token')) {
+      try {
+        var g = JSON.parse(localStorage.getItem(GIST_KEY) || '{}');
+        if (g.token) { $('#gist-token').value = g.token; $('#gist-remember').checked = true; }
+      } catch (e) {}
+      if (!$('#gist-msg').textContent) setGistMsg('令牌只用来请求 GitHub，不会写进存档；勾选「记住」才会留在本机。');
+    }
     $('#set-stats').textContent =
       '词典 ' + Object.keys(st.unlock.dict).length + ' · 图鉴 ' + Object.keys(st.unlock.gal).length +
       ' · 动态 ' + Object.keys(st.unlock.dyn).length;
@@ -2237,13 +2244,10 @@
     if (ac) ac.onclick = function () { $('#after-modal').hidden = true; };
 
     if ($('#btn-notify')) $('#btn-notify').onclick = openNotify;
-    if ($('#btn-gist')) $('#btn-gist').onclick = openGist;
-    if ($('#btn-stats')) $('#btn-stats').onclick = function () { go('settings'); };
 
     if ($('#btn-notify-toggle')) $('#btn-notify-toggle').onclick = toggleNotify;
     if ($('#btn-notify-close')) $('#btn-notify-close').onclick = function () { $('#notify-modal').hidden = true; renderNotifyState(); };
 
-    if ($('#btn-gist-close')) $('#btn-gist-close').onclick = function () { $('#gist-modal').hidden = true; };
     if ($('#btn-gist-up')) $('#btn-gist-up').onclick = gistUpload;
     if ($('#btn-gist-share')) $('#btn-gist-share').onclick = gistShare;
     if ($('#btn-gist-down')) $('#btn-gist-down').onclick = function () { gistDownload(($('#gist-id') || {}).value, false); };
@@ -2307,17 +2311,6 @@
     if ($('#menu-sheet') && !$('#menu-sheet').hidden) $('#menu-sheet').hidden = true;
     $('#notify-modal').hidden = false;
     renderNotifyState();
-  }
-
-  function openGist() {
-    if ($('#menu-sheet') && !$('#menu-sheet').hidden) $('#menu-sheet').hidden = true;
-    $('#gist-modal').hidden = false;
-    try {
-      var g = JSON.parse(localStorage.getItem(GIST_KEY) || '{}');
-      if (g.token) { $('#gist-token').value = g.token; $('#gist-remember').checked = true; }
-    } catch (e) {}
-    if (gistInfo && gistInfo.id && !$('#gist-id').value) $('#gist-id').value = gistInfo.id;
-    if (!$('#gist-msg').textContent) setGistMsg('令牌只用来发 Gist 请求，不写进存档；勾选「记住」才会留在本机。');
   }
 
   /* ---------------- 云存档（GitHub Gist） ---------------- */
