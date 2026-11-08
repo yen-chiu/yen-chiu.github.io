@@ -854,3 +854,11 @@ select{
 .fold-body .gist-btns{display:flex;gap:9px;margin:8px 0}
 .fold-body .gist-btns > button{flex:1;padding:11px;border-radius:11px;font-size:13px}
 .fold-body .gist-msg{margin:8px 0 2px;font-size:12.5px;color:#8b87a3;line-height:1.6}
+
+/* 解锁与剧透：折叠标题按区块标题的规格显示 */
+.set-card-warn .fold > summary{
+  font-size:14.5px;font-weight:600;color:#e8e4f7;letter-spacing:.02em;
+  padding:2px 26px 2px 0;
+}
+.set-card-warn .fold > summary .set-badge{vertical-align:1px}
+.set-card-warn .fold-body{padding:2px 0 2px}

@@ -193,7 +193,9 @@
     </div>
 
     <div class="set-card set-card-warn">
-      <h3 class="set-title">解锁与剧透 <span class="set-badge">谨慎选择</span></h3>
+      <details class="fold">
+        <summary>解锁与剧透 <span class="set-badge">谨慎选择</span></summary>
+        <div class="fold-body">
       <div class="set-row">
         <span>解锁全部章节<em class="set-sub">开启后所有章节直接可玩，会跳过原本的顺序解锁</em></span>
         <label class="switch"><input type="checkbox" id="set-unlock-all"><i></i></label>
@@ -207,6 +209,8 @@
         <label class="switch"><input type="checkbox" id="set-reveal-lock"><i></i></label>
       </div>
       <p class="set-note set-note-left">「解锁全部章节」「自动解锁全部词典图鉴」默认关闭；「头像随剧情解锁」默认开启（即保持锁定）；改动时都会再确认一次。</p>
+        </div>
+      </details>
     </div>
 
     <div class="set-card">
@@ -261,6 +265,17 @@
       <button class="danger-btn" id="btn-reset">清空进度</button>
     </div>
 
+    
+    <div class="set-card">
+      <details class="fold">
+        <summary>本机统计</summary>
+        <div class="fold-body">
+          <div id="stats-body"></div>
+          <button class="ghost-btn" id="btn-stats-clear">清空本机统计</button>
+        </div>
+      </details>
+    </div>
+
     <div class="set-card">
       <div class="set-row set-plain">
         <span>本页与原版的差别</span>
@@ -290,16 +305,6 @@
       <p class="set-note" style="margin:8px 2px 0;text-align:left">
         剧本、插画、语音、音乐都取自原包；剧情引擎、界面与上面这些交互是重新实现的。
       </p>
-    </div>
-
-    <div class="set-card">
-      <details class="fold">
-        <summary>本机统计</summary>
-        <div class="fold-body">
-          <div id="stats-body"></div>
-          <button class="ghost-btn" id="btn-stats-clear">清空本机统计</button>
-        </div>
-      </details>
     </div>
 
     <div class="set-card">
