@@ -475,3 +475,44 @@ test('/chat 按 IP 限流', async () => {
     globalThis.fetch = restore;
   }
 });
+/* ---------------- /chat：记忆注入 ---------------- */
+
+test('/chat 把记忆拼进 system，且有序不乱', async () => {
+  const env = { ...ENV, DEEPSEEK_API_KEY: 'k', RATE_LIMIT_CHAT: 100 };
+  resetEngineState();
+  let seen = null;
+  const restore = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    seen = JSON.parse(init.body);
+    return new Response(JSON.stringify({ choices: [{ message: { content: '嗯。' } }] }), { status: 200 });
+  };
+  try {
+    const res = await worker.fetch(makeRequest('/chat', {
+      body: { persona: 'miko', text: '还记得美术馆吗', memory: '【你们一起经历过的】第一章《路人美术图书馆》。' }
+    }), env);
+    assert.equal(res.status, 200);
+    const sys = seen.messages[0].content;
+    assert.match(sys, /Miko/);
+    assert.match(sys, /第一章《路人美术图书馆》/);
+    assert.ok(sys.indexOf('Miko') < sys.indexOf('第一章'), '人设在前、记忆在后');
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
+
+test('/chat 没有记忆时不注入额外片段', async () => {
+  const env = { ...ENV, DEEPSEEK_API_KEY: 'k', RATE_LIMIT_CHAT: 100 };
+  resetEngineState();
+  let seen = null;
+  const restore = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    seen = JSON.parse(init.body);
+    return new Response(JSON.stringify({ choices: [{ message: { content: '嗯。' } }] }), { status: 200 });
+  };
+  try {
+    await worker.fetch(makeRequest('/chat', { body: { text: '在吗' } }), env);
+    assert.ok(!/真实发生过的记忆/.test(seen.messages[0].content));
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
