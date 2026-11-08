@@ -197,6 +197,10 @@
       stream: options.stream !== false
     };
     if (typeof options.temperature === 'number') body.temperature = options.temperature;
+    // 采样：只调温度不压 top_p，小模型在高温下会开始堆词、复读、串词
+    if (typeof options.topP === 'number') body.top_p = options.topP;
+    if (typeof options.frequencyPenalty === 'number') body.frequency_penalty = options.frequencyPenalty;
+    if (typeof options.presencePenalty === 'number') body.presence_penalty = options.presencePenalty;
     if (typeof options.maxTokens === 'number' && options.maxTokens > 0) body.max_tokens = options.maxTokens;
     if (options.tools && options.tools.length) {
       body.tools = options.tools;

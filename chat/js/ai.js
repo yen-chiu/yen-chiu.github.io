@@ -29,6 +29,10 @@
     apiKey: '',
     model: 'deepseek-chat',
     temperature: 0.7,
+    // 只调温度不压 top_p 时，7B 这类小模型在 1.0 以上很容易堆词复读；
+    // 这两个值给一个稳的默认，老配置没有这两个键也照样能用
+    topP: 0.9,
+    frequencyPenalty: 0.3,
     maxTokens: 2048,
     persona: 'nianzhen',
     system: '',
@@ -152,6 +156,7 @@
       modelOptions: document.getElementById('model-options'),
       temp: document.getElementById('cfg-temp'),
       tempOut: document.getElementById('cfg-temp-out'),
+    tempHint: document.getElementById('cfg-temp-hint'),
       max: document.getElementById('cfg-max'),
       maxOut: document.getElementById('cfg-max-out'),
       persona: document.getElementById('cfg-persona'),
@@ -1969,6 +1974,8 @@
           model: config.model,
           messages: apiMessages,
           temperature: Number(config.temperature),
+          topP: Number(config.topP),
+          frequencyPenalty: Number(config.frequencyPenalty),
           maxTokens: Number(config.maxTokens),
           stream: config.stream !== false && !config.tools,
           tools: config.tools ? toolsFor() : null,
@@ -2172,6 +2179,7 @@
     el.form.model.value = config.model || '';
     el.form.temp.value = String(config.temperature);
     el.form.tempOut.textContent = String(config.temperature);
+    updateTempHint(Number(config.temperature));
     el.form.max.value = String(config.maxTokens);
     el.form.maxOut.textContent = String(config.maxTokens);
     el.form.persona.value = config.persona;
@@ -2186,6 +2194,22 @@
     fillModelOptions(preset);
   }
 
+  // 温度越高越发散，但 1.0 以上小模型（7B 一类）会开始堆词、复读、把上一句接到下一句里。
+  // 这里只把风险说出来，不拦着人调——真调高了，模型只会更胡。
+  function updateTempHint(value) {
+    var hint = el.form.tempHint;
+    if (!hint) return;
+    if (value >= 1.3) {
+      hint.textContent = '这个温度下小模型基本会胡言乱语：堆词、复读、把上一句接到下一句里。建议退回 0.7 再试。';
+      hint.dataset.tone = 'warn';
+    } else if (value > 1.0) {
+      hint.textContent = '偏高了，模型容易重复或跑题。聊天一般 0.6–0.9。';
+      hint.dataset.tone = 'warn';
+    } else {
+      hint.textContent = '越低越稳，越高越发散。聊天一般 0.6–0.9。';
+      hint.dataset.tone = '';
+    }
+  }
   function fillModelOptions(preset) {
     var list = (preset && preset.models) || [];
     el.form.modelOptions.innerHTML = list
@@ -2493,6 +2517,7 @@
 
     el.form.temp.addEventListener('input', function () {
       el.form.tempOut.textContent = Number(el.form.temp.value).toFixed(1);
+      updateTempHint(Number(el.form.temp.value));
     });
     el.form.max.addEventListener('input', function () {
       el.form.maxOut.textContent = el.form.max.value;

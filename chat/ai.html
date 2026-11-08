@@ -8,10 +8,10 @@
     <meta name="description" content="念真 · AI：自带模型的对话页，Key 只存本机，直连任何 OpenAI 兼容接口。">
     <title>念真 · AI</title>
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-    <link href="css/shell.css?v=0f3c1af48f" rel="stylesheet">
-    <link href="css/ai.css" rel="stylesheet">
-    <link href="css/ambient.css?v=0f3c1af48f" rel="stylesheet">
-    <script src="js/shell.js?v=0f3c1af48f"></script>
+    <link href="css/shell.css?v=8af1775b87" rel="stylesheet">
+    <link href="css/ai.css?v=8af1775b87" rel="stylesheet">
+    <link href="css/ambient.css?v=8af1775b87" rel="stylesheet">
+    <script src="js/shell.js?v=8af1775b87"></script>
 </head>
 
 <body class="wd-page">
@@ -150,7 +150,7 @@
                         <input type="range" id="cfg-temp" min="0" max="2" step="0.1" value="0.7">
                         <output id="cfg-temp-out" for="cfg-temp">0.7</output>
                     </div>
-                    <p class="wd-field__hint">越低越稳，越高越发散。聊天一般 0.6–0.9。</p>
+                    <p class="wd-field__hint" id="cfg-temp-hint">越低越稳，越高越发散。聊天一般 0.6–0.9。</p>
                 </div>
 
                 <div class="wd-field">
@@ -279,9 +279,9 @@
     </noscript>
 
     <script src="js/core/markdown.js"></script>
-    <script src="js/core/ai-client.js"></script>
-    <script src="js/ai.js?v=0f3c1af48f"></script>
-    <script src="js/ambient.js?v=0f3c1af48f" defer></script>
+    <script src="js/core/ai-client.js?v=8af1775b87"></script>
+    <script src="js/ai.js?v=8af1775b87"></script>
+    <script src="js/ambient.js?v=8af1775b87" defer></script>
     <script src="js/sw-update.js"></script>
 </body>
 

@@ -986,6 +986,15 @@ html[data-theme="dark"] .wd-error {
   font: 400 11px/1.4 var(--wd-mono);
 }
 
+/* 温度拉过 1.0 时的提醒：只换颜色，不动排版 */
+.wd-field__hint[data-tone="warn"] {
+  color: #c2683f;
+}
+
+html[data-theme="dark"] .wd-field__hint[data-tone="warn"] {
+  color: #e8a06a;
+}
+
 .wd-range {
   display: flex;
   align-items: center;
