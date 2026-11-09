@@ -374,7 +374,17 @@
   margin: 0;
 }
 
-.pz-table {
+/* Chirpy 的 JS 会给正文里的 table 套一层 .table-wrapper，
+   它带着 table-layout:auto + 每格 min-width:120px，7 列就是 840px，正文栏只有 779px。
+   这里压回去：取消内层滚动与阴影，改成固定列宽。 */
+.pz-tablewrap .table-wrapper {
+  overflow: visible;
+  margin-bottom: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pz-tablewrap .pz-table {
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
@@ -382,39 +392,62 @@
   font-variant-numeric: tabular-nums;
 }
 
-.pz-table th,
-.pz-table td {
+.pz-tablewrap .pz-table th,
+.pz-tablewrap .pz-table td {
+  min-width: 0;
   padding: 0.4rem 0.5rem;
   text-align: right;
   border-bottom: 1px solid var(--main-border-color);
 }
 
-.pz-table th {
+.pz-tablewrap .pz-table th {
   white-space: normal;
 }
 
-.pz-table th:first-child,
-.pz-table td:first-child {
+.pz-tablewrap .pz-table th:first-child,
+.pz-tablewrap .pz-table td:first-child {
   text-align: left;
 }
 
-.pz-table thead th {
+.pz-tablewrap .pz-table thead th {
   font-weight: 400;
   color: var(--text-muted-color);
   border-bottom-color: var(--text-muted-color);
 }
 
-.pz-table tbody tr:last-child td {
+.pz-tablewrap .pz-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
-.pz-table tr.is-anchor td {
+.pz-tablewrap .pz-table tr.is-anchor td {
   font-weight: 600;
   color: var(--heading-color);
 }
 
-.pz-table .pz-pick {
+.pz-tablewrap .pz-table .pz-pick {
   color: #22c3aa;
+}
+
+/* 压掉 Chirpy 默认表样式：斑马纹、竖线、表头居中 */
+.pz-tablewrap .pz-table > tbody > tr,
+.pz-tablewrap .pz-table > tbody > tr:nth-child(2n),
+.pz-tablewrap .pz-table > tbody > tr:nth-child(2n + 1) {
+  background-color: transparent;
+  border-bottom: 0;
+}
+
+.pz-tablewrap .pz-table > thead > tr > th,
+.pz-tablewrap .pz-table > tbody > tr > td {
+  border-left: 0;
+  border-right: 0;
+}
+
+.pz-tablewrap .pz-table > thead > tr > th {
+  text-align: right;
+}
+
+.pz-tablewrap .pz-table > thead > tr > th:first-child {
+  text-align: left;
 }
 
 /* ---------- 响应式 ---------- */
@@ -476,12 +509,12 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .pz-table {
+  .pz-tablewrap .pz-table {
     font-size: 0.7rem;
   }
 
-  .pz-table th,
-  .pz-table td {
+  .pz-tablewrap .pz-table th,
+  .pz-tablewrap .pz-table td {
     padding: 0.34rem 0.28rem;
   }
 }
