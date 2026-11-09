@@ -622,9 +622,10 @@ html[data-theme="dark"] .wd-error {
   min-width: 0;
 }
 
+/* 欢迎屏那张是 4:3 横构图（夜读·台灯下抬头-1448×1086），不再按 3:4 裁 */
 .wd-welcome__portrait {
   flex: 0 0 auto;
-  width: 152px;
+  width: 208px;
   margin: 0;
 }
 
@@ -635,7 +636,7 @@ html[data-theme="dark"] .wd-error {
 .wd-welcome__portrait img {
   display: block;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 16px;
   box-shadow: var(--wd-shadow-sm);
@@ -655,14 +656,14 @@ html[data-theme="dark"] .wd-error {
     gap: 12px;
   }
 
-  /* 手机上不放整宽横幅：会按 16:9 裁掉脸。改成小图，保持 3:4 原比例 */
+  /* 手机上不放整宽横幅：会裁掉脸。改成小图，保持 4:3 原比例 */
   .wd-welcome__portrait {
-    width: 112px;
+    width: 148px;
     margin: 0 auto;
   }
 
   .wd-welcome__portrait img {
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 4 / 3;
     border-radius: 14px;
   }
 
