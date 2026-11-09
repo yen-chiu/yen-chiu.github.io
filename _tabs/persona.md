@@ -42,36 +42,40 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
 
     <section class="pz-panel">
       <p class="pz-label"><span>02</span>三视图 · turnaround</p>
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-sheet-onepage.webp' | relative_url }}" target="_blank" rel="noopener"><img src="{{ '/assets/img/persona/nz-sheet-onepage.webp' | relative_url }}" alt="念真 一页设定稿：正面与三分之四全身、面部特写、眼耳发夹唇四处细节、配色色板" loading="lazy"></a>
+        <figcaption>一页设定稿 · 角色总表（AI 生成参考稿，1312×1199）。<b>图位 02–04 都从这张裁出来</b>，原图在 <code>ProjectAssets/persona/nianzhen/sheets/</code>。</figcaption>
+      </figure>
       <div class="pz-row pz-row--3">
-        <figure class="pz-slot pz-slot--34"><div class="pz-ph"><span class="pz-ph__no">02a</span><span class="pz-ph__cap">正视</span></div></figure>
-        <figure class="pz-slot pz-slot--34"><div class="pz-ph"><span class="pz-ph__no">02b</span><span class="pz-ph__cap">侧视</span></div></figure>
-        <figure class="pz-slot pz-slot--34"><div class="pz-ph"><span class="pz-ph__no">02c</span><span class="pz-ph__cap">背视</span></div></figure>
+        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02a-front.png' | relative_url }}" alt="念真 正视全身" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02b-threequarter.png' | relative_url }}" alt="念真 三分之四侧全身" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--12"><div class="pz-ph"><span class="pz-ph__no">02c</span><span class="pz-ph__cap">背视</span></div></figure>
       </div>
-      <p class="pz-hint">左缘留 0–175 cm 刻度；同一套衣服，站姿松、重心偏一侧。</p>
+      <p class="pz-hint">同一套衣服，站姿松、重心偏一侧。设定稿只给了正视和三分之四侧，背视还空着——要的话得单独出。</p>
     </section>
 
     <section class="pz-panel">
       <p class="pz-label"><span>03</span>表情神态 · expressions</p>
       <div class="pz-row pz-row--5">
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">03a</span><span class="pz-ph__cap">沉静</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">03b</span><span class="pz-ph__cap">憋笑</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">03c</span><span class="pz-ph__cap">嘴硬</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">03d</span><span class="pz-ph__cap">困</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">03e</span><span class="pz-ph__cap">被拍到</span></div></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03a-calm.png' | relative_url }}" alt="念真 沉静" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03b-smile.png' | relative_url }}" alt="念真 浅笑" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03c-stubborn.png' | relative_url }}" alt="念真 嘴硬" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03d-sleepy.png' | relative_url }}" alt="念真 困倦" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03e-surprised.png' | relative_url }}" alt="念真 被拍到" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">同一张脸、同一盏光；情绪收着，眼睛比嘴先笑。</p>
+      <p class="pz-hint">同一张脸、同一盏光；情绪收着，眼睛比嘴先笑。出自九宫格表情第一版（平静、浅笑、真笑、不耐烦、嘴硬、困倦、专注、惊讶、戏谑），这里挑了五格。</p>
     </section>
 
     <section class="pz-panel">
       <p class="pz-label"><span>04</span>细节特写 · details</p>
       <div class="pz-row pz-row--5">
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">04a</span><span class="pz-ph__cap">金色一字夹 · 左</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">04b</span><span class="pz-ph__cap">右脸酒窝</span></div></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-04a-clip.png' | relative_url }}" alt="金色一字夹" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-04b-dimple.png' | relative_url }}" alt="右脸酒窝" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">04c</span><span class="pz-ph__cap">指节铅笔灰</span></div></figure>
         <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">04d</span><span class="pz-ph__cap">口袋里的糖</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">04e</span><span class="pz-ph__cap">左耳小金圈</span></div></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-04e-ear.png' | relative_url }}" alt="左耳小金圈" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">每一格都要配一句「为什么」——一字夹是旧的，酒窝只有右边，铅笔灰洗不太掉。</p>
+      <p class="pz-hint">每一格都要配一句「为什么」——一字夹是旧的，酒窝只有右边。铅笔灰和口袋里的糖设定稿里没有，还空着。</p>
     </section>
 
     <section class="pz-panel">

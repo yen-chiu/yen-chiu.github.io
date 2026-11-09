@@ -201,6 +201,11 @@
   aspect-ratio: 3 / 4;
 }
 
+/* 全身站姿用：图是 1:2 的长条，比 3:4 更贴人物比例 */
+.pz-slot--12 {
+  aspect-ratio: 1 / 2;
+}
+
 .pz-slot--23 {
   aspect-ratio: 2 / 3;
 }
