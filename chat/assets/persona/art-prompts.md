@@ -6,29 +6,80 @@
 
 ---
 
-## 0. 定妆照（先画这张，后面全部拿它当参考图）
+## 0. 定妆照 · 锚点（v3 三格，当前版）
+
+> 3:2 横 · 三格等宽并排：左·全身正面 / 中·全身 3/4 / 右·头部特写。同一人物、同一套衣服、同一发型，纯浅灰底、无文字。
+> 与素材包 `~/Desktop/nianzhen-pack/prompt-v3.md` 同源；成品即站点 `assets/img/persona/nz-anchor-sheet.webp`。
 
 ```text
-character reference sheet, nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender but not fragile, soft narrow shoulders, standing loosely with her hands in her pockets and her weight on one leg, unhurried and a little off-handed, front view and three-quarter view side by side, face structure: soft oval face, slightly full lower cheeks that still keep a little schoolgirl roundness, gentle rounded jawline, jaw angles barely visible, chin short and slightly rounded rather than pointed, cheekbones low and soft, small forehead, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, one small gold hairpin pinned on her LEFT side, eyebrows thin and nearly straight, eyes a little large with slightly downturned outer corners and a soft inner double eyelid, amber-teal irises, low nose bridge with a small rounded tip, lips full on the lower lip with a natural pale rose color, a very small gold hoop in her LEFT ear only, right ear bare, a faint dimple on her RIGHT cheek that only shows when she smiles, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, hands relaxed, pencil smudges on the knuckles, plain light-grey background, even flat lighting, neutral expression plus one small closed-mouth smile, soft anime illustration, painterly digital art, fine crisp linework, ultra-detailed, sharp focus, high resolution, no text
+character reference sheet, plain light-grey background, three equal-width panels side by side, no text, the same girl in all three panels, same outfit and same hairstyle in all three,
+
+CHARACTER
+nianzhen, 20-year-old Chinese college student, 160 cm, petite but not fragile, realistic young-adult proportions, about 7 heads tall, soft narrow shoulders,
+
+FACE (identical in all three panels)
+soft oval face, the widest part is across the cheeks not the temples, slightly full lower cheeks keeping a schoolgirl roundness, the jawline stays round and wide all the way down to a short soft chin, chin about half the width across the cheeks, cheekbones low and soft, small forehead, no straight diagonal from cheekbone to chin, no narrowing below the cheekbones,
+
+HAIR
+short dark-brown bob parted in the middle, slightly flipped ends, one small ahoge curling up from the top of her head, hair tucked behind her left ear, one small gold hairpin on her left side, one very small gold hoop in her left ear only, right ear bare,
+
+EYES
+thin, nearly straight eyebrows; eyes a little large with slightly downturned outer corners and a soft inner double eyelid, warm amber irises with a faint teal rim,
+
+NOSE AND LIPS
+low nose bridge with a small rounded tip; lower lip full, natural pale rose,
+
+OUTFIT
+white dress shirt with sleeves rolled to the elbow, dark teal knit vest over it, charcoal-grey wide-leg trousers with side pockets, white sneakers,
+
+PANEL 1 — left: full body front view, camera straight on at chest height, knees and shoes fully in frame, both hands in her pockets, weight on one leg, face completely relaxed: eyelids level, brows level, mouth a soft straight line with the corners neither lifted nor pulled down, no smile, no frown, no crease on her right cheek,
+
+PANEL 2 — center: full body three-quarter view, her body and head turned 45 degrees, her left shoulder toward the camera and appearing larger and closer, her right shoulder behind her and partly hidden by her body, her head turned with the body so that only one ear is visible in this panel — her left ear, the right ear hidden behind her head, her right eye sitting closer to the far edge of her face, mouth a small closed-lip smile with the corners lifted only slightly, a soft dimple on her right cheek,
+
+PANEL 3 — right: head and shoulders close-up, front view, the same slight closed-lip smile as panel 2, the soft dimple on her right cheek clearly readable, no teeth,
+
+LIGHTING AND BACKGROUND
+even flat lighting, plain light-grey background, soft contact shadow under her feet, no cast shadow on the background,
+
+STYLE
+soft anime illustration, painterly digital art, fine crisp linework, ultra-detailed, sharp focus, high resolution
 ```
 
-**画质**：写 `fine crisp linework, ultra-detailed, sharp focus, high resolution` 这四句，别单写「4K」——多数模型不认识这个词。真正的 4K 靠出图后放大（见第 14 节）。
+**出图参数**：3:2 横、三格等宽、无文字（`no text` 写在正向词里，别只放负面词）。
 
-**负面词（这张一定要带，否则脸会被拉成锥子）**
+**负面词（这张必须带，否则脸会被拉成锥子）**
 
 ```text
-sharp pointed chin, V-line jaw, extremely narrow face, shrunk lower face, high razor cheekbones, gaunt cheeks, hollow cheekbones, model face, idol proportions, adult-woman maturity, oversized eyes, plastic skin, heavy makeup, contouring, glossy lips
+sharp pointed chin, V-line jaw, extremely narrow face, shrunk lower face, face narrowing below the cheekbones, straight diagonal jawline, high razor cheekbones, gaunt cheeks, hollow cheekbones, model face, idol proportions, adult-woman maturity, oversized eyes, plastic skin, heavy makeup, contouring, glossy lips, elongated legs, fashion illustration proportions, tiny head, eight heads tall, floating feet, all three panels facing the camera, same pose in all panels, both ears visible in the three-quarter panel, level symmetric shoulders in the three-quarter panel, smile in the neutral panel, grin, teeth showing, pout, furrowed brows, sullen expression, frown, two different girls, mismatched outfit, cropped feet, extra fingers, deformed hands, watermark, signature
 ```
 
-**检查清单（出图后逐条看，有一条不对就重画，别将就）**
+**最容易垮的是中格**：模型爱把两只耳朵都画出来、把肩膀画平，所以 `only one ear is visible … her left ear` 和负面词里的 `both ears visible in the three-quarter panel` 各写了一遍——少一条，45° 就退化成正面微侧。
 
-- 下颌是**圆弧**的，能摸到一点点软肉，不是一条直线切下来的
-- 下巴**短且圆**，不向前翘、不收成尖
-- 脸下半部分不比上半部分窄太多（锥子脸就是这里塌的）
-- 眼睛有上眼睑的厚度，不是两颗贴在脸上的大瞳孔
-- 笑的时候右脸有酒窝，左耳有圈、右边没有
+**画质**：`fine crisp linework, ultra-detailed, sharp focus, high resolution` 已写在 STYLE 段里，别单加「4K」，多数模型不认识这个词。真正的尺寸靠出图后放大（见第 14 节）。
+
+**后处理：先拼版，再超分，别反过来**
+
+| 步 | 做什么 | 产物 |
+| --- | --- | --- |
+| 1 | 三格拼版（背景灰统一 204/203/208、按身高对齐、脚底压同一基线、格线两侧各内收 3 px） | `nianzhen_sheet_1920_master.png` 1920×1280 母版 |
+| 2 | Real-CUGAN 2× · 无降噪（`up2x-no-denoise`） | 3840×2560 定妆照锚点 |
+| 3 | 缩到 1600 宽存 webp，进站点 | `assets/img/persona/nz-anchor-sheet.webp` |
+
+选 Real-CUGAN 而不是 Real-ESRGAN：ESRGAN 更锐，但把睫毛外沿和发丝描成暖红边、把背心的冷灰蓝针脚推成暖铜色；而且成品缩到 1K（参考图真正进模型的尺寸）时那点锐度就没了，色偏却全额留着。四版锐度 / 背景 ΔE / 多尺度对照见 `_tabs/persona.md` 第 10 节。
+
+**检查清单（三格一起看，一条不对就重画，别将就）**
+
+- 三格是同一个人：脸宽、下巴、发际线对得上——最容易在中格与右格之间漂
+- 中格是真 45°：左肩朝镜头、只露左耳、右耳被头挡住、右眼更靠脸的远侧边缘
+- 左格完全中性：不笑、不皱眉、右脸没有酒窝
+- 中格与右格是同一个「小抿嘴笑」，酒窝只在右脸出现一处
+- 金一字夹在**她自己的左**、金耳圈只在**左耳**、右耳空着
+- 背景是一整块灰：没有投影、没有格线、没有文字
+- 下颌圆弧、下巴短圆（理由见 0.1）
 
 > 想要「专业设定稿」那种三视图＋表情表＋细节表，见文末 **第 12 节**。那一节是拿来做一致性锚点的，第 0 节这张是拿来直接用的。
+
+> 旧的「两格并排」prompt 已停用；需要时 `git log -p chat/assets/persona/art-prompts.md` 取回。
 
 ### 0.1 脸型为什么要单独写（以及怎么修）
 
@@ -59,7 +110,7 @@ sharp pointed chin, V-line jaw, extremely narrow face, shrunk lower face, high r
 **角色锚点**
 
 ```text
-nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender with soft narrow shoulders, relaxed loose posture, soft oval face with slightly full lower cheeks and a short rounded chin, gentle rounded jawline, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, one small gold hairpin on her LEFT side, thin nearly-straight eyebrows, large eyes with slightly downturned outer corners and amber-teal irises, low nose bridge with a small round tip, full lower lip in pale rose, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, a small gold hoop in her LEFT ear only, a faint dimple on her RIGHT cheek
+nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender with soft narrow shoulders, relaxed loose posture, soft oval face with slightly full lower cheeks and a short rounded chin, gentle rounded jawline, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, hair tucked behind her left ear, one small gold hairpin on her LEFT side, thin nearly-straight eyebrows, eyes a little large with slightly downturned outer corners and warm amber irises with a faint teal rim, low nose bridge with a small round tip, full lower lip in pale rose, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, a small gold hoop in her LEFT ear only, a faint dimple on her RIGHT cheek
 ```
 
 **风格锚点**
@@ -533,6 +584,8 @@ fine crisp linework, ultra-detailed, sharp focus, high resolution
 - **原生分辨率**：MJ 默认 1024²（v7 可 `--ar` 到 2K 左右）；SD/Flux 原生 1024–1536。直接要 3840 宽，模型会给你放大的糊图。
 - **流程**：原生出图 → 选图 → 放大到 2 倍 → 再 2 倍（或一次 4 倍），每步之间做一次轻度锐化/降噪。
 - 工具：MJ 的 `--upgrade`（Creative / Subtle 两档）；SD WebUI 的 Hires.fix（2×，denoise 0.35–0.45）+ 4× 超分（ESRGAN / 4x-UltraSharp）；Topaz Gigapixel 也行。
+
+**本项目的实测口径**：定妆照走「拼好的 1920 母版 → Real-CUGAN 2× · 无降噪 → 3840×2560」。不用 ESRGAN（更锐，但把睫毛/发丝描成暖红边、冷灰蓝针织推成暖铜色），也不用 waifu2x（几乎不偏色，可锐度与纯插值持平）。理由与四版数据见 `_tabs/persona.md` 第 10 节。
 
 ### 14.3 站内实际要多大
 

@@ -129,11 +129,94 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
   <p class="pz-hint">两套青绿别混：衣服是深青绿 #2F4F4A，站内品牌青绿只出现在网页与 UI 上。</p>
 </section>
 
+<section class="pz-panel pz-panel--block">
+  <p class="pz-label"><span>10</span>定妆照 · 锚点图 anchor</p>
+
+  <p class="pz-lead">
+    定妆照锚点固定为<strong>第五版</strong>——Real-CUGAN 2× · 无降噪（<code>up2x-no-denoise</code>），3840×2560。
+    往后三视图、表情、场景、动作，一律以这一版的骨相与配色为准；另外三版只作对照留档，不参与出图。
+  </p>
+
+  <figure class="pz-figure">
+    <img src="{{ '/assets/img/persona/nz-anchor-sheet.webp' | relative_url }}"
+         alt="念真定妆照锚点：正视全身、3/4 侧全身、头部特写，三格拼接"
+         loading="lazy">
+    <figcaption>定妆照 · 三格拼接 · 锚点版（原图 3840×2560，此处 1600 宽预览）</figcaption>
+  </figure>
+
+  <div class="pz-sub">超分选型 · 四版对照（点图看 1:1 原尺寸）</div>
+
+  <figure class="pz-figure">
+    <a href="{{ '/assets/img/persona/nz-upscale-01-eyes.png' | relative_url }}" target="_blank" rel="noopener">
+      <img src="{{ '/assets/img/persona/nz-upscale-01-eyes.png' | relative_url }}"
+           alt="眼部 1:1 对比：母版×2、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+           loading="lazy">
+    </a>
+    <figcaption>① 眼部 · 1:1 —— 母版×2(nearest) / Lanczos / Real-ESRGAN / waifu2x / <b>第五版 Real-CUGAN</b>。ESRGAN 睫毛外沿有暖红描边，肤色偏粉橙；第五版边缘干净，肤色贴着母版。</figcaption>
+  </figure>
+
+  <figure class="pz-figure">
+    <a href="{{ '/assets/img/persona/nz-upscale-02-knit.png' | relative_url }}" target="_blank" rel="noopener">
+      <img src="{{ '/assets/img/persona/nz-upscale-02-knit.png' | relative_url }}"
+           alt="针织背心 1:1 对比：母版×2、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+           loading="lazy">
+    </a>
+    <figcaption>② 针织 · 1:1 —— 同框序。母版里冷灰蓝的针脚高光，被 ESRGAN 推成暖铜色丝线（局部 R−B 由 −13 变 +69）；第五版留在冷色系，这是选它最主要的原因。</figcaption>
+  </figure>
+
+  <figure class="pz-figure">
+    <a href="{{ '/assets/img/persona/nz-upscale-03-hair.png' | relative_url }}" target="_blank" rel="noopener">
+      <img src="{{ '/assets/img/persona/nz-upscale-03-hair.png' | relative_url }}"
+           alt="发丝 1:1 对比：母版×2、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+           loading="lazy">
+    </a>
+    <figcaption>③ 发丝 · 1:1 —— 同框序。两者锐度接近，差别在边缘：ESRGAN 沿发丝有一圈暖色描边，第五版没有。</figcaption>
+  </figure>
+
+  <div class="pz-sub">量测 · 四版对照</div>
+
+  <div class="pz-tablewrap">
+    <table class="pz-table">
+      <thead>
+        <tr>
+          <th>版本</th>
+          <th>3840 锐度</th>
+          <th>相对插值</th>
+          <th>2048</th>
+          <th>1024</th>
+          <th>背景 ΔE</th>
+          <th>低频偏离</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Lanczos 插值</td><td>2.27</td><td>1.00×</td><td>1.00×</td><td>1.00×</td><td>0.00</td><td>0.54</td></tr>
+        <tr><td>Real-ESRGAN</td><td>5.52</td><td>2.44×</td><td>1.52×</td><td>1.08×</td><td>1.56</td><td>1.55</td></tr>
+        <tr><td>waifu2x</td><td>2.71</td><td>1.19×</td><td>1.04×</td><td>0.99×</td><td>0.46</td><td>0.51</td></tr>
+        <tr class="is-anchor"><td>Real-CUGAN <span class="pz-pick">★</span></td><td>5.04</td><td>2.22×</td><td>1.49×</td><td>1.12×</td><td>0.65</td><td>1.01</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="pz-hint">
+    口径：锐度取 Laplacian 均值（越大越锐，与 README 那套 1.41 / 2.09 只是归一化不同，倍数一致）；
+    背景 ΔE 对母版灰底取样；低频偏离是缩到 480×320 后与母版的 MAD。
+    「2048 / 1024」两列是同一张图缩到该宽度后相对插值的锐度倍数——模拟参考图被生成模型降采样：
+    <strong>锐度差在这一步基本消失，色偏却不减</strong>，所以第五版胜出，锚点用它。
+  </p>
+
+  <p class="pz-hint">
+    归档：<code>final/nianzhen_sheet_3840_realcugan_up2x-nodenoise.png</code>。
+    四版几何完全一致（对母版最佳偏移均为 0,0），换图不需要重拼三格。
+    出图 prompt 见 <code>chat/assets/persona/art-prompts.md</code> 第 0 节（v3 三格版式）。
+  </p>
+</section>
+
 <p class="pz-note">
-  图位编号与 <code>assets/persona/art-prompts.md</code> 第 15.2 节一一对应。
+  图位编号与 <code>chat/assets/persona/art-prompts.md</code> 第 15.2 节一一对应。
   出图后把文件按 <code>nz-01</code>…<code>nz-08</code> 命名丢进 <code>assets/img/persona/</code>，
   再在对应的 <code>&lt;figure&gt;</code> 里加一行
   <code>&lt;img src="…" alt=""&gt;</code>——占位会自动让位，不用改样式。
+  定妆照（10）不用等出图：<code>nz-anchor-sheet.webp</code> 与三张 <code>nz-upscale-0*.png</code> 已经在位。
 </p>
 
 </div>
