@@ -293,3 +293,21 @@ html[data-mode='dark'] {
     content: none;
   }
 }
+
+/* ==========================================================================
+   念真 tab 图标：同理用内联 SVG 蒙版补一个半身像字形。
+   ========================================================================== */
+.iconfont.icon-persona {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  font-size: 1rem;
+  vertical-align: -0.145em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8.4' r='3.5'/%3E%3Cpath d='M5.3 19.6c0-3.4 3-5.7 6.7-5.7s6.7 2.3 6.7 5.7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8.4' r='3.5'/%3E%3Cpath d='M5.3 19.6c0-3.4 3-5.7 6.7-5.7s6.7 2.3 6.7 5.7'/%3E%3C/svg%3E") center / contain no-repeat;
+
+  &::before {
+    content: none;
+  }
+}

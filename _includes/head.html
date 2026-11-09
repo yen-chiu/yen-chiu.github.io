@@ -116,6 +116,11 @@
     <link rel="stylesheet" href="{{ '/assets/css/journal.css' | relative_url }}?v={{ site.time | date: '%s' }}">
   {% endif %}
 
+  {% if page.persona_css %}
+    <!-- 念真 · 角色设定页样式 -->
+    <link rel="stylesheet" href="{{ '/assets/css/persona.css' | relative_url }}?v={{ site.time | date: '%s' }}">
+  {% endif %}
+
   {% if page.layout == 'page' or page.layout == 'post' %}
     <!-- Image Popup -->
     <link rel="stylesheet" href="{{ site.data.origin[type].glightbox.css | relative_url }}">
