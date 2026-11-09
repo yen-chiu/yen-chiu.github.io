@@ -2,7 +2,8 @@
 
 > 已经出图并接进站点（2026-11）：
 > - `img/persona/nianzhen-avatar.webp`（512²，聊天头像，取特写那张）
-> - `img/persona/nianzhen-scene.webp`（900×1200，欢迎屏自画像）
+> - `img/persona/nianzhen-nightread-1448x1086.webp`（1000×750，4:3 横构图，**欢迎屏自画像现在用这张**）
+> - `img/persona/nianzhen-scene.webp`（900×1200，3:4 竖版夜景，同组备选，暂未上站）
 > - `img/persona/nianzhen-desk.webp`（1000²，带书桌的完整场景）
 >
 > 想重画时把下面的提示词整段贴进 ChatGPT / Midjourney，出图后按同样三个尺寸替换即可。
