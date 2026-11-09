@@ -9,7 +9,7 @@
 ## 0. 定妆照（先画这张，后面全部拿它当参考图）
 
 ```text
-character reference sheet, nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender but not fragile, soft narrow shoulders, standing with a slightly forward energetic posture, front view and three-quarter view side by side, face structure: soft oval face, slightly full lower cheeks that still keep a little schoolgirl roundness, gentle rounded jawline, jaw angles barely visible, chin short and slightly rounded rather than pointed, cheekbones low and soft, small forehead, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, one small gold hairpin pinned on her LEFT side, eyebrows thin and nearly straight, eyes a little large with slightly downturned outer corners and a soft inner double eyelid, amber-teal irises, low nose bridge with a small rounded tip, lips full on the lower lip with a natural pale rose color, a very small gold hoop in her LEFT ear only, right ear bare, a faint dimple on her RIGHT cheek that only shows when she smiles, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, hands relaxed, pencil smudges on the knuckles, plain light-grey background, even flat lighting, neutral expression plus one small closed-mouth smile, soft anime illustration, painterly digital art, fine crisp linework, ultra-detailed, sharp focus, high resolution, no text
+character reference sheet, nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender but not fragile, soft narrow shoulders, standing loosely with her hands in her pockets and her weight on one leg, unhurried and a little off-handed, front view and three-quarter view side by side, face structure: soft oval face, slightly full lower cheeks that still keep a little schoolgirl roundness, gentle rounded jawline, jaw angles barely visible, chin short and slightly rounded rather than pointed, cheekbones low and soft, small forehead, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, one small gold hairpin pinned on her LEFT side, eyebrows thin and nearly straight, eyes a little large with slightly downturned outer corners and a soft inner double eyelid, amber-teal irises, low nose bridge with a small rounded tip, lips full on the lower lip with a natural pale rose color, a very small gold hoop in her LEFT ear only, right ear bare, a faint dimple on her RIGHT cheek that only shows when she smiles, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, hands relaxed, pencil smudges on the knuckles, plain light-grey background, even flat lighting, neutral expression plus one small closed-mouth smile, soft anime illustration, painterly digital art, fine crisp linework, ultra-detailed, sharp focus, high resolution, no text
 ```
 
 **画质**：写 `fine crisp linework, ultra-detailed, sharp focus, high resolution` 这四句，别单写「4K」——多数模型不认识这个词。真正的 4K 靠出图后放大（见第 14 节）。
@@ -59,7 +59,7 @@ sharp pointed chin, V-line jaw, extremely narrow face, shrunk lower face, high r
 **角色锚点**
 
 ```text
-nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender with soft narrow shoulders, soft oval face with slightly full lower cheeks and a short rounded chin, gentle rounded jawline, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, one small gold hairpin on her LEFT side, thin nearly-straight eyebrows, large eyes with slightly downturned outer corners and amber-teal irises, low nose bridge with a small round tip, full lower lip in pale rose, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, a small gold hoop in her LEFT ear only, a faint dimple on her RIGHT cheek
+nianzhen, a 20-year-old Chinese college student, about 160 cm tall, slender with soft narrow shoulders, relaxed loose posture, soft oval face with slightly full lower cheeks and a short rounded chin, gentle rounded jawline, short dark-brown bob parted in the middle with slightly flipped ends and a small ahoge on top, one small gold hairpin on her LEFT side, thin nearly-straight eyebrows, large eyes with slightly downturned outer corners and amber-teal irises, low nose bridge with a small round tip, full lower lip in pale rose, white dress shirt with sleeves rolled to the elbow under a dark teal knit vest, a small gold hoop in her LEFT ear only, a faint dimple on her RIGHT cheek
 ```
 
 **风格锚点**
@@ -143,7 +143,7 @@ extra fingers, deformed hands, plastic skin, oversaturated, heavy bloom, text, w
 ### 3.4 走路 · 口袋里的糖
 
 ```text
-[角色锚点 + 风格锚点] + walking on a quiet street after rain, one hand in her coat pocket pulling out a wrapped candy, the pocket visibly bulging with stickers and a bit of string, wet asphalt reflections, evening blue hour, three-quarter back view turning her head toward the viewer, full body, environmental
+[角色锚点 + 风格锚点] + walking slowly on a quiet street after rain, unhurried, stopping half-way to look at the light on the wet asphalt, one hand in her coat pocket pulling out a wrapped candy, the pocket visibly bulging with stickers and a bit of string, wet asphalt reflections, evening blue hour, three-quarter back view turning her head toward the viewer, full body, environmental
 ```
 
 ### 3.5 晒被子 / 晾衣服（生活气）
@@ -361,8 +361,9 @@ flat lay on a wooden desk: a small gold hairpin, a kalimba, a fountain pen, a dr
 4. **锁 seed**：同一组场景用同一个 seed，只改场景词；换 seed 等于换人。
 5. **一次只改一个变量**：先固定人和光，再换动作；同时改场景、光线、服装，角色会散。
 6. **别让她穿别的**：青绿针织背心 + 白衬衫是识别符；确实需要换装（比如睡衣、外套）时，保留发夹、耳圈和发型。
-7. **手要单独检查**：她这组图大量是握笔、弹琴、捏黏土，手最容易崩，出图后放大看指节。
-8. **情绪不要过**：她是「嘴硬心软」，不是元气少女。笑是收着的，眼睛比嘴先笑。
+7. **站姿要松**：手插口袋、重心偏在一侧、肩膀不抬。她随性，不紧绷——站得笔直的姿势会让她像在拍样片，不像她。
+8. **手要单独检查**：她这组图大量是握笔、弹琴、捏黏土，手最容易崩，出图后放大看指节。
+9. **情绪不要过**：她是「嘴硬心软」，不是元气少女。笑是收着的，眼睛比嘴先笑。
 
 ---
 
