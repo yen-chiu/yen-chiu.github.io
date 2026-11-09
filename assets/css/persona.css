@@ -1,0 +1,406 @@
+/* ==========================================================================
+   念真 · 角色设定页
+   版式参考：一页式角色设定稿（档案卡 + 右侧分块「证据」）。
+   颜色全部走主题变量，暗色模式自动跟随；只有品牌青绿是写死的。
+   ========================================================================== */
+
+.pz-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.4rem 1.2rem 3rem;
+  color: var(--text-color);
+}
+
+.pz-wrap code {
+  font-size: 0.82em;
+  color: var(--text-muted-color);
+}
+
+.pz-dot {
+  margin: 0 0.35em;
+  color: var(--text-muted-color);
+}
+
+/* ---------- 头部 ---------- */
+
+.pz-hero {
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--main-border-color);
+}
+
+.pz-hero__kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  color: var(--text-muted-color);
+}
+
+.pz-hero__title {
+  margin: 0;
+  font-size: 2.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--heading-color);
+  line-height: 1.1;
+}
+
+.pz-hero__tagline {
+  margin: 0.55rem 0 0;
+  font-size: 1.02rem;
+  color: var(--text-color);
+}
+
+.pz-hero__meta {
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted-color);
+}
+
+.pz-hero__link {
+  margin: 0.7rem 0 0;
+  font-size: 0.84rem;
+}
+
+.pz-hero__link a {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(34, 195, 170, 0.45);
+}
+
+/* ---------- 主体网格 ---------- */
+
+.pz-grid {
+  display: grid;
+  grid-template-columns: 292px minmax(0, 1fr);
+  gap: 1.1rem;
+  align-items: start;
+}
+
+.pz-card {
+  padding: 0.9rem;
+  border: 1px solid var(--main-border-color);
+  border-radius: 10px;
+}
+
+.pz-panels {
+  display: grid;
+  gap: 1rem;
+}
+
+.pz-panel {
+  padding: 0.85rem 0.95rem 0.75rem;
+  border: 1px solid var(--main-border-color);
+  border-radius: 10px;
+}
+
+/* ---------- 小标签 ---------- */
+
+.pz-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted-color);
+  text-transform: uppercase;
+}
+
+.pz-label span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.3rem;
+  font-size: 0.66rem;
+  letter-spacing: 0;
+  border-radius: 4px;
+  color: #22c3aa;
+  background: rgba(34, 195, 170, 0.12);
+}
+
+.pz-hint {
+  margin: 0.6rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--text-muted-color);
+}
+
+/* ---------- 档案卡 ---------- */
+
+.pz-meta {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.9rem 0 0;
+  font-size: 0.8rem;
+}
+
+.pz-meta > div {
+  display: flex;
+  gap: 0.6rem;
+  padding-bottom: 0.32rem;
+  border-bottom: 1px dashed var(--main-border-color);
+}
+
+.pz-meta dt {
+  flex: 0 0 3.4rem;
+  color: var(--text-muted-color);
+  font-weight: 400;
+}
+
+.pz-meta dd {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.pz-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pz-chips li {
+  padding: 0.12rem 0.58rem;
+  font-size: 0.74rem;
+  border: 1px solid var(--tag-border, var(--main-border-color));
+  border-radius: 999px;
+  color: var(--text-muted-color);
+}
+
+/* ---------- 图位占位 ---------- */
+
+.pz-row {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.pz-row--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pz-row--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.pz-row--5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.pz-slot {
+  position: relative;
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pz-slot--34 {
+  aspect-ratio: 3 / 4;
+}
+
+.pz-slot--23 {
+  aspect-ratio: 2 / 3;
+}
+
+.pz-slot--11 {
+  aspect-ratio: 1 / 1;
+}
+
+.pz-slot--169 {
+  aspect-ratio: 16 / 9;
+}
+
+.pz-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  text-align: center;
+  padding: 0.4rem;
+  border: 1px dashed rgba(34, 195, 170, 0.42);
+  border-radius: 8px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(34, 195, 170, 0.045) 0,
+    rgba(34, 195, 170, 0.045) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+.pz-ph__no {
+  font-size: 0.64rem;
+  letter-spacing: 0.16em;
+  color: #22c3aa;
+}
+
+.pz-ph__cap {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--text-muted-color);
+}
+
+/* ---------- 配色 ---------- */
+
+.pz-palette {
+  margin-top: 1.1rem;
+  padding: 0.85rem 0.95rem 0.7rem;
+  border: 1px solid var(--main-border-color);
+  border-radius: 10px;
+}
+
+.pz-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 0.5rem 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pz-swatches li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.76rem;
+}
+
+.pz-swatches i {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.28);
+}
+
+.pz-swatches b {
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+.pz-swatches code {
+  margin-left: auto;
+  font-size: 0.68rem;
+  color: var(--text-muted-color);
+}
+
+/* ---------- 页脚说明 ---------- */
+
+.pz-note {
+  margin: 1.3rem 0 0;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--main-border-color);
+  font-size: 0.76rem;
+  line-height: 1.7;
+  color: var(--text-muted-color);
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 900px) {
+  .pz-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pz-card {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: start;
+  }
+
+  .pz-card .pz-slot {
+    grid-row: span 2;
+  }
+
+  .pz-meta {
+    margin-top: 0;
+  }
+
+  .pz-chips {
+    margin-top: 0.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .pz-wrap {
+    padding: 1rem 0.9rem 2.4rem;
+  }
+
+  .pz-hero__title {
+    font-size: 2.1rem;
+  }
+
+  /* 手机上档案卡改竖排：肖像居中，档案整宽排，避免两列挤成三行折行 */
+  .pz-card {
+    display: block;
+  }
+
+  .pz-card .pz-slot {
+    max-width: 186px;
+    margin: 0 auto 0.9rem;
+  }
+
+  .pz-meta dt {
+    flex-basis: 3rem;
+  }
+
+  .pz-row--4,
+  .pz-row--5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pz-row--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------- 暗色 ---------- */
+
+@media (prefers-color-scheme: dark) {
+  body:not([data-mode='light']) .pz-ph {
+    border-color: rgba(63, 209, 225, 0.35);
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(63, 209, 225, 0.06) 0,
+      rgba(63, 209, 225, 0.06) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  }
+}
+
+html[data-mode='dark'] .pz-ph {
+  border-color: rgba(63, 209, 225, 0.35);
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(63, 209, 225, 0.06) 0,
+    rgba(63, 209, 225, 0.06) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+html[data-mode='dark'] .pz-label span {
+  color: #3fd1e1;
+  background: rgba(63, 209, 225, 0.14);
+}
+
+html[data-mode='dark'] .pz-ph__no {
+  color: #3fd1e1;
+}
+
+/* ---------- 打印 ---------- */
+
+@media print {
+  .pz-ph {
+    border-color: #c9c9c9;
+    background-image: none;
+  }
+}
