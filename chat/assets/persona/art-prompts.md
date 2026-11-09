@@ -462,6 +462,8 @@ character proportion chart on a white background, full body standing straight, 7
 4. 用上面三份做参考图，再回头画第 1–8 节那些插画
 5. 12.7 五连景别 → 每画完一张插画，顺手用它验一次「还是同一个人吗」
 
+> 以上是按「单张素材」出的。真要做成一张给别人看的**设定稿**（档案卡 + 三视图 + 表情行 + 细节 + 配色 + 动态），看第 15 节的版式和分块清单。
+
 ---
 
 ## 13. 配色（每个部位一个色号）
@@ -542,3 +544,76 @@ fine crisp linework, ultra-detailed, sharp focus, high resolution
 | 打印 / 设定稿 | 300 dpi，A3 约 3508×4961 | 这类才真的需要 4K+ |
 
 > 记住一条：**网页上用不到 4K**，站点上的图 1600 宽就够；4K 是母版，用来以后裁切、印刷、重排版。
+
+---
+
+## 15. 一页讲完一个人：参考设计稿里能直接用的东西
+
+看过那几张参考（一页式角色设定图、完整维度清单、两张男角色 full sheet），共同骨架其实只有一个：
+
+> **左边一张档案卡，右边一块块「证据」。**
+
+档案卡答「她是谁」，右边每一块都是用图回答一个问题：长什么样（三视图）、笑起来什么样（表情行）、这些小东西为什么在她身上（细节特写）、什么颜色（配色+材质）、带着什么（道具）、动起来什么样（动态）、一句话概括（气质关键词+视觉符号）。
+
+### 15.1 念真版一页设定稿（整版 prompt，出不来就分块）
+
+模型排版能力很弱，一次出整页多半字会糊、区块会错位。先用这条试一次，不行就走 15.2 分块。
+
+```text
+single-page character design sheet, clean editorial layout on a warm off-white background, Chinese editorial poster style, thin teal hairline dividers, generous margins, no decorative flourishes, muted palette
+
+left column, a portrait card: three-quarter portrait of [角色锚点 + 风格锚点], below it a small info block of thin rules and short lines of text, a row of five circular color chips
+
+right side, a tiled grid of panels:
+- panel 1, full-body turnaround, front / side / back, with a thin vertical height ruler at the left edge
+- panel 2, an expression row of five head crops
+- panel 3, four macro close-ups of small details
+- panel 4, a row of four square material swatches
+- panel 5, three full-body variants standing side by side
+- panel 6, one wide cinematic still of her at her desk at night
+
+consistent character across all panels, same face, same hair, same clothes, flat neutral studio light for the reference panels, warm lamp light only in the last panel, fine crisp linework, ultra-detailed, high resolution
+```
+
+不要指望它写字——**版面上的文字后期排**。
+
+### 15.2 分块清单（每块单独出图，最后拼版）
+
+| # | 块 | prompt 主体（接 [角色锚点 + 风格锚点]） | 版面上的说明文字（后期加） |
+| --- | --- | --- | --- |
+| 1 | 档案卡竖幅 | `three-quarter portrait, chest up, looking slightly off camera, soft window light, plain warm background` | 20 岁 · 160 cm · 7 头身 · 写网页的、拍照的、弹卡林巴的 |
+| 2 | 三视图 | `full-body turnaround, front view, side view, back view, standing neutrally, same outfit, plain background, flat even light` | 正视 / 侧视 / 背视，左边缘画身高刻度 |
+| 3 | 表情行 | `five head-and-shoulders crops in a row, same face and light: calm listening, holding back a laugh, mouth-hard but eyes soft, sleepy at 2am, caught by the camera` | 沉静 / 憋笑 / 嘴硬 / 困 / 被拍到 |
+| 4 | 细节特写 | `macro close-up, shallow depth of field, neutral light: gold hairpin clipping the left side of her bangs; the shallow dimple on her right cheek; graphite-stained knuckles holding a pencil; coat pocket with stickers, a wrapped candy and a short piece of string; small gold hoop on her left ear` | 每张配一句为什么（见 15.4 第 1 条） |
+| 5 | 材质色板 | `four square swatches, top-down, soft studio light: cotton shirting, teal knit, aged brass, yellowed paper` | 棉 / 针织 / 黄铜 / 旧纸 |
+| 6 | 三状态全身 | `three full-body standing variants side by side, same character: at the desk writing code at night, walking outside with a camera in hand, sitting on the floor with a kalimba` | 写代码 / 拍照 / 弹琴 |
+| 7 | 动态细节 | `walking slowly and stopping to look at the light, coat tail and hair strands lifting in the wind, sleeves always rolled to the elbow` | 走路会停 / 头发被风吹乱 / 袖子永远卷着 |
+| 8 | 气质与符号 | `a wide cinematic still, night desk by the window, rain on the glass, city lights bokeh, lamp glow on her face` | 气质：随性 · 慢半拍 · 嘴硬心软；符号：青绿渐变 + 坐标网格、光斑、金色一字夹 |
+
+### 15.3 版式怎么拼
+
+- 网格按 12 栏，左边 4 栏给档案卡，右边 8 栏摊六块；每块左上角留一个 24px 的小标签（「三视图」「表情神态」这种）。
+- 字号只分两级：标签 12px、说明 10px，正文别超过三行。
+- 色块直接从第 13 节取 hex，别在 PS 里重新调色，否则和出图不一致。
+- 中文用思源黑体 / 苹方，英文小字用等宽（IBM Plex Mono 之类），中间那行拉丁文说明用斜体。
+- 留白要够：参考稿里每块之间至少 24px，挤在一起就变成「拼图」而不是「设定稿」。
+
+### 15.4 参考稿里最值得偷的三条
+
+1. **细节要配一句解释**。参考稿里写「手掌有薄茧，常年劳作与练剑」——图谁都会画，那句解释才是设计。念真的细节也都配有理由：一字夹是旧的、右边才有酒窝、指节的铅笔灰洗不太掉、口袋里的糖和贴纸是随手塞的。
+2. **给三种状态，而不是三套衣服**。阿竹那张是「日常 / 劳作 / 练剑」，同一件衣服在不同动作里。念真同理：写代码、出门拍照、弹卡林巴——衣服不必换，姿态和光要换。
+3. **身高刻度和头身比画进三视图**。参考稿直接在左侧画了 0–190cm 的标尺，配「7.2 头身」「6 头身」。念真按 160cm、7 头身画一条，之后所有出图都能对着比。
+
+### 15.5 九维度自检表（照那张「完整维度」清单填）
+
+| 维度 | 念真的答案 |
+| --- | --- |
+| 体型骨架 | 160 cm，7 头身，瘦，肩窄，骨架小；站姿松、重心偏一侧 |
+| 面部五官 | 鹅蛋脸偏圆、下颌软；内双、外眼角微垂；鼻梁低、鼻头圆；下唇饱满偏淡玫瑰；右脸浅酒窝 |
+| 发型发色 | 中分短发，深棕近黑，发梢外翘，头顶一小撮呆毛；左侧金色一字夹 |
+| 肤色肌理 | 冷白偏粉，腮红淡；指节铅笔灰；没有疤，只有一点旧笔痕 |
+| 服饰穿搭 | 白衬衫卷袖 + 青绿针织背心；宽大、松、不修身；棉与针织两种材质 |
+| 配饰道具 | 左耳小金圈（右耳空）、金色一字夹、口袋里的糖/贴纸/线；书桌：台灯、凉茶、卡林巴、耳机、干花书签 |
+| 肢体细节 | 手指细、指节有铅笔灰；走路会停下来；习惯手插口袋 |
+| 色彩光影 | 夜：台灯暖黄 + 窗外青蓝；白天：阴天柔光；品牌青绿 #22C3AA / #3FD1E1 只出现在网页与 UI，不进画面主色 |
+| 动态外观 | 步子慢、常驻足；头发被风或雨打乱；袖子一直卷着 |
