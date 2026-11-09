@@ -131,7 +131,9 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
 
 <p class="pz-note">
   图位编号与 <code>assets/persona/art-prompts.md</code> 第 15.2 节一一对应。
-  出图后把文件按 <code>nz-01</code>…<code>nz-08</code> 命名丢进 <code>assets/img/persona/</code>，再把对应占位块换成图片即可。
+  出图后把文件按 <code>nz-01</code>…<code>nz-08</code> 命名丢进 <code>assets/img/persona/</code>，
+  再在对应的 <code>&lt;figure&gt;</code> 里加一行
+  <code>&lt;img src="…" alt=""&gt;</code>——占位会自动让位，不用改样式。
 </p>
 
 </div>
