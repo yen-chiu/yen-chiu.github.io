@@ -376,6 +376,7 @@
 
 .pz-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.76rem;
   font-variant-numeric: tabular-nums;
@@ -385,8 +386,11 @@
 .pz-table td {
   padding: 0.4rem 0.5rem;
   text-align: right;
-  white-space: nowrap;
   border-bottom: 1px solid var(--main-border-color);
+}
+
+.pz-table th {
+  white-space: normal;
 }
 
 .pz-table th:first-child,
