@@ -3,7 +3,7 @@ title: Github进行fork后如何与原仓库同步
 date: 2023-06-12 08:32:00 +0800
 description: fork 了别人的仓库之后，怎么把上游的更新同步回来：配置 upstream 远端、fetch、merge，以及冲突与推送的注意事项。
 categories: [Uncategories, Git]
-tags: [Github]
+tags: [GitHub]
 image: /assets/img/posts/github-fork-sync/cover.png
 ---
 
