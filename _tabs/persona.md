@@ -193,10 +193,10 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
         </tr>
       </thead>
       <tbody>
-        <tr><td>Lanczos 插值</td><td>2.27</td><td>1.00×</td><td>1.00×</td><td>1.00×</td><td>0.00</td><td>0.54</td></tr>
-        <tr><td>Real-ESRGAN</td><td>5.52</td><td>2.44×</td><td>1.52×</td><td>1.08×</td><td>1.56</td><td>1.55</td></tr>
-        <tr><td>waifu2x</td><td>2.71</td><td>1.19×</td><td>1.04×</td><td>0.99×</td><td>0.46</td><td>0.51</td></tr>
-        <tr class="is-anchor"><td>Real-CUGAN <span class="pz-pick">★</span></td><td>5.04</td><td>2.22×</td><td>1.49×</td><td>1.12×</td><td>0.65</td><td>1.01</td></tr>
+        <tr><td data-label="版本">Lanczos 插值</td><td data-label="3840 锐度">2.27</td><td data-label="相对插值">1.00×</td><td data-label="缩到 2048">1.00×</td><td data-label="缩到 1024">1.00×</td><td data-label="背景 ΔE">0.00</td><td data-label="低频偏离">0.54</td></tr>
+        <tr><td data-label="版本">Real-ESRGAN</td><td data-label="3840 锐度">5.52</td><td data-label="相对插值">2.44×</td><td data-label="缩到 2048">1.52×</td><td data-label="缩到 1024">1.08×</td><td data-label="背景 ΔE">1.56</td><td data-label="低频偏离">1.55</td></tr>
+        <tr><td data-label="版本">waifu2x</td><td data-label="3840 锐度">2.71</td><td data-label="相对插值">1.19×</td><td data-label="缩到 2048">1.04×</td><td data-label="缩到 1024">0.99×</td><td data-label="背景 ΔE">0.46</td><td data-label="低频偏离">0.51</td></tr>
+        <tr class="is-anchor"><td data-label="版本">Real-CUGAN <span class="pz-pick">★</span></td><td data-label="3840 锐度">5.04</td><td data-label="相对插值">2.22×</td><td data-label="缩到 2048">1.49×</td><td data-label="缩到 1024">1.12×</td><td data-label="背景 ΔE">0.65</td><td data-label="低频偏离">1.01</td></tr>
       </tbody>
     </table>
   </div>
