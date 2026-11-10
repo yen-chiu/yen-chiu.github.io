@@ -514,13 +514,67 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .pz-tablewrap .pz-table {
-    font-size: 0.7rem;
+  /* 7 列在手机上挤不开（390px 时每列 57px，表头与数字直接贴在一起）：
+     改成竖排卡片——一行一张表，指标逐条成「标签 → 数值」。 */
+  .pz-tablewrap {
+    overflow-x: visible;
   }
 
-  .pz-tablewrap .pz-table th,
-  .pz-tablewrap .pz-table td {
-    padding: 0.34rem 0.28rem;
+  .pz-tablewrap .pz-table {
+    display: block;
+    width: 100%;
+    table-layout: auto;
+    font-size: 0.74rem;
+  }
+
+  .pz-tablewrap .pz-table thead {
+    display: none;
+  }
+
+  .pz-tablewrap .pz-table tbody {
+    display: block;
+  }
+
+  .pz-tablewrap .pz-table tbody tr {
+    display: block;
+    padding: 0.55rem 0 0.6rem;
+    border-bottom: 1px dashed var(--main-border-color);
+  }
+
+  .pz-tablewrap .pz-table tbody tr:last-child {
+    border-bottom: 0;
+    padding-bottom: 0.1rem;
+  }
+
+  .pz-tablewrap .pz-table tbody td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.9rem;
+    padding: 0.14rem 0;
+    text-align: right;
+    border-bottom: 0;
+  }
+
+  .pz-tablewrap .pz-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    font-size: 0.9em;
+    font-weight: 400;
+    color: var(--text-muted-color);
+  }
+
+  .pz-tablewrap .pz-table tbody td:first-child {
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding-bottom: 0.3rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--heading-color);
+  }
+
+  .pz-tablewrap .pz-table tbody td:first-child::before {
+    content: none;
   }
 }
 
