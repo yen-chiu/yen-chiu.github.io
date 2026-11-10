@@ -190,6 +190,11 @@
   grid-template-columns: repeat(5, 1fr);
 }
 
+/* 六张表情排 3+3：三列两行 */
+.pz-row--6 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .pz-slot {
   position: relative;
   margin: 0;
@@ -506,7 +511,8 @@
   }
 
   .pz-row--4,
-  .pz-row--5 {
+  .pz-row--5,
+  .pz-row--6 {
     grid-template-columns: repeat(2, 1fr);
   }
 

@@ -56,14 +56,15 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
 
     <section class="pz-panel">
       <p class="pz-label"><span>03</span>表情神态 · expressions</p>
-      <div class="pz-row pz-row--5">
-        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03a-calm.png' | relative_url }}" alt="念真 沉静" loading="lazy"></figure>
-        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03b-smile.png' | relative_url }}" alt="念真 浅笑" loading="lazy"></figure>
+      <div class="pz-row pz-row--6">
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03a-calm.png' | relative_url }}" alt="念真 平静" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03b-grin.png' | relative_url }}" alt="念真 真笑" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03c-stubborn.png' | relative_url }}" alt="念真 嘴硬" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03d-sleepy.png' | relative_url }}" alt="念真 困倦" loading="lazy"></figure>
-        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03e-surprised.png' | relative_url }}" alt="念真 被拍到" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03e-surprised.png' | relative_url }}" alt="念真 惊讶" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-03f-tease.png' | relative_url }}" alt="念真 戏谑" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">同一张脸、同一盏光；情绪收着，眼睛比嘴先笑。出自九宫格表情第一版（平静、浅笑、真笑、不耐烦、嘴硬、困倦、专注、惊讶、戏谑），这里挑了五格。</p>
+      <p class="pz-hint">六格依次是平静、真笑、嘴硬、困倦、惊讶、戏谑——同一张脸、同一盏光，情绪收着，眼睛比嘴先笑。取自九宫格表情第一版的第 1、3、5、6、8、9 格。</p>
     </section>
 
     <section class="pz-panel">
