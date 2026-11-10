@@ -65,7 +65,7 @@ webmaster_verifications:
 # 网页分析设置
 analytics:
   google:
-    id: G-0JYNN6DS4J # 填入你的 Google Analytics ID
+    id: # 已停用 Google Analytics（gtag 540 KB，境内不可达）；如需恢复填入 G-0JYNN6DS4J
   goatcounter:
     id: wendell # 填入你的 GoatCounter ID
   umami:
