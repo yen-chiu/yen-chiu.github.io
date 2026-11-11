@@ -196,38 +196,38 @@ description: 念真的角色设定：档案、三视图、表情、细节、材�
           <tbody>
             <tr>
               <td>边缘能量（越高越锐）</td>
-              <td>1.41</td>
-              <td>2.09</td>
-              <td>1.41</td>
-              <td>1.93</td>
+              <td data-label="Lanczos">1.41</td>
+              <td data-label="Real-ESRGAN">2.09</td>
+              <td data-label="waifu2x">1.41</td>
+              <td data-label="Real-CUGAN">1.93</td>
             </tr>
             <tr>
               <td>平面色块 ΔE（越低越不偏色）</td>
-              <td>0.12</td>
-              <td>3.94</td>
-              <td>0.13</td>
-              <td>0.49</td>
+              <td data-label="Lanczos">0.12</td>
+              <td data-label="Real-ESRGAN">3.94</td>
+              <td data-label="waifu2x">0.13</td>
+              <td data-label="Real-CUGAN">0.49</td>
             </tr>
             <tr>
               <td>发丝 / 睫毛</td>
-              <td>断，整体发糊</td>
-              <td>连上了，过锐</td>
-              <td>连上，偏软</td>
-              <td>连上，边缘自然</td>
+              <td data-label="Lanczos">断，整体发糊</td>
+              <td data-label="Real-ESRGAN">连上了，过锐</td>
+              <td data-label="waifu2x">连上，偏软</td>
+              <td data-label="Real-CUGAN">连上，边缘自然</td>
             </tr>
             <tr>
               <td>针织针脚</td>
-              <td>糊成一片</td>
-              <td>清楚，对比过强</td>
-              <td>略糊</td>
-              <td>清楚，明暗过渡正常</td>
+              <td data-label="Lanczos">糊成一片</td>
+              <td data-label="Real-ESRGAN">清楚，对比过强</td>
+              <td data-label="waifu2x">略糊</td>
+              <td data-label="Real-CUGAN">清楚，明暗过渡正常</td>
             </tr>
             <tr class="is-anchor">
               <td>结论</td>
-              <td>只作对照</td>
-              <td>不采用</td>
-              <td>备选</td>
-              <td>采用</td>
+              <td data-label="Lanczos">只作对照</td>
+              <td data-label="Real-ESRGAN">不采用</td>
+              <td data-label="waifu2x">备选</td>
+              <td data-label="Real-CUGAN">采用</td>
             </tr>
           </tbody>
         </table></div>
