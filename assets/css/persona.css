@@ -327,8 +327,11 @@
 
 .pz-more {
   margin: 1rem 0 0;
-  padding-top: 0.85rem;
+  padding: 0.85rem 0 0;
+  /* 主题给 details 加了 2px 实线框与左右内边距，这里清掉，只留一条虚线分隔 */
+  border: 0;
   border-top: 1px dashed var(--main-border-color);
+  border-radius: 0;
 }
 
 .pz-more > summary {
