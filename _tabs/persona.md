@@ -69,12 +69,14 @@ description: 念真的角色设定：档案、三视图、表情、细节、材�
 
     <section class="pz-panel">
       <p class="pz-label"><span>04</span>细节特写 · details</p>
-      <div class="pz-row pz-row--3">
+      <div class="pz-row pz-row--5">
         <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-04a-clip.png' | relative_url }}" alt="金色一字夹" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-04b-dimple.png' | relative_url }}" alt="右脸酒窝" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__id">04c</span><span class="pz-ph__cap">指节铅笔灰</span></div></figure>
+        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__id">04d</span><span class="pz-ph__cap">口袋里的糖</span></div></figure>
         <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-04e-ear.png' | relative_url }}" alt="左耳小金圈" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">细节：左侧金色一字夹（旧物，表面有磨痕）、右颊单侧酒窝、左耳细金圈。另有：指节常带铅笔灰，外套口袋内装贴纸、糖与一段线。</p>
+      <p class="pz-hint">细节：左侧金色一字夹（旧物，表面有磨痕）、右颊单侧酒窝、左耳细金圈。04c 指节铅笔灰、04d 口袋里的糖两项待补。</p>
     </section>
 
     <section class="pz-panel">
@@ -145,6 +147,96 @@ description: 念真的角色设定：档案、三视图、表情、细节、材�
          loading="lazy">
     <figcaption>定妆照 · 正视 / 四分之三侧 / 面部特写</figcaption>
   </figure>
+
+  <details class="pz-more">
+    <summary>细节补充 · 超分选型与量测</summary>
+    <div class="pz-more__body">
+
+      <div class="pz-sub">四版对照（点图看 1:1 原尺寸）</div>
+
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-upscale-01-eyes.png' | relative_url }}" target="_blank" rel="noopener">
+          <img src="{{ '/assets/img/persona/nz-upscale-01-eyes.png' | relative_url }}"
+               alt="眼部 1:1 对照：Master（nearest ×2）、Lanczos、Real-ESRGAN x4plus-anime、waifu2x cunet n2、Real-CUGAN up2x-no-denoise"
+               loading="lazy">
+        </a>
+        <figcaption><b>眼部</b>：睫毛根部、虹膜纹理与下眼睑阴影</figcaption>
+      </figure>
+
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-upscale-02-knit.png' | relative_url }}" target="_blank" rel="noopener">
+          <img src="{{ '/assets/img/persona/nz-upscale-02-knit.png' | relative_url }}"
+               alt="颈部与针织背心 1:1 对照：Master、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+               loading="lazy">
+        </a>
+        <figcaption><b>衣料</b>：针织针脚与衬衫布纹</figcaption>
+      </figure>
+
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-upscale-03-hair.png' | relative_url }}" target="_blank" rel="noopener">
+          <img src="{{ '/assets/img/persona/nz-upscale-03-hair.png' | relative_url }}"
+               alt="发丝 1:1 对照：Master、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+               loading="lazy">
+        </a>
+        <figcaption><b>头发</b>：发丝分股与逆光边缘</figcaption>
+      </figure>
+
+      <div class="pz-sub">量测（3840 画幅，以母版为基准）</div>
+      <div class="pz-tablewrap">
+        <div class="table-wrapper"><table class="pz-table">
+          <thead>
+            <tr>
+              <th>指标</th>
+              <th>Lanczos</th>
+              <th>Real-ESRGAN</th>
+              <th>waifu2x</th>
+              <th>Real-CUGAN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>边缘能量（越高越锐）</td>
+              <td>1.41</td>
+              <td>2.09</td>
+              <td>1.41</td>
+              <td>1.93</td>
+            </tr>
+            <tr>
+              <td>平面色块 ΔE（越低越不偏色）</td>
+              <td>0.12</td>
+              <td>3.94</td>
+              <td>0.13</td>
+              <td>0.49</td>
+            </tr>
+            <tr>
+              <td>发丝 / 睫毛</td>
+              <td>断，整体发糊</td>
+              <td>连上了，过锐</td>
+              <td>连上，偏软</td>
+              <td>连上，边缘自然</td>
+            </tr>
+            <tr>
+              <td>针织针脚</td>
+              <td>糊成一片</td>
+              <td>清楚，对比过强</td>
+              <td>略糊</td>
+              <td>清楚，明暗过渡正常</td>
+            </tr>
+            <tr class="is-anchor">
+              <td>结论</td>
+              <td>只作对照</td>
+              <td>不采用</td>
+              <td>备选</td>
+              <td>采用</td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <p class="pz-hint">口径：边缘能量取亮度通道相邻像素差绝对值的均值；ΔE 取多个大面积平面色块相对母版的平均色差。Real-ESRGAN 用 x4plus-anime 出 4× 后降回 3840，其余为 2× 直出。</p>
+
+    </div>
+  </details>
 
 </section>
 

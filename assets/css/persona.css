@@ -323,6 +323,58 @@
   color: var(--text-muted-color);
 }
 
+/* ---------- 折叠的细节补充 ---------- */
+
+.pz-more {
+  margin: 1rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--main-border-color);
+}
+
+.pz-more > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  cursor: pointer;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  color: var(--text-muted-color);
+  list-style: none;
+}
+
+.pz-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pz-more > summary::before {
+  content: "＋";
+  letter-spacing: 0;
+  color: #22c3aa;
+}
+
+.pz-more[open] > summary::before {
+  content: "－";
+}
+
+.pz-more > summary:hover {
+  color: var(--text-color);
+}
+
+.pz-more > summary:focus-visible {
+  outline: 2px solid #22c3aa;
+  outline-offset: 3px;
+}
+
+.pz-more__body {
+  padding-top: 0.4rem;
+}
+
+.pz-more__body > .pz-sub:first-child {
+  margin-top: 0.4rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
 /* ---------- 定妆照锚点 · 长条对比 ---------- */
 
 .pz-panel--block {
