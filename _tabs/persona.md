@@ -21,7 +21,7 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
 
   <aside class="pz-card">
     <figure class="pz-slot pz-slot--34">
-      <div class="pz-ph"><span class="pz-ph__no">01</span><span class="pz-ph__cap">肖像 · 3/4 侧</span></div>
+      <img src="{{ '/assets/img/persona/nz-01-portrait.webp' | relative_url }}" alt="念真 肖像：三分之四侧，中分短发、左侧金色一字夹、白衬衫外套青绿针织背心" loading="lazy">
     </figure>
 
     <dl class="pz-meta">
@@ -44,14 +44,14 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
       <p class="pz-label"><span>02</span>三视图 · turnaround</p>
       <figure class="pz-figure">
         <a href="{{ '/assets/img/persona/nz-sheet-onepage.webp' | relative_url }}" target="_blank" rel="noopener"><img src="{{ '/assets/img/persona/nz-sheet-onepage.webp' | relative_url }}" alt="念真 一页设定稿：正面与三分之四全身、面部特写、眼耳发夹唇四处细节、配色色板" loading="lazy"></a>
-        <figcaption>一页设定稿 · 角色总表（AI 生成参考稿，1312×1199）。<b>图位 02–04 都从这张裁出来</b>，原图在 <code>ProjectAssets/persona/nianzhen/sheets/</code>。</figcaption>
+        <figcaption>一页设定稿 · 角色总表（AI 生成参考稿，1536×1024）：四向全身、面部特写、眼 / 耳 / 发夹 / 唇四处细节、九宫格表情、服装单品与配色。<b>图位 02 从这张裁出来</b>，原图在 <code>assets/img/persona/src/nz-src-sheet.webp</code>。</figcaption>
       </figure>
       <div class="pz-row pz-row--3">
-        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02a-front.png' | relative_url }}" alt="念真 正视全身" loading="lazy"></figure>
-        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02b-threequarter.png' | relative_url }}" alt="念真 三分之四侧全身" loading="lazy"></figure>
-        <figure class="pz-slot pz-slot--12"><div class="pz-ph"><span class="pz-ph__no">02c</span><span class="pz-ph__cap">背视</span></div></figure>
+        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02a-front.webp' | relative_url }}" alt="念真 正视全身" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02b-threequarter.webp' | relative_url }}" alt="念真 三分之四侧全身" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--12"><img src="{{ '/assets/img/persona/nz-02c-back.webp' | relative_url }}" alt="念真 背视全身：帆布包斜挎、阔腿裤" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">同一套衣服，站姿松、重心偏一侧。设定稿只给了正视和三分之四侧，背视还空着——要的话得单独出。</p>
+      <p class="pz-hint">三视图齐了：同一套衣服，站姿松、重心偏一侧，手插口袋。</p>
     </section>
 
     <section class="pz-panel">
@@ -82,34 +82,34 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
     <section class="pz-panel">
       <p class="pz-label"><span>05</span>材质 · materials</p>
       <div class="pz-row pz-row--4">
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">05a</span><span class="pz-ph__cap">棉</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">05b</span><span class="pz-ph__cap">针织</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">05c</span><span class="pz-ph__cap">黄铜</span></div></figure>
-        <figure class="pz-slot pz-slot--11"><div class="pz-ph"><span class="pz-ph__no">05d</span><span class="pz-ph__cap">旧纸</span></div></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-05a-cotton.webp' | relative_url }}" alt="白衬衫的棉：领口与袖口" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-05b-knit.webp' | relative_url }}" alt="青绿针织背心的针脚" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-05c-brass.webp' | relative_url }}" alt="金色一字夹的黄铜" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--11"><img src="{{ '/assets/img/persona/nz-05d-paper.webp' | relative_url }}" alt="帆布包里的线圈本与旧纸" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">白衬衫的棉、背心的青绿针织、一字夹的黄铜、书页的旧纸。</p>
+      <p class="pz-hint">白衬衫的棉、背心的青绿针织、一字夹的黄铜、帆布包里那本线圈本的旧纸。</p>
     </section>
 
     <section class="pz-panel">
       <p class="pz-label"><span>06</span>三状态 · three states</p>
       <div class="pz-row pz-row--3">
-        <figure class="pz-slot pz-slot--23"><div class="pz-ph"><span class="pz-ph__no">06a</span><span class="pz-ph__cap">写代码</span></div></figure>
-        <figure class="pz-slot pz-slot--23"><div class="pz-ph"><span class="pz-ph__no">06b</span><span class="pz-ph__cap">拍照</span></div></figure>
-        <figure class="pz-slot pz-slot--23"><div class="pz-ph"><span class="pz-ph__no">06c</span><span class="pz-ph__cap">弹卡林巴</span></div></figure>
+        <figure class="pz-slot pz-slot--23"><img src="{{ '/assets/img/persona/nz-06a-code.webp' | relative_url }}" alt="念真 写代码：夜里书桌、台灯与笔记本" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--23"><img src="{{ '/assets/img/persona/nz-06b-camera.webp' | relative_url }}" alt="念真 拍照：举着相机对着墙上的光" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--23"><img src="{{ '/assets/img/persona/nz-06c-kalimba.webp' | relative_url }}" alt="念真 弹卡林巴：桌上的 17 音卡林巴与猫杯" loading="lazy"></figure>
       </div>
-      <p class="pz-hint">换的是姿态和光，不是衣服。</p>
+      <p class="pz-hint">换的是姿态和光，不是衣服：写代码时台灯压在左边，拍照时是斜下来的日光，卡林巴只弹三首。</p>
     </section>
 
     <section class="pz-panel">
       <p class="pz-label"><span>07</span>动态细节 · motion</p>
-      <figure class="pz-slot pz-slot--169"><div class="pz-ph"><span class="pz-ph__no">07</span><span class="pz-ph__cap">走路 · 停下来看光</span></div></figure>
-      <p class="pz-hint">步子慢、常驻足；头发被风或雨打乱；袖子一直卷着。</p>
+      <figure class="pz-slot pz-slot--169"><img src="{{ '/assets/img/persona/nz-07-motion.webp' | relative_url }}" alt="念真 在夜班车窗边，城市从玻璃上滑过去" loading="lazy"></figure>
+      <p class="pz-hint">步子慢、常驻足；在车上也只是靠着窗，看城市从玻璃上滑过去。头发被风或雨打乱，袖子一直卷着。</p>
     </section>
 
     <section class="pz-panel">
       <p class="pz-label"><span>08</span>气质与符号 · mood</p>
-      <figure class="pz-slot pz-slot--169"><div class="pz-ph"><span class="pz-ph__no">08</span><span class="pz-ph__cap">夜书桌 · 雨与灯</span></div></figure>
-      <p class="pz-hint">符号：青绿渐变下的坐标网格、一点光斑、一枚金色一字夹。</p>
+      <figure class="pz-slot pz-slot--169"><img src="{{ '/assets/img/persona/nz-08-mood.webp' | relative_url }}" alt="念真 夜里的书桌：台灯、卡林巴、耳机与窗外的灯" loading="lazy"></figure>
+      <p class="pz-hint">符号：青绿渐变下的坐标网格、一点光斑、一枚金色一字夹；台灯是暖的，窗外是冷的。</p>
     </section>
 
   </div>
@@ -218,9 +218,9 @@ description: 念真的角色设定稿 —— 档案、三视图、表情、细�
 
 <p class="pz-note">
   图位编号与 <code>chat/assets/persona/art-prompts.md</code> 第 15.2 节一一对应。
-  出图后把文件按 <code>nz-01</code>…<code>nz-08</code> 命名丢进 <code>assets/img/persona/</code>，
-  再在对应的 <code>&lt;figure&gt;</code> 里加一行
-  <code>&lt;img src="…" alt=""&gt;</code>——占位会自动让位，不用改样式。
+  原图归档在 <code>assets/img/persona/src/</code>（一页设定稿、电车、夜书桌、拍照四张），
+  图位是从它们里裁的；04c 指节铅笔灰、04d 口袋里的糖还空着——出图后按 <code>nz-04c-*</code> / <code>nz-04d-*</code> 命名丢进 <code>assets/img/persona/</code>，
+  在对应的 <code>&lt;figure&gt;</code> 里加一行 <code>&lt;img src="…" alt=""&gt;</code>，占位会自动让位。
   定妆照（10）不用等出图：<code>nz-anchor-sheet.webp</code> 与三张 <code>nz-upscale-0*.png</code> 已经在位。
 </p>
 
