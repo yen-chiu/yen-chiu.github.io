@@ -261,6 +261,50 @@
           return link.source && link.target;
         });
 
+      function clampNode(node) {
+        node.x = Math.max(60, Math.min(WIDTH - 60, node.x));
+        node.y = Math.max(48, Math.min(HEIGHT - 54, node.y));
+      }
+
+      // 力导向只负责把节点大致摊开；最后再做硬碰撞分离，
+      // 让每个圆点按自身半径留出间距，而不是只靠斥力“尽量不重叠”。
+      function separateNodes(passes) {
+        for (var pass = 0; pass < passes; pass += 1) {
+          var moved = false;
+          for (var i = 0; i < graphNodes.length; i += 1) {
+            for (var j = i + 1; j < graphNodes.length; j += 1) {
+              var a = graphNodes[i];
+              var b = graphNodes[j];
+              var dx = b.x - a.x;
+              var dy = b.y - a.y;
+              var distance = Math.sqrt(dx * dx + dy * dy);
+              var minDistance = a.r + b.r + 30;
+              if (distance >= minDistance) continue;
+
+              if (distance < 0.001) {
+                // 两个节点恰好重合时给一个确定的方向，避免除以零。
+                var angle = (i * 31 + j * 17) * 0.61803398875 * Math.PI * 2;
+                dx = Math.cos(angle);
+                dy = Math.sin(angle);
+                distance = 0.001;
+              }
+
+              var push = (minDistance - distance) / 2;
+              var nx = dx / distance;
+              var ny = dy / distance;
+              a.x -= nx * push;
+              a.y -= ny * push;
+              b.x += nx * push;
+              b.y += ny * push;
+              moved = true;
+            }
+          }
+
+          graphNodes.forEach(clampNode);
+          if (!moved) break;
+        }
+      }
+
       // 简单力导向：让标签自然散开，同时让有关联的节点靠近。
       for (var step = 0; step < 300; step += 1) {
         for (var i = 0; i < graphNodes.length; i += 1) {
@@ -304,10 +348,14 @@
           node.y += node.vy * 0.55;
           node.vx *= 0.78;
           node.vy *= 0.78;
-          node.x = Math.max(60, Math.min(WIDTH - 60, node.x));
-          node.y = Math.max(48, Math.min(HEIGHT - 54, node.y));
+          clampNode(node);
         });
+
+        separateNodes(2);
       }
+
+      // 最后再跑几轮，消掉边界钳制后可能残留的重叠。
+      separateNodes(120);
 
       var linkLayer = document.createElementNS(SVG_NS, 'g');
       linkLayer.setAttribute('class', 'wx-graph-links');
