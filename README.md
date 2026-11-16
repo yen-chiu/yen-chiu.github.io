@@ -1,6 +1,6 @@
 # Wendell Astro 迁移工作区
 
-基于 Astro Theme Iris 的私有临时迁移库。原站 https://yenchiu.com 仍是线上版本。
+基于 Astro Theme Iris 的公开临时迁移库。原站 https://yenchiu.com 仍是线上版本。
 
 ## 本地运行
 
@@ -16,8 +16,12 @@ Node.js 24：`npm ci`，然后 `npm run dev -- --host 127.0.0.1`。
 - `scripts/verify-migration.py`：需要同级原博客目录，检查来源哈希与念真资源。
 - `scripts/migrate-jekyll.py`：批量转换，需要 Python PyYAML；重新导入会覆盖对应迁移文章，手改前先备份。
 
-自动部署与友链写入 workflow 已改为 .disabled；不绑定域名，不开启评论，禁止搜索引擎抓取。聊天和项目入口暂链接原站。
+GitHub Pages 自动部署已启用，预览地址为 https://yenchiu.com/yen-chiu-astro/ 。友链自动写入 workflow 仍停用；不切换根站域名，不开启评论，暂禁止搜索引擎抓取。聊天和项目入口暂链接原站。
 
 完整工作记录与已知问题位于 WendellManual 的“建站笔记 → Astro 迁移记录”。搜索面板、旧链接重定向、移动端和完整聊天迁移仍待处理，不是生产就绪版本。
 
 Iris / Pure 原主题使用 Apache-2.0；保留 LICENSE 与原主题归属。原模板 README 保存在 migration/upstream-README.md。
+
+## 公开预览验证
+
+CI 使用 Node 24、npm ci、npm run build 与 node scripts/pages-paths.mjs。路径适配回归检查：node scripts/pages-paths.test.mjs。独立搜索页位于 /search，浮层加载失败时自动回退。
