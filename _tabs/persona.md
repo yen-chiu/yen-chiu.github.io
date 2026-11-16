@@ -108,8 +108,8 @@ description: 念真的角色设定：档案、设定稿、九种表情、细节�
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-rain-shelter.webp' | relative_url }}" alt="念真 突然下雨，抱着书躲进屋檐" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-shelf-build.webp' | relative_url }}" alt="念真 装书架，少了一颗螺丝" loading="lazy"></figure>
 
-        <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-quote-flowers.webp' | relative_url }}" alt="念真 抄句子，本子旁边是干花" loading="lazy"></figure>
-        <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-clay-cat.webp' | relative_url }}" alt="念真 捏黏土，桌上排着小东西" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-laugh.webp' | relative_url }}" alt="念真 笑出声，眼睛弯起来" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-bookstore-hand.webp' | relative_url }}" alt="念真 在旧书店抬头，抬手挡了一下镜头" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-offer-candy.webp' | relative_url }}" alt="念真 递过来一颗糖" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-laundry-balcony.webp' | relative_url }}" alt="念真 在阳台晒被子，阳光穿过白布" loading="lazy"></figure>
 
@@ -122,6 +122,11 @@ description: 念真的角色设定：档案、设定稿、九种表情、细节�
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-stairwell-light.webp' | relative_url }}" alt="念真 在楼梯间拍光，窗格影子落在墙上" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-typhoon-window.webp' | relative_url }}" alt="念真 台风天坐在窗边，听玻璃响" loading="lazy"></figure>
         <figure class="pz-slot pz-slot--34"><img src="{{ '/assets/img/persona/nz-cat-camera.webp' | relative_url }}" alt="念真 蹲下来拍猫，猫总是躲开镜头" loading="lazy"></figure>
+      </div>
+
+      <div class="pz-row pz-row--2" style="margin-top:0.55rem">
+        <figure class="pz-slot pz-slot--43"><img src="{{ '/assets/img/persona/nz-quote-flowers.webp' | relative_url }}" alt="念真 抄句子，本子旁边是干花" loading="lazy"></figure>
+        <figure class="pz-slot pz-slot--43"><img src="{{ '/assets/img/persona/nz-clay-cat.webp' | relative_url }}" alt="念真 捏黏土，桌上排着小东西" loading="lazy"></figure>
       </div>
       <p class="pz-hint">走路、坐车、躲雨、装书架、抄句子、捏黏土、递糖、晒被子。她的生活气都在这些小动作里。</p>
     </section>

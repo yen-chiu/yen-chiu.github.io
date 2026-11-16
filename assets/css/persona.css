@@ -178,6 +178,10 @@
   gap: 0.55rem;
 }
 
+.pz-row--2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .pz-row--3 {
   grid-template-columns: repeat(3, 1fr);
 }
@@ -223,6 +227,10 @@
 
 .pz-slot--32 {
   aspect-ratio: 3 / 2;
+}
+
+.pz-slot--43 {
+  aspect-ratio: 4 / 3;
 }
 
 .pz-slot--169 {
