@@ -1,5 +1,5 @@
 ---
-import { Font } from 'astro:assets'
+
 import config from 'virtual:config'
 
 import { prod } from 'astro-pure/server'
@@ -31,10 +31,9 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 <link rel='icon' type='image/gif' href='/favicon/favicon.gif' />
 
 {/* Font preloads */}
-<Font cssVariable='--font-satoshi' preload={[{ subset: 'latin', style: 'normal' }]} />
 <style>
   body {
-    font-family: var(--font-satoshi);
+    font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
   }
 </style>
 

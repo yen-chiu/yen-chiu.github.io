@@ -1,0 +1,12 @@
+---
+import PageLayout from '@/layouts/CommonPage.astro'
+import content from '../migration-persona.html?raw'
+---
+<PageLayout title="念真" hideTitle hideBack layout="wide">
+  <link rel="stylesheet" href="/assets/css/persona.css" />
+  <div set:html={content} />
+</PageLayout>
+<style is:global>
+.pz-wrap { --text-color:hsl(var(--foreground)); --text-muted-color:hsl(var(--muted-foreground)); --heading-color:hsl(var(--foreground)); --main-border-color:hsl(var(--border)); --card-bg:hsl(var(--background)); }
+</style>
+

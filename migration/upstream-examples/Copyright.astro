@@ -1,0 +1,256 @@
+---
+import { Image } from 'astro:assets'
+import type { CollectionKey, InferEntrySchema } from 'astro:content'
+
+import config from 'virtual:config'
+
+import { cn, getFormattedDate } from '../../utils'
+import { QRCode } from '../advanced'
+import { Icon } from '../user'
+
+import alipayQr from '../../../../src/assets/alipay-qrcode.jpg'
+import wechatQr from '../../../../src/assets/wechat-qrcode.jpg'
+
+interface Props<T extends CollectionKey> {
+  data: InferEntrySchema<T>
+  class?: string
+}
+
+const {
+  data: { heroImage, title, publishDate },
+  class: className
+} = Astro.props
+
+const image = typeof heroImage?.src === 'string' ? heroImage?.src : (heroImage?.src?.src ?? '')
+
+const shares = {
+  weibo: {
+    link: `http://service.weibo.com/share/share.php?url=${Astro.url}&title=${title}&pic=${image}`
+  },
+  x: {
+    link: `https://x.com/intent/tweet?text='${title}'&url='${Astro.url}'&via='${config.author}'`
+  },
+  bluesky: {
+    link: `https://bsky.app/intent/compose?text=${title}%0A${Astro.url}`
+  }
+} as const
+---
+
+<div
+  class={cn(
+    'relative flex flex-col gap-y-2 rounded-xl border px-3 sm:px-4 py-2 sm:py-3',
+    className
+  )}
+>
+  <Icon class='absolute end-4 top-4 size-20 opacity-10' name='copyright' />
+
+  {/* title & link */}
+  <div class='flex flex-col'>
+    <div class='font-medium text-foreground'>{title}</div>
+    <div class='text-sm line-clamp-1'>{Astro.url}</div>
+  </div>
+
+  {/* common info */}
+  <div class='flex flex-row flex-wrap justify-start gap-x-5 gap-y-1 sm:gap-x-8'>
+    <div class='flex gap-x-2 sm:flex-col'>
+      <span>Author</span>
+      <span class='text-sm text-foreground max-sm:place-self-center'>{config.author}</span>
+    </div>
+    {
+      publishDate && (
+        <div class='flex gap-x-2 sm:min-w-16 sm:flex-col'>
+          <span>Published at</span>
+          <span class='text-sm text-foreground max-sm:place-self-center'>
+            {getFormattedDate(publishDate, {
+              month: 'long'
+            })}
+          </span>
+        </div>
+      )
+    }
+    <div class='flex gap-x-2 sm:flex-col'>
+      <span>Copyright</span>
+      <a
+        class='text-sm text-foreground max-sm:place-self-center'
+        href='https://creativecommons.org/licenses/by/4.0/'
+        target='_blank'
+      >
+        CC BY-NC-SA 4.0
+      </a>
+    </div>
+  </div>
+
+  {/* functions */}
+  <div class='relative'>
+    <div class='flex flex-row gap-3'>
+      <button
+        id='copy-link'
+        aria-label='Copy link'
+        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+      >
+        <Icon class='size-5' name='link' />
+      </button>
+      <button
+        id='get-qrcode'
+        aria-label='Get QR code'
+        class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+      >
+        <Icon class='size-5' name='qrcode' />
+      </button>
+      {
+        config.content.share.map((share) => (
+          <a
+            href={shares[share].link}
+            target='_blank'
+            id={`share-${share}`}
+            aria-label={`Share to ${share}`}
+            class='group rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:text-primary sm:p-1.5'
+          >
+            <Icon class='size-5' name={share} />
+          </a>
+        ))
+      }
+    </div>
+    <QRCode
+      class='absolute z-10 -mt-2 box-content max-h-0 max-w-44 overflow-hidden rounded-xl border bg-muted p-4 opacity-0 transition-all duration-300 ease-in-out'
+    />
+  </div>
+</div>
+
+<div class='mx-6 rounded-b-xl border border-t-0 px-3 pb-1 pt-1 sm:mx-8 sm:px-4'>
+  <button
+    id='sponsor-toggle'
+    type='button'
+    class='flex w-full items-center justify-between text-muted-foreground no-underline'
+    aria-expanded='false'
+  >
+    <span>Buy me a cup of coffee.</span>
+    <Icon class='box-content size-5 p-1' name='receive-money' />
+  </button>
+  <div
+    id='sponsor-panel'
+    class='sponsor-panel grid grid-cols-1 justify-items-center gap-3 text-sm sm:grid-cols-2'
+    aria-hidden='true'
+  >
+    <div class='sponsorship-card relative flex size-44 items-center justify-center overflow-hidden rounded-xl border bg-white'>
+      <div class='sponsorship-card-icon absolute bottom-0 end-0 start-0 top-0 flex items-center justify-center transition-opacity'>
+        <Icon class='size-16' name='wechat-pay' />
+      </div>
+      <Image
+        class='sponsorship-card-img mx-auto my-0 max-w-44 blur-sm transition-opacity'
+        src={wechatQr}
+        alt='WeChat sponsorship QR code'
+        loading='lazy'
+      />
+    </div>
+    <div class='sponsorship-card relative flex size-44 items-center justify-center overflow-hidden rounded-xl border bg-white'>
+      <div class='sponsorship-card-icon absolute bottom-0 end-0 start-0 top-0 flex items-center justify-center transition-opacity'>
+        <Icon class='size-16' name='alipay' />
+      </div>
+      <Image
+        class='sponsorship-card-img mx-auto my-0 max-w-44 blur-sm transition-opacity'
+        src={alipayQr}
+        alt='Alipay sponsorship QR code'
+        loading='lazy'
+      />
+    </div>
+  </div>
+  <div class='sponsor-action'>
+    <a href='/projects#sponsorship' class='sponsor-link'>
+      Go to sponsor page
+    </a>
+  </div>
+</div>
+
+<style>
+  #qrcode-container.expanded {
+    max-height: 11rem;
+    transform: translateY(6px);
+    opacity: 100;
+  }
+
+  .sponsor-panel {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: max-height 300ms ease, opacity 300ms ease, transform 300ms ease;
+  }
+
+  .sponsor-panel.expanded {
+    max-height: 24rem;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 0.5rem;
+  }
+
+  .sponsor-action {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-top: 0;
+    display: flex;
+    justify-content: flex-end;
+    transition: max-height 200ms ease, opacity 200ms ease, margin-top 200ms ease;
+  }
+
+  .sponsor-panel.expanded + .sponsor-action {
+    max-height: 2rem;
+    opacity: 1;
+    margin-top: 0.5rem;
+  }
+
+  .sponsor-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    text-decoration: underline;
+    transition: color 200ms ease;
+  }
+
+  .sponsor-link:hover {
+    color: hsl(var(--primary));
+  }
+
+  .sponsorship-card {
+    & .sponsorship-card-img {
+      opacity: 0.3;
+      --un-blur: blur(4px);
+      filter: var(--un-blur);
+    }
+
+    &:hover {
+      & .sponsorship-card-icon {
+        opacity: 0;
+      }
+      & .sponsorship-card-img {
+        opacity: 1;
+        --un-blur: blur(0);
+      }
+    }
+  }
+</style>
+
+<script>
+  import { showToast } from '../../utils'
+
+  // Copy link
+  const copyLink = document.getElementById('copy-link')
+  copyLink?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href)
+    // Show toast
+    showToast({ message: 'Link copied!' })
+  })
+
+  // QRCode
+  const getQRCode = document.getElementById('get-qrcode')
+  const qrcodeContainer = document.getElementById('qrcode-container')
+  getQRCode?.addEventListener('click', () => qrcodeContainer?.classList.toggle('expanded'))
+
+  const sponsorToggle = document.getElementById('sponsor-toggle')
+  const sponsorPanel = document.getElementById('sponsor-panel')
+  sponsorToggle?.addEventListener('click', () => {
+    const isExpanded = sponsorPanel?.classList.toggle('expanded') ?? false
+    sponsorToggle.setAttribute('aria-expanded', String(isExpanded))
+    sponsorPanel?.setAttribute('aria-hidden', String(!isExpanded))
+  })
+</script>

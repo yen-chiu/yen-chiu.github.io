@@ -49,8 +49,10 @@ const blog = defineCollection({
 // Define docs collection
 const docs = defineCollection({
   loader: glob({ base: './src/content/docs', pattern: '**/*.{md,mdx}' }),
-  schema: () =>
+  schema: ({ image }) =>
     z.object({
+      heroImage: z.object({ src: image(), color: z.string().optional(), alt: z.string().optional() }).optional(),
+      language: z.string().optional(),
       title: z.string().max(60),
       description: z.string().max(160),
       publishDate: z.coerce.date().optional(),

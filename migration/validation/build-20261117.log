@@ -1,0 +1,155 @@
+
+> astro-theme-iris@4.1.4 build
+> astro-pure check && astro check && astro build
+
+BUN_LINK_PKG is not set to true. Skipping commands.
+02:35:48 [astro-mermaid] Setting up Mermaid integration
+02:35:48 [astro-mermaid] Existing rehype plugins:
+02:35:48 [astro-mermaid] Skipping ELK support
+02:35:50 [content] Syncing content
+02:35:50 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src\content\docs"
+02:35:50 [content] Synced content
+02:35:50 [types] Generated 2.17s
+02:35:50 [check] Getting diagnostics for Astro files in C:\03_Github\yen-chiu-astro...
+[96msrc/components/docs/HelpSupport.astro[0m:[93m2[0m:[93m1[0m - [93mwarning[0m[90m ts(6133): [0m'Icon' is declared but its value is never read.
+
+[7m2[0m import { Icon } from 'astro-pure/user'
+[7m [0m [93m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+Result (184 files): 
+- 0 errors
+- 0 warnings
+- 1 hint
+
+02:36:13 [astro-mermaid] Setting up Mermaid integration
+02:36:13 [astro-mermaid] Existing rehype plugins:
+02:36:13 [astro-mermaid] Skipping ELK support
+02:36:16 [content] Syncing content
+02:36:16 [WARN] [glob-loader] No files found matching "**/*.{md,mdx}" in directory "src\content\docs"
+02:36:16 [content] Synced content
+02:36:16 [types] Generated 2.09s
+02:36:16 [build] output: "static"
+02:36:16 [build] mode: "static"
+02:36:16 [build] directory: C:\03_Github\yen-chiu-astro\dist\
+02:36:16 [build] Collecting build info...
+02:36:16 [build] ✓ Completed in 2.97s.
+02:36:17 [build] Building static entrypoints...
+02:36:26 [vite] ✓ built in 9.55s
+02:36:55 [WARN] [vite] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+02:36:55 [vite] ✓ built in 28.90s
+02:36:56 [build] Rearranging server assets...
+
+ generating static routes 
+The collection "docs" does not exist or is empty. Please check your content config file for errors.
+02:36:57   ├─ /404.html (+65ms) 
+02:36:57   ├─ /about/index.html (+30ms) 
+02:36:58   ├─ /archives/index.html (+35ms) 
+02:36:58   ├─ /blog/post-2026-11-06-17/index.html (+30ms) 
+02:36:58   ├─ /blog/post-2026-11-05-15/index.html (+28ms) 
+02:36:58   ├─ /blog/post-2026-11-05-16/index.html (+41ms) 
+02:36:58   ├─ /blog/post-2026-11-04-14/index.html (+36ms) 
+02:36:58   ├─ /blog/post-2026-11-03-10/index.html (+40ms) 
+02:36:58   ├─ /blog/post-2026-11-03-09/index.html (+86ms) 
+02:36:58   ├─ /blog/post-2026-11-03-08/index.html (+196ms) 
+02:36:58   ├─ /blog/post-2026-11-03-13/index.html (+105ms) 
+02:36:58   ├─ /blog/post-2026-11-03-11/index.html (+43ms) 
+02:36:58   ├─ /blog/post-2026-11-03-07/index.html (+37ms) 
+02:36:58   ├─ /blog/post-2026-11-03-12/index.html (+77ms) 
+02:36:58   ├─ /blog/post-2024-11-13-06/index.html (+38ms) 
+02:36:58   ├─ /blog/post-2023-10-11-05/index.html (+206ms) 
+02:36:59   ├─ /blog/post-2023-06-12-04/index.html (+66ms) 
+02:36:59   ├─ /blog/post-2023-04-23-03/index.html (+67ms) 
+02:36:59   ├─ /blog/post-2023-04-06-02/index.html (+51ms) 
+02:36:59   ├─ /blog/post-2023-04-05-01/index.html (+65ms) 
+02:36:59   ├─ /blog/index.html (+60ms) 
+02:36:59   ├─ /blog/2/index.html (+64ms) 
+02:36:59   ├─ /blog/3/index.html (+65ms) 
+02:36:59   ├─ /categories/index.html (+151ms) 
+02:36:59   ├─ /categories/Blog/index.html (+61ms) 
+02:36:59   ├─ /categories/Blog/Markdown/index.html (+23ms) 
+02:36:59   ├─ /categories/Blogging/index.html (+29ms) 
+02:36:59   ├─ /categories/Blogging/Tutorial/index.html (+44ms) 
+The collection "docs" does not exist or is empty. Please check your content config file for errors.
+02:36:59   ├─ /contentIndex.json (+442ms) 
+The collection "docs" does not exist or is empty. Please check your content config file for errors.
+02:37:00   ├─ /docs/DocsContents/index.html (+9ms) 
+The collection "docs" does not exist or is empty. Please check your content config file for errors.
+02:37:00   ├─ /docs/rss.xml (+157ms) 
+The collection "docs" does not exist or is empty. Please check your content config file for errors.
+02:37:00   ├─ /docs/index.html (+20ms) 
+02:37:00   ├─ /journal/index.html (+19ms) 
+02:37:00   ├─ /links/index.html (+20ms) 
+02:37:00   ├─ /persona/index.html (+24ms) 
+02:37:00   ├─ /projects/index.html (+31ms) 
+02:37:00   ├─ /robots.txt (+44ms) 
+02:37:00   ├─ /rss.xml (+346ms) 
+02:37:00   ├─ /search/index.html (+19ms) 
+02:37:00   ├─ /tags/逆向/index.html (+21ms) 
+02:37:00   ├─ /tags/flutter/index.html (+16ms) 
+02:37:00   ├─ /tags/dart/index.html (+14ms) 
+02:37:00   ├─ /tags/游戏移植/index.html (+26ms) 
+02:37:00   ├─ /tags/静态站点/index.html (+22ms) 
+02:37:00   ├─ /tags/技术/index.html (+93ms) 
+02:37:01   ├─ /tags/dsh/index.html (+67ms) 
+02:37:01   ├─ /tags/rea/index.html (+22ms) 
+02:37:01   ├─ /tags/mcp/index.html (+18ms) 
+02:37:01   ├─ /tags/逆向工程/index.html (+28ms) 
+02:37:01   ├─ /tags/windows/index.html (+27ms) 
+02:37:01   ├─ /tags/折腾/index.html (+104ms) 
+02:37:01   ├─ /tags/cloudflare/index.html (+59ms) 
+02:37:01   ├─ /tags/worker/index.html (+20ms) 
+02:37:01   ├─ /tags/ai/index.html (+23ms) 
+02:37:01   ├─ /tags/架构/index.html (+58ms) 
+02:37:01   ├─ /tags/cors/index.html (+86ms) 
+02:37:01   ├─ /tags/运维/index.html (+35ms) 
+02:37:01   ├─ /tags/动漫/index.html (+60ms) 
+02:37:01   ├─ /tags/影评/index.html (+18ms) 
+02:37:01   ├─ /tags/杂记/index.html (+21ms) 
+02:37:01   ├─ /tags/影视/index.html (+21ms) 
+02:37:01   ├─ /tags/随笔/index.html (+90ms) 
+02:37:01   ├─ /tags/前端/index.html (+45ms) 
+02:37:01   ├─ /tags/r2/index.html (+68ms) 
+02:37:02   ├─ /tags/部署/index.html (+26ms) 
+02:37:02   ├─ /tags/安全/index.html (+38ms) 
+02:37:02   ├─ /tags/qq/index.html (+23ms) 
+02:37:02   ├─ /tags/napcat/index.html (+88ms) 
+02:37:02   ├─ /tags/onebot/index.html (+30ms) 
+02:37:02   ├─ /tags/插件/index.html (+42ms) 
+02:37:02   ├─ /tags/xss/index.html (+78ms) 
+02:37:02   ├─ /tags/jekyll/index.html (+42ms) 
+02:37:02   ├─ /tags/cloudflare worker/index.html (+49ms) 
+02:37:02   ├─ /tags/git/index.html (+93ms) 
+02:37:02   ├─ /tags/性能/index.html (+31ms) 
+02:37:02   ├─ /tags/自动化/index.html (+47ms) 
+02:37:02   ├─ /tags/blogging/index.html (+90ms) 
+02:37:02   ├─ /tags/github/index.html (+46ms) 
+02:37:02   ├─ /tags/oauth/index.html (+44ms) 
+02:37:02   ├─ /tags/写作台/index.html (+42ms) 
+02:37:02   ├─ /tags/tutorial/index.html (+33ms) 
+02:37:02   ├─ /tags/bug/index.html (+39ms) 
+02:37:02   ├─ /tags/blog/index.html (+77ms) 
+02:37:02   ├─ /tags/markdown/index.html (+62ms) 
+02:37:03   ├─ /tags/世界起源/index.html (+64ms) 
+02:37:03   ├─ /tags/feeling/index.html (+49ms) 
+02:37:03   ├─ /tags/uncategories/index.html (+50ms) 
+02:37:03   ├─ /tags/撰文/index.html (+83ms) 
+02:37:03   ├─ /tags/writing/index.html (+48ms) 
+02:37:03   ├─ /tags/课程/index.html (+36ms) 
+02:37:03   ├─ /tags/哲学/index.html (+24ms) 
+02:37:03   ├─ /tags/index.html (+95ms) 
+02:37:03   ├─ /terms/index.html (+64ms) 
+02:37:03   ├─ /index.html (+49ms) 
+02:37:03 ✓ Completed in 6.14s.
+
+ generating optimized images 
+02:37:03   ▶ /_astro/avatar.qjEIa46G_cHt78.webp (reused cache entry) (+8ms) (1/1)
+02:37:03 ✓ Completed in 13ms.
+
+02:37:03 [build] ✓ Completed in 46.45s.
+02:37:03 [@astrojs/sitemap] `sitemap-index.xml` created at `dist`
+02:37:03 [build] 90 page(s) built in 50.03s
+02:37:03 [build] Complete!

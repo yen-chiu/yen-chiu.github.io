@@ -1,0 +1,382 @@
+[
+  {
+    "source": "_posts\\2023-04-05-理论微课.md",
+    "sha256": "a07866ea5a0ef6c01ebbf1bb78be1ae98ce9130b91651f3e42957c3959f7bb87",
+    "destination": "src\\content\\blog\\杂记\\Writing\\post-2023-04-05-01.md",
+    "url": "/blog/post-2023-04-05-01",
+    "originalMetadata": {
+      "title": "马原_理论微课",
+      "description": "马原理论微课文稿：从黄金分割比与斐波那契数列出发，用「量变到质变」的视角看自然界的数学秩序，以及它给人类实践的启示。",
+      "date": "2023-04-05 13:14:00 +0800",
+      "categories": [
+        "杂记",
+        "Writing"
+      ],
+      "tags": [
+        "课程",
+        "哲学"
+      ],
+      "image": {
+        "path": "/assets/img/posts/marxism-micro-lesson/cover.jpg",
+        "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA",
+        "alt": "马原"
+      }
+    }
+  },
+  {
+    "source": "_posts\\2023-04-06-markdown.md",
+    "sha256": "355a693c0c1a030a62a165aa2e752ea9856990a03f52effbe25ea0f32ee53679",
+    "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2023-04-06-02.md",
+    "url": "/blog/post-2023-04-06-02",
+    "originalMetadata": {
+      "title": "Markdown",
+      "description": "我们理解您需要更便捷更高效的工具记录思想，整理笔记、知识，并将其中承载的价值传播给他人，Cmd Markdown 是我们给出的答案 —— 我们为记录思想和分享知识提供更专业的工具。",
+      "date": "2023-04-06 16:10:46 +0800",
+      "categories": [
+        "Blogging",
+        "Tutorial"
+      ],
+      "tags": [
+        "Markdown"
+      ],
+      "image": {
+        "path": "/assets/img/posts/markdown-notes/cover.png",
+        "alt": "Markdown 写作工具箱"
+      }
+    }
+  },
+  {
+    "source": "_posts\\2023-04-23-记录中国.md",
+    "sha256": "384aca41fce01042ea72c00c82c98365f590bc97a28d3dfddc8dfe7c0bb1b83c",
+    "destination": "src\\content\\blog\\杂记\\Writing\\post-2023-04-23-03.md",
+    "url": "/blog/post-2023-04-23-03",
+    "originalMetadata": {
+      "title": "记录一次志愿活动",
+      "date": "2023-04-23 12:47:00 +0800",
+      "categories": [
+        "杂记",
+        "Writing"
+      ],
+      "tags": [
+        "撰文"
+      ],
+      "description": "一次志愿活动：在长沙浏河社区访谈八旬老兵周德仁，听他讲海军二十年、五十七本日记，以及那句「我们共产党员不要攀比」。",
+      "image": {
+        "path": "/assets/img/posts/volunteer-visit/cover.png"
+      }
+    }
+  },
+  {
+    "source": "_posts\\2023-06-12-GitHub Fork仓库同步.md",
+    "sha256": "3621102f73c2b575db53f41f20c5a5e4a9c9b743756db08f2a2bb6ef0dd27a61",
+    "destination": "src\\content\\blog\\Uncategories\\Git\\post-2023-06-12-04.md",
+    "url": "/blog/post-2023-06-12-04",
+    "originalMetadata": {
+      "title": "Github进行fork后如何与原仓库同步",
+      "date": "2023-06-12 08:32:00 +0800",
+      "description": "fork 了别人的仓库之后，怎么把上游的更新同步回来：配置 upstream 远端、fetch、merge，以及冲突与推送的注意事项。",
+      "categories": [
+        "Uncategories",
+        "Git"
+      ],
+      "tags": [
+        "GitHub"
+      ],
+      "image": "/assets/img/posts/github-fork-sync/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2023-10-11-MyBlog.md",
+    "sha256": "a2464afc84f97252f6f3ffb9a9a417f99f45c51b424c9b9ccf650e4ca472a115",
+    "destination": "src\\content\\blog\\杂记\\Feeling\\post-2023-10-11-05.md",
+    "url": "/blog/post-2023-10-11-05",
+    "originalMetadata": {
+      "title": "MyBlog",
+      "author": "Wendell",
+      "date": "2023-10-11 13:14:00 +0800",
+      "description": "我的第一篇博客：为什么想搭一个属于自己的网站，以及三年后，它变成了什么样子。",
+      "categories": [
+        "杂记",
+        "Feeling"
+      ],
+      "tags": [
+        "世界起源"
+      ],
+      "pin": true,
+      "image": "/assets/img/posts/my-first-blog/cover.jpg"
+    }
+  },
+  {
+    "source": "_posts\\2024-11-13-关于Github page的引用路径问题.md",
+    "sha256": "c2b50ffd52795492147650af0ef8caba9090a690f65aa036be89b0d50eb6d4c6",
+    "destination": "src\\content\\blog\\Blog\\Markdown\\post-2024-11-13-06.md",
+    "url": "/blog/post-2024-11-13-06",
+    "originalMetadata": {
+      "title": "关于Github page的引用路径问题",
+      "date": "2024-11-13 18:57:46 +0800",
+      "description": "Jekyll 里引用图片和视频的几种写法：相对路径、站内绝对路径、raw 外链，以及它们在 GitHub Pages 上分别会踩什么坑。",
+      "categories": [
+        "Blog",
+        "Markdown"
+      ],
+      "image": "/assets/img/posts/github-page-paths/cover.png",
+      "tags": [
+        "Bug"
+      ]
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-device-login.md",
+    "sha256": "59b33f25e53ac6644b1274f4ae2597e72e0f3c9590085fdf9ebf07aef5d9a994",
+    "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2026-11-03-07.md",
+    "url": "/blog/post-2026-11-03-07",
+    "originalMetadata": {
+      "title": "GitHub App 设备码：让写作台「点一下」就登录",
+      "date": "2026-11-03 07:40:00 +0800",
+      "categories": [
+        "Blogging",
+        "Tutorial"
+      ],
+      "tags": [
+        "GitHub",
+        "Cloudflare",
+        "OAuth",
+        "写作台"
+      ],
+      "description": "浏览器直连 GitHub 的 token 接口会被 CORS 拦掉。用 Cloudflare Worker 做一层无状态代理，配上 GitHub App 的设备码流程，就能不手动创建 Token 直接登录。",
+      "image": {
+        "path": "/assets/img/posts/device-login/cover.png",
+        "alt": "GitHub 设备码登录"
+      }
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-qq-bot-postmortem.md",
+    "sha256": "f90d95bd338ffc690a36d9fd87e561823e05e2ce863287c5892935ca2ba0c17e",
+    "destination": "src\\content\\blog\\技术\\折腾\\post-2026-11-03-08.md",
+    "url": "/blog/post-2026-11-03-08",
+    "originalMetadata": {
+      "title": "我把 QQ 接进 AI 助手，失败了三次",
+      "date": "2026-11-03 09:50:00 +0800",
+      "description": "想让 DSH 通过 QQ 收发消息：NapCat 的 headless 模式写不进 QQ 数据目录、注入模式又卡在 QQ 版本不匹配。三次尝试的完整证据、源码定位，以及「什么时候该止损」的判断。",
+      "categories": [
+        "技术",
+        "折腾"
+      ],
+      "tags": [
+        "QQ",
+        "NapCat",
+        "OneBot",
+        "插件"
+      ],
+      "image": "/assets/img/posts/qq-bot-postmortem/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-r2-migration.md",
+    "sha256": "dd4c0f3e8e58b03b51b7ddbf25721589a1445e63db74bce32364a15fe3f3f5bd",
+    "destination": "src\\content\\blog\\技术\\运维\\post-2026-11-03-09.md",
+    "url": "/blog/post-2026-11-03-09",
+    "originalMetadata": {
+      "title": "把 72MB 视频搬进 Cloudflare R2，顺手吊销了一张泄露的证书",
+      "date": "2026-11-03 10:20:00 +0800",
+      "description": "站点瘦身之后还剩一个 72MB 的视频卡在仓库里。用 Cloudflare API 建 R2 桶、绑自定义域名、上传、改引用，再用真实浏览器验证可拖动播放；顺便把历史里泄露过的 Origin 证书吊销掉。",
+      "categories": [
+        "技术",
+        "运维"
+      ],
+      "tags": [
+        "Cloudflare",
+        "R2",
+        "部署",
+        "安全"
+      ],
+      "image": "/assets/img/posts/r2-migration/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-refresh-button.md",
+    "sha256": "51766e63ed405189c7f053dee5af3ef6247d965ccf1243ec54a8b0606faf20d9",
+    "destination": "src\\content\\blog\\杂记\\折腾\\post-2026-11-03-10.md",
+    "url": "/blog/post-2026-11-03-10",
+    "originalMetadata": {
+      "title": "刷新一下",
+      "date": "2026-11-03 13:30:00 +0800",
+      "description": "改了一下午的样式，手机上还是旧的。为了不再去设置里删网站数据，我在页脚添了一个小按钮。",
+      "categories": [
+        "杂记",
+        "折腾"
+      ],
+      "tags": [
+        "随笔",
+        "前端"
+      ],
+      "image": "/assets/img/posts/refresh-button/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-site-diet.md",
+    "sha256": "c1603938c1588af3bb5161ac667ab6291aadc26776f933038865a333f6acd0b7",
+    "destination": "src\\content\\blog\\Blogging\\post-2026-11-03-11.md",
+    "url": "/blog/post-2026-11-03-11",
+    "originalMetadata": {
+      "title": "一次站点瘦身：从 390MB 到 179MB",
+      "date": "2026-11-03 08:05:00 +0800",
+      "categories": [
+        "Blogging"
+      ],
+      "tags": [
+        "Git",
+        "Jekyll",
+        "性能",
+        "自动化"
+      ],
+      "description": "清理一个跑了三年的 Jekyll 博客仓库：找出藏在历史里的 90MB 垃圾文本、108MB 设计源文件，顺手把配图压了 90%，最后重写历史把体积砍掉一半。",
+      "image": {
+        "path": "/assets/img/posts/site-diet/cover.png",
+        "alt": "站点瘦身"
+      }
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-writing-studio.md",
+    "sha256": "1a02a4574d8c5042e446b74230ffcaec4c361d6d4dbaa6eeb21f7882bca2bf74",
+    "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2026-11-03-12.md",
+    "url": "/blog/post-2026-11-03-12",
+    "originalMetadata": {
+      "title": "给自己的博客装一个「写作台」",
+      "date": "2026-11-03 07:10:00 +0800",
+      "categories": [
+        "Blogging",
+        "Tutorial"
+      ],
+      "tags": [
+        "Jekyll",
+        "GitHub",
+        "写作台",
+        "自动化"
+      ],
+      "description": "用纯前端加 GitHub API 做一个手机和电脑都能用的在线编辑器：改文章、传图片、提交到草稿分支，不用开电脑，也不用装环境。",
+      "image": {
+        "path": "/assets/img/posts/writing-studio/cover.png",
+        "alt": "写作台"
+      }
+    }
+  },
+  {
+    "source": "_posts\\2026-11-03-xss-audit.md",
+    "sha256": "bf2aae2a0dce8ae169cab5766f6bd02ffcbf1795ce0814ce9b668201d60b4ae9",
+    "destination": "src\\content\\blog\\技术\\安全\\post-2026-11-03-13.md",
+    "url": "/blog/post-2026-11-03-13",
+    "originalMetadata": {
+      "title": "一次真实的安全审计：我自己的写作台被 XSS 绕过了",
+      "date": "2026-11-03 09:20:00 +0800",
+      "description": "让安全专家审自己写的写作台，审出一个能绕过净化、读出 GitHub 令牌的真漏洞；修完之后再做代码评审，又抓出我自己引入的丢稿回归。完整经过与 13 条回归用例。",
+      "categories": [
+        "技术",
+        "安全"
+      ],
+      "tags": [
+        "安全",
+        "XSS",
+        "Jekyll",
+        "Cloudflare Worker"
+      ],
+      "image": "/assets/img/posts/xss-audit/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2026-11-04-ai动画.md",
+    "sha256": "cb92c95aa0d0f8814a324acd3d9bbe75c1fc10c94970996e22a7e5097f2873f6",
+    "destination": "src\\content\\blog\\杂记\\影视\\post-2026-11-04-14.md",
+    "url": "/blog/post-2026-11-04-14",
+    "originalMetadata": {
+      "title": "「科学修仙时代」：把修仙拍成村口吵架",
+      "date": "2026-11-04 00:57:00 +0800",
+      "description": "一部 13 分钟的 AI 修仙剧集，拿了 B 站每周必看第 396 期、全站排行第 10。这篇记两件事：它凭什么好看，以及大家为它吵了什么。",
+      "categories": [
+        "杂记",
+        "影视"
+      ],
+      "tags": [
+        "动漫",
+        "AI",
+        "影评"
+      ],
+      "image": {
+        "path": "/assets/img/uploads/2026/11/屏幕截图-2026-10-19-231914-1793725100447.webp",
+        "alt": "高灵聘请：性感美人鱼，在线发灵"
+      },
+      "pin": true
+    }
+  },
+  {
+    "source": "_posts\\2026-11-05-dsh-rea-install.md",
+    "sha256": "0cae95da0d8121cacd26f903c885677f523e9fe30a9d6511e667e444deb94750",
+    "destination": "src\\content\\blog\\技术\\折腾\\post-2026-11-05-15.md",
+    "url": "/blog/post-2026-11-05-15",
+    "originalMetadata": {
+      "title": "给 AI 装一双逆向之眼：REA 接入 DeepSeek Harness",
+      "date": "2026-11-05 19:40:00 +0800",
+      "description": "一张海报把我带进 REA。从补装 Node、绕开 npm 同名包陷阱，到一条 rea setup 注册 MCP 并装好技能，再接上 Ghidra 跑通原生伪代码。附 229 个工具的验证、能力清单与 Windows 踩坑。",
+      "categories": [
+        "技术",
+        "折腾"
+      ],
+      "tags": [
+        "DSH",
+        "REA",
+        "MCP",
+        "逆向工程",
+        "Windows"
+      ],
+      "image": "/assets/img/posts/rea-install/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2026-11-05-nianzhen-web-architecture.md",
+    "sha256": "fb9b59bd8f01652962100be5febdf3fce675218a1191599fd7400f3b285ac2ab",
+    "destination": "src\\content\\blog\\技术\\运维\\post-2026-11-05-16.md",
+    "url": "/blog/post-2026-11-05-16",
+    "originalMetadata": {
+      "title": "念真怎么上网：纯静态站的搜索与读页架构",
+      "date": "2026-11-05 00:55:00 +0800",
+      "description": "纯静态的 AI 聊天页没有后端，浏览器直连搜索和网页会被 CORS 挡住。这篇拆开念真的联网链路：一个只读 Cloudflare Worker、三级搜索降级、正文提取、SSRF 防护、配置迁移，以及上线前真正验证过的细节。",
+      "categories": [
+        "技术",
+        "运维"
+      ],
+      "tags": [
+        "Cloudflare",
+        "Worker",
+        "AI",
+        "架构",
+        "CORS"
+      ],
+      "image": "/assets/img/posts/nianzhen-web/cover.png"
+    }
+  },
+  {
+    "source": "_posts\\2026-11-06-miko-web.md",
+    "sha256": "e1273f65f7be935bb0fe1219d24106c92f1cb5f07f153e0630e3c7362773cded",
+    "destination": "src\\content\\blog\\技术\\逆向\\post-2026-11-06-17.md",
+    "url": "/blog/post-2026-11-06-17",
+    "originalMetadata": {
+      "title": "把《异次元通讯·次元复苏》搬进浏览器",
+      "date": "2026-11-05 22:30:00 +0800",
+      "description": "一款停服下架的国产文字聊天游戏，剧本居然是完全明文的 CSV。逆向出它的剧情指令语法后，我把它做成了纯静态网页版，保留打字动画、选项分支、词典与图鉴。",
+      "categories": [
+        "技术",
+        "逆向"
+      ],
+      "tags": [
+        "逆向",
+        "Flutter",
+        "Dart",
+        "游戏移植",
+        "静态站点"
+      ],
+      "image": "/assets/img/posts/miko-web/cover.webp"
+    }
+  }
+]

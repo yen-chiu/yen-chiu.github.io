@@ -1,0 +1,440 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+import { Quote } from 'astro-pure/advanced'
+import { PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button, Icon } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+
+import BentoGrid from '@/components/bento/BentoGrid.astro'
+import ProfileWidget from '@/components/bento/widgets/ProfileWidget.astro'
+import GithubWidget from '@/components/bento/widgets/GithubWidget.astro'
+import ProjectWidget from '@/components/bento/widgets/ProjectWidget.astro'
+import SkillsWidget from '@/components/bento/widgets/SkillsWidget.astro'
+import HobbiesWidget from '@/components/bento/widgets/HobbiesWidget.astro'
+import SponsorWidget from '@/components/bento/widgets/SponsorWidget.astro'
+import LinksWidget from '@/components/bento/widgets/LinksWidget.astro'
+
+import Section from '@/components/home/Section.astro'
+import config from '@/site-config'
+
+const MAX_POSTS = 10
+const allPosts = await getBlogCollection()
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+
+const imagePath = config.logo.src
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/*.{jpeg,jpg,png,gif,avif,webp}'
+)
+if (!images[imagePath])
+  throw new Error(
+    `"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,avif,webp}"`
+  )
+---
+
+<PageLayout meta={{ title: 'Home' }} highlightColor='#B19CD9'>
+  <main class='flex w-full flex-col items-center relative -mt-16' data-page='home'>
+    {/* Profile Section - Full Screen Hero */}
+    <section
+      class='flex min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-center relative overflow-hidden page-transition-enter'
+      id='profile-hero'
+    >
+      <div class='relative z-10 flex flex-col items-center gap-y-5 max-w-2xl mx-auto px-4'>
+        {/* Avatar */}
+        <div class='relative group'>
+          <div
+            class='absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 blur-xl group-hover:blur-2xl transition-all duration-500'
+          >
+          </div>
+          <div class='relative'>
+            <Image
+              id='home-avatar'
+              src={images[imagePath]()}
+              alt={config.logo.alt || 'Profile'}
+              class='rounded-full border-4 border-foreground/10 shadow-2xl transition-transform duration-500 group-hover:scale-105'
+              style='width: 120px; height: 120px; object-fit: cover;'
+              width={120}
+              height={120}
+              loading='eager'
+              fetchpriority='high'
+            />
+          </div>
+        </div>
+
+        {/* Title */}
+        <h1 class='text-4xl sm:text-5xl font-bold text-center tracking-tight'>
+          {config.title}
+        </h1>
+
+        {/* Description */}
+        <p
+          class='text-lg sm:text-xl text-muted-foreground font-light text-center max-w-lg leading-relaxed'
+        >
+          {config.description}
+        </p>
+
+        {/* Navigation Buttons */}
+        <div class='flex flex-wrap justify-center gap-3 mt-1'>
+          <a
+            href='/blog'
+            class='home-nav-btn group relative px-6 py-2.5 text-sm font-medium rounded-full bg-background/60 backdrop-blur-sm border border-foreground/10 text-foreground/80 hover:text-foreground hover:bg-background/80 hover:border-foreground/20 transition-all duration-300 hover:scale-105 hover:shadow-md'
+          >
+            <span class='relative z-10'>博客</span>
+            <div
+              class='absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/0 via-purple-400/0 to-purple-500/0 group-hover:from-purple-500/10 group-hover:via-purple-400/10 group-hover:to-purple-500/10 transition-all duration-300 opacity-0 group-hover:opacity-100'
+            >
+            </div>
+          </a>
+          <a
+            href='/categories'
+            class='home-nav-btn group relative px-6 py-2.5 text-sm font-medium rounded-full bg-background/60 backdrop-blur-sm border border-foreground/10 text-foreground/80 hover:text-foreground hover:bg-background/80 hover:border-foreground/20 transition-all duration-300 hover:scale-105 hover:shadow-md'
+          >
+            <span class='relative z-10'>分类</span>
+            <div
+              class='absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/0 via-purple-400/0 to-purple-500/0 group-hover:from-purple-500/10 group-hover:via-purple-400/10 group-hover:to-purple-500/10 transition-all duration-300 opacity-0 group-hover:opacity-100'
+            >
+            </div>
+          </a>
+          <a
+            href='/about'
+            class='home-nav-btn group relative px-6 py-2.5 text-sm font-medium rounded-full bg-background/60 backdrop-blur-sm border border-foreground/10 text-foreground/80 hover:text-foreground hover:bg-background/80 hover:border-foreground/20 transition-all duration-300 hover:scale-105 hover:shadow-md'
+          >
+            <span class='relative z-10'>关于</span>
+            <div
+              class='absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/0 via-purple-400/0 to-purple-500/0 group-hover:from-purple-500/10 group-hover:via-purple-400/10 group-hover:to-purple-500/10 transition-all duration-300 opacity-0 group-hover:opacity-100'
+            >
+            </div>
+          </a>
+        </div>
+
+        {/* Social Icons */}
+        <div class='flex items-center justify-center gap-x-4 mt-3'>
+          <a
+            href='https://github.com/LemonAdorable'
+            target='_blank'
+            rel='noopener noreferrer'
+            class='group relative p-2.5 rounded-full bg-muted/50 hover:bg-muted transition-all duration-300 hover:scale-110'
+            aria-label='GitHub'
+          >
+            <Icon
+              name='github'
+              class='size-5 text-muted-foreground group-hover:text-foreground transition-colors duration-300'
+            />
+          </a>
+        </div>
+      </div>
+
+      {/* Scroll indicator at bottom */}
+      <a
+        href='#content'
+        class='scroll-indicator-circle absolute bottom-20 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full border-2 bg-background/80 backdrop-blur-sm flex items-center justify-center cursor-pointer group transition-all duration-300 hover:scale-110 shadow-lg z-20'
+        aria-label='向下滚动'
+        style='border-width: 0; border-color: transparent;'
+      >
+        <svg
+          width='20'
+          height='20'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          stroke-width='2.5'
+          stroke-linecap='round'
+          stroke-linejoin='round'
+          class='text-muted-foreground/70 group-hover:text-foreground transition-colors duration-300'
+        >
+          <path d='M6 9l6 6 6-6'></path>
+        </svg>
+      </a>
+    </section>
+
+    {/* Content Section - Bento Grid */}
+    <div id='content' class='animate w-full px-4 pt-8 md:pt-16 pb-12 max-w-6xl mx-auto'>
+      <BentoGrid>
+        <ProfileWidget />
+        <ProjectWidget />
+        <SkillsWidget />
+        <HobbiesWidget />
+        <GithubWidget />
+        <SponsorWidget />
+        <LinksWidget />
+      </BentoGrid>
+    </div>
+    <Quote class='mt-12 mb-12' />
+  </main>
+</PageLayout>
+
+<style>
+  /* Page transition animations */
+  @keyframes pageFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes heroFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Navigation buttons animation */
+  .home-nav-btn {
+    animation: navBtnFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 0.2s;
+    opacity: 0;
+  }
+
+  @keyframes navBtnFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Homepage entry animation - optimized for performance */
+  /* Only animate the hero section, not the entire main */
+  .page-transition-enter {
+    animation: heroFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  /* Smooth scroll behavior */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  #profile-hero {
+    position: relative;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  #content {
+    scroll-margin-top: 2rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+  }
+
+  /* Smooth scroll behavior */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Enhanced scroll indicator circle - optimized */
+  .scroll-indicator-circle {
+    animation: scrollBounce 2s infinite;
+    border: 2px solid hsl(var(--background) / 0.8);
+    opacity: 0;
+    animation:
+      scrollBounce 2s infinite,
+      scrollFadeIn 0.8s 0.4s forwards;
+  }
+
+  @keyframes scrollFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scrollBounce {
+    0%,
+    100% {
+      transform: translate(-50%, 0);
+    }
+    50% {
+      transform: translate(-50%, 6px);
+    }
+  }
+
+  /* Pulse effect for scroll indicator circle */
+  .scroll-indicator-circle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--background) / 0.8);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite 2s;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.3);
+    }
+  }
+
+  /* Avatar glow effect */
+  #profile-hero .group:hover img {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.3);
+  }
+
+  /* Fade in animation for content */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Smooth transition when scrolling - optimized */
+  #profile-hero {
+    transition:
+      opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Hide header on scroll for better experience */
+  @media (prefers-reduced-motion: no-preference) {
+    #profile-hero.scrolled {
+      opacity: 0.3;
+      transform: scale(0.95);
+    }
+  }
+</style>
+
+<script>
+  // Avatar rotation on link hover
+  document.addEventListener('DOMContentLoaded', () => {
+    const avatar = document.getElementById('home-avatar')
+    if (!avatar) return
+
+    // Get all links on the page (excluding the scroll indicator)
+    const links = document.querySelectorAll('a[href]:not(.scroll-indicator-circle)')
+
+    links.forEach((link) => {
+      link.addEventListener('mouseenter', () => {
+        // Remove the class first to reset animation
+        avatar.classList.remove('rotate')
+        // Force reflow to restart animation
+        void avatar.offsetWidth
+        // Add the class to trigger rotation
+        avatar.classList.add('rotate')
+      })
+
+      // Remove the class after animation completes
+      avatar.addEventListener('animationend', () => {
+        avatar.classList.remove('rotate')
+      })
+    })
+  })
+
+  // Smooth scroll behavior and scroll detection
+  document.addEventListener('DOMContentLoaded', () => {
+    const profileHero = document.getElementById('profile-hero') as HTMLElement | null
+    const scrollIndicator = document.querySelector('.scroll-indicator-circle') as HTMLElement | null
+    const content = document.getElementById('content')
+
+    if (!profileHero || !scrollIndicator || !content) return
+
+    // Ensure button is always clickable initially
+    scrollIndicator.style.pointerEvents = 'auto'
+    scrollIndicator.style.opacity = '1'
+
+    // Handle scroll indicator click - always allow clicking
+    scrollIndicator.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      content.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    })
+
+    // Auto-scroll-to-top when user scrolls up in the transition zone
+    let prevScrollY = window.scrollY
+    let isAutoScrolling = false
+
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const heroHeight = profileHero.offsetHeight
+
+      // Always keep button clickable, only adjust opacity for visual feedback
+      if (scrollTop > heroHeight * 0.7) {
+        scrollIndicator.style.opacity = '0.3'
+        profileHero.classList.add('scrolled')
+      } else {
+        scrollIndicator.style.opacity = '1'
+        profileHero.classList.remove('scrolled')
+      }
+
+      // Auto-scroll-to-top: when user scrolls up while in the zone
+      // between 10% and 70% of hero height, snap back to top
+      if (!isAutoScrolling && scrollTop < prevScrollY && scrollTop > 0 && scrollTop < heroHeight * 0.7) {
+        isAutoScrolling = true
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        // Reset flag after animation completes
+        setTimeout(() => { isAutoScrolling = false }, 600)
+      }
+
+      prevScrollY = scrollTop
+
+      // Always ensure button is clickable
+      scrollIndicator.style.pointerEvents = 'auto'
+    }
+
+    // Initialize scroll state
+    handleScroll()
+
+    // Throttle scroll events
+    let ticking = false
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            handleScroll()
+            ticking = false
+          })
+          ticking = true
+        }
+      },
+      { passive: true }
+    )
+  })
+</script>

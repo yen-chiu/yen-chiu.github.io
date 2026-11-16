@@ -3,11 +3,11 @@ import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } fro
 export const theme: ThemeUserConfig = {
   // [Basic]
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: '灵的梦境',
+  title: 'Wendell',
   /** Will be used in index page & copyright declaration */
-  author: 'Ling',
+  author: 'Wendell',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: '愿美梦成真',
+  description: '读书，买花，长大。',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.gif',
   /** The default social card image for your site which should be a path to an image in the `public/` directory. */
@@ -49,6 +49,7 @@ export const theme: ThemeUserConfig = {
   header: {
     menu: [
       { title: '博客', link: '/blog' },
+      { title: '念真', link: '/persona' },
       { title: '分类', link: '/categories' },
       { title: '标签', link: '/tags' },
       { title: '时光机', link: '/archives' },
@@ -66,11 +67,6 @@ export const theme: ThemeUserConfig = {
     // year: `© 2019 - ${new Date().getFullYear()}`,
     links: [
       // Registration link
-      {
-        title: '萌ICP备20250550号',
-        link: 'https://icp.gov.moe/?keyword=20250550',
-        style: 'text-sm' // Uno/TW CSS class
-      },
       // Privacy Policy link
       {
         title: 'Site Policy',
@@ -82,7 +78,7 @@ export const theme: ThemeUserConfig = {
     credits: true,
     /** Optional details about the social media accounts for this site. */
     social: [
-      { icon: 'github', label: 'GitHub', href: 'https://github.com/LemonAdorable' },
+      { icon: 'github', label: 'GitHub', href: 'https://github.com/yen-chiu' },
       { icon: 'rss', label: 'RSS', href: '/rss.xml' }
     ]
   },
@@ -186,7 +182,7 @@ export const integ: IntegrationUserConfig = {
   },
   // Giscus comment system configuration
   giscus: {
-    enable: true,
+    enable: false,
     repo: 'LemonAdorable/lemonadorable.github.io',
     repoId: 'R_kgDOLJXF6A',
     category: 'Announcements',

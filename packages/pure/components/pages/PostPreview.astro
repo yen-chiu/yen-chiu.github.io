@@ -20,7 +20,7 @@ const fallbackSlug =
     .at(-1) ?? id
 const slug = 'slug' in data && typeof data.slug === 'string' ? data.slug : fallbackSlug
 const { remarkPluginFrontmatter } = await render(post)
-const postDate = data.updatedDate ?? data.publishDate
+const postDate = data.updatedDate ?? data.publishDate ?? new Date(0)
 ---
 
 <li
@@ -57,7 +57,7 @@ const postDate = data.updatedDate ?? data.publishDate
 
       {/* title */}
       <div class='flex justify-between flex-grow'>
-        <div class={detailed && 'font-medium'}>
+        <div class={detailed ? 'font-medium' : undefined}>
           {data.draft && <span class='text-red-500'>(Draft) </span>}
           {data.title}
         </div>
