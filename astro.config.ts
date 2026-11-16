@@ -30,7 +30,8 @@ export default defineConfig({
   compressHTML: true,
 
   // [Basic]
-  site: 'https://example.invalid',
+  site: 'https://yen-chiu.github.io',
+  base: '/yen-chiu-astro',
   // Deploy to a sub path
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
@@ -151,3 +152,4 @@ export default defineConfig({
     }
   }
 })
+
