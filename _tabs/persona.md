@@ -180,4 +180,100 @@ description: 念真的角色设定：档案、设定稿、九种表情、细节�
   <p class="pz-hint">服装主色为深青绿 #2F4F4A；#22C3AA 只用于界面与标识，不进入角色服装。</p>
 </section>
 
+<section class="pz-panel pz-panel--block">
+  <p class="pz-label"><span>10</span>超分对比 · upscale</p>
+
+  <details class="pz-more">
+    <summary>四版对照与量测</summary>
+    <div class="pz-more__body">
+
+      <p class="pz-hint">这组局部对照截自上一版定妆稿，用来记录超分工具的选型结论；新稿沿用同一结论。</p>
+
+      <div class="pz-sub">四版对照（点图看 1:1 原尺寸）</div>
+
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-upscale-01-eyes.png' | relative_url }}" target="_blank" rel="noopener">
+          <img src="{{ '/assets/img/persona/nz-upscale-01-eyes.png' | relative_url }}"
+               alt="眼部 1:1 对照：Master（nearest ×2）、Lanczos、Real-ESRGAN x4plus-anime、waifu2x cunet n2、Real-CUGAN up2x-no-denoise"
+               loading="lazy">
+        </a>
+        <figcaption><b>眼部</b>：睫毛根部、虹膜纹理与下眼睑阴影</figcaption>
+      </figure>
+
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-upscale-02-knit.png' | relative_url }}" target="_blank" rel="noopener">
+          <img src="{{ '/assets/img/persona/nz-upscale-02-knit.png' | relative_url }}"
+               alt="颈部与针织背心 1:1 对照：Master、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+               loading="lazy">
+        </a>
+        <figcaption><b>衣料</b>：针织针脚与衬衫布纹</figcaption>
+      </figure>
+
+      <figure class="pz-figure">
+        <a href="{{ '/assets/img/persona/nz-upscale-03-hair.png' | relative_url }}" target="_blank" rel="noopener">
+          <img src="{{ '/assets/img/persona/nz-upscale-03-hair.png' | relative_url }}"
+               alt="发丝 1:1 对照：Master、Lanczos、Real-ESRGAN、waifu2x、Real-CUGAN"
+               loading="lazy">
+        </a>
+        <figcaption><b>头发</b>：发丝分股与逆光边缘</figcaption>
+      </figure>
+
+      <div class="pz-sub">量测（3840 画幅，以母版为基准）</div>
+      <div class="pz-tablewrap">
+        <div class="table-wrapper"><table class="pz-table">
+          <thead>
+            <tr>
+              <th>指标</th>
+              <th>Lanczos</th>
+              <th>Real-ESRGAN</th>
+              <th>waifu2x</th>
+              <th>Real-CUGAN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>边缘能量（越高越锐）</td>
+              <td data-label="Lanczos">1.41</td>
+              <td data-label="Real-ESRGAN">2.09</td>
+              <td data-label="waifu2x">1.41</td>
+              <td data-label="Real-CUGAN">1.93</td>
+            </tr>
+            <tr>
+              <td>平面色块 ΔE（越低越不偏色）</td>
+              <td data-label="Lanczos">0.12</td>
+              <td data-label="Real-ESRGAN">3.94</td>
+              <td data-label="waifu2x">0.13</td>
+              <td data-label="Real-CUGAN">0.49</td>
+            </tr>
+            <tr>
+              <td>发丝 / 睫毛</td>
+              <td data-label="Lanczos">断，整体发糊</td>
+              <td data-label="Real-ESRGAN">连上了，过锐</td>
+              <td data-label="waifu2x">连上，偏软</td>
+              <td data-label="Real-CUGAN">连上，边缘自然</td>
+            </tr>
+            <tr>
+              <td>针织针脚</td>
+              <td data-label="Lanczos">糊成一片</td>
+              <td data-label="Real-ESRGAN">清楚，对比过强</td>
+              <td data-label="waifu2x">略糊</td>
+              <td data-label="Real-CUGAN">清楚，明暗过渡正常</td>
+            </tr>
+            <tr class="is-anchor">
+              <td>结论</td>
+              <td data-label="Lanczos">只作对照</td>
+              <td data-label="Real-ESRGAN">不采用</td>
+              <td data-label="waifu2x">备选</td>
+              <td data-label="Real-CUGAN">采用</td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <p class="pz-hint">口径：边缘能量取亮度通道相邻像素差绝对值的均值；ΔE 取多个大面积平面色块相对母版的平均色差。Real-ESRGAN 用 x4plus-anime 出 4× 后降回 3840，其余为 2× 直出。</p>
+
+    </div>
+  </details>
+</section>
+
 </div>
