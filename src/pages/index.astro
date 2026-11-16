@@ -5,6 +5,20 @@ const posts = (await getCollection('blog')).filter(p => !p.data.draft).sort((a,b
 ---
 <PageLayout title="Wendell" hideTitle hideBack layout="wide">
 <section class="py-12"><h1 class="text-4xl font-bold">Wendell</h1><p class="mt-4 text-muted-foreground">读书，买花，长大。</p>
-<nav class="flex gap-6 my-8"><a href="/blog">文章</a><a href="/persona">念真</a><a href="https://yenchiu.com/chat/">与念真聊天</a><a href="/about">关于</a></nav>
-<div class="grid gap-6">{posts.map(post=><article class="border rounded-xl p-6"><a href={`/blog/${post.data.slug}`}><h2 class="text-xl font-bold">{post.data.title}</h2></a><p class="mt-2 text-muted-foreground">{post.data.description}</p><time>{post.data.publishDate.toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'})}</time></article>)}</div>
+<nav aria-label="主要入口" class="flex flex-wrap gap-x-6 gap-y-3 my-8"><a href="/blog">文章</a><a href="/persona">念真</a><a href="https://yenchiu.com/chat/">与念真聊天</a><a href="/about">关于</a></nav>
+<div class="grid gap-6">{posts.map(post=><article class="border rounded-xl p-6"><a href={`/blog/${post.data.slug}`}><h2 class="text-xl font-bold">{post.data.title}</h2></a><p class="mt-2 text-muted-foreground">{post.data.description}</p><time datetime={post.data.publishDate.toISOString()} class="block mt-4 text-sm text-muted-foreground">{post.data.publishDate.toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'})}</time></article>)}</div>
 </section></PageLayout>
+
+<style>
+section { max-width: 56rem; margin-inline:auto; }
+article { transition:border-color 160ms ease,background-color 160ms ease; }
+article:hover { border-color:hsl(var(--primary)/.5);background:hsl(var(--muted)/.35); }
+article a { text-underline-offset:.2em; }
+article a:hover { text-decoration:underline; }
+article h2 { line-height:1.55; }
+article p { line-height:1.8; max-width:65ch; }
+nav a { border-bottom:1px solid hsl(var(--border));padding-bottom:.25rem; }
+nav a:focus-visible, article a:focus-visible { outline:2px solid hsl(var(--primary));outline-offset:5px; }
+@media(max-width:640px) { article {padding:1.1rem;} h1 {font-size:2rem;} }
+@media(prefers-reduced-motion:reduce) { article {transition:none;} }
+</style>

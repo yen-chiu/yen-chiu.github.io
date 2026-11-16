@@ -99,7 +99,7 @@ import './styles/search.css'
         loadPromise ??= import('./scripts/search.ts').then(async (mod) => {
           await mod.initSearch()
           return mod
-        })
+        }).catch((error) => { loadPromise = undefined; throw error })
         return loadPromise
       }
 
@@ -118,6 +118,7 @@ import './styles/search.css'
             button.click()
           } catch (err) {
             console.error('Failed to load search:', err)
+            window.location.assign(import.meta.env.BASE_URL + '/search')
           }
         },
         { capture: true }

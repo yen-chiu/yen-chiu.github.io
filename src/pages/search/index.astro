@@ -1,33 +1,25 @@
 ---
-import { PFSearch } from 'astro-pure/components/pages'
-import { Button } from 'astro-pure/user'
-import PageLayout from '@/layouts/BaseLayout.astro'
-import { integ } from '@/site-config'
-
-const meta = {
-  description: 'Search relative posts of the whole blog',
-  title: 'Search'
-}
+import PageLayout from '@/layouts/CommonPage.astro'
+import { getCollection } from 'astro:content'
+const posts=(await getCollection('blog')).filter(p=>!p.data.draft)
 ---
-
-<PageLayout {meta}>
-  <Button title='Back' href='/blog' variant='back' />
-  <main class='mt-6 lg:mt-10'>
-    <div id='content-header' class='animate'>
-      <h1 class='mb-6 text-3xl font-medium'>Search</h1>
-    </div>
-
-    <div id='content' class='animate'>
-      {
-        integ.pagefind ? (
-          <>
-            <p>Enter a search term or phrase to search the blog.</p>
-            <PFSearch />
-          </>
-        ) : (
-          <p>Pagefind is disabled.</p>
-        )
-      }
-    </div>
-  </main>
+<PageLayout title="搜索文章" hideBack>
+<label for="article-search" class="block mb-3">输入标题、摘要或标签</label>
+<input id="article-search" type="search" class="w-full rounded-xl border bg-background p-4" placeholder="例如：念真、GitHub、建模" />
+<p id="search-count" aria-live="polite" class="my-4 text-muted-foreground">共 {posts.length} 篇文章</p>
+<ul id="article-results" class="space-y-6">{posts.map(p=><li data-search={[p.data.title,p.data.description,...p.data.tags].join(' ').toLocaleLowerCase()}><a class="text-lg font-medium" href={`/blog/${p.data.slug}`}>{p.data.title}</a><p class="mt-1 text-muted-foreground">{p.data.description}</p></li>)}</ul>
 </PageLayout>
+<script>
+function setupArticleSearch(){
+ const input=document.querySelector<HTMLInputElement>('#article-search')
+ if(!input || input.dataset.ready) return
+ input.dataset.ready='true'
+ input.addEventListener('input',()=>{
+  const terms=input.value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
+  let count=0
+  document.querySelectorAll<HTMLElement>('#article-results li').forEach(row=>{row.hidden=!terms.every(t=>row.dataset.search?.includes(t));if(!row.hidden)count++})
+  const status=document.querySelector('#search-count');if(status)status.textContent=count?`找到 ${count} 篇文章`:'没有找到文章，试试其他关键词。'
+ })
+}
+setupArticleSearch();document.addEventListener('astro:page-load',setupArticleSearch)
+</script>
