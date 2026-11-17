@@ -491,14 +491,21 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
         return source === item.id || target === item.id ? 1 : 0.06
       })
     }
+    const selectNode = (item: GraphNode) => {
+      state.focus = item.id
+      writeState(root, state)
+      if (state.depth > 0 || state.flow !== 'all') render()
+      showDetails(item, graph.edges)
+      labels.text(candidate => graphLabel(candidate.label, candidate.kind, mobile, candidate.id === item.id))
+    }
     node
       .on('mouseenter', (_event, item) => focus(item))
       .on('mouseleave', () => focus(null))
-      .on('click', (_event, item) => {
-        state.focus = item.id
-        writeState(root, state)
-        if (state.depth > 0 || state.flow !== 'all') render()
-        else showDetails(item, graph.edges)
+      .on('click', (_event, item) => selectNode(item))
+      .on('keydown', (event, item) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+        event.preventDefault()
+        selectNode(item)
       })
       .on('dblclick', (_event, item) => {
         location.href = item.href
@@ -556,6 +563,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     node.call(
       d3
         .drag<SVGGElement, GraphNode>()
+        .clickDistance(6)
         .on('start', (event, item) => {
           if (!event.active) simulation?.alphaTarget(0.18).restart()
           item.fx = item.x

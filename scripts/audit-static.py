@@ -29,6 +29,6 @@ for row in manifest:
 assert not missing,missing
 index=json.loads((root/'contentIndex.json').read_text(encoding='utf-8'))
 assert len(index)==17
-report={'articles':17,'localMissing':missing,'mediaElements':media,'externalMedia':sorted(external),'comments':'17 pages bound to original repository and title','redirects':'17 original posts paths and 17 previous staging URLs','seo':'original canonical and noindex follow; sitemap emitted','browser':'unavailable in current chat; responsive and interactive acceptance pending'}
+report={'articles':17,'localMissing':missing,'mediaElements':media,'externalMedia':sorted(external),'comments':'17 pages bound to original repository and title','redirects':'17 original posts paths and 17 previous staging URLs','seo':'original canonical and noindex follow; sitemap emitted','browser':'see chrome-qa report for partial live browser acceptance; untested items remain pending'}
 Path('migration/validation/selected-audit.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 print(json.dumps(report,ensure_ascii=False,indent=2))
