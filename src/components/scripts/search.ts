@@ -1390,7 +1390,7 @@ async function fillDocument(data: ContentIndex) {
 export async function initSearch() {
   const currentSlug = getCurrentSlug()
 
-  contentIndexPromise ??= fetch(import.meta.env.BASE_URL.replace(/\/$/, '') + '/contentIndex.json').then((response) => {
+  contentIndexPromise ??= fetch(sitePath('contentIndex.json')).then((response) => {
     if (!response.ok) throw new Error('Failed to fetch contentIndex.json')
     return response.json() as Promise<ContentIndex>
   })
