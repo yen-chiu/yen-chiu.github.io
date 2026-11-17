@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-17",
+  "browser": "Chrome extension against final production build",
+  "viewports": ["320x740", "390x844", "768x1024", "1280x900"],
+  "passed": [
+    "No horizontal overflow at all four tested viewport widths",
+    "Tag selection navigated to blogging and 技术 routes on repeated use; dialog closed and tagcloud-open removed",
+    "Mobile first four tag font sizes 16.8,16.52,16.21,15.86 CSS pixels",
+    "Mobile folder tap entered 技术 and scrolled internal host to127; contents aligned8px below host top",
+    "Mobile article tap scrolled host to606 and exposed R2 preview and read link; background scrollY remained0",
+    "Read article link closed file manager and loaded correct preview article",
+    "Fixed up button returned 技术 to root and became disabled at root",
+    "Glass mobile menu width280px, alpha0.88 and backdrop blur18px",
+    "Opening 探索 closed 阅读; local group stayed open until selection; navigation and Escape closed menu",
+    "Desktop menu button hidden; desktop group dropdown width208px",
+    "Hue165 preset and keyboard step166 changed actual primary color",
+    "Dark, overlay, grid, hidden title and wave preferences survived full reload",
+    "Reset restored defaults; test settings and temporary viewport restored afterward",
+    "Mobile grid rendered two166.3px columns without overflow",
+    "Search 念真 returned results and body preview; search covered full layout viewport",
+    "Search Escape and navigation to About worked after header changes"
+  ],
+  "automated": [
+    "appearance.test.mjs: malformed storage, validation, persistence, theme behavior, lifecycle and361 hue contrast checks",
+    "Pages path, runtime path, graph labels, wikilinks and backlinks regressions",
+    "136-page build, zero type errors/warnings, static local-missing audit empty",
+    "17 original article SHA checks and57 persona asset references passed"
+  ],
+  "screenshots": [
+    "C:/03_Github/.work/iris-glass-menu.jpg",
+    "C:/03_Github/.work/iris-appearance-panel.jpg",
+    "C:/03_Github/.work/iris-directory-scroll.jpg",
+    "C:/03_Github/.work/iris-appearance-desktop.jpg"
+  ],
+  "references": "migration/theme-references/README.md with pinned GitHub source and licenses",
+  "limits": [
+    "Physical mobile browser not tested",
+    "All background-mode combinations and OS reduced-motion behavior not exhaustively tested",
+    "Prior pending Giscus historical body and external-media coverage remain pending"
+  ]
+}

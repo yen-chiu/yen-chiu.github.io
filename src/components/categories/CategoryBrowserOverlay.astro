@@ -25,6 +25,7 @@ import { Icon } from 'astro-pure/user'
         <span class='window-path' data-category-window-path>/</span>
       </div>
       <div class='category-browser-actions'>
+        <button type='button' aria-label='返回上一级' data-category-up disabled>‹</button>
         <button type='button' aria-label='关闭文件管理器' data-category-browser-close>
           ×
         </button>
@@ -194,6 +195,7 @@ import { Icon } from 'astro-pure/user'
     gap: 0.75rem;
     color: hsl(var(--muted-foreground));
     font-size: 0.7rem;
+    flex-shrink:0;
   }
 
   .category-browser-actions span {
@@ -232,6 +234,7 @@ import { Icon } from 'astro-pure/user'
     background: hsl(var(--muted));
     color: hsl(var(--foreground));
   }
+  .category-browser-actions button:disabled {opacity:.35;cursor:default;}
 
   .browser-columns {
     display: grid;
@@ -800,6 +803,7 @@ import { Icon } from 'astro-pure/user'
     .browser-columns {
       display: block;
       overflow-y: auto;
+      overscroll-behavior:contain;
     }
 
     .browser-column + .browser-column {
@@ -817,5 +821,14 @@ import { Icon } from 'astro-pure/user'
       flex: 0 0 auto;
       min-width: 9rem;
     }
+    .browser-window-header {padding:.6rem .8rem;}
+    .window-title {font-size:.85rem;gap:.45rem;}
+    .category-browser-actions button {min-width:44px;min-height:44px;}
+    .browser-footer {display:none;}
+    :global(.category-browser .browser-row) {min-height:58px;padding:.65rem .8rem;}
+    :global(.category-browser .browser-row strong) {font-size:.85rem;}
+    :global(.category-browser .browser-row small) {font-size:.7rem;}
+    :global(.category-browser .preview-heading h2) {font-size:1.1rem;line-height:1.5;}
+    .browser-preview {min-height:15rem;padding-bottom:1rem;}
   }
 </style>

@@ -6,6 +6,7 @@ export function listenThemeChange(theme?: string) {
   // If theme is specified, no need to listen window theme change
   if (theme && theme !== 'system') return
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (getTheme() && getTheme() !== 'system') return
     setTheme(e.matches ? 'dark' : 'light')
   })
 }

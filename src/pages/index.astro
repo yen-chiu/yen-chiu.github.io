@@ -1,24 +1,117 @@
 ---
-import PageLayout from '@/layouts/CommonPage.astro'
+import { Image } from 'astro:assets'
 import { getCollection } from 'astro:content'
-const posts = (await getCollection('blog')).filter(p => !p.data.draft).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf())
+import { BackToTop } from 'astro-pure/components/pages'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getPostPath } from '@/utils/content-paths'
+import { sitePath } from '@/utils/site-path'
+import { Icon } from 'astro-pure/user'
+const posts=(await getCollection('blog')).filter(p=>!p.data.draft).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf())
 ---
-<PageLayout title="Wendell" hideTitle hideBack layout="wide">
-<section class="py-12"><h1 class="text-4xl font-bold">Wendell</h1><p class="mt-4 text-muted-foreground">读书，买花，长大。</p>
-<nav aria-label="主要入口" class="flex flex-wrap gap-x-6 gap-y-3 my-8"><a href="/blog">文章</a><a href="/persona">念真</a><a href="https://yenchiu.com/chat/">与念真聊天</a><a href="/about">关于</a></nav>
-<div class="grid gap-6">{posts.map(post=><article class="border rounded-xl p-6"><a href={`/blog/${post.data.slug}`}><h2 class="text-xl font-bold">{post.data.title}</h2></a><p class="mt-2 text-muted-foreground">{post.data.description}</p><time datetime={post.data.publishDate.toISOString()} class="block mt-4 text-sm text-muted-foreground">{post.data.publishDate.toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'})}</time></article>)}</div>
-</section></PageLayout>
-
+<BaseLayout meta={{title:'Wendell'}}>
+  <main class='home-page'>
+    <section class='home-cover' aria-label='首页封面'>
+      <img class='cover-image' src={sitePath('/images/moonlit-cover.svg')} alt='' width='1600' height='700' fetchpriority='high' />
+      <div class='cover-shade'></div>
+      <div class='cover-content'>
+        <div class='cover-copy'><p class='eyebrow'>代码、阅读与生活</p><h1 id='home-title'>Wendell</h1><p class='tagline'>读书，买花，长大。</p></div>
+        <nav class='cover-actions' aria-label='首页入口'><a href='#latest'>开始阅读 ↓</a><a href={sitePath('/persona')}>念真</a><a href={sitePath('/about')}>关于我</a></nav>
+      </div>
+      <span class='cover-caption'>星夜 · 记录值得留下的片段</span>
+      <div class='cover-wave' aria-hidden='true'></div>
+    </section>
+    <home-feed id='home-feed'>
+      <header class='feed-heading' id='latest'><div><p class='feed-kicker'>慢慢写，慢慢积累</p><h2>最近的记录 <span>{posts.length} 篇</span></h2></div><div class='layout-actions' aria-label='文章布局'><button type='button' data-home-layout='list' aria-pressed='true'>列表</button><button type='button' data-home-layout='grid' aria-pressed='false'>网格</button></div></header>
+      <div class='home-posts'>
+        {posts.map(post=><article class:list={['post-card',{'has-cover':!!post.data.heroImage}]}>
+          {post.data.heroImage&&<a class='post-cover' href={sitePath(getPostPath(post))} aria-label={`打开：${post.data.title}`}><Image src={post.data.heroImage.src} alt={post.data.heroImage.alt??''} width={720} height={420} loading='lazy'/></a>}
+          <div class='post-copy'><div class='post-meta'><Icon name='calendar'/><time datetime={post.data.publishDate.toISOString()}>{post.data.publishDate.toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'})}</time>{post.data.tags.slice(0,2).map(tag=><a href={sitePath('/tags/'+encodeURIComponent(tag))}>#{tag}</a>)}</div>
+          <h3><a href={sitePath(getPostPath(post))}>{post.data.title}<span aria-hidden='true'> ↗</span></a></h3><p>{post.data.description}</p></div>
+        </article>)}
+      </div>
+      <p class='feed-end'>写下的，都是来过的。</p>
+    </home-feed>
+  </main>
+  <BackToTop header='home-title' content='home-feed' slot='overlay'/>
+</BaseLayout>
+<script>
+  import type {} from '../types/appearance'
+  class HomeFeed extends HTMLElement{
+    private controller?:AbortController
+    connectedCallback(){
+      this.controller?.abort();this.controller=new AbortController()
+      const {signal}=this.controller
+      const sync=()=>{const layout=window.wendellAppearance?.get().layout??'list';this.querySelectorAll<HTMLButtonElement>('[data-home-layout]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeLayout===layout)))}
+      this.addEventListener('click',event=>{const b=(event.target as Element).closest<HTMLButtonElement>('[data-home-layout]');if(b)window.wendellAppearance?.set({layout:b.dataset.homeLayout as 'list'|'grid'})},{signal})
+      window.addEventListener('wendell:appearance',sync,{signal});sync()
+    }
+    disconnectedCallback(){this.controller?.abort()}
+  }
+  if(!customElements.get('home-feed'))customElements.define('home-feed',HomeFeed)
+</script>
 <style>
-section { max-width: 56rem; margin-inline:auto; }
-article { transition:border-color 160ms ease,background-color 160ms ease; }
-article:hover { border-color:hsl(var(--primary)/.5);background:hsl(var(--muted)/.35); }
-article a { text-underline-offset:.2em; }
-article a:hover { text-decoration:underline; }
-article h2 { line-height:1.55; }
-article p { line-height:1.8; max-width:65ch; }
-nav a { border-bottom:1px solid hsl(var(--border));padding-bottom:.25rem; }
-nav a:focus-visible, article a:focus-visible { outline:2px solid hsl(var(--primary));outline-offset:5px; }
-@media(max-width:640px) { article {padding:1.1rem;} h1 {font-size:2rem;} }
-@media(prefers-reduced-motion:reduce) { article {transition:none;} }
+  .home-page{max-width:64rem;margin:auto;}
+  .home-cover{position:relative;isolation:isolate;overflow:hidden;border-radius:1.4rem;min-height:22rem;display:flex;align-items:center;background:#293456;color:#fff;}
+  .cover-image,.cover-shade{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% center;z-index:-1;}
+  .cover-shade{background:linear-gradient(90deg,rgba(16,22,51,.65),transparent 85%);}
+  .cover-content{padding:2.7rem 3rem;position:relative;z-index:1;}
+  .cover-copy .eyebrow{font-size:.8rem;letter-spacing:.16em;opacity:.85;margin:0 0 .8rem;}
+  h1{font-size:clamp(2.7rem,5vw,4.4rem);line-height:1.15;letter-spacing:-.04em;font-weight:700;margin:0;}
+  .tagline{font-size:1.1rem;letter-spacing:.09em;margin:1rem 0 1.5rem;}
+  .cover-actions{display:flex;gap:.65rem;flex-wrap:wrap;}
+  .cover-actions a{display:inline-flex;align-items:center;min-height:40px;padding:.5rem .8rem;border-radius:.65rem;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.09);color:inherit;font-size:.78rem;}
+  .cover-actions a:hover{background:rgba(255,255,255,.18);}
+  .cover-caption{position:absolute;right:1.1rem;bottom:.8rem;font-size:.65rem;opacity:.7;}
+  .cover-wave{display:none;position:absolute;bottom:-1rem;left:-20%;width:140%;height:2.5rem;background:hsl(var(--background)/.7);clip-path:ellipse(65% 55% at 50% 100%);}
+  :global(html[data-banner-waves='true']) .cover-wave{display:block;}
+  :global(html[data-banner-title='false']) .cover-copy{visibility:hidden;}
+  :global(html[data-wallpaper='fullscreen']) .home-cover{min-height:calc(100svh - 8rem);}
+  :global(html[data-wallpaper='hidden']) .home-cover{min-height:0;background:hsl(var(--muted));color:hsl(var(--foreground));}
+  :global(html[data-wallpaper='hidden']) :is(.cover-image,.cover-shade,.cover-caption,.cover-wave){display:none;}
+  :global(html[data-wallpaper='hidden']) .cover-actions a{border-color:hsl(var(--border));background:hsl(var(--background));}
+  :global(html[data-wallpaper='hidden'][data-banner-title='false']) .cover-copy{display:none;}
+  home-feed{display:block;}
+  .feed-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:2.5rem 0 1.25rem;scroll-margin-top:6.5rem;}
+  .feed-kicker{font-size:.72rem;color:hsl(var(--muted-foreground));margin:0 0 .4rem;}
+  h2{font-size:1.4rem;line-height:1.4;font-weight:650;margin:0;}h2 span{font-size:.72rem;font-weight:400;color:hsl(var(--muted-foreground));margin-left:.5rem;}
+  .layout-actions{display:flex;gap:.2rem;}
+  .layout-actions button{min-height:40px;min-width:44px;padding:.4rem .6rem;border:1px solid transparent;border-radius:.6rem;color:hsl(var(--muted-foreground));background:transparent;font-size:.75rem;cursor:pointer;}
+  .layout-actions button[aria-pressed=true]{color:hsl(var(--primary));background:hsl(var(--primary)/.08);border-color:hsl(var(--primary)/.15);}
+  .home-posts{display:grid;gap:1rem;}
+  .post-card{display:flex;flex-direction:row-reverse;align-items:center;gap:1.5rem;padding:1.5rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.9);}
+  .post-copy{flex:1;min-width:0;}
+  .post-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem .65rem;font-size:.7rem;color:hsl(var(--muted-foreground));}
+  .post-meta :global(svg){width:14px;height:14px;color:hsl(var(--primary));}
+  .post-meta a{color:hsl(var(--primary));}
+  h3{font-size:1.15rem;font-weight:650;line-height:1.6;margin:.65rem 0 .45rem;}
+  h3 span{font-size:.95rem;color:hsl(var(--primary));}
+  h3 a:hover{color:hsl(var(--primary));}
+  .post-copy p{font-size:.85rem;line-height:1.9;color:hsl(var(--muted-foreground));margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .post-cover{display:block;flex:0 0 11rem;overflow:hidden;border-radius:.7rem;align-self:stretch;}
+  .post-cover :global(img){width:100%;height:100%;max-height:11rem;object-fit:cover;}
+  :global(html[data-post-layout='grid']) .home-posts{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
+  :global(html[data-post-layout='grid']) .post-card{display:block;padding:1.1rem;height:100%;}
+  :global(html[data-post-layout='grid']) .post-cover{margin:-1.1rem -1.1rem 1.1rem;border-radius:1rem 1rem 0 0;}
+  :global(html[data-post-layout='grid']) .post-cover :global(img){aspect-ratio:16/9;max-height:none;display:block;}
+  .feed-end{margin:2rem 0 3rem;text-align:center;color:hsl(var(--muted-foreground));font-size:.75rem;}
+  :is(a,button):focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px;}
+  @media(max-width:640px){
+    .home-cover{min-height:16.5rem;border-radius:1.05rem;}
+    .cover-content{padding:2rem 1.3rem;}
+    h1{font-size:2.6rem;}.tagline{font-size:.95rem;}.cover-copy .eyebrow{font-size:.7rem;}
+    .cover-caption{font-size:.55rem;}.cover-actions{gap:.4rem;}.cover-actions a{font-size:.73rem;padding:.4rem .65rem;}
+    .feed-heading{margin:1.8rem 0 1rem;}h2{font-size:1.2rem;}.feed-kicker{font-size:.65rem;}
+    .post-card{display:block;padding:1.05rem;}
+    .post-cover{display:block;margin:-1.05rem -1.05rem 1rem;border-radius:1rem 1rem 0 0;}
+    .post-cover :global(img){display:block;aspect-ratio:16/9;max-height:12rem;}
+    h3{font-size:1.05rem;}.post-copy p{font-size:.8rem;}
+    :global(html[data-post-layout='grid']) .home-posts{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;}
+    :global(html[data-post-layout='grid']) .post-card{padding:.8rem;}
+    :global(html[data-post-layout='grid']) h3{font-size:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+    :global(html[data-post-layout='grid']) .post-copy p{-webkit-line-clamp:1;font-size:.75rem;}
+    :global(html[data-post-layout='grid']) .post-meta a{display:none;}
+    :global(html[data-post-layout='grid']) .post-cover{margin:-.8rem -.8rem .8rem;}
+  }
+  @media(prefers-reduced-motion:no-preference){:global(html[data-banner-waves='true']) .cover-wave{animation:wave-drift 7s ease-in-out infinite alternate;}}
+  @keyframes wave-drift{to{transform:translateX(8%);}}
 </style>

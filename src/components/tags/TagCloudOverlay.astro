@@ -10,12 +10,12 @@ const allTags = getUniqueTagsWithCount(allPosts).sort(
 const maxTagCount = Math.max(...allTags.map(([, count]) => count), 1)
 ---
 
-<dialog class='tagcloud-overlay' data-tagcloud-overlay transition:persist='tagcloud-overlay'>
+<dialog class='tagcloud-overlay' data-tagcloud-overlay aria-labelledby='tagcloud-title' transition:persist='tagcloud-overlay'>
   <div class='tagcloud-modal'>
     <header class='tagcloud-header'>
       <div class='tagcloud-title'>
         <Icon name='hashtag' class='tagcloud-icon' />
-        <strong>标签云 / Tag Cloud</strong>
+        <strong id='tagcloud-title'>标签云</strong>
       </div>
       <button type='button' aria-label='关闭' data-tagcloud-close>×</button>
     </header>
@@ -30,7 +30,7 @@ const maxTagCount = Math.max(...allTags.map(([, count]) => count), 1)
             <a 
               href={`/tags/${encodeURIComponent(tag)}`} 
               class='tag-cloud-item'
-              style={`--tag-size: ${size}rem; --tag-opacity: ${opacity};`}
+              style={`--tag-size: ${size}rem; --tag-mobile-size: ${0.85 + ratio * 0.2}rem; --tag-opacity: ${opacity};`}
             >
               <span class='tag-hash'>#</span>{tag}
               <span class='tag-count'>{count}</span>
@@ -46,28 +46,36 @@ const maxTagCount = Math.max(...allTags.map(([, count]) => count), 1)
   function setupTagCloud() {
     const dialog = document.querySelector<HTMLDialogElement>('[data-tagcloud-overlay]')
     if (!dialog) return
+    const tagWindow = window as Window & { tagCloudAbort?: AbortController }
+    tagWindow.tagCloudAbort?.abort()
+    const controller = new AbortController()
+    tagWindow.tagCloudAbort = controller
+    const { signal } = controller
+    const close = () => {
+      if (dialog.open) dialog.close()
+      document.documentElement.classList.remove('tagcloud-open')
+    }
 
     const openBtns = document.querySelectorAll('[data-tagcloud-trigger]')
     const closeBtn = dialog.querySelector('[data-tagcloud-close]')
 
     openBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
-        dialog.showModal()
+        if (!dialog.open) dialog.showModal()
         document.documentElement.classList.add('tagcloud-open')
-      })
+      }, { signal })
     })
 
-    closeBtn?.addEventListener('click', () => {
-      dialog.close()
-    })
+    closeBtn?.addEventListener('click', close, { signal })
 
     dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) dialog.close()
-    })
+      if (e.target === dialog || (e.target instanceof Element && e.target.closest('a[href]'))) close()
+    }, { signal })
 
     dialog.addEventListener('close', () => {
       document.documentElement.classList.remove('tagcloud-open')
-    })
+    }, { signal })
+    document.addEventListener('astro:before-swap', close, { signal })
   }
 
   setupTagCloud()
@@ -242,5 +250,18 @@ const maxTagCount = Math.max(...allTags.map(([, count]) => count), 1)
   .tag-cloud-item:hover .tag-count {
     color: hsl(var(--primary));
     background: hsl(var(--primary) / 0.2);
+  }
+  .tag-cloud-item:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:2px;}
+  .tagcloud-header button {min-width:44px;min-height:44px;}
+  @media(max-width:640px) {
+    .tagcloud-header {padding:.65rem .85rem;}
+    .tagcloud-title {font-size:.9rem;}
+    .tagcloud-content {padding:.75rem;}
+    .tag-cloud-wrapper {gap:.3rem .4rem;}
+    .tag-cloud-item {font-size:var(--tag-mobile-size);min-height:44px;align-items:center;padding:.35rem .5rem;}
+    .tag-count {font-size:.68rem;}
+  }
+  @media(prefers-reduced-motion:reduce) {
+    .tagcloud-overlay,.tag-cloud-item {transition:none;}
   }
 </style>

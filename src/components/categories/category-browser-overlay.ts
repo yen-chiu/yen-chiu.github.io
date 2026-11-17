@@ -89,6 +89,7 @@ const initialize = () => {
   dialog.dataset.initialized = 'true'
 
   const closeButton = dialog.querySelector<HTMLElement>('[data-category-browser-close]')
+  const upButton = dialog.querySelector<HTMLButtonElement>('[data-category-up]')
   const contextList = dialog.querySelector<HTMLElement>('[data-category-context]')
   const contentsList = dialog.querySelector<HTMLElement>('[data-category-contents]')
   const contentsTitleLabel = dialog.querySelector<HTMLElement>('[data-category-contents-title]')
@@ -273,6 +274,20 @@ const initialize = () => {
   let lastMouseX = -1
   let lastMouseY = -1
 
+  // On narrow screens the panes stack vertically. Move only their scroll host,
+  // so selection never scrolls the page behind the modal.
+  const revealMobilePane = (target: Element | null) => {
+    if (!target || !window.matchMedia('(max-width: 640px)').matches) return
+    requestAnimationFrame(() => {
+      const host = dialog.querySelector<HTMLElement>('.browser-columns')
+      if (!host || !dialog.open || !target.isConnected) return
+      host.scrollTo({
+        top: Math.max(0, host.scrollTop + target.getBoundingClientRect().top - host.getBoundingClientRect().top - 8),
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      })
+    })
+  }
+
   const makeRow = (item: BrowserItem, index: number, highlightedTitle?: string) => {
     const button = document.createElement('button')
     button.type = 'button'
@@ -300,7 +315,15 @@ const initialize = () => {
     count.textContent = item.type === 'folder' ? '›' : ''
     button.append(count)
 
-    button.addEventListener('click', () => selectIndex(index))
+    button.addEventListener('click', () => {
+      if (index < 0) return
+      if (window.matchMedia('(max-width: 640px)').matches && item.type === 'folder') {
+        enterFolder(item.path)
+      } else {
+        selectIndex(index)
+        revealMobilePane(preview.closest('.browser-column'))
+      }
+    })
     button.addEventListener('focus', () => selectIndex(index, false))
     button.addEventListener('mousemove', (e) => {
       if (e.clientX === lastMouseX && e.clientY === lastMouseY) return
@@ -365,6 +388,7 @@ const initialize = () => {
   }
 
   const renderContents = (focus = false) => {
+    if (upButton) upButton.disabled = !currentPath
     visibleItems = searchMode ? searchResults : itemsForCurrentPath()
     const folderCount = visibleItems.filter((item) => item.type === 'folder').length
     const postCount = visibleItems.length - folderCount
@@ -713,10 +737,12 @@ const initialize = () => {
 
   const enterFolder = (path: string) => {
     currentPath = normalizePath(path)
+    searchMode = false
     selectedIndex = 0
     renderContext()
     renderContents(true)
     saveState()
+    revealMobilePane(contentsList.closest('.browser-column'))
   }
 
   const activate = (item = selected) => {
@@ -1054,6 +1080,10 @@ const initialize = () => {
 
   // Prevent right-click from closing/opening things in the browser
   dialog.addEventListener('contextmenu', (e) => e.preventDefault(), { signal })
+  dialog.addEventListener('click', event => {
+    if (event.target instanceof Element && event.target.closest('a[href]')) dialog.close()
+  }, { signal })
+  document.addEventListener('astro:before-swap', () => { if (dialog.open) dialog.close() }, { signal })
 
   // Blur trigger on close to remove focus outline/decorations
   dialog.addEventListener('close', () => {
@@ -1062,6 +1092,7 @@ const initialize = () => {
   }, { signal })
 
   closeButton?.addEventListener('click', () => dialog.close(), { signal })
+  upButton?.addEventListener('click', () => enterFolder(currentPath.split('/').slice(0,-1).join('/')), { signal })
   dialog.addEventListener(
     'click',
     (event) => {

@@ -2,352 +2,159 @@
 import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 import config from 'virtual:config'
-
 import { Icon } from 'astro-pure/user'
-
 import Search from './Search.astro'
+import AppearancePanel from './appearance/AppearancePanel.astro'
+import { sitePath } from '@/utils/site-path'
 
-const imagePath = config.logo.src
-const images = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/*.{jpeg,jpg,png,gif,avif,webp}'
-)
-const logoImageModule = images[imagePath]
-const logoImage = logoImageModule ? await logoImageModule() : null
+const images=import.meta.glob<{default:ImageMetadata}>('/src/assets/*.{jpeg,jpg,png,gif,avif,webp}')
+const logoImage=images[config.logo.src] ? await images[config.logo.src]() : null
+// Icon-labelled groups and single expanded section follow Mizuki's NavMenuPanel.
+const groups=[
+  {title:'阅读',icon:'document',items:[
+    {title:'博客',icon:'document',href:'/blog'},{title:'分类',icon:'package',href:'/categories'},
+    {title:'标签',icon:'hashtag',href:'/tags'},{title:'时光机',icon:'calendar',href:'/archives'}
+  ]},
+  {title:'探索',icon:'earth',items:[
+    {title:'知识图谱',icon:'earth',action:'graph'},{title:'文件管理器',icon:'package',action:'folders'},
+    {title:'标签云',icon:'hashtag',action:'tags'},{title:'文档',icon:'document',href:'/docs'},
+    {title:'链接',icon:'link',href:'/links'},{title:'项目',icon:'bulb',href:'/projects'}
+  ]},
+  {title:'念真',icon:'moon',items:[
+    {title:'念真介绍',icon:'moon',href:'/persona'},{title:'进入聊天',icon:'link',href:'https://yenchiu.com/chat/'}
+  ]},
+  {title:'关于',icon:'info',items:[
+    {title:'关于我',icon:'info',href:'/about'},{title:'站点历程',icon:'time',href:'/about#journey'},
+    {title:'更新日志',icon:'list',href:'/about#changelog'}
+  ]}
+] as const
 ---
-
-<header-component
-  class='group sticky top-4 z-50 max-md:z-30 mb-12 flex items-center justify-between rounded-xl border border-transparent max-sm:py-1 sm:rounded-2xl'
-  transition:persist='site-header'
->
-  <a
-    class='z-30 flex items-center gap-2 text-xl font-medium group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
-    style='transition:margin-inline 0.3s'
-    href='/'
-    aria-label='Brand'
-    data-astro-prefetch
-  >
-    {
-      logoImage && (
-        <Image
-          id='header-avatar'
-          src={logoImage.default}
-          alt={config.logo.alt || 'Logo'}
-          class='h-8 w-8 rounded-full border border-foreground/20 transition-transform duration-600'
-          style='object-fit: cover;'
-          width={64}
-          height={64}
-          loading='eager'
-          fetchpriority='high'
-        />
-      )
-    }
+<header-component class='site-header group' transition:persist='site-header'>
+  <a class='brand' href={sitePath('/')} aria-label='Brand' data-astro-prefetch>
+    {logoImage && <Image id='header-avatar' src={logoImage.default} alt={config.logo.alt || 'Avatar'} width={64} height={64} loading='eager' />}
     <span>{config.title}</span>
   </a>
-
-  <div class='flex items-center gap-x-2'>
-    {/* Menu links */}
-    <div
-      id='headerExpandContent'
-      class='end-0 start-0 top-12 grid border border-transparent group-[.not-top]:rounded-xl group-[.expanded]:opacity-100 dark:group-[.expanded.not-top]:bg-muted max-sm:absolute max-sm:opacity-0 max-sm:group-[.not-top]:border-border max-sm:group-[.expanded.not-top]:bg-background max-sm:group-[.not-top]:px-4 max-sm:group-[.not-top]:py-2 sm:grid-rows-1'
-    >
-      <div class='flex flex-col items-center justify-center overflow-hidden sm:flex-row'>
-        {
-          config.header.menu.map((item) => (
-            <a
-              href={item.link}
-              class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
-              aria-label='Nav menu item'
-              data-astro-prefetch={item.link.startsWith('#') ? 'false' : 'load'}
-            >
-              {item.title}
-            </a>
-          ))
-        }
-      </div>
-    </div>
-
-    {/* buttons */}
-    <div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
-      <Search />
-      <button
-        aria-label='标签云'
-        data-tagcloud-trigger
-        class='flex h-8 w-8 items-center justify-center rounded text-foreground transition-colors hover:bg-muted sm:group-[.not-top]:rounded-xl'
-      >
-        <Icon class='size-5' name='hashtag' />
-      </button>
-      <button
-        aria-label='文件管理器'
-        title='文件管理器'
-        data-category-open
-        class='flex h-8 w-8 items-center justify-center rounded text-foreground transition-colors hover:bg-muted sm:group-[.not-top]:rounded-xl'
-      >
-        <Icon class='size-5' name='package' />
-      </button>
-      <button
-        aria-label='知识图谱'
-        title='知识图谱'
-        data-graph-open
-        class='flex h-8 w-8 items-center justify-center rounded text-foreground transition-colors hover:bg-muted sm:group-[.not-top]:rounded-xl'
-      >
-        <Icon class='size-5' name='earth' />
-      </button>
-      <button
-        id='toggleDarkMode'
-        class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
-      >
-        <span class='sr-only'>Dark Theme</span>
-        <Icon class='system size-5 group-hover/dark:text-primary' name='computer' />
-        <Icon class='light hidden size-5 group-hover/dark:text-primary' name='sun' />
-        <Icon class='dark hidden size-5 group-hover/dark:text-primary' name='moon' />
-      </button>
-      <button
-        id='toggleMenu'
-        aria-controls='headerExpandContent'
-        aria-expanded='false'
-        class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
-      >
-        <span class='sr-only'>Menu</span>
-        <Icon class='size-5' name='menu' />
-      </button>
-    </div>
+  <div id='headerExpandContent' class='navigation-panel'>
+    <nav aria-label='主导航'>
+      <a class='nav-home' href={sitePath('/')}><Icon name='location' />首页</a>
+      {groups.map(group=><details class='nav-group'>
+        <summary><Icon name={group.icon}/><span>{group.title}</span><i class='chevron' aria-hidden='true'></i></summary>
+        <div class='nav-submenu'>
+          {group.items.map(item=>'href' in item ?
+            <a href={sitePath(item.href)} target={item.href.startsWith('https:')?'_blank':undefined} rel={item.href.startsWith('https:')?'noopener noreferrer':undefined}>
+              <Icon name={item.icon}/><span>{item.title}</span>{item.href.startsWith('https:')&&<small aria-hidden='true'>↗</small>}
+            </a> :
+            <button type='button' data-graph-open={item.action==='graph'?'':undefined} data-category-open={item.action==='folders'?'':undefined} data-tagcloud-trigger={item.action==='tags'?'':undefined}><Icon name={item.icon}/><span>{item.title}</span></button>
+          )}
+        </div>
+      </details>)}
+    </nav>
   </div>
+  <div class='header-tools'>
+    <Search />
+    <button type='button' aria-label='标签云' data-tagcloud-trigger><Icon name='hashtag'/></button>
+    <button type='button' class='header-folder' aria-label='文件管理器' data-category-open><Icon name='package'/></button>
+    <button type='button' aria-label='知识图谱' data-graph-open><Icon name='earth'/></button>
+    <button type='button' id='toggleAppearance' aria-label='外观设置' aria-expanded='false' aria-controls='appearance-panel'>
+      <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' aria-hidden='true'><path d='M12 3a9 9 0 1 0 0 18h1a2.5 2.5 0 0 0 1.8-4.2c-.8-.8-.2-2.1.9-2.1H18a3 3 0 0 0 3-3C21 6.8 17 3 12 3Z'/><circle cx='7.5' cy='11' r='.8'/><circle cx='10' cy='7' r='.8'/><circle cx='15' cy='7.5' r='.8'/></svg>
+    </button>
+    <button type='button' id='toggleMenu' aria-label='菜单' aria-controls='headerExpandContent' aria-expanded='false'><Icon name='menu'/></button>
+  </div>
+  <AppearancePanel/>
 </header-component>
-
-{/* Use inline to load icon quicker firstly */}
-<script is:inline>
-  const toggleDarkModeElement = document.getElementById('toggleDarkMode')
-  if (toggleDarkModeElement) {
-    toggleDarkModeElement.dataset.theme = localStorage.getItem('theme') || 'system'
-  }
-</script>
 <script>
-  import { setTheme, showToast } from 'astro-pure/utils'
-
   class HeaderComponent extends HTMLElement {
-    private controller?: AbortController
-
-    connectedCallback() {
-      this.controller?.abort()
-      this.controller = new AbortController()
-      const { signal } = this.controller
-
-      // Header
-      let preScrollY = window.scrollY
-      this.classList.toggle('not-top', preScrollY > 20)
-      window.addEventListener(
-        'scroll',
-        () => {
-          this.classList.toggle('not-top', window.scrollY > 20)
-          this.dataset.show = (window.scrollY < 350 || window.scrollY < preScrollY).toString()
-          preScrollY = window.scrollY
-        },
-        { passive: true, signal }
-      )
-
-      // Dark Mode
-      const darkModeBtn = this.querySelector('#toggleDarkMode') as HTMLElement
-      darkModeBtn.addEventListener(
-        'click',
-        () => {
-          const newTheme = setTheme(undefined, true)
-          darkModeBtn.dataset.theme = newTheme
-          showToast({ message: `Set theme to ${newTheme}` })
-        },
-        { signal }
-      )
-
-      // Menu
-      const menuButton = this.querySelector('#toggleMenu')
-      const closeMenu = () => {
-        this.classList.remove('expanded')
-        menuButton?.setAttribute('aria-expanded', 'false')
+    private controller?:AbortController
+    connectedCallback(){
+      this.controller?.abort();this.controller=new AbortController()
+      const {signal}=this.controller
+      const menu=this.querySelector<HTMLButtonElement>('#toggleMenu')!
+      const appearance=this.querySelector<HTMLButtonElement>('#toggleAppearance')!
+      const panel=this.querySelector<HTMLElement>('#appearance-panel')!
+      const closeGroups=()=>this.querySelectorAll<HTMLDetailsElement>('.nav-group[open]').forEach(d=>d.open=false)
+      const closeNav=()=>{this.classList.remove('expanded');menu.setAttribute('aria-expanded','false');closeGroups()}
+      const closeAppearance=()=>{panel.hidden=true;appearance.setAttribute('aria-expanded','false')}
+      const closeAll=()=>{closeNav();closeAppearance()}
+      menu.addEventListener('click',()=>{
+        const open=!this.classList.contains('expanded')
+        closeAll();this.classList.toggle('expanded',open);menu.setAttribute('aria-expanded',String(open))
+      },{signal})
+      appearance.addEventListener('click',()=>{
+        const open=panel.hidden;closeAll();panel.hidden=!open;appearance.setAttribute('aria-expanded',String(open))
+      },{signal})
+      this.querySelector('[data-appearance-close]')?.addEventListener('click',()=>{closeAppearance();appearance.focus()},{signal})
+      this.addEventListener('toggle',event=>{
+        const target=event.target
+        if(!(target instanceof HTMLDetailsElement)||!target.classList.contains('nav-group')||!target.open)return
+        this.querySelectorAll<HTMLDetailsElement>('.nav-group').forEach(other=>{if(other!==target)other.open=false})
+      },{capture:true,signal})
+      this.addEventListener('click',event=>{
+        const target=event.target as Element
+        if(target.closest('summary'))closeAppearance()
+        if(target.closest('a,[data-graph-open],[data-tagcloud-trigger],[data-category-open],.search-button'))closeAll()
+      },{signal})
+      document.addEventListener('pointerdown',event=>{if(!this.contains(event.target as Node))closeAll()},{signal})
+      document.addEventListener('keydown',event=>{
+        if(event.key!=='Escape')return
+        const wasAppearance=!panel.hidden,wasMenu=this.classList.contains('expanded')||!!this.querySelector('.nav-group[open]')
+        closeAll()
+        if(wasAppearance)appearance.focus()
+        else if(wasMenu&&matchMedia('(max-width:900px)').matches)menu.focus()
+      },{signal})
+      document.addEventListener('astro:before-swap',closeAll,{signal})
+      document.addEventListener('focusin',event=>{if(!this.contains(event.target as Node))closeAll()},{signal})
+      const sync=()=>{
+        closeAll()
+        const path=location.pathname.replace(/\/$/,'')
+        this.querySelectorAll<HTMLAnchorElement>('nav a').forEach(a=>{
+          const current=new URL(a.href).pathname.replace(/\/$/,'')===path&&!a.hash
+          if(current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')
+        })
       }
-      this.querySelector('#toggleMenu')?.addEventListener(
-        'click',
-        () => {
-          this.classList.toggle('expanded')
-          menuButton?.setAttribute('aria-expanded', String(this.classList.contains('expanded')))
-        },
-        { signal }
-      )
-      this.addEventListener('click', (event) => {
-        if ((event.target as Element).closest('a, [data-graph-open], [data-tagcloud-trigger], [data-category-open], .search-button')) closeMenu()
-      }, { signal })
-      document.addEventListener('astro:before-swap', closeMenu, { signal })
-      document.addEventListener('astro:page-load', closeMenu, { signal })
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') closeMenu()
-      }, { signal })
+      document.addEventListener('astro:page-load',sync,{signal});sync()
     }
-
-    disconnectedCallback() {
-      this.controller?.abort()
-    }
+    disconnectedCallback(){this.controller?.abort()}
   }
-
-  customElements.define('header-component', HeaderComponent)
-
-  // Avatar rotation only on homepage link hover in header
-  document.addEventListener('DOMContentLoaded', () => {
-    const headerAvatar = document.getElementById('header-avatar')
-    if (!headerAvatar) return
-
-    // Only listen to the homepage link (brand link)
-    const homeLink = document.querySelector('header-component a[href="/"]')
-    if (!homeLink) return
-
-    homeLink.addEventListener('mouseenter', () => {
-      headerAvatar.style.transform = 'rotate(360deg)'
-      headerAvatar.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'
-    })
-
-    homeLink.addEventListener('mouseleave', () => {
-      headerAvatar.style.transform = 'rotate(0deg)'
-    })
-  })
+  if(!customElements.get('header-component'))customElements.define('header-component',HeaderComponent)
 </script>
-
 <style>
-  header-component {
-    transition:
-      padding 0.3s,
-      transform 0.3s,
-      margin-inline 0.3s,
-      border 0.15s,
-      background-color 0.15s;
-
-    &.not-top {
-      --un-border-opacity: 1;
-      border-color: hsl(var(--border) / var(--un-border-opacity));
-      --un-bg-opacity: 1;
-      background-color: hsl(var(--background) / var(--un-bg-opacity));
-      padding-left: 0.375rem;
-      padding-right: 0.375rem;
-      box-shadow:
-        rgb(255, 255, 255) 0px 0px 0px 0px,
-        rgba(24, 24, 27, 0.08) 0px 0px 0px 1px,
-        rgba(39, 39, 42, 0.08) 0px 10px 15px -3px,
-        rgba(39, 39, 42, 0.08) 0px 4px 6px -4px;
-    }
-    &[data-show='false']:not(.expanded) {
-      transform: translateY(-5rem);
-    }
+  header-component{display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:1rem;z-index:50;isolation:isolate;margin:0 0 2rem;padding:.55rem .7rem;min-height:58px;border:1px solid hsl(var(--border)/.7);border-radius:1rem;}
+  header-component::before{content:'';position:absolute;inset:0;z-index:-1;background:hsl(var(--background)/.84);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:inherit;box-shadow:0 6px 24px hsl(var(--foreground)/.05);pointer-events:none;}
+  .brand{display:flex;align-items:center;gap:.55rem;font-size:1.1rem;font-weight:650;white-space:nowrap;flex-shrink:0;}
+  .brand :global(img){width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid hsl(var(--border));}
+  .header-tools{display:flex;align-items:center;gap:.15rem;}
+  .header-tools>button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:.7rem;background:transparent;cursor:pointer;color:inherit;flex-shrink:0;}
+  .header-tools :global(.search-button){width:40px;height:40px;padding:0;border-radius:.7rem;}
+  .header-tools :global(svg){width:21px;height:21px;}
+  .header-tools>button:hover,.header-tools>button[aria-expanded=true]{background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
+  #toggleMenu{display:none;}
+  nav{display:flex;gap:.15rem;}
+  .nav-group{position:relative;}
+  summary,.nav-home{display:flex;align-items:center;gap:.45rem;min-height:40px;padding:.4rem .65rem;border-radius:.6rem;font-size:.85rem;font-weight:550;cursor:pointer;list-style:none;}
+  summary::-webkit-details-marker{display:none;}
+  summary :global(svg),.nav-home :global(svg),.nav-submenu :global(svg){width:18px;height:18px;flex-shrink:0;color:hsl(var(--primary));}
+  summary:hover,.nav-group[open]>summary{color:hsl(var(--primary));background:hsl(var(--primary)/.09);}
+  .chevron{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-left:auto;}
+  .nav-group[open]>summary .chevron{transform:rotate(225deg);}
+  .nav-submenu{position:absolute;top:calc(100% + .55rem);left:0;width:13rem;padding:.4rem;background:hsl(var(--background)/.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid hsl(var(--border)/.7);border-radius:.85rem;box-shadow:0 12px 35px hsl(var(--foreground)/.12);}
+  .nav-submenu :is(a,button){display:flex;align-items:center;gap:.65rem;width:100%;min-height:42px;padding:.55rem .65rem;border:0;border-radius:.5rem;text-align:left;font:inherit;font-size:.82rem;color:inherit;background:transparent;cursor:pointer;}
+  .nav-submenu :is(a,button):hover,.nav-submenu a[aria-current=page]{background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
+  .nav-submenu small{margin-left:auto;}
+  .nav-home{display:none;}
+  :is(a,button,summary):focus-visible{outline:2px solid hsl(var(--primary));outline-offset:2px;}
+  @media(max-width:1050px){summary{padding-inline:.45rem;gap:.3rem;}summary :global(svg){display:none;}.brand span{font-size:1rem;}}
+  @media(max-width:900px){
+    #toggleMenu{display:grid;}
+    .navigation-panel{display:none;position:absolute;top:calc(100% + .6rem);right:0;width:min(17.5rem,calc(100vw - 2rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;padding:.5rem;border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;background:hsl(var(--background)/.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px hsl(var(--foreground)/.14);}
+    .expanded .navigation-panel{display:block;}
+    nav{display:block;}
+    summary,.nav-home{min-height:44px;padding:.65rem .7rem;font-size:.88rem;gap:.7rem;}
+    summary :global(svg){display:block;}
+    .nav-home{display:flex;}
+    .nav-group{position:static;}
+    .nav-submenu{position:static;width:100%;padding:.1rem 0 .35rem 1.1rem;background:transparent;backdrop-filter:none;border:0;box-shadow:none;}
+    .nav-submenu :is(a,button){min-height:42px;font-size:.82rem;}
   }
-  @media (min-width: 800px) {
-    header-component.not-top {
-      margin-inline: 8%;
-    }
-  }
-  :global(.dark) header-component.not-top {
-    background-color: hsl(var(--muted) / var(--un-bg-opacity));
-  }
-
-  /* header menu */
-  @media (max-width: 640px) {
-    header-component > a[aria-label='Brand'] {
-      min-width: 2rem;
-      flex-shrink: 0;
-    }
-
-    header-component > a[aria-label='Brand'] span {
-      display: none;
-    }
-
-    header-component > div > .z-30 {
-      gap: 0.5rem;
-    }
-  }
-
-  @media (max-width: 900px) {
-    #headerExpandContent {
-      position: absolute;
-      inset-inline: 0;
-      top: 3rem;
-      grid-template-rows: 0fr;
-      opacity: 0;
-      pointer-events: none;
-      transition:
-        opacity 0.3s,
-        padding 0.3s,
-        border-color 0.15s,
-        grid-template-rows 0.3s;
-    }
-
-    #headerExpandContent > div {
-      flex-direction: column;
-    }
-
-    #headerExpandContent a {
-      width: 100%;
-      padding: 0.5rem 0;
-      text-align: right;
-    }
-
-    .expanded #headerExpandContent {
-      grid-template-rows: 1fr;
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .expanded.not-top #headerExpandContent,
-    header-component:not(.not-top).expanded #headerExpandContent {
-      border-color: hsl(var(--border) / var(--un-border-opacity, 1));
-      border-radius: 0.75rem;
-      padding: 0.5rem 1rem;
-      background-color: hsl(var(--background) / var(--un-bg-opacity, 1));
-    }
-    .expanded.not-top #headerExpandContent {
-      box-shadow:
-        rgb(255, 255, 255) 0px 0px 0px 0px,
-        rgba(24, 24, 27, 0.08) 0px 0px 0px 1px,
-        rgba(39, 39, 42, 0.08) 0px 10px 15px -3px,
-        rgba(39, 39, 42, 0.08) 0px 4px 6px -4px;
-    }
-
-    /* header component after */
-    header-component #headerExpandContent::after {
-      box-sizing: content-box;
-      content: '';
-      position: absolute;
-      inset-inline: calc(-1rem - 1px);
-      bottom: 0;
-      top: -5rem;
-      z-index: -1;
-      transition: 0.3s;
-      visibility: hidden;
-      opacity: 0;
-      border-bottom: 1px solid transparent;
-    }
-    header-component:not(.not-top) #headerExpandContent::after {
-      visibility: visible;
-      bottom: -1rem;
-      opacity: 1;
-      background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
-      border-bottom-color: hsl(var(--border) / var(--un-border-opacity, 1));
-    }
-
-    #toggleMenu {
-      display: grid !important;
-    }
-  }
-
-  /* dark light mode toggle */
-  #toggleDarkMode {
-    &[data-theme='dark'] {
-      & .system {
-        display: none;
-      }
-      & .dark {
-        display: block;
-      }
-    }
-    &[data-theme='light'] {
-      & .system {
-        display: none;
-      }
-      .light {
-        display: block;
-      }
-    }
-  }
+  @media(max-width:600px){header-component{gap:.3rem;padding:.4rem .5rem;margin-bottom:1.25rem;}.brand span{display:none;}.brand :global(img){width:32px;height:32px;}.header-tools{gap:0;}}
+  @media(max-width:370px){.header-folder{display:none!important;}}
 </style>

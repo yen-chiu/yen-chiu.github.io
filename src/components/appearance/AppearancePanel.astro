@@ -1,0 +1,76 @@
+---
+const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},{name:'粉',hue:335},{name:'琥珀',hue:35}]
+---
+<appearance-panel id='appearance-panel' class='appearance-panel' hidden aria-label='外观设置'>
+  <header><strong>外观设置</strong><button type='button' data-appearance-close aria-label='关闭外观设置'>×</button></header>
+  <fieldset><legend>主题颜色 <output data-hue-value>267°</output></legend>
+    <div class='presets'>{presets.map(p => <button type='button' data-hue={p.hue} aria-pressed='false' style={`--swatch:hsl(${p.hue} 55% 58%)`}><i aria-hidden='true'></i>{p.name}</button>)}</div>
+    <input type='range' min='0' max='360' step='1' value='267' aria-label='主题色相' data-hue-slider />
+  </fieldset>
+  <fieldset><legend>显示模式</legend><div class='options'>{['system','light','dark'].map((value,i) => <button type='button' data-theme-choice={value} aria-pressed={i===0?'true':'false'}>{['跟随系统','浅色','深色'][i]}</button>)}</div></fieldset>
+  <fieldset><legend>背景</legend><div class='options wallpaper'>{['banner','fullscreen','overlay','hidden'].map((value,i) => <button type='button' data-wallpaper-choice={value} aria-pressed={i===0?'true':'false'}>{['横幅','全屏','叠加','隐藏'][i]}</button>)}</div></fieldset>
+  <fieldset><legend>文章布局</legend><div class='options'><button type='button' data-layout-choice='list' aria-pressed='true'>列表</button><button type='button' data-layout-choice='grid' aria-pressed='false'>网格</button></div></fieldset>
+  <fieldset><legend>封面选项</legend><label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label><label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label></fieldset>
+  <button class='reset' type='button' data-appearance-reset>恢复默认外观</button>
+</appearance-panel>
+<script>
+  import type { AppearanceSettings } from '../../types/appearance'
+  class AppearancePanel extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort();this.controller=new AbortController()
+      const {signal}=this.controller
+      const sync=()=>{
+        const s=window.wendellAppearance?.get()
+        if(!s)return
+        this.querySelectorAll<HTMLButtonElement>('[data-hue]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.hue)===s.hue)))
+        for(const [selector,key] of [['theme-choice','theme'],['wallpaper-choice','wallpaper'],['layout-choice','layout']] as const){
+          this.querySelectorAll<HTMLButtonElement>(`[data-${selector}]`).forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute(`data-${selector}`)===s[key])))
+        }
+        this.querySelector<HTMLOutputElement>('[data-hue-value]')!.value=`${s.hue}°`
+        this.querySelector<HTMLInputElement>('[data-hue-slider]')!.value=String(s.hue)
+        this.querySelector<HTMLInputElement>('[data-title-choice]')!.checked=s.title
+        this.querySelector<HTMLInputElement>('[data-waves-choice]')!.checked=s.waves
+      }
+      this.addEventListener('click',e=>{
+        const b=(e.target as Element).closest<HTMLButtonElement>('button');if(!b)return
+        const api=window.wendellAppearance;if(!api)return
+        if(b.hasAttribute('data-hue'))api.set({hue:Number(b.dataset.hue)})
+        if(b.dataset.themeChoice)api.set({theme:b.dataset.themeChoice as AppearanceSettings['theme']})
+        if(b.dataset.wallpaperChoice)api.set({wallpaper:b.dataset.wallpaperChoice as AppearanceSettings['wallpaper']})
+        if(b.dataset.layoutChoice)api.set({layout:b.dataset.layoutChoice as AppearanceSettings['layout']})
+        if(b.hasAttribute('data-appearance-reset'))api.reset()
+      },{signal})
+      this.querySelector('[data-hue-slider]')?.addEventListener('input',e=>window.wendellAppearance?.set({hue:Number((e.target as HTMLInputElement).value)}),{signal})
+      this.addEventListener('change',e=>{
+        const input=e.target as HTMLInputElement
+        if(input.hasAttribute('data-title-choice'))window.wendellAppearance?.set({title:input.checked})
+        if(input.hasAttribute('data-waves-choice'))window.wendellAppearance?.set({waves:input.checked})
+      },{signal})
+      window.addEventListener('wendell:appearance',sync,{signal});sync()
+    }
+    disconnectedCallback(){this.controller?.abort()}
+  }
+  if(!customElements.get('appearance-panel'))customElements.define('appearance-panel',AppearancePanel)
+</script>
+<style>
+  appearance-panel{position:absolute;right:0;top:calc(100% + .65rem);width:min(21rem,calc(100vw - 2rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;padding:1rem;border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;background:hsl(var(--background)/.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px hsl(var(--foreground)/.13);z-index:60;scrollbar-width:thin;}
+  appearance-panel[hidden]{display:none!important;}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;font-size:.95rem;}
+  button{font:inherit;cursor:pointer;color:inherit;}
+  header button{border:0;background:transparent;font-size:1.3rem;min-width:40px;min-height:40px;}
+  fieldset{border:0;padding:0;margin:1rem 0;min-width:0;}
+  legend{display:flex;justify-content:space-between;width:100%;font-size:.78rem;font-weight:650;margin-bottom:.65rem;}
+  output{color:hsl(var(--primary));font-variant-numeric:tabular-nums;}
+  .presets,.options{display:flex;gap:.3rem;}
+  .presets button,.options button{flex:1;min-height:40px;border:1px solid transparent;border-radius:.55rem;padding:.45rem .35rem;background:hsl(var(--muted)/.7);font-size:.73rem;white-space:nowrap;}
+  button[aria-pressed=true]{color:hsl(var(--primary));background:hsl(var(--primary)/.12);border-color:hsl(var(--primary)/.35);}
+  .presets i{display:block;width:.7rem;height:.7rem;border-radius:50%;background:var(--swatch);margin:0 auto .3rem;}
+  input[type=range]{width:100%;height:24px;margin-top:.85rem;appearance:none;border-radius:.4rem;background:linear-gradient(90deg,#e77a79,#e5c274,#7cc79c,#66b8cc,#8599e2,#c28cda,#e77a79);cursor:ew-resize;}
+  input[type=range]::-webkit-slider-thumb{appearance:none;width:12px;height:30px;border:2px solid hsl(var(--background));border-radius:.3rem;background:hsl(var(--foreground));}
+  input[type=range]::-moz-range-thumb{width:10px;height:26px;border:2px solid hsl(var(--background));border-radius:.3rem;background:hsl(var(--foreground));}
+  .switch{display:flex;justify-content:space-between;align-items:center;min-height:40px;font-size:.78rem;cursor:pointer;}
+  input[type=checkbox]{accent-color:hsl(var(--primary));width:1.1rem;height:1.1rem;}
+  .reset{width:100%;min-height:40px;border:1px solid hsl(var(--border));border-radius:.6rem;background:transparent;font-size:.78rem;}
+  :is(button,input):focus-visible{outline:2px solid hsl(var(--primary));outline-offset:2px;}
+</style>
