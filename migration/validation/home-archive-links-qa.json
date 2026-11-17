@@ -1,0 +1,82 @@
+{
+  "date": "2026-11-18",
+  "scope": "Full-screen home, blog layouts, interactive avatar, archives and links",
+  "browser": "Local production build in Chrome; responsive viewport simulation, not a physical phone",
+  "home": {
+    "article_elements": 0,
+    "initial_cover_height_at_390x844": 844,
+    "credit_after_scroll": "visible",
+    "glitch_animation": "name-shift observed after activation",
+    "avatar": "tap activation exercised; pointer-follow/reduced-motion code inspected",
+    "collapse_button_keyboard_activation": {
+      "viewport": "390x844",
+      "scrollY": 504,
+      "cover_height": 340,
+      "source_credit": "visible"
+    },
+    "note": "Automatic locator click centering scrolled the moving button away before activation; Enter activation verified the actual handler target.",
+    "desktop_collapse_height": 340.09375
+  },
+  "blog": {
+    "layout": "list/grid persisted through full reload and navigation to page 2",
+    "grid_columns_390": [
+      166.297,
+      166.305
+    ],
+    "grid_columns_320": [
+      131.297,
+      131.305
+    ],
+    "horizontal_overflow": false,
+    "pagination_page_2_articles": 8
+  },
+  "calendar": {
+    "publication_day_timezone": "Asia/Shanghai",
+    "2026-11-05_selected_articles": 3,
+    "2024-02_days": 29,
+    "month_navigation": "exercised",
+    "today": "exercised",
+    "mobile_horizontal_overflow": false,
+    "desktop_columns_1280": [
+      547.719,
+      476.273
+    ]
+  },
+  "sound": {
+    "start_pause_ui": "passed, aria-pressed toggled true/false",
+    "audible_output": "not verified",
+    "source": "locally synthesized filtered noise; no external recording",
+    "cleanup": "source-reviewed for navigation, disconnect and hidden document"
+  },
+  "links": {
+    "search_Mizuki": "1 matching card",
+    "no_results": "empty message shown",
+    "keyboard_ArrowRight": "selected next tab",
+    "copy_site_info": "已复制 feedback observed",
+    "horizontal_overflow": false,
+    "template_author_friends": "removed; friend section initially empty"
+  },
+  "regressions": [
+    "calendar civil-day/leap-year/Monday-first",
+    "appearance persistence/361 hue contrast",
+    "Pages paths",
+    "runtime paths",
+    "content links/backlinks",
+    "graph labels",
+    "17 original article SHA matches / 57 persona assets present"
+  ],
+  "limits": [
+    "No physical mobile test",
+    "Pointer-follow and OS reduced-motion behavior not directly exercised",
+    "No audible-output check or user-selected song playlist",
+    "Historical Giscus bodies and every external media remain earlier pending items"
+  ],
+  "final_build": {
+    "pages": 136,
+    "type_errors": 0,
+    "warnings": 0,
+    "existing_hints": 2,
+    "local_missing_resources": 0
+  },
+  "browser_console_note": "Final session included Chrome extension message-channel/Zotero errors; no page feature failure was observed. These are recorded, not counted as clean console evidence."
+}

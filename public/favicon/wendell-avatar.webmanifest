@@ -1,0 +1,14 @@
+{
+  "name": "Wendell",
+  "short_name": "Wendell",
+  "description": "读书，买花，长大。",
+  "icons": [
+    { "src": "wendell-avatar-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "wendell-avatar-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "start_url": "../",
+  "scope": "../",
+  "display": "browser",
+  "theme_color": "#8653b3",
+  "background_color": "#fcfbfe"
+}

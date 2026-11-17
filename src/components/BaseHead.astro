@@ -32,11 +32,11 @@ const socialImageURL = new URL(sitePath(ogImage || config.socialCard), Astro.sit
 <link rel='dns-prefetch' href='https://dummyjson.com' />
 
 {/* Icons / Favicon */}
-<link rel='icon' type='image/x-icon' sizes='16x16 32x32 48x48' href={sitePath('/favicon/moon-stars.ico')} />
-<link rel='icon' type='image/png' sizes='32x32' href={sitePath('/favicon/moon-stars-32.png')} />
-<link rel='icon' type={config.favicon.type} sizes='any' href={sitePath(config.favicon.href)} />
-<link rel='apple-touch-icon' sizes='180x180' href={sitePath('/favicon/moon-stars-180.png')} />
-<link rel='manifest' href={sitePath('/favicon/wendell.webmanifest')} />
+<link rel='icon' type='image/x-icon' sizes='16x16 32x32 48x48 64x64 128x128 256x256' href={sitePath('/favicon/wendell-avatar.ico')} />
+<link rel='icon' type='image/png' sizes='32x32' href={sitePath('/favicon/wendell-avatar-32.png')} />
+<link rel='icon' type={config.favicon.type} sizes={config.favicon.type === 'image/svg+xml' ? 'any' : '192x192'} href={sitePath(config.favicon.href)} />
+<link rel='apple-touch-icon' sizes='180x180' href={sitePath('/favicon/wendell-avatar-180.png')} />
+<link rel='manifest' href={sitePath('/favicon/wendell-avatar.webmanifest')} />
 
 {/* Font preloads */}
 <style>

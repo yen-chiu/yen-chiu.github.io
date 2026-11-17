@@ -1,4 +1,16 @@
-# Wendell website icon
+# Current Wendell website icon
+
+The current icon is exported from the transparent PNG supplied by the site owner
+on 2026-11-18. Its original artwork attribution has not been supplied. This file
+does not assert that the site owner created the illustration or relicense it.
+
+`wendell-avatar-source.png` retains the supplied pixels. The generator performs
+only size/format conversion with alpha preserved; the share card places a copy
+of the same image beside the site title. Homepage/about portraits are separate.
+
+The previous moon/star exports remain as historical assets with their notice:
+
+# Historical moon-and-stars icon
 
 Adapted from **Moon Stars** by **Nishanth kunder**, distributed by SVG Repo:
 https://www.svgrepo.com/svg/426321/moon-stars

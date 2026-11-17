@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-18",
+  "source": "user supplied transparent PNG",
+  "source_sha256": "4c3a2a70b3df075b98112acf2cdacaa2ab8d8a40272e7d474850146b031ca193",
+  "ico_frames": [
+    {
+      "size": 16,
+      "length": 618,
+      "alpha": true
+    },
+    {
+      "size": 32,
+      "length": 1553,
+      "alpha": true
+    },
+    {
+      "size": 48,
+      "length": 2907,
+      "alpha": true
+    },
+    {
+      "size": 64,
+      "length": 4613,
+      "alpha": true
+    },
+    {
+      "size": 128,
+      "length": 14396,
+      "alpha": true
+    },
+    {
+      "size": 256,
+      "length": 44920,
+      "alpha": true
+    }
+  ],
+  "icon_192": {
+    "channels": 4,
+    "corner_alpha": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "share_card": {
+    "width": 1200,
+    "height": 630
+  },
+  "visual_review": "light/dark background and share card passed; native browser-tab icon display not directly inspected",
+  "browser": {
+    "head_icon_links": "new ICO, PNG 32/192 and Apple 180 verified",
+    "og_image": "/yen-chiu-astro/images/wendell-avatar-card.png",
+    "links_card_image_loaded": true,
+    "temporary_viewport_reset": true
+  }
+}

@@ -1,4 +1,481 @@
 ---
-import PageLayout from '@/layouts/CommonPage.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
+import { sitePath } from '@/utils/site-path'
+
+import links from '../../public/links.json'
+
+const groups = links.friends,
+  total = groups.reduce((n, g) => n + g.link_list.length, 0)
+const info = `名称：Wendell
+简介：读书，买花，长大。
+博客：https://yenchiu.com/
+头像：https://yenchiu.com/yen-chiu-astro/favicon/wendell-avatar-192.png`
 ---
-<PageLayout title="链接"><a href="https://github.com/yen-chiu">GitHub</a></PageLayout>
+
+<BaseLayout meta={{ title: '链接', description: '我的网络角落、开源主题和友好邻居。' }}>
+  <main class='links-page'>
+    <KnowledgeIndexHero
+      icon='link'
+      eyebrow='WEB NEIGHBORHOOD'
+      title='链接'
+      description='常去的地方，认真做的站点，以及慢慢认识的朋友。'
+      stats={[
+        { label: '收录站点', value: total },
+        { label: '分组', value: groups.length },
+        { label: '友好邻居', value: groups.find(group=>group.id_name==='friends')?.link_list.length??0 }
+      ]}
+      statsLabel='链接统计'
+      symbol='↗'
+    />
+    <link-directory>
+      <div class='directory-tools'>
+        <div role='tablist' aria-label='链接分组'>
+          {
+            groups.map((g, i) => (
+              <button
+                type='button'
+                role='tab'
+                id={`link-tab-${g.id_name}`}
+                aria-controls={`link-panel-${g.id_name}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                data-link-tab={g.id_name}
+              >
+                {g.title}
+                <small>{g.link_list.length}</small>
+              </button>
+            ))
+          }
+        </div><label class='link-search'
+          ><span aria-hidden='true'>⌕</span><input
+            type='search'
+            aria-label='搜索链接'
+            placeholder='搜索名称或简介'
+          /></label>
+      </div>
+      {
+        groups.map((g, i) => (
+          <section
+            role='tabpanel'
+            id={`link-panel-${g.id_name}`}
+            aria-labelledby={`link-tab-${g.id_name}`}
+            hidden={i !== 0}
+            data-link-panel={g.id_name}
+          >
+            <>
+              <header class='group-heading'>
+                <>
+                  <h2>{g.title}</h2>
+                  <p>{g.desc}</p>
+                </>
+              </header>
+              <div class='link-cards'>
+                {g.link_list.map((link) => (
+                  <a
+                    href={link.link}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    class='link-card'
+                    data-link-card
+                    data-search={`${link.name} ${link.intro}`.toLowerCase()}
+                  >
+                    <span class='link-mark' aria-hidden='true'>
+                      {link.avatar ? (
+                        <img
+                          src={sitePath(link.avatar)}
+                          width='44'
+                          height='44'
+                          alt=''
+                          loading='lazy'
+                        />
+                      ) : 'mark' in link ? (
+                        link.mark
+                      ) : (
+                        '↗'
+                      )}
+                    </span>
+                    <span class='link-copy'>
+                      <strong>{link.name}</strong>
+                      <small>{link.intro}</small>
+                      <span>{new URL(link.link).hostname}</span>
+                    </span>
+                    <span class='link-arrow' aria-hidden='true'>
+                      ↗
+                    </span>
+                  </a>
+                ))}
+              </div>
+              <p class='directory-empty' data-link-empty hidden={g.link_list.length > 0}>
+                {g.id_name === 'friends'
+                  ? '这里为新朋友留个位置，欢迎通过下面的方式认识。'
+                  : '没有找到匹配的链接，试试其他关键词。'}
+              </p>
+            </>
+          </section>
+        ))
+      }
+      <p class='directory-count' data-link-status aria-live='polite'></p>
+    </link-directory>
+    <section class='link-about' aria-labelledby='exchange-title'>
+      <div>
+        <p class='kicker'>SAY HELLO</p><h2 id='exchange-title'>交换一个小小的入口</h2><p>
+          如果也在认真记录，欢迎带着站点名称、地址和一句介绍来打个招呼。
+        </p><a href={sitePath('/about#comments')}>去留言板认识一下 ↗</a>
+      </div><details>
+        <summary>本站信息与收录说明 <span aria-hidden='true'>＋</span></summary><pre
+          id='site-link-info'>{info}</pre><button type='button' data-copy-link-info
+          >复制本站信息</button
+        ><span class='copy-result' data-copy-result aria-live='polite'></span><ul>
+          <li>博客地址使用正式域名；头像暂用公开预览站的透明人物图标。</li><li>
+            友链由维护者人工确认，开源参考站单独分类。
+          </li><li>请提供可公开访问的个人站点和简短介绍。</li>
+        </ul>
+      </details>
+    </section>
+  </main>
+</BaseLayout>
+<script>
+  class LinkDirectory extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const tabs = [...this.querySelectorAll<HTMLButtonElement>('[data-link-tab]')],
+        input = this.querySelector<HTMLInputElement>('input')!,
+        panels = [...this.querySelectorAll<HTMLElement>('[data-link-panel]')]
+      let active = tabs[0].dataset.linkTab
+      const update = () => {
+        const query = input.value.trim().toLowerCase()
+        let count = 0
+        tabs.forEach((t) => {
+          const selected = t.dataset.linkTab === active
+          t.setAttribute('aria-selected', String(selected))
+          t.tabIndex = selected ? 0 : -1
+        })
+        panels.forEach((panel) => {
+          panel.hidden = panel.dataset.linkPanel !== active
+          let visible = 0
+          panel.querySelectorAll<HTMLElement>('[data-link-card]').forEach((card) => {
+            card.hidden = !card.dataset.search?.includes(query)
+            if (!card.hidden) visible++
+          })
+          panel.querySelector<HTMLElement>('[data-link-empty]')!.hidden = visible > 0
+          if (!panel.hidden) count = visible
+        })
+        this.querySelector<HTMLElement>('[data-link-status]')!.textContent =
+          `当前分组显示 ${count} 个站点`
+      }
+      tabs.forEach((tab, index) => {
+        tab.addEventListener(
+          'click',
+          () => {
+            active = tab.dataset.linkTab
+            update()
+          },
+          { signal }
+        )
+        tab.addEventListener(
+          'keydown',
+          (e) => {
+            let next = index
+            if (e.key === 'ArrowRight') next = (index + 1) % tabs.length
+            else if (e.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length
+            else if (e.key === 'Home') next = 0
+            else if (e.key === 'End') next = tabs.length - 1
+            else return
+            e.preventDefault()
+            active = tabs[next].dataset.linkTab
+            update()
+            tabs[next].focus()
+          },
+          { signal }
+        )
+      })
+      input.addEventListener('input', update, { signal })
+      update()
+    }
+    disconnectedCallback() {
+      this.controller?.abort()
+    }
+  }
+  if (!customElements.get('link-directory')) customElements.define('link-directory', LinkDirectory)
+  const setupCopy = () => {
+    const button = document.querySelector<HTMLButtonElement>('[data-copy-link-info]'),
+      info = document.querySelector<HTMLElement>('#site-link-info'),
+      result = document.querySelector<HTMLElement>('[data-copy-result]')
+    if (!button || !info || !result) return
+    button.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(info.textContent ?? '')
+        result.textContent = '已复制'
+      } catch {
+        result.textContent = '无法自动复制，请长按上方文字复制。'
+      }
+    }
+  }
+  setupCopy()
+  document.addEventListener('astro:page-load', setupCopy)
+</script>
+<style>
+  .links-page {
+    max-width: 64rem;
+    margin: 1.5rem auto 3rem;
+  }
+  link-directory {
+    display: block;
+    margin-top: 1.5rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.3rem;
+    padding: 1.5rem;
+    background: hsl(var(--background) / 0.92);
+  }
+  .directory-tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  [role='tablist'] {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+  [role='tab'] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    border: 1px solid transparent;
+    border-radius: 0.7rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    cursor: pointer;
+  }
+  [role='tab'][aria-selected='true'] {
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary) / 0.16);
+    background: hsl(var(--primary) / 0.09);
+  }
+  [role='tab'] small {
+    font-size: 0.6rem;
+    padding: 0.05rem 0.3rem;
+    border-radius: 0.3rem;
+    background: hsl(var(--primary) / 0.08);
+  }
+  .link-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 15rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.65rem;
+  }
+  .link-search span {
+    font-size: 1.4rem;
+    color: hsl(var(--primary));
+  }
+  .link-search input {
+    font-size: 0.75rem;
+    min-width: 0;
+    width: 100%;
+    min-height: 32px;
+    background: transparent;
+    border: 0;
+    color: inherit;
+  }
+  .group-heading {
+    margin: 1.4rem 0 1rem;
+  }
+  .group-heading h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .group-heading p {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    margin: 0.4rem 0 0;
+  }
+  .link-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+  .link-card {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted) / 0.5));
+  }
+  .link-card[hidden] {
+    display: none;
+  }
+  .link-mark {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 0.8rem;
+    background: hsl(var(--primary) / 0.09);
+    color: hsl(var(--primary));
+    font-size: 1.3rem;
+  }
+  .link-mark img {
+    max-width: 100%;
+    height: auto;
+  }
+  .link-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 0.25rem;
+    flex: 1;
+  }
+  .link-copy strong {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .link-copy small {
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: hsl(var(--muted-foreground));
+  }
+  .link-copy > span {
+    font-size: 0.6rem;
+    color: hsl(var(--muted-foreground));
+    word-break: break-all;
+  }
+  .link-arrow {
+    color: hsl(var(--primary));
+  }
+  .link-card:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    background: hsl(var(--primary) / 0.05);
+  }
+  .directory-empty {
+    font-size: 0.8rem;
+    line-height: 1.9;
+    padding: 2rem 1rem;
+    text-align: center;
+    color: hsl(var(--muted-foreground));
+  }
+  .directory-count {
+    font-size: 0.65rem;
+    color: hsl(var(--muted-foreground));
+    margin: 1.2rem 0 0;
+  }
+  .link-about {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.3rem;
+    background: hsl(var(--background) / 0.8);
+  }
+  .kicker {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: hsl(var(--primary));
+    margin: 0 0 0.5rem;
+  }
+  .link-about h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .link-about p:not(.kicker) {
+    font-size: 0.78rem;
+    line-height: 1.9;
+    color: hsl(var(--muted-foreground));
+    margin: 0.7rem 0;
+  }
+  .link-about a {
+    font-size: 0.78rem;
+    color: hsl(var(--primary));
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+  .link-about summary {
+    cursor: pointer;
+    font-size: 0.83rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+  }
+  .link-about pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 0.7rem;
+    line-height: 1.9;
+    padding: 0.8rem;
+    background: hsl(var(--muted));
+    border-radius: 0.7rem;
+  }
+  .link-about button {
+    min-height: 44px;
+    font-size: 0.73rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.6rem;
+    color: hsl(var(--primary));
+    background: transparent;
+    cursor: pointer;
+  }
+  .link-about ul {
+    padding-left: 1rem;
+    font-size: 0.7rem;
+    line-height: 1.9;
+    color: hsl(var(--muted-foreground));
+    margin: 0.75rem 0;
+  }
+  .copy-result {
+    font-size: 0.7rem;
+    color: hsl(var(--primary));
+    margin-left: 0.5rem;
+  }
+  :is(a, button, input, summary):focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 3px;
+  }
+  @media (max-width: 700px) {
+    link-directory {
+      padding: 1rem;
+    }
+    .directory-tools {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .link-search {
+      max-width: none;
+    }
+    .link-cards,
+    .link-about {
+      grid-template-columns: 1fr;
+    }
+    .link-about {
+      padding: 1.1rem;
+      gap: 1rem;
+    }
+    .links-page {
+      margin-top: 1rem;
+    }
+    .link-card {
+      padding: 0.9rem;
+    }
+  }
+</style>

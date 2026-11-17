@@ -1,117 +1,567 @@
 ---
 import { Image } from 'astro:assets'
 import { getCollection } from 'astro:content'
-import { BackToTop } from 'astro-pure/components/pages'
+
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getPostPath } from '@/utils/content-paths'
+import InteractiveAvatar from '@/components/InteractiveAvatar.astro'
 import { sitePath } from '@/utils/site-path'
-import { Icon } from 'astro-pure/user'
-const posts=(await getCollection('blog')).filter(p=>!p.data.draft).sort((a,b)=>b.data.publishDate.valueOf()-a.data.publishDate.valueOf())
+import avatar from '@/assets/avatar.png'
+
+const posts = (await getCollection('blog')).filter((p) => !p.data.draft)
+const entries = [
+  { title: '博客', desc: '技术实践与生活记录', path: '/blog', symbol: '✎' },
+  { title: '时光机', desc: '在日历里回看写作', path: '/archives', symbol: '◷' },
+  { title: '念真', desc: '一个一直在生长的故事', path: '/persona', symbol: '☾' },
+  { title: '链接', desc: '常去的地方与网络邻居', path: '/links', symbol: '↗' }
+]
 ---
-<BaseLayout meta={{title:'Wendell'}}>
+
+<BaseLayout meta={{ title: 'Wendell', description: '读书，买花，长大。Wendell 的个人博客。' }}>
   <main class='home-page'>
-    <section class='home-cover' aria-label='首页封面'>
-      <img class='cover-image' src={sitePath('/images/moonlit-cover.svg')} alt='' width='1600' height='700' fetchpriority='high' />
-      <div class='cover-shade'></div>
-      <div class='cover-content'>
-        <div class='cover-copy'><p class='eyebrow'>代码、阅读与生活</p><h1 id='home-title'>Wendell</h1><p class='tagline'>读书，买花，长大。</p></div>
-        <nav class='cover-actions' aria-label='首页入口'><a href='#latest'>开始阅读 ↓</a><a href={sitePath('/persona')}>念真</a><a href={sitePath('/about')}>关于我</a></nav>
-      </div>
-      <span class='cover-caption'>星夜 · 记录值得留下的片段</span>
-      <div class='cover-wave' aria-hidden='true'></div>
+    <landing-hero class='landing-track'>
+      <section class='home-cover' aria-label='首页封面'>
+        <img
+          class='cover-image'
+          src={sitePath('/images/moonlit-cover.svg')}
+          alt=''
+          width='1600'
+          height='700'
+          fetchpriority='high'
+        />
+        <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
+        <div class='hero-intro'>
+          <InteractiveAvatar
+            ><Image
+              id='home-avatar'
+              src={avatar}
+              alt='Wendell 的头像'
+              width={128}
+              height={128}
+              loading='eager'
+            /></InteractiveAvatar
+          >
+          <p class='eyebrow'>代码 · 阅读 · 生活</p>
+          <h1>
+            <button
+              class='glitch-name'
+              type='button'
+              data-text='Wendell'
+              aria-label='Wendell，触发名字动画'>Wendell</button
+            >
+          </h1>
+          <p class='tagline'>读书，买花，长大。</p>
+          <nav class='cover-actions' aria-label='首页入口'>
+            <a href={sitePath('/blog')}>进入博客 ↗</a><a href={sitePath('/about')}>关于我</a><a
+              href='https://github.com/yen-chiu'
+              target='_blank'
+              rel='noopener noreferrer'>GitHub ↗</a
+            >
+          </nav>
+        </div>
+        <button type='button' class='scroll-hint' data-collapse aria-label='向下滚动，收起全屏封面'
+          ><span>向下探索</span><b aria-hidden='true'>⌄</b></button
+        >
+        <a
+          class='cover-credit'
+          href='https://github.com/yen-chiu/yen-chiu-astro/blob/main/public/images/moonlit-cover.svg'
+          target='_blank'
+          rel='noopener noreferrer'
+          aria-label='查看星夜封面的矢量源文件'>ⓘ 星夜 · 本站矢量封面 ↗</a
+        >
+        <div class='cover-wave' aria-hidden='true'></div>
+      </section>
+    </landing-hero>
+    <section class='home-doorway' id='home-entries' aria-labelledby='doorway-title'>
+      <header>
+        <div>
+          <p class='section-kicker'>WELCOME TO MY CORNER</p><h2 id='doorway-title'>
+            你好，路过的朋友。
+          </h2><p>这里收集思考，也留下生活。找一个入口，慢慢逛。</p>
+        </div><a href='#' class='expand-cover'>展开封面 ↑</a>
+      </header>
+      <nav class='entry-grid' aria-label='探索本站'>
+        {
+          entries.map((e) => (
+            <a href={sitePath(e.path)}>
+              <>
+                <span class='entry-symbol' aria-hidden='true'>
+                  {e.symbol}
+                </span>
+                <strong>{e.title}</strong>
+                <p>{e.desc}</p>
+                <span class='entry-arrow' aria-hidden='true'>
+                  ↗
+                </span>
+              </>
+            </a>
+          ))
+        }
+      </nav>
+      <p class='home-note'>
+        从 2023 年开始记录，已留下 <a href={sitePath('/blog')}>{posts.length} 篇文章</a>。<a
+          href={sitePath('/rss.xml')}>订阅 RSS ↗</a
+        >
+      </p>
     </section>
-    <home-feed id='home-feed'>
-      <header class='feed-heading' id='latest'><div><p class='feed-kicker'>慢慢写，慢慢积累</p><h2>最近的记录 <span>{posts.length} 篇</span></h2></div><div class='layout-actions' aria-label='文章布局'><button type='button' data-home-layout='list' aria-pressed='true'>列表</button><button type='button' data-home-layout='grid' aria-pressed='false'>网格</button></div></header>
-      <div class='home-posts'>
-        {posts.map(post=><article class:list={['post-card',{'has-cover':!!post.data.heroImage}]}>
-          {post.data.heroImage&&<a class='post-cover' href={sitePath(getPostPath(post))} aria-label={`打开：${post.data.title}`}><Image src={post.data.heroImage.src} alt={post.data.heroImage.alt??''} width={720} height={420} loading='lazy'/></a>}
-          <div class='post-copy'><div class='post-meta'><Icon name='calendar'/><time datetime={post.data.publishDate.toISOString()}>{post.data.publishDate.toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'})}</time>{post.data.tags.slice(0,2).map(tag=><a href={sitePath('/tags/'+encodeURIComponent(tag))}>#{tag}</a>)}</div>
-          <h3><a href={sitePath(getPostPath(post))}>{post.data.title}<span aria-hidden='true'> ↗</span></a></h3><p>{post.data.description}</p></div>
-        </article>)}
-      </div>
-      <p class='feed-end'>写下的，都是来过的。</p>
-    </home-feed>
   </main>
-  <BackToTop header='home-title' content='home-feed' slot='overlay'/>
 </BaseLayout>
 <script>
-  import type {} from '../types/appearance'
-  class HomeFeed extends HTMLElement{
-    private controller?:AbortController
-    connectedCallback(){
-      this.controller?.abort();this.controller=new AbortController()
-      const {signal}=this.controller
-      const sync=()=>{const layout=window.wendellAppearance?.get().layout??'list';this.querySelectorAll<HTMLButtonElement>('[data-home-layout]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeLayout===layout)))}
-      this.addEventListener('click',event=>{const b=(event.target as Element).closest<HTMLButtonElement>('[data-home-layout]');if(b)window.wendellAppearance?.set({layout:b.dataset.homeLayout as 'list'|'grid'})},{signal})
-      window.addEventListener('wendell:appearance',sync,{signal});sync()
+  class LandingHero extends HTMLElement {
+    private controller?: AbortController
+    private frame = 0
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller,
+        cover = this.querySelector<HTMLElement>('.home-cover')!,
+        intro = this.querySelector<HTMLElement>('.hero-intro')!,
+        credit = this.querySelector<HTMLElement>('.cover-credit')!
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      const update = () => {
+        this.style.setProperty('--viewport-width', `${document.documentElement.clientWidth}px`)
+        const height = this.offsetHeight,
+          compact = Math.min(340, innerHeight * 0.42),
+          progress = Math.min(
+            1,
+            Math.max(0, -this.getBoundingClientRect().top) / (height - compact)
+          )
+        cover.style.height = `${height - (height - compact) * progress}px`
+        intro.style.opacity = String(1 - Math.min(1, progress * 1.8))
+        intro.style.visibility = progress > 0.6 ? 'hidden' : 'visible'
+        intro.style.transform = reduced.matches
+          ? ''
+          : `translateY(${-progress * 35}px) scale(${1 - progress * 0.06})`
+        credit.classList.toggle('is-visible', progress > 0.3)
+        this.classList.toggle('is-collapsed', progress > 0.6)
+      }
+      const schedule = () => {
+        cancelAnimationFrame(this.frame)
+        this.frame = requestAnimationFrame(update)
+      }
+      window.addEventListener('scroll', schedule, { passive: true, signal })
+      window.addEventListener('resize', schedule, { signal })
+      window.addEventListener('wendell:appearance', schedule, { signal })
+      this.querySelector('[data-collapse]')?.addEventListener(
+        'click',
+        () => {
+          const compact = Math.min(340, innerHeight * 0.42)
+          window.scrollTo({
+            top: window.scrollY + this.getBoundingClientRect().top + this.offsetHeight - compact,
+            behavior: reduced.matches ? 'instant' : 'smooth'
+          })
+        },
+        { signal }
+      )
+      const name = this.querySelector<HTMLButtonElement>('.glitch-name')!
+      name.addEventListener(
+        'click',
+        () => {
+          name.classList.remove('is-glitching')
+          void name.offsetWidth
+          name.classList.add('is-glitching')
+        },
+        { signal }
+      )
+      name.addEventListener('animationend', () => name.classList.remove('is-glitching'), { signal })
+      update()
     }
-    disconnectedCallback(){this.controller?.abort()}
+    disconnectedCallback() {
+      this.controller?.abort()
+      cancelAnimationFrame(this.frame)
+    }
   }
-  if(!customElements.get('home-feed'))customElements.define('home-feed',HomeFeed)
+  if (!customElements.get('landing-hero')) customElements.define('landing-hero', LandingHero)
 </script>
 <style>
-  .home-page{max-width:64rem;margin:auto;}
-  .home-cover{position:relative;isolation:isolate;overflow:hidden;border-radius:1.4rem;min-height:22rem;display:flex;align-items:center;background:#293456;color:#fff;}
-  .cover-image,.cover-shade{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% center;z-index:-1;}
-  .cover-shade{background:linear-gradient(90deg,rgba(16,22,51,.65),transparent 85%);}
-  .cover-content{padding:2.7rem 3rem;position:relative;z-index:1;}
-  .cover-copy .eyebrow{font-size:.8rem;letter-spacing:.16em;opacity:.85;margin:0 0 .8rem;}
-  h1{font-size:clamp(2.7rem,5vw,4.4rem);line-height:1.15;letter-spacing:-.04em;font-weight:700;margin:0;}
-  .tagline{font-size:1.1rem;letter-spacing:.09em;margin:1rem 0 1.5rem;}
-  .cover-actions{display:flex;gap:.65rem;flex-wrap:wrap;}
-  .cover-actions a{display:inline-flex;align-items:center;min-height:40px;padding:.5rem .8rem;border-radius:.65rem;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.09);color:inherit;font-size:.78rem;}
-  .cover-actions a:hover{background:rgba(255,255,255,.18);}
-  .cover-caption{position:absolute;right:1.1rem;bottom:.8rem;font-size:.65rem;opacity:.7;}
-  .cover-wave{display:none;position:absolute;bottom:-1rem;left:-20%;width:140%;height:2.5rem;background:hsl(var(--background)/.7);clip-path:ellipse(65% 55% at 50% 100%);}
-  :global(html[data-banner-waves='true']) .cover-wave{display:block;}
-  :global(html[data-banner-title='false']) .cover-copy{visibility:hidden;}
-  :global(html[data-wallpaper='fullscreen']) .home-cover{min-height:calc(100svh - 8rem);}
-  :global(html[data-wallpaper='hidden']) .home-cover{min-height:0;background:hsl(var(--muted));color:hsl(var(--foreground));}
-  :global(html[data-wallpaper='hidden']) :is(.cover-image,.cover-shade,.cover-caption,.cover-wave){display:none;}
-  :global(html[data-wallpaper='hidden']) .cover-actions a{border-color:hsl(var(--border));background:hsl(var(--background));}
-  :global(html[data-wallpaper='hidden'][data-banner-title='false']) .cover-copy{display:none;}
-  home-feed{display:block;}
-  .feed-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:2.5rem 0 1.25rem;scroll-margin-top:6.5rem;}
-  .feed-kicker{font-size:.72rem;color:hsl(var(--muted-foreground));margin:0 0 .4rem;}
-  h2{font-size:1.4rem;line-height:1.4;font-weight:650;margin:0;}h2 span{font-size:.72rem;font-weight:400;color:hsl(var(--muted-foreground));margin-left:.5rem;}
-  .layout-actions{display:flex;gap:.2rem;}
-  .layout-actions button{min-height:40px;min-width:44px;padding:.4rem .6rem;border:1px solid transparent;border-radius:.6rem;color:hsl(var(--muted-foreground));background:transparent;font-size:.75rem;cursor:pointer;}
-  .layout-actions button[aria-pressed=true]{color:hsl(var(--primary));background:hsl(var(--primary)/.08);border-color:hsl(var(--primary)/.15);}
-  .home-posts{display:grid;gap:1rem;}
-  .post-card{display:flex;flex-direction:row-reverse;align-items:center;gap:1.5rem;padding:1.5rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.9);}
-  .post-copy{flex:1;min-width:0;}
-  .post-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem .65rem;font-size:.7rem;color:hsl(var(--muted-foreground));}
-  .post-meta :global(svg){width:14px;height:14px;color:hsl(var(--primary));}
-  .post-meta a{color:hsl(var(--primary));}
-  h3{font-size:1.15rem;font-weight:650;line-height:1.6;margin:.65rem 0 .45rem;}
-  h3 span{font-size:.95rem;color:hsl(var(--primary));}
-  h3 a:hover{color:hsl(var(--primary));}
-  .post-copy p{font-size:.85rem;line-height:1.9;color:hsl(var(--muted-foreground));margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .post-cover{display:block;flex:0 0 11rem;overflow:hidden;border-radius:.7rem;align-self:stretch;}
-  .post-cover :global(img){width:100%;height:100%;max-height:11rem;object-fit:cover;}
-  :global(html[data-post-layout='grid']) .home-posts{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;}
-  :global(html[data-post-layout='grid']) .post-card{display:block;padding:1.1rem;height:100%;}
-  :global(html[data-post-layout='grid']) .post-cover{margin:-1.1rem -1.1rem 1.1rem;border-radius:1rem 1rem 0 0;}
-  :global(html[data-post-layout='grid']) .post-cover :global(img){aspect-ratio:16/9;max-height:none;display:block;}
-  .feed-end{margin:2rem 0 3rem;text-align:center;color:hsl(var(--muted-foreground));font-size:.75rem;}
-  :is(a,button):focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px;}
-  @media(max-width:640px){
-    .home-cover{min-height:16.5rem;border-radius:1.05rem;}
-    .cover-content{padding:2rem 1.3rem;}
-    h1{font-size:2.6rem;}.tagline{font-size:.95rem;}.cover-copy .eyebrow{font-size:.7rem;}
-    .cover-caption{font-size:.55rem;}.cover-actions{gap:.4rem;}.cover-actions a{font-size:.73rem;padding:.4rem .65rem;}
-    .feed-heading{margin:1.8rem 0 1rem;}h2{font-size:1.2rem;}.feed-kicker{font-size:.65rem;}
-    .post-card{display:block;padding:1.05rem;}
-    .post-cover{display:block;margin:-1.05rem -1.05rem 1rem;border-radius:1rem 1rem 0 0;}
-    .post-cover :global(img){display:block;aspect-ratio:16/9;max-height:12rem;}
-    h3{font-size:1.05rem;}.post-copy p{font-size:.8rem;}
-    :global(html[data-post-layout='grid']) .home-posts{grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;}
-    :global(html[data-post-layout='grid']) .post-card{padding:.8rem;}
-    :global(html[data-post-layout='grid']) h3{font-size:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-    :global(html[data-post-layout='grid']) .post-copy p{-webkit-line-clamp:1;font-size:.75rem;}
-    :global(html[data-post-layout='grid']) .post-meta a{display:none;}
-    :global(html[data-post-layout='grid']) .post-cover{margin:-.8rem -.8rem .8rem;}
+  .home-page {
+    margin-top: -90px;
   }
-  @media(prefers-reduced-motion:no-preference){:global(html[data-banner-waves='true']) .cover-wave{animation:wave-drift 7s ease-in-out infinite alternate;}}
-  @keyframes wave-drift{to{transform:translateX(8%);}}
+  .landing-track {
+    overflow-anchor: none;
+    display: block;
+    height: 100svh;
+    position: relative;
+    width: var(--viewport-width, 100%);
+    margin-left: calc(50% - var(--viewport-width, 100%) / 2);
+  }
+  .home-cover {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 230px;
+    isolation: isolate;
+    overflow: hidden;
+    background: #1e2948;
+    color: white;
+    display: grid;
+    place-items: center;
+  }
+  .cover-image,
+  .cover-shade,
+  .star-field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  .cover-image {
+    object-position: 65% center;
+  }
+  .cover-shade {
+    background: linear-gradient(180deg, #10172f44, #10172f33 30%, #10172fbb);
+  }
+  .star-field {
+    background-image:
+      radial-gradient(1px 1px at 15% 30%, #fff, transparent),
+      radial-gradient(2px 2px at 78% 25%, #fff8, transparent),
+      radial-gradient(1px 1px at 60% 55%, #fff, transparent);
+    background-size: 370px 310px;
+    pointer-events: none;
+  }
+  .hero-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 6rem 1rem 5rem;
+    will-change: opacity;
+  }
+  .hero-intro :global(img) {
+    width: 112px;
+    height: 112px;
+    border: 3px solid #ffffffaa;
+    box-shadow: 0 15px 55px #10172f70;
+  }
+  .eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    margin: 1.7rem 0 0.6rem;
+    opacity: 0.8;
+  }
+  h1 {
+    margin: 0;
+    line-height: 1.15;
+  }
+  .glitch-name {
+    position: relative;
+    font-size: clamp(3rem, 8vw, 5.7rem);
+    font-weight: 750;
+    letter-spacing: -0.04em;
+    color: inherit;
+    border: 0;
+    background: transparent;
+    padding: 0.1rem 0.2rem;
+    cursor: pointer;
+  }
+  .glitch-name::before,
+  .glitch-name::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    padding: inherit;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .glitch-name::before {
+    color: #8ce9ff;
+    clip-path: inset(18% 0 53% 0);
+  }
+  .glitch-name::after {
+    color: #eab0ff;
+    clip-path: inset(63% 0 12% 0);
+  }
+  .tagline {
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    margin: 1rem 0 1.8rem;
+    color: #ffffffe0;
+  }
+  .cover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+  .cover-actions a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.55rem 1rem;
+    font-size: 0.8rem;
+    color: white;
+    background: #ffffff12;
+    border: 1px solid #ffffff55;
+    border-radius: 2rem;
+    backdrop-filter: blur(12px);
+  }
+  .cover-actions a:hover {
+    background: #ffffff30;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 0;
+    background: transparent;
+    color: white;
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+  .scroll-hint b {
+    font-size: 1.7rem;
+    line-height: 1;
+  }
+  .is-collapsed .scroll-hint {
+    display: none;
+  }
+  .cover-credit {
+    position: absolute;
+    right: max(1.1rem, calc((100vw - 67rem) / 2));
+    bottom: 1.4rem;
+    background: #080e1bbd;
+    backdrop-filter: blur(10px);
+    border: 1px solid #ffffff22;
+    border-radius: 2rem;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.68rem;
+    color: #ffffffe0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s;
+  }
+  .cover-credit.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .cover-wave {
+    display: none;
+    position: absolute;
+    bottom: -1px;
+    left: -10%;
+    width: 120%;
+    height: 1.4rem;
+    background: hsl(var(--background));
+    clip-path: ellipse(60% 70% at 50% 100%);
+  }
+  :global(html[data-banner-waves='true']) .cover-wave {
+    display: block;
+  }
+  :global(html[data-banner-title='false']) :is(h1, .eyebrow, .tagline) {
+    visibility: hidden;
+  }
+  :global(html[data-wallpaper='hidden']) :is(.cover-image, .star-field) {
+    display: none;
+  }
+  :global(html[data-wallpaper='hidden']) .cover-credit {
+    display: none;
+  }
+  .home-doorway {
+    padding: 3rem 0 1.5rem;
+    max-width: 64rem;
+    margin: auto;
+    scroll-margin-top: calc(min(42svh, 340px) + 1rem);
+  }
+  .home-doorway header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+  }
+  .section-kicker {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: hsl(var(--primary));
+    margin: 0 0 0.5rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 650;
+  }
+  .home-doorway header p:not(.section-kicker) {
+    font-size: 0.83rem;
+    line-height: 1.8;
+    color: hsl(var(--muted-foreground));
+    margin: 0.6rem 0 1.5rem;
+  }
+  .expand-cover {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    color: hsl(var(--primary));
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .entry-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .entry-grid a {
+    position: relative;
+    padding: 1.5rem 1.1rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.15rem;
+    background: hsl(var(--background) / 0.9);
+  }
+  .entry-symbol {
+    display: block;
+    font-size: 1.6rem;
+    color: hsl(var(--primary));
+    margin-bottom: 1rem;
+  }
+  .entry-grid strong {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .entry-grid p {
+    font-size: 0.72rem;
+    line-height: 1.7;
+    margin: 0.5rem 0 0;
+    color: hsl(var(--muted-foreground));
+  }
+  .entry-arrow {
+    position: absolute;
+    right: 1.1rem;
+    top: 1.5rem;
+    color: hsl(var(--primary));
+  }
+  .entry-grid a:hover {
+    border-color: hsl(var(--primary) / 0.5);
+    background: hsl(var(--primary) / 0.04);
+  }
+  .home-note {
+    margin: 1.5rem 0 0;
+    font-size: 0.72rem;
+    line-height: 1.8;
+    color: hsl(var(--muted-foreground));
+  }
+  .home-note a {
+    color: hsl(var(--primary));
+  }
+  :is(a, button):focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 4px;
+  }
+  @media (max-width: 640px) {
+    .home-page {
+      margin-top: -78px;
+    }
+    .hero-intro :global(img) {
+      width: 100px;
+      height: 100px;
+    }
+    .entry-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
+    }
+    .home-doorway {
+      padding-top: 1.7rem;
+    }
+    h2 {
+      font-size: 1.25rem;
+    }
+    .home-doorway header {
+      align-items: start;
+    }
+    .home-doorway header p:not(.section-kicker) {
+      font-size: 0.75rem;
+    }
+    .entry-grid a {
+      padding: 1.1rem;
+    }
+    .cover-credit {
+      right: 1rem;
+      font-size: 0.6rem;
+    }
+    .tagline {
+      font-size: 0.88rem;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-intro {
+      animation: intro-in 0.7s ease-out both;
+    }
+    .star-field {
+      animation: twinkle 7s ease-in-out infinite alternate;
+    }
+    .scroll-hint b {
+      animation: hint 2s ease-in-out infinite;
+    }
+    .glitch-name:hover,
+    .glitch-name.is-glitching {
+      animation: name-shift 0.55s steps(2, end);
+    }
+    .glitch-name:hover::before,
+    .glitch-name.is-glitching::before {
+      animation: glitch-fragment 0.55s steps(2, end);
+    }
+    .glitch-name:hover::after,
+    .glitch-name.is-glitching::after {
+      animation: glitch-fragment 0.55s steps(2, end) reverse;
+    }
+  }
+  @keyframes intro-in {
+    from {
+      opacity: 0;
+      translate: 0 12px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+  @keyframes twinkle {
+    to {
+      opacity: 0.35;
+      translate: 0 5px;
+    }
+  }
+  @keyframes hint {
+    50% {
+      translate: 0 5px;
+    }
+  }
+  @keyframes name-shift {
+    20%,
+    60% {
+      text-shadow:
+        2px 0 #8ce9ff,
+        -2px 0 #eab0ff;
+    }
+    40%,
+    80% {
+      text-shadow:
+        -2px 0 #8ce9ff,
+        2px 0 #eab0ff;
+    }
+  }
+  @keyframes glitch-fragment {
+    15%,
+    45% {
+      opacity: 0.85;
+      transform: translateX(4px);
+    }
+    30%,
+    70% {
+      opacity: 0.7;
+      transform: translateX(-4px);
+    }
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
 </style>

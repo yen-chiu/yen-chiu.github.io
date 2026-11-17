@@ -1,39 +1,81 @@
 {
   "friends": [
     {
-      "id_name": "cf-links",
-      "desc": "Friend links included in circle friends",
+      "id_name": "own",
+      "title": "我的角落",
+      "desc": "可以找到我的地方。",
       "link_list": [
         {
-          "name": "灵的梦境",
-          "intro": "愿美梦成真",
-          "link": "https://lemonadorable.github.io/",
-          "avatar": "/favicon/favicon.gif"
+          "name": "Wendell · 原博客",
+          "intro": "从 2023 年开始记录技术与生活",
+          "link": "https://yenchiu.com/",
+          "avatar": "/favicon/wendell-avatar-192.png"
         },
         {
-          "name": "CWorld Site",
-          "intro": "求知若愚，虚怀若谷",
-          "link": "https://cworld0.com/",
-          "avatar": "https://gravatar.loli.net/avatar/1ffe42aa45a6b1444a786b1f32dfa8aa?s=200"
+          "name": "GitHub · yen-chiu",
+          "intro": "代码、实验与这个博客的源文件",
+          "link": "https://github.com/yen-chiu",
+          "avatar": "",
+          "mark": "⌘"
+        },
+        {
+          "name": "WendellManual",
+          "intro": "建站笔记、工具与持续整理的文档",
+          "link": "https://github.com/yen-chiu/WendellManual",
+          "avatar": "",
+          "mark": "▤"
+        },
+        {
+          "name": "X · Xiao_Bard",
+          "intro": "原博客公开资料中的社交主页",
+          "link": "https://x.com/Xiao_Bard",
+          "avatar": "",
+          "mark": "𝕏"
         }
       ]
     },
     {
-      "id_name": "inactive-links",
-      "desc": "Inactive or rule-breaking friends",
-      "link_list": []
-    },
-    {
-      "id_name": "special-links",
-      "desc": "Other special links",
+      "id_name": "references",
+      "title": "开源与阅读",
+      "desc": "本站使用的主题、参考站与原站收录的链接。",
       "link_list": [
         {
+          "name": "Iris · 灵的梦境",
+          "intro": "本站使用的 Astro 主题与设计来源",
+          "link": "https://lemonadorable.github.io/",
+          "avatar": "",
+          "mark": "I"
+        },
+        {
+          "name": "Fuwari",
+          "intro": "横幅与主题颜色交互的参考",
+          "link": "https://fuwari.vercel.app/",
+          "avatar": "",
+          "mark": "F"
+        },
+        {
+          "name": "Mizuki",
+          "intro": "玻璃导航、外观设置与日历的参考",
+          "link": "https://mizuki.mysqil.com/",
+          "avatar": "",
+          "mark": "M"
+        },
+        {
           "name": "Astro",
-          "intro": "The web framework for content-driven websites",
+          "intro": "构建本站的内容网站框架",
           "link": "https://astro.build/",
-          "avatar": "https://avatars.githubusercontent.com/u/44914786?s=200&v=4"
+          "avatar": "",
+          "mark": "A"
+        },
+        {
+          "name": "996.icu",
+          "intro": "原博客收录的外部链接",
+          "link": "https://996.icu/",
+          "avatar": "",
+          "mark": "↗"
         }
       ]
-    }
+    },
+    { "id_name": "friends", "title": "友好邻居", "desc": "慢慢认识，认真收录。", "link_list": [] }
   ]
 }

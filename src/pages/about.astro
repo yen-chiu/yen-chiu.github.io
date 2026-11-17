@@ -6,6 +6,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import { Giscus } from '@/components/giscus'
 import UpdateList from '@/components/about/UpdateList.astro'
 import avatar from '@/assets/avatar.png'
+import InteractiveAvatar from '@/components/InteractiveAvatar.astro'
 import profile from '../data/about.json'
 import changelog from '../data/changelog.json'
 import { getAllCategories, getPostPath } from '@/utils/content-paths'
@@ -47,7 +48,7 @@ const sections = [
           <p class='hero-since'>从 <time datetime={since}>2023.05.20</time> 开始，写着第 <strong data-about-days data-since={since}>{days.toLocaleString('zh-CN')}</strong> 天。</p>
         </div>
         <aside class='profile-card' aria-label='个人资料'>
-          <div class='avatar-wrap'><Image src={avatar} alt='Wendell 的头像' width={200} height={200} loading='eager' /></div>
+          <div class='avatar-wrap'><InteractiveAvatar><Image src={avatar} alt='Wendell 的头像' width={200} height={200} loading='eager' /></InteractiveAvatar></div>
           <p class='profile-handle'>{profile.profile.handle}</p>
           <p class='profile-role'>{profile.profile.role}</p>
           <dl class='profile-stats'>

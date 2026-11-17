@@ -1,19 +1,31 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 
-import { getBlogCollection, groupCollectionsByYear, sortMDByDate } from 'astro-pure/server'
+import { getBlogCollection } from 'astro-pure/server'
 import { Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import ArchiveCalendar from '@/components/archive/ArchiveCalendar.astro'
+import ReadingSound from '@/components/archive/ReadingSound.astro'
 import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
+import { dateKey } from '@/utils/calendar'
 import { getPostPath } from '@/utils/content-paths'
+import { sitePath } from '@/utils/site-path'
 
 export const prerender = true
 
 const allPosts = (await getBlogCollection('blog')) as CollectionEntry<'blog'>[]
-const allPostsByDate = sortMDByDate(allPosts) as CollectionEntry<'blog'>[]
-const allPostsByYear = groupCollectionsByYear<'blog'>(allPostsByDate)
+const allPostsByDate = [...allPosts].sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
+)
+const byYear = new Map<number, typeof allPosts>()
+allPostsByDate.forEach((post) => {
+  const year = Number(dateKey(post.data.publishDate).slice(0, 4))
+  if (!byYear.has(year)) byYear.set(year, [])
+  byYear.get(year)!.push(post)
+})
+const allPostsByYear = [...byYear.entries()]
 const effectiveDate = (post: (typeof allPosts)[number]) =>
-  new Date(post.data.updatedDate ?? post.data.publishDate)
+  new Date(dateKey(post.data.publishDate) + 'T12:00:00+08:00')
 const monthFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'long' })
 const dayFormatter = new Intl.DateTimeFormat('zh-CN', { month: '2-digit', day: '2-digit' })
 const fullDateFormatter = new Intl.DateTimeFormat('zh-CN', {
@@ -50,6 +62,16 @@ const archiveGroups = allPostsByYear.map(([year, posts]) => {
   }
 })
 
+const calendarItems = allPostsByDate.map((post) => ({
+  title: post.data.title,
+  date: dateKey(post.data.publishDate),
+  href: sitePath(getPostPath(post))
+}))
+const tagCount = new Set(allPosts.flatMap((post) => post.data.tags)).size
+const wordEstimate = allPosts.reduce(
+  (n, post) => n + (post.body?.match(/[\u3400-\u9fff]|[A-Za-z0-9]+/g)?.length ?? 0),
+  0
+)
 const meta = {
   description: '沿着时间线浏览所有文章与创作记录',
   title: '时光机'
@@ -72,6 +94,24 @@ const meta = {
       symbol='∞'
     />
 
+    <section class='archive-dashboard' aria-label='写作日历与数据'>
+      <ArchiveCalendar items={calendarItems} />
+      <div class='archive-sidecards'>
+        <section class='writing-data' aria-labelledby='writing-data-title'>
+          <p class='dashboard-kicker'>IN NUMBERS</p><h2 id='writing-data-title'>记录的刻度</h2><dl>
+            <div><dt>已发布文章</dt><dd>{allPosts.length}<small> 篇</small></dd></div><div>
+              <dt>主题标签</dt><dd>{tagCount}<small> 个</small></dd>
+            </div><div><dt>活跃月份</dt><dd>{activeMonths}<small> 个月</small></dd></div><div>
+              <dt>文字量（估算）</dt><dd>{wordEstimate.toLocaleString('zh-CN')}</dd>
+            </div>
+          </dl><p class='data-note'>按公开文章的发布日期统计；文字量为汉字与英文单词的近似计数。</p>
+        </section>
+        <section class='sound-card' aria-label='阅读环境声'><ReadingSound /></section>
+        <a class='dashboard-rss' href={sitePath('/rss.xml')}
+          >订阅这些记录 <span aria-hidden='true'>RSS ↗</span></a
+        >
+      </div>
+    </section>
     {
       allPosts.length > 0 ? (
         <>
@@ -313,7 +353,11 @@ const meta = {
   </main>
 
   <script>
+    let archiveController: AbortController | undefined
     const setupArchive = () => {
+      archiveController?.abort()
+      archiveController = new AbortController()
+      const { signal } = archiveController
       const input = document.querySelector<HTMLInputElement>('[data-archive-search]')
       const items = [...document.querySelectorAll<HTMLElement>('[data-archive-item]')]
       const years = [...document.querySelectorAll<HTMLDetailsElement>('[data-archive-year]')]
@@ -336,7 +380,12 @@ const meta = {
           if (yearDetails instanceof HTMLDetailsElement) yearDetails.open = true
 
           requestAnimationFrame(() => {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            target.scrollIntoView({
+              behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'instant'
+                : 'smooth',
+              block: 'start'
+            })
             history.replaceState(null, '', `#${targetId}`)
           })
         }
@@ -404,7 +453,7 @@ const meta = {
           }
         }
 
-        window.addEventListener('scroll', updateRocket, { passive: true })
+        window.addEventListener('scroll', updateRocket, { passive: true, signal })
         updateRocket()
       }
     }
@@ -425,12 +474,89 @@ const meta = {
       }
     }
 
+    document.addEventListener('astro:before-swap', () => archiveController?.abort())
     setupArchive()
     document.addEventListener('astro:page-load', setupArchive)
     document.addEventListener('keydown', focusArchiveSearch)
   </script>
 
   <style>
+    .archive-dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 1rem;
+      margin-top: 1.2rem;
+      align-items: start;
+    }
+    .archive-sidecards {
+      display: grid;
+      gap: 1rem;
+      min-width: 0;
+    }
+    .writing-data,
+    .sound-card {
+      padding: 1.4rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 1.25rem;
+      background: hsl(var(--background) / 0.92);
+    }
+    .dashboard-kicker {
+      font-size: 0.6rem;
+      color: hsl(var(--primary));
+      letter-spacing: 0.13em;
+      margin: 0 0 0.3rem;
+    }
+    .writing-data h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    .writing-data dl {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin: 1.4rem 0;
+    }
+    .writing-data dt {
+      font-size: 0.7rem;
+      color: hsl(var(--muted-foreground));
+    }
+    .writing-data dd {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin: 0.3rem 0 0;
+    }
+    .writing-data small {
+      font-size: 0.7rem;
+      font-weight: 400;
+    }
+    .data-note {
+      font-size: 0.65rem;
+      line-height: 1.8;
+      color: hsl(var(--muted-foreground));
+    }
+    .dashboard-rss {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      padding: 0.8rem 1rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.9rem;
+      color: hsl(var(--primary));
+      min-height: 44px;
+    }
+    @media (max-width: 700px) {
+      .archive-dashboard {
+        grid-template-columns: 1fr;
+      }
+      .writing-data,
+      .sound-card {
+        padding: 1.1rem;
+      }
+      .writing-data dl {
+        gap: 1rem;
+      }
+    }
+
     .archive-overview {
       margin-top: 2rem;
       padding: clamp(1rem, 3vw, 1.4rem);
@@ -783,8 +909,12 @@ const meta = {
       opacity: 0;
       transition: opacity 150ms ease;
     }
-    .archive-rocket__flame::before { left: -0.2rem; }
-    .archive-rocket__flame::after { right: -0.2rem; }
+    .archive-rocket__flame::before {
+      left: -0.2rem;
+    }
+    .archive-rocket__flame::after {
+      right: -0.2rem;
+    }
 
     /* === HOVER IGNITION === */
     .archive-rocket-wrapper:hover .archive-rocket__flame,
@@ -845,20 +975,42 @@ const meta = {
     }
 
     @keyframes rocket-rumble {
-      from { transform: translateY(-0.22rem) scale(1.06) translateX(-0.3px); }
-      to { transform: translateY(-0.22rem) scale(1.06) translateX(0.3px); }
+      from {
+        transform: translateY(-0.22rem) scale(1.06) translateX(-0.3px);
+      }
+      to {
+        transform: translateY(-0.22rem) scale(1.06) translateX(0.3px);
+      }
     }
 
     @keyframes spark-left {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      50% { opacity: 0.8; transform: translate(-4px, 6px) scale(0.7); }
-      100% { opacity: 0; transform: translate(-6px, 12px) scale(0.3); }
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: translate(-4px, 6px) scale(0.7);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-6px, 12px) scale(0.3);
+      }
     }
 
     @keyframes spark-right {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      50% { opacity: 0.8; transform: translate(4px, 6px) scale(0.7); }
-      100% { opacity: 0; transform: translate(6px, 12px) scale(0.3); }
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: translate(4px, 6px) scale(0.7);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(6px, 12px) scale(0.3);
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {

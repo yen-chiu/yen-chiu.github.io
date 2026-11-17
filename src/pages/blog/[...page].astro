@@ -6,6 +6,7 @@ import { render, type CollectionEntry } from 'astro:content'
 import { getBlogCollection, getUniqueTagsWithCount, sortMDByDate } from 'astro-pure/server'
 import { Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import PostLayoutToggle from '@/components/appearance/PostLayoutToggle.astro'
 import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
 import {
   getAllCategories,
@@ -141,6 +142,7 @@ const meta = {
               <p>
                 第 {page.currentPage} / {page.lastPage} 页 · 本页 {page.data.length} 篇
               </p>
+              <PostLayoutToggle />
             </header>
 
             <ol class='post-list'>
@@ -739,6 +741,64 @@ const meta = {
       .post-card__read {
         width: 100%;
         margin-left: 0;
+      }
+    }
+    :global(html[data-post-layout='grid']) .post-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+    }
+    :global(html[data-post-layout='grid']) .post-list > li {
+      min-width: 0;
+    }
+    :global(html[data-post-layout='grid']) .post-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    :global(html[data-post-layout='grid']) .post-card__main {
+      flex: 1;
+    }
+    :global(html[data-post-layout='grid']) .post-card__content {
+      padding: 1.15rem;
+    }
+    :global(html[data-post-layout='grid']) .post-card__bottom {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    @media (max-width: 640px) {
+      .stream-header {
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+      .stream-header p {
+        font-size: 0.65rem;
+      }
+      :global(html[data-post-layout='grid']) .post-list {
+        gap: 0.65rem;
+      }
+      :global(html[data-post-layout='grid']) .post-card {
+        border-radius: 0.9rem;
+      }
+      :global(html[data-post-layout='grid']) .post-card__content {
+        padding: 0.85rem;
+      }
+      :global(html[data-post-layout='grid']) .post-card__meta {
+        font-size: 0.6rem;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+      }
+      :global(html[data-post-layout='grid']) .post-card h3 {
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+      :global(html[data-post-layout='grid']) .post-card__content > p {
+        font-size: 0.72rem;
+      }
+      :global(html[data-post-layout='grid']) .post-card__bottom {
+        padding: 0.7rem 0.85rem;
+      }
+      :global(html[data-post-layout='grid']) .post-card__tags {
+        display: none;
       }
     }
   </style>

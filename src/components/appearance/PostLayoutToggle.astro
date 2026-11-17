@@ -1,0 +1,67 @@
+<post-layout-toggle role='group' aria-label='文章布局'
+  ><button type='button' data-post-layout='list' aria-pressed='true'>☰ 列表</button><button
+    type='button'
+    data-post-layout='grid'
+    aria-pressed='false'>▦ 网格</button
+  ></post-layout-toggle
+>
+<script>
+  import type {} from '../../types/appearance'
+
+  class PostLayoutToggle extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const sync = () =>
+        this.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+          b.setAttribute(
+            'aria-pressed',
+            String(b.dataset.postLayout === (window.wendellAppearance?.get().layout ?? 'list'))
+          )
+        )
+      this.addEventListener(
+        'click',
+        (e) => {
+          const b = (e.target as Element).closest<HTMLButtonElement>('button')
+          if (b) window.wendellAppearance?.set({ layout: b.dataset.postLayout as 'list' | 'grid' })
+        },
+        { signal }
+      )
+      window.addEventListener('wendell:appearance', sync, { signal })
+      sync()
+    }
+    disconnectedCallback() {
+      this.controller?.abort()
+    }
+  }
+  if (!customElements.get('post-layout-toggle'))
+    customElements.define('post-layout-toggle', PostLayoutToggle)
+</script>
+<style>
+  post-layout-toggle {
+    display: flex;
+    gap: 0.25rem;
+  }
+  button {
+    min-height: 44px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 0.65rem;
+    cursor: pointer;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    white-space: nowrap;
+  }
+  button[aria-pressed='true'] {
+    border-color: hsl(var(--primary) / 0.2);
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--primary));
+  }
+  button:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+</style>

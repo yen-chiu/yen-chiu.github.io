@@ -9,9 +9,9 @@ export const theme: ThemeUserConfig = {
   /** Description metadata for your website. Can be used in page metadata. */
   description: '读书，买花，长大。',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
-  favicon: '/favicon/moon-stars.svg',
+  favicon: '/favicon/wendell-avatar-192.png',
   /** The default social card image for your site which should be a path to an image in the `public/` directory. */
-  socialCard: '/images/wendell-moon-stars.png',
+  socialCard: '/images/wendell-avatar-card.png',
   /** Specify the default language for this site. */
   locale: {
     lang: 'zh-CN',
@@ -118,7 +118,7 @@ export const integ: IntegrationUserConfig = {
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
       { name: 'Link', val: 'https://yenchiu.com/yen-chiu-astro/' },
-      { name: 'Avatar', val: 'https://yenchiu.com/yen-chiu-astro/favicon/moon-stars-192.png' }
+      { name: 'Avatar', val: 'https://yenchiu.com/yen-chiu-astro/favicon/wendell-avatar-192.png' }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false

@@ -1,0 +1,368 @@
+---
+import { dateKey, monthCells } from '@/utils/calendar'
+
+interface Item {
+  title: string
+  date: string
+  href: string
+}
+const { items } = Astro.props as { items: Item[] }
+const initial = items[0]?.date.slice(0, 7) ?? dateKey(new Date()).slice(0, 7)
+const [year, month] = initial.split('-').map(Number)
+const cells = monthCells(year, month - 1)
+---
+
+<archive-calendar data-items={JSON.stringify(items)} data-initial={initial}>
+  <header>
+    <div><p class='kicker'>WRITING CALENDAR</p><h2>文章日历</h2></div><button
+      type='button'
+      data-today>今天</button>
+  </header>
+  <div class='calendar-toolbar'>
+    <button type='button' data-prev aria-label='上个月'>‹</button><label
+      ><span class='sr-only'>选择归档月份</span><input
+        type='month'
+        value={initial}
+        min='2000-01'
+        max='2100-12'
+        aria-label='归档月份'
+      /></label
+    ><button type='button' data-next aria-label='下个月'>›</button>
+  </div>
+  <div class='weekdays' aria-hidden='true'>
+    {['一', '二', '三', '四', '五', '六', '日'].map((d) => <span>{d}</span>)}
+  </div>
+  <div class='calendar-grid' aria-label='选择日期'>
+    {
+      cells.map((key) =>
+        key ? (
+          <button
+            type='button'
+            data-date={key}
+            aria-label={`${key}${items.some((i) => i.date === key) ? '，有文章' : ''}`}
+            class:list={{ 'has-post': items.some((i) => i.date === key) }}
+          >
+            {Number(key.slice(-2))}
+          </button>
+        ) : (
+          <span />
+        )
+      )
+    }
+  </div>
+  <p class='calendar-help'>圆点标记发布日，点选日期查看文章。</p>
+  <div class='selection-heading'>
+    <p data-calendar-status aria-live='polite'></p><button type='button' data-all hidden
+      >本月全部</button>
+  </div>
+  <ul class='calendar-posts'>
+    {
+      items
+        .filter((i) => i.date.startsWith(initial))
+        .map((i) => (
+          <li>
+            <a href={i.href}>
+              <>
+                <time datetime={i.date}>{i.date.slice(5)}</time>
+                <span>{i.title}</span>
+                <b aria-hidden='true'>↗</b>
+              </>
+            </a>
+          </li>
+        ))
+    }
+  </ul>
+</archive-calendar>
+<script>
+  import { dateKey, monthCells } from '../../utils/calendar'
+
+  class ArchiveCalendar extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const items = JSON.parse(this.dataset.items ?? '[]') as {
+        title: string
+        date: string
+        href: string
+      }[]
+      const input = this.querySelector<HTMLInputElement>('input')!,
+        grid = this.querySelector<HTMLElement>('.calendar-grid')!,
+        list = this.querySelector<HTMLUListElement>('ul')!,
+        status = this.querySelector<HTMLElement>('[data-calendar-status]')!,
+        all = this.querySelector<HTMLButtonElement>('[data-all]')!
+      let selected = ''
+      const render = () => {
+        const [y, m] = input.value.split('-').map(Number)
+        if (!y || !m) return
+        grid.replaceChildren()
+        for (const key of monthCells(y, m - 1)) {
+          if (!key) {
+            grid.append(document.createElement('span'))
+            continue
+          }
+          const button = document.createElement('button'),
+            count = items.filter((i) => i.date === key).length
+          button.type = 'button'
+          button.dataset.date = key
+          button.textContent = String(Number(key.slice(-2)))
+          button.className = count ? 'has-post' : ''
+          button.setAttribute('aria-label', `${key}，${count} 篇文章`)
+          button.setAttribute('aria-pressed', String(key === selected))
+          if (key === dateKey(new Date())) button.setAttribute('aria-current', 'date')
+          grid.append(button)
+        }
+        const matches = items.filter((i) =>
+          selected ? i.date === selected : i.date.startsWith(input.value)
+        )
+        status.textContent = `${selected || `${y} 年 ${m} 月`} · ${matches.length} 篇文章`
+        all.hidden = !selected
+        list.replaceChildren()
+        for (const item of matches) {
+          const li = document.createElement('li'),
+            a = document.createElement('a'),
+            time = document.createElement('time'),
+            title = document.createElement('span'),
+            arrow = document.createElement('b')
+          a.href = item.href
+          time.dateTime = item.date
+          time.textContent = item.date.slice(5)
+          title.textContent = item.title
+          arrow.textContent = '↗'
+          arrow.setAttribute('aria-hidden', 'true')
+          a.append(time, title, arrow)
+          li.append(a)
+          list.append(li)
+        }
+        if (!matches.length) {
+          const li = document.createElement('li')
+          li.className = 'calendar-empty'
+          li.textContent = '这段时间还没有发布文章。'
+          list.append(li)
+        }
+        this.querySelector<HTMLButtonElement>('[data-prev]')!.disabled = input.value === '2000-01'
+        this.querySelector<HTMLButtonElement>('[data-next]')!.disabled = input.value === '2100-12'
+      }
+      const move = (offset: number) => {
+        const [y, m] = input.value.split('-').map(Number),
+          date = new Date(Date.UTC(y, m - 1 + offset, 1))
+        input.value = date.toISOString().slice(0, 7)
+        selected = ''
+        render()
+      }
+      this.addEventListener(
+        'click',
+        (e) => {
+          const b = (e.target as Element).closest<HTMLButtonElement>('button')
+          if (!b) return
+          if (b.hasAttribute('data-prev')) move(-1)
+          else if (b.hasAttribute('data-next')) move(1)
+          else if (b.hasAttribute('data-today')) {
+            const today = dateKey(new Date())
+            input.value = today.slice(0, 7)
+            selected = today
+            render()
+          } else if (b.hasAttribute('data-all')) {
+            selected = ''
+            render()
+          } else if (b.dataset.date) {
+            selected = selected === b.dataset.date ? '' : b.dataset.date
+            render()
+          }
+        },
+        { signal }
+      )
+      input.addEventListener(
+        'change',
+        () => {
+          if (
+            !/^\d{4}-\d{2}$/.test(input.value) ||
+            input.value < '2000-01' ||
+            input.value > '2100-12'
+          )
+            input.value = this.dataset.initial!
+          selected = ''
+          render()
+        },
+        { signal }
+      )
+      render()
+    }
+    disconnectedCallback() {
+      this.controller?.abort()
+    }
+  }
+  if (!customElements.get('archive-calendar'))
+    customElements.define('archive-calendar', ArchiveCalendar)
+</script>
+<style>
+  archive-calendar {
+    display: block;
+    min-width: 0;
+    padding: 1.4rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.25rem;
+    background: hsl(var(--background) / 0.92);
+  }
+  header,
+  .calendar-toolbar,
+  .selection-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+  .kicker {
+    font-size: 0.6rem;
+    color: hsl(var(--primary));
+    letter-spacing: 0.12em;
+    margin: 0 0 0.3rem;
+  }
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    min-height: 40px;
+    min-width: 40px;
+    border-radius: 0.6rem;
+    font-size: 0.8rem;
+  }
+  header button,
+  [data-all] {
+    font-size: 0.7rem;
+    color: hsl(var(--primary));
+    padding-inline: 0.5rem;
+  }
+  .calendar-toolbar {
+    margin: 1.1rem 0 0.5rem;
+  }
+  .calendar-toolbar > button {
+    font-size: 1.4rem;
+  }
+  input {
+    font: inherit;
+    font-size: 0.85rem;
+    max-width: 100%;
+    border: 1px solid hsl(var(--border));
+    padding: 0.45rem 0.7rem;
+    border-radius: 0.6rem;
+    background: hsl(var(--muted) / 0.5);
+    color: inherit;
+    min-height: 40px;
+  }
+  .weekdays,
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.15rem;
+    text-align: center;
+  }
+  .weekdays {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.65rem;
+    padding: 0.5rem 0;
+  }
+  .calendar-grid :global(button) {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 0.6rem;
+    font-size: 0.8rem;
+    position: relative;
+    min-width: 0;
+    min-height: 38px;
+    height: 2.5rem;
+  }
+  .calendar-grid :global(button.has-post)::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: hsl(var(--primary));
+    position: absolute;
+    left: calc(50% - 2px);
+    bottom: 3px;
+    border-radius: 50%;
+  }
+  .calendar-grid :global(button[aria-current='date']) {
+    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.5);
+  }
+  .calendar-grid :global(button[aria-pressed='true']) {
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.14);
+  }
+  button:hover {
+    background: hsl(var(--primary) / 0.07);
+  }
+  button:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .calendar-help {
+    font-size: 0.65rem;
+    line-height: 1.6;
+    color: hsl(var(--muted-foreground));
+    margin: 0.65rem 0;
+  }
+  .selection-heading {
+    border-top: 1px solid hsl(var(--border));
+    padding-top: 0.65rem;
+    min-height: 44px;
+  }
+  .selection-heading p {
+    font-size: 0.72rem;
+    font-weight: 550;
+  }
+  .calendar-posts {
+    padding: 0;
+    list-style: none;
+    max-height: 15rem;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  .calendar-posts :global(a) {
+    display: flex;
+    align-items: start;
+    gap: 0.65rem;
+    padding: 0.6rem 0;
+    font-size: 0.78rem;
+    min-height: 44px;
+    border-bottom: 1px solid hsl(var(--border) / 0.6);
+  }
+  .calendar-posts :global(time) {
+    font-size: 0.65rem;
+    color: hsl(var(--muted-foreground));
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+  .calendar-posts :global(span) {
+    flex: 1;
+    min-width: 0;
+  }
+  .calendar-posts :global(b) {
+    font-weight: 400;
+    color: hsl(var(--primary));
+  }
+  .calendar-posts :global(.calendar-empty) {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    padding: 0.7rem 0;
+  }
+  :is(button, input):focus-visible,
+  .calendar-grid :global(button:focus-visible) {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+  @media (max-width: 640px) {
+    archive-calendar {
+      padding: 1rem;
+    }
+  }
+</style>

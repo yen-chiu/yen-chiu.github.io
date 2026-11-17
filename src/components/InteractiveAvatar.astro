@@ -1,0 +1,107 @@
+---
+const { label = '轻触头像，打个招呼' } = Astro.props
+---
+
+<interactive-avatar><button type='button' aria-label={label}><slot /></button></interactive-avatar>
+<script>
+  class InteractiveAvatar extends HTMLElement {
+    private controller?: AbortController
+    private frame = 0
+    private bounce?: Animation
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller,
+        button = this.querySelector('button')!
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      const reset = () => {
+        cancelAnimationFrame(this.frame)
+        button.style.transform = ''
+      }
+      button.addEventListener(
+        'pointermove',
+        (e) => {
+          if (e.pointerType !== 'mouse' || reduced.matches) return
+          const r = button.getBoundingClientRect(),
+            x = (e.clientX - r.left) / r.width - 0.5,
+            y = (e.clientY - r.top) / r.height - 0.5
+          cancelAnimationFrame(this.frame)
+          this.frame = requestAnimationFrame(() => {
+            button.style.transform = `perspective(650px) rotateX(${-y * 12}deg) rotateY(${x * 12}deg)`
+          })
+        },
+        { signal }
+      )
+      button.addEventListener('pointerleave', reset, { signal })
+      button.addEventListener('blur', reset, { signal })
+      button.addEventListener(
+        'click',
+        () => {
+          reset()
+          this.bounce?.cancel()
+          if (!reduced.matches)
+            this.bounce = button.animate(
+              [
+                { transform: 'scale(1)' },
+                { transform: 'translateY(-7px) rotate(-4deg) scale(1.045)', offset: 0.35 },
+                { transform: 'scale(.98)', offset: 0.72 },
+                { transform: 'scale(1)' }
+              ],
+              { duration: 520, easing: 'cubic-bezier(.2,.7,.3,1)' }
+            )
+        },
+        { signal }
+      )
+      document.addEventListener(
+        'astro:before-swap',
+        () => {
+          reset()
+          this.bounce?.cancel()
+        },
+        { signal }
+      )
+    }
+    disconnectedCallback() {
+      this.controller?.abort()
+      cancelAnimationFrame(this.frame)
+      this.bounce?.cancel()
+    }
+  }
+  if (!customElements.get('interactive-avatar'))
+    customElements.define('interactive-avatar', InteractiveAvatar)
+</script>
+<style>
+  interactive-avatar {
+    display: inline-block;
+    perspective: 650px;
+  }
+  button {
+    display: block;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
+    box-shadow: 0 0 0 6px hsl(var(--primary) / 0.08);
+  }
+  button:hover {
+    box-shadow: 0 0 0 9px hsl(var(--primary) / 0.13);
+  }
+  button:focus-visible {
+    outline: 3px solid hsl(var(--primary));
+    outline-offset: 6px;
+  }
+  button :global(img) {
+    display: block;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+  }
+</style>

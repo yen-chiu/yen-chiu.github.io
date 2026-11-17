@@ -1,0 +1,166 @@
+<reading-sound
+  ><div class='sound-icon' aria-hidden='true'>♫</div><div>
+    <h3>阅读时的雨声</h3><p>本地合成 · 无需加载音源</p>
+  </div><button type='button' data-sound-toggle aria-pressed='false'>播放雨声</button><label
+    >音量<input type='range' min='0' max='100' value='25' aria-label='雨声音量' /></label
+  ><p class='sound-status' data-sound-status aria-live='polite'>
+    点按播放，离开页面自动停止。
+  </p></reading-sound
+>
+<script>
+  class ReadingSound extends HTMLElement {
+    private controller?: AbortController
+    private context?: AudioContext
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const button = this.querySelector<HTMLButtonElement>('button')!,
+        volume = this.querySelector<HTMLInputElement>('input')!,
+        status = this.querySelector<HTMLElement>('[data-sound-status]')!
+      let gain: GainNode | undefined,
+        starting = false
+      const stop = () => {
+        this.context?.close().catch(() => {})
+        this.context = undefined
+        gain = undefined
+        button.textContent = '播放雨声'
+        button.setAttribute('aria-pressed', 'false')
+        status.textContent = '点按播放，离开页面自动停止。'
+      }
+      button.addEventListener(
+        'click',
+        async () => {
+          if (starting) return
+          if (this.context) {
+            stop()
+            return
+          }
+          starting = true
+          try {
+            const context = new AudioContext()
+            this.context = context
+            await context.resume()
+            if (signal.aborted || !this.isConnected || this.context !== context) {
+              context.close().catch(() => {})
+              return
+            }
+            const buffer = context.createBuffer(1, context.sampleRate * 6, context.sampleRate),
+              data = buffer.getChannelData(0)
+            for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+            const source = context.createBufferSource(),
+              filter = context.createBiquadFilter()
+            gain = context.createGain()
+            source.buffer = buffer
+            source.loop = true
+            filter.type = 'lowpass'
+            filter.frequency.value = 1100
+            gain.gain.value = 0
+            gain.gain.linearRampToValueAtTime(
+              (Number(volume.value) / 100) * 0.22,
+              context.currentTime + 0.5
+            )
+            source.connect(filter).connect(gain).connect(context.destination)
+            source.start()
+            button.textContent = '暂停雨声'
+            button.setAttribute('aria-pressed', 'true')
+            status.textContent = '雨声播放中 · 本地生成的环境声'
+          } catch {
+            stop()
+            status.textContent = '浏览器暂时无法播放，请再点一次试试。'
+          } finally {
+            starting = false
+          }
+        },
+        { signal }
+      )
+      volume.addEventListener(
+        'input',
+        () => {
+          if (gain && this.context)
+            gain.gain.setTargetAtTime(
+              (Number(volume.value) / 100) * 0.22,
+              this.context.currentTime,
+              0.1
+            )
+        },
+        { signal }
+      )
+      document.addEventListener('astro:before-swap', stop, { signal })
+      document.addEventListener(
+        'visibilitychange',
+        () => {
+          if (document.hidden) stop()
+        },
+        { signal }
+      )
+    }
+    disconnectedCallback() {
+      this.controller?.abort()
+      this.context?.close().catch(() => {})
+      this.context = undefined
+    }
+  }
+  if (!customElements.get('reading-sound')) customElements.define('reading-sound', ReadingSound)
+</script>
+<style>
+  reading-sound {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .sound-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 0.8rem;
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.09);
+    font-size: 1.3rem;
+  }
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  p {
+    margin: 0.3rem 0 0;
+    font-size: 0.65rem;
+    color: hsl(var(--muted-foreground));
+  }
+  button {
+    min-height: 44px;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.7rem;
+    border: 1px solid hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.07);
+    font-size: 0.7rem;
+    cursor: pointer;
+  }
+  label {
+    grid-column: 1/-1;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.7rem;
+    color: hsl(var(--muted-foreground));
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    accent-color: hsl(var(--primary));
+    min-height: 40px;
+  }
+  .sound-status {
+    grid-column: 1/-1;
+    margin: 0;
+    line-height: 1.7;
+  }
+  button:focus-visible,
+  input:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+</style>

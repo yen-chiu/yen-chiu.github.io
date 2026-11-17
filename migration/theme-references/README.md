@@ -35,3 +35,30 @@ corrupt-storage handling, hue clamping, a namespaced storage key and calculated
 text contrast were added locally. This records integration choices, not claims
 that every upstream behavior was defective. The new cover is a local vector
 landscape, separate from upstream demo images and the unchanged page avatar.
+
+
+## Home, archives and links — 2026-11-18
+
+Read Iris snapshot `56f5cfee0d39c08649a714da68a53200c7600223`:
+
+- [Home](https://github.com/LemonAdorable/astro-theme-iris/blob/56f5cfee0d39c08649a714da68a53200c7600223/src/pages/index.astro)
+- [Links](https://github.com/LemonAdorable/astro-theme-iris/blob/56f5cfee0d39c08649a714da68a53200c7600223/src/pages/links/index.astro)
+
+Read Mizuki's [archive](https://github.com/LyraVoid/Mizuki/blob/dbdd3eb039e5e92f9375f5f8f79c3589cdf6ca16/src/pages/archive.astro)
+and [calendar utilities](https://github.com/LyraVoid/Mizuki/blob/dbdd3eb039e5e92f9375f5f8f79c3589cdf6ca16/src/components/widgets/calendar/utils/calendarUtils.ts).
+
+Iris informed the full-screen avatar entrance, downward exploration and grouped
+link cards/site-information block. Mizuki informed the Monday-first publication
+calendar and statistics alongside archives. This is a local implementation, not
+a new theme/runtime dependency. Existing Iris licensing remains at repository root;
+Mizuki licensing is retained above. No friend identities, music recordings or
+upstream artwork were copied.
+
+Integration changes: scroll-linked cover contraction uses normal document scrolling
+without the upstream forced return-to-top behavior; avatar motion is scoped to the
+avatar button and lifecycle-cleaned; reduced-motion disables tilt, bounce and glitch.
+Calendar dates use Asia/Shanghai civil publication days and include leap-year tests.
+The optional reading rain sound is generated locally through Web Audio, starts only
+on explicit play, and stops on navigation/background. Link groups use the original
+blog's public profiles/external links and clearly labelled theme references; there
+is no fake exchange, health-check or automated application status.
