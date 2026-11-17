@@ -9,6 +9,7 @@
       <span>Knowledge explorer</span>
       <h2 id='knowledge-graph-title'>知识图谱</h2>
     </div>
+    <button type='button' class='graph-mobile-settings' data-graph-settings aria-expanded='false'>筛选与设置</button>
     <button type='button' data-graph-close aria-label='关闭知识图谱'>
       <svg viewBox='0 0 24 24' aria-hidden='true'>
         <path d='M18 6 6 18M6 6l12 12'></path>
@@ -120,7 +121,8 @@
       </div>
 
       <footer>
-        <span>拖动节点 · 滚动缩放 · 单击查看详情 · 双击打开页面</span>
+        <div class='graph-zoom-actions'><button type='button' data-graph-zoom-in aria-label='放大图谱'>＋</button><button type='button' data-graph-zoom-out aria-label='缩小图谱'>−</button><button type='button' data-graph-fit>重置</button></div>
+        <span>拖动节点或画布 · 双指缩放 · 点击节点查看详情</span>
       </footer>
     </div>
 
@@ -136,6 +138,15 @@
   function setupGraphOverlay() {
     const dialog = document.querySelector<HTMLDialogElement>('[data-knowledge-graph-dialog]')
     if (!dialog) return
+    const settings = dialog.querySelector<HTMLButtonElement>('[data-graph-settings]')
+    if (settings && !settings.dataset.ready) {
+      settings.dataset.ready = 'true'
+      settings.addEventListener('click', () => {
+        const expanded = dialog.classList.toggle('graph-settings-expanded')
+        settings.setAttribute('aria-expanded', String(expanded))
+      })
+    }
+
     const overlayWindow = window as Window & { graphOverlayAbort?: AbortController }
     overlayWindow.graphOverlayAbort?.abort()
     const controller = new AbortController()
@@ -617,7 +628,22 @@
     }
   }
 
+  .graph-mobile-settings { display:none; }
+  .graph-zoom-actions { display:flex;gap:.4rem; }
+  .graph-zoom-actions button { min-width:44px;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:hsl(var(--background)); }
   @media (max-width: 639px) {
+    .graph-mobile-settings { display:block;font-size:.85rem;padding:.4rem .75rem;min-height:44px; }
+    .graph-dialog-header { gap:.4rem; }
+    .graph-dialog-header > button { min-width:44px;min-height:44px; }
+    .graph-controls { display:none;order:2; }
+    .graph-settings-expanded .graph-controls { display:block; }
+    .graph-workspace { order:1;min-width:0; }
+    .graph-details { order:3; }
+    .graph-controls input[type=search], .graph-controls select { font-size:16px;min-height:44px; }
+    .graph-controls button { min-height:44px;font-size:.85rem; }
+    .graph-details p,.graph-details :global(li),.graph-details :global(a) { font-size:.9rem; }
+    .graph-canvas { touch-action:none; }
+
     .knowledge-graph-dialog {
       width: 100vw;
       height: 100dvh;
@@ -633,7 +659,7 @@
     }
 
     .graph-workspace {
-      grid-template-rows: auto minmax(27rem, 65vh) auto;
+      grid-template-rows: auto minmax(22rem, calc(100dvh - 15rem)) auto;
     }
 
     .graph-workspace > header {

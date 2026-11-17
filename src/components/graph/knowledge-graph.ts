@@ -380,6 +380,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     const graph = buildGraph(index, state)
     const width = canvas.clientWidth || 760
     const height = canvas.clientHeight || 580
+    const mobile = window.matchMedia('(max-width: 639px)').matches
     const directed = (edge: GraphEdge) =>
       state.direction === 'directed' || (state.direction === 'mixed' && edge.directed)
     const scopeLabels: Record<Scope, string> = {
@@ -446,6 +447,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .attr('tabindex', 0)
       .style('cursor', 'pointer')
 
+    node.append('circle').attr('r', item => Math.max(item.radius, mobile ? 22 : 14)).attr('fill', 'transparent')
     node
       .append('circle')
       .attr('r', (item) => item.radius)
@@ -458,7 +460,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .attr('x', (item) => item.radius + 4)
       .attr('y', 3)
       .attr('fill', 'hsl(var(--foreground))')
-      .attr('font-size', 9)
+      .attr('font-size', mobile ? 13 : 11)
       .attr('font-weight', (item) => (item.id === state.focus ? 700 : 480))
       .text((item) => item.label)
       .style('pointer-events', 'none')
@@ -585,6 +587,9 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     }
     if (state.focus) window.setTimeout(() => zoomToNode?.(state.focus!), 350)
 
+    root.querySelector<HTMLButtonElement>('[data-graph-zoom-in]')!.onclick = () => { svg.transition().duration(180).call(zoom.scaleBy, 1.3) }
+    root.querySelector<HTMLButtonElement>('[data-graph-zoom-out]')!.onclick = () => { svg.transition().duration(180).call(zoom.scaleBy, 1 / 1.3) }
+    root.querySelector<HTMLButtonElement>('[data-graph-fit]')!.onclick = () => { svg.transition().duration(180).call(zoom.transform, d3.zoomIdentity) }
     root.querySelector<HTMLButtonElement>('[data-graph-reset]')!.onclick = () => {
       svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity)
     }
