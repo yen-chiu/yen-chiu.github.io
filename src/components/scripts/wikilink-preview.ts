@@ -1,3 +1,4 @@
+import { sitePath } from '@/utils/site-path'
 // Wikilink popover preview functionality using Tippy.js
 // Similar to Quartz's popover previews with multi-layer support
 
@@ -40,7 +41,7 @@ const elementToInstance: WeakMap<HTMLElement, Instance> = new WeakMap()
 async function loadContentIndex(): Promise<ContentIndex> {
   if (contentIndex) return contentIndex
 
-  const response = await fetch('/contentIndex.json')
+  const response = await fetch(sitePath('/contentIndex.json'))
   if (!response.ok) {
     throw new Error('Failed to fetch contentIndex.json')
   }
@@ -50,13 +51,7 @@ async function loadContentIndex(): Promise<ContentIndex> {
 }
 
 // Resolve relative URL
-function resolveUrl(slug: string): string {
-  const baseUrl = window.location.origin
-  if (slug.startsWith('/')) {
-    return `${baseUrl}${slug}`
-  }
-  return `${baseUrl}/${slug}`
-}
+function resolveUrl(slug: string): string { return new URL(sitePath(slug), window.location.origin).href }
 
 // Normalize relative URLs in HTML
 function normalizeRelativeURLs(el: Element | Document, destination: string | URL) {

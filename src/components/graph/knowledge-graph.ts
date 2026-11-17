@@ -1,3 +1,4 @@
+import { sitePath } from '@/utils/site-path'
 import * as d3 from 'd3'
 
 type Collection = 'blog' | 'docs'
@@ -78,7 +79,7 @@ function escapeHtml(value: string) {
 }
 
 function loadIndex() {
-  indexPromise ??= fetch('/contentIndex.json').then((response) => {
+  indexPromise ??= fetch(sitePath('/contentIndex.json')).then((response) => {
     if (!response.ok) throw new Error('Failed to load content index')
     return response.json() as Promise<ContentIndex>
   })
@@ -142,7 +143,7 @@ function buildGraph(index: ContentIndex, state: GraphState) {
 
   const addNode = (id: string, label: string, href: string, kind: NodeKind) => {
     if (!state.nodeTypes.has(kind) || nodes.has(id)) return
-    nodes.set(id, { id, label, href, kind, degree: 0, inDegree: 0, outDegree: 0, radius: 7 })
+    nodes.set(id, { id, label, href: sitePath(href), kind, degree: 0, inDegree: 0, outDegree: 0, radius: 7 })
   }
   const addEdge = (
     source: string,

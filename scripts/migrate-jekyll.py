@@ -3,6 +3,9 @@ import json,re,shutil,hashlib
 import yaml
 root=Path(__file__).resolve().parents[1]
 source=root.parent/'yen-chiu.github.io'
+existing_manifest=root/'migration/content-manifest.json'
+if existing_manifest.exists() and any(row.get('originalUrl') for row in json.loads(existing_manifest.read_text(encoding='utf-8'))):
+    raise SystemExit('Canonical migration already applied; do not overwrite curated content. Use the manifest for incremental updates.')
 manifest=[]
 for group in ('blog','docs'):
     folder=root/'src/content'/group

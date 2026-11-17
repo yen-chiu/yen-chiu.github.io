@@ -1,3 +1,4 @@
+import { sitePath } from '@/utils/site-path'
 import FlexSearch, { type DefaultDocumentSearchResults } from 'flexsearch'
 
 interface ContentDetails {
@@ -243,13 +244,7 @@ function getCurrentSlug(): string {
 }
 
 // Resolve relative URL
-function resolveUrl(slug: string): string {
-  const baseUrl = window.location.origin
-  if (slug.startsWith('/')) {
-    return `${baseUrl}${slug}`
-  }
-  return `${baseUrl}/${slug}`
-}
+function resolveUrl(slug: string): string { return new URL(sitePath(slug), window.location.origin).href }
 
 // Normalize relative URLs in HTML
 function normalizeRelativeURLs(el: Element | Document, destination: string | URL) {

@@ -11,7 +11,7 @@ import {Giscus} from '@/components/giscus'
 <section><h2>站点历程</h2>{profile.milestones.map(item=><article><time datetime={item.datetime}>{item.datetime.slice(0,10)}</time><h3>{item.title}</h3><p>{item.text}</p></article>)}</section>
 <section id="changelog"><h2>更新日志</h2>{changelog.map(item=><article><time datetime={item.date}>{item.date}</time><p class="text-sm text-muted-foreground">{item.scope} · {item.kind}</p><h3>{item.title}</h3><p>{item.note}</p>{item.links?.map(link=><a href={link.url.startsWith('/')?'https://yenchiu.com'+link.url:link.url}>{link.label} →</a>)}</article>)}</section>
 <p>原站：Jekyll + Chirpy；当前预览：Astro + Iris。写作台与聊天仍由原站提供。</p>
-<Giscus term="关于" />
+<Giscus term="关于 | Wendell" />
 </PageLayout>
 <style>
 section{margin-block:2.5rem}h2{font-size:1.5rem;font-weight:650;margin-bottom:1rem}h3{font-size:1.1rem;font-weight:600}p,li{line-height:1.9}p{margin-block:.7rem}article{padding:1.2rem 0;border-bottom:1px solid hsl(var(--border))}time{font-size:.85rem;color:hsl(var(--muted-foreground))}.chips{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0}.chips li{padding:.2rem .8rem;border:1px solid hsl(var(--border));border-radius:2rem}a{color:hsl(var(--primary));text-decoration:underline;text-underline-offset:.2em}
