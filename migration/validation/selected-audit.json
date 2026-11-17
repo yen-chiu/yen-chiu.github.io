@@ -1,0 +1,21 @@
+{
+  "articles": 17,
+  "localMissing": {},
+  "mediaElements": {
+    "images": 171,
+    "videos": 2,
+    "math": 3,
+    "code": 491
+  },
+  "externalMedia": [
+    "https://media.yenchiu.com/videos/marxism-micro-lesson.mp4",
+    "https://www.zybuluo.com/static/img/file-list.png",
+    "https://www.zybuluo.com/static/img/toolbar-editor.png",
+    "https://www.zybuluo.com/static/img/toolbar-manager.jpg",
+    "https://www.zybuluo.com/static/img/toolbar-reader.jpg"
+  ],
+  "comments": "17 pages bound to original repository and title",
+  "redirects": "17 original posts paths and 17 previous staging URLs",
+  "seo": "original canonical and noindex follow; sitemap emitted",
+  "browser": "unavailable in current chat; responsive and interactive acceptance pending"
+}

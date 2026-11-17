@@ -1,0 +1,236 @@
+[
+  {
+    "date": "2026-11-05",
+    "kind": "content",
+    "scope": "主站",
+    "title": "念真联网架构长文",
+    "note": "搜索降级、读页提取与 Worker 代理的完整拆解。",
+    "links": [
+      {
+        "label": "阅读全文",
+        "url": "/posts/nianzhen-web-architecture/"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-04",
+    "kind": "feature",
+    "scope": "子站",
+    "title": "聊天子站多了三个模块",
+    "note": "对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页，抽屉统一入口。"
+  },
+  {
+    "date": "2026-11-04",
+    "kind": "style",
+    "scope": "子站",
+    "title": "子站支持深色主题",
+    "note": "抽屉里切换浅色 / 深色 / 跟随系统，旧聊天页也一并适配。"
+  },
+  {
+    "date": "2026-11-04",
+    "kind": "infra",
+    "scope": "主站",
+    "title": "发布站点快照 2026-11-04",
+    "note": "写作台登录、提示轮播与图片缓存修复随此版本上线。",
+    "links": [
+      {
+        "label": "发布页",
+        "url": "https://github.com/yen-chiu/yen-chiu.github.io/releases/tag/2026-11-04"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "infra",
+    "scope": "主站",
+    "title": "2.2MB 的 PDF 也搬到 R2",
+    "note": "仓库里不再存这个文件，地址走 media.yenchiu.com。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "写作台",
+    "title": "写作台支持「点一下」GitHub 登录",
+    "note": "设备码走 Worker 代理，不用再手动建令牌。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "style",
+    "scope": "主站",
+    "title": "侧边栏标题改为 hover 故障特效",
+    "note": "0.6s 内闪 4 次，随后停 3s 循环。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "style",
+    "scope": "主站",
+    "title": "词云按热度放大并拆分数据色",
+    "note": "指数字号阶梯，墨色文字 + 青绿数据/靛蓝节点。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "fix",
+    "scope": "主站",
+    "title": "恢复头像月牙渐变环",
+    "note": "头像改流体尺寸后盖住了外圈，留出 4px 弧带。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "fix",
+    "scope": "主站",
+    "title": "修正标签视图切换按钮与缓存",
+    "note": "改成下划线标签页，CSS/JS 加版本号避免旧缓存。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "fix",
+    "scope": "主站",
+    "title": "修正侧边栏缩放位置抖动与对齐",
+    "note": "统一 profile 居中、去掉水平偏移，并固定桌面合成层。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "主站",
+    "title": "标签页增加 SVG 关系图与 PMI 预计算",
+    "note": "词云/关系图可切换，边权来自站内共现。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "style",
+    "scope": "主站",
+    "title": "首页去掉重复入口，主题菜单改为弹出圆钮",
+    "note": "三枚等大圆形选项在按钮上方弹性展开。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "fix",
+    "scope": "主站",
+    "title": "修正侧边栏主题按钮图标对齐",
+    "note": "按钮继承 nav-link 内边距，把 16px 图标挤成 0.8px。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "style",
+    "scope": "主站",
+    "title": "首页、子域与侧边栏重新排版",
+    "note": "首页加 Now 卡片，子域改成入口卡片，侧边栏补状态行。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "主站",
+    "title": "档案滚动浮现，标签云显示关联",
+    "note": "主题切换也补上了「跟随系统」三态。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "style",
+    "scope": "主站",
+    "title": "关于页收紧排版，更新日志只露最近三条",
+    "note": "首页那条搬到关于页底部，完整记录仍在 /changelog/。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "主站",
+    "title": "关于页重做，更新日志搬了进来",
+    "note": "首屏、便当盒、时间线，还有这一页更新记录。",
+    "links": [
+      {
+        "label": "关于页",
+        "url": "/about/"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "style",
+    "scope": "主站",
+    "title": "关于页加了滚动入场和数字动画",
+    "note": "系统里开了「减少动态效果」就会自动停下。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "主站",
+    "title": "页脚加了「刷新缓存」",
+    "note": "不用再去设置里删网站数据，点一下就好。",
+    "links": [
+      {
+        "label": "相关文章",
+        "url": "/posts/refresh-button/"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "content",
+    "scope": "主站",
+    "title": "新增随笔《刷新一下》",
+    "note": "记一晚上的删除，和一个小按钮。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "写作台",
+    "title": "日期改成原生的日期与时间两个控件",
+    "note": "手机上终于点得开选择器了。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "fix",
+    "scope": "写作台",
+    "title": "文章列表补了关闭键和遮罩",
+    "note": "原来点「新建」会卡在抽屉里出不来。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "feature",
+    "scope": "写作台",
+    "title": "保存前先查一遍格式",
+    "note": "全角逗号会被纠正，未来日期会提醒。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "fix",
+    "scope": "主站",
+    "title": "修掉写作台预览的 XSS 绕过",
+    "note": "一条带控制字符的链接，能把本地令牌读走。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "infra",
+    "scope": "子站",
+    "title": "「来聊聊吧」搬到 /chat/",
+    "note": "换了域名，顺手把 2.4MB 的照片压到 90K。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "infra",
+    "scope": "子站",
+    "title": "Manual 站重新上线",
+    "note": "旧域名已失效，改挂 /WendellManual/。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "infra",
+    "scope": "主站",
+    "title": "72MB 视频迁到 Cloudflare R2",
+    "note": "仓库轻了 72MB，拖动播放已验证。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "content",
+    "scope": "主站",
+    "title": "新增三篇技术汇报",
+    "note": "安全审计、QQ 复盘、R2 迁移各一篇。"
+  },
+  {
+    "date": "2026-11-03",
+    "kind": "infra",
+    "scope": "主站",
+    "title": "站点瘦身 390MB → 179MB",
+    "note": "图片从 167MB 压到 3.5MB。"
+  }
+]

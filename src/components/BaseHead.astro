@@ -1,6 +1,7 @@
 ---
 
 import config from 'virtual:config'
+import manifest from '../../migration/content-manifest.json'
 
 import { prod } from 'astro-pure/server'
 import type { SiteMeta } from 'astro-pure/types'
@@ -10,11 +11,13 @@ type Props = SiteMeta
 const { articleDate, description, ogImage, title } = Astro.props
 
 const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const original = manifest.find(entry => entry.originalMetadata.title === title)
+const canonicalURL = new URL(original?.originalUrl ?? (title === '关于' ? 'https://yenchiu.com/about/' : title === '念真' ? 'https://yenchiu.com/persona/' : Astro.url.pathname), Astro.site)
 const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url).href
 ---
 
 <meta charset='utf-8' />
+<meta name='robots' content='noindex, follow' />
 <meta
   content='width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover'
   name='viewport'

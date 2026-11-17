@@ -11,7 +11,7 @@ type Props = {
 
 // Get the requested entry
 const { id, collections, class: className } = Astro.props
-const path = Astro.url.pathname.split('/').slice(0, 2).join('/')
+const path = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/${collections[0]?.collection ?? 'blog'}`
 
 // Get the next and prev entries (modulo to wrap index)
 const index = collections.findIndex((x) => x.id === id)

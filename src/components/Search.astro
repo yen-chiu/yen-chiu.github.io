@@ -103,8 +103,8 @@ import './styles/search.css'
         return loadPromise
       }
 
-      button.addEventListener('pointerenter', () => loadSearch(), { once: true })
-      button.addEventListener('focus', () => loadSearch(), { once: true })
+      button.addEventListener('pointerenter', () => { void loadSearch().catch(() => {}) }, { once: true })
+      button.addEventListener('focus', () => { void loadSearch().catch(() => {}) }, { once: true })
       button.addEventListener(
         'click',
         async (event) => {

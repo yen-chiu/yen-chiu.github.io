@@ -110,7 +110,7 @@ const currentPostSlug = getPostSlug(Astro.props.post)
 
   <Fragment slot='bottom'>
     {/* Comment */}
-    {!isDraft && enableComment && config.integ.giscus?.enable && <Giscus class='mt-3 sm:mt-6' />}
+    {!isDraft && enableComment && config.integ.giscus?.enable && <Giscus class='mt-3 sm:mt-6' term={title} />}
   </Fragment>
 </PageLayout>
 

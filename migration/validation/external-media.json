@@ -1,0 +1,22 @@
+[
+  {
+    "url": "https://media.yenchiu.com/videos/marxism-micro-lesson.mp4",
+    "status": 200
+  },
+  {
+    "url": "https://www.zybuluo.com/static/img/file-list.png",
+    "status": "Response status code does not indicate success: 403 (Forbidden)."
+  },
+  {
+    "url": "https://www.zybuluo.com/static/img/toolbar-editor.png",
+    "status": "Response status code does not indicate success: 403 (Forbidden)."
+  },
+  {
+    "url": "https://www.zybuluo.com/static/img/toolbar-manager.jpg",
+    "status": "Response status code does not indicate success: 403 (Forbidden)."
+  },
+  {
+    "url": "https://www.zybuluo.com/static/img/toolbar-reader.jpg",
+    "status": "Response status code does not indicate success: 403 (Forbidden)."
+  }
+]

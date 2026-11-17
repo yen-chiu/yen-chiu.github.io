@@ -1,32 +1,20 @@
 ---
+import config from '@/site-config'
 interface Props {
+  term?: string
   class?: string
 }
 
-const { class: className } = Astro.props
+const { class: className, term } = Astro.props
 ---
 
-<div id='giscus' class={className}>
+<div id='giscus' class={className} data-repo={config.integ.giscus?.repo} data-repo-id={config.integ.giscus?.repoId} data-category={config.integ.giscus?.category} data-category-id={config.integ.giscus?.categoryId} data-term={term}>
   <p class='giscus-loading'>评论正在预加载...</p>
 </div>
 
 <script>
   let themeListenerReady = false
 
-  const giscusConfig = {
-    repo: 'LemonAdorable/lemonadorable.github.io',
-    repoId: 'R_kgDOLJXF6A',
-    category: 'Announcements',
-    categoryId: 'DIC_kwDOLJXF6M4Ccs4x',
-    mapping: 'pathname',
-    strict: '0',
-    reactionsEnabled: '1',
-    emitMetadata: '1',
-    inputPosition: 'top',
-    lang: 'zh-CN',
-    loading: 'eager',
-    crossorigin: 'anonymous'
-  }
 
   function getTheme() {
     const isDark = document.documentElement.classList.contains('dark')
@@ -45,7 +33,9 @@ const { class: className } = Astro.props
     if (!container.isConnected || container.dataset.giscusLoaded === 'true') return
     container.dataset.giscusLoaded = 'true'
 
+    const giscusConfig = {repo:container.dataset.repo!,repoId:container.dataset.repoId!,category:container.dataset.category!,categoryId:container.dataset.categoryId!,mapping:container.dataset.term ? 'specific' : 'title',strict:'0',reactionsEnabled:'1',emitMetadata:'1',inputPosition:'top',lang:'zh-CN',loading:'lazy',crossorigin:'anonymous'}
     const script = document.createElement('script')
+    if(container.dataset.term) script.setAttribute('data-term',container.dataset.term)
     script.src = 'https://giscus.app/client.js'
     script.setAttribute('data-repo', giscusConfig.repo)
     script.setAttribute('data-repo-id', giscusConfig.repoId)

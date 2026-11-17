@@ -1377,8 +1377,8 @@ async function fillDocument(data: ContentIndex) {
   const promises: Array<Promise<unknown>> = []
   for (const [slug, fileData] of Object.entries<ContentDetails>(data)) {
     promises.push(
-      index.addAsync(id++, {
-        id,
+      index.addAsync({
+        id: id++,
         slug: slug,
         title: fileData.title,
         content: fileData.content,
@@ -1395,12 +1395,12 @@ async function fillDocument(data: ContentIndex) {
 export async function initSearch() {
   const currentSlug = getCurrentSlug()
 
-  contentIndexPromise ??= fetch('/contentIndex.json').then((response) => {
+  contentIndexPromise ??= fetch(import.meta.env.BASE_URL.replace(/\/$/, '') + '/contentIndex.json').then((response) => {
     if (!response.ok) throw new Error('Failed to fetch contentIndex.json')
     return response.json() as Promise<ContentIndex>
   })
 
-  const data = await contentIndexPromise
+  const data = await contentIndexPromise.catch(error => { contentIndexPromise = undefined; throw error })
   const searchElements = document.getElementsByClassName('search')
 
   for (const element of searchElements) {

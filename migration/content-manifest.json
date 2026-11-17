@@ -3,7 +3,7 @@
     "source": "_posts\\2023-04-05-理论微课.md",
     "sha256": "a07866ea5a0ef6c01ebbf1bb78be1ae98ce9130b91651f3e42957c3959f7bb87",
     "destination": "src\\content\\blog\\杂记\\Writing\\post-2023-04-05-01.md",
-    "url": "/blog/post-2023-04-05-01",
+    "url": "/blog/理论微课",
     "originalMetadata": {
       "title": "马原_理论微课",
       "description": "马原理论微课文稿：从黄金分割比与斐波那契数列出发，用「量变到质变」的视角看自然界的数学秩序，以及它给人类实践的启示。",
@@ -21,13 +21,15 @@
         "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4WAoAAAAQAAAADwAABwAAQUxQSDIAAAARL0AmbZurmr57yyIiqE8oiG0bejIYEQTgqiDA9vqnsUSI6H+oAERp2HZ65qP/VIAWAFZQOCBCAAAA8AEAnQEqEAAIAAVAfCWkAALp8sF8rgRgAP7o9FDvMCkMde9PK7euH5M1m6VWoDXf2FkP3BqV0ZYbO6NA/VFIAAAA",
         "alt": "马原"
       }
-    }
+    },
+    "previousUrl": "/blog/post-2023-04-05-01",
+    "originalUrl": "https://yenchiu.com/posts/%E7%90%86%E8%AE%BA%E5%BE%AE%E8%AF%BE/"
   },
   {
     "source": "_posts\\2023-04-06-markdown.md",
     "sha256": "355a693c0c1a030a62a165aa2e752ea9856990a03f52effbe25ea0f32ee53679",
     "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2023-04-06-02.md",
-    "url": "/blog/post-2023-04-06-02",
+    "url": "/blog/markdown",
     "originalMetadata": {
       "title": "Markdown",
       "description": "我们理解您需要更便捷更高效的工具记录思想，整理笔记、知识，并将其中承载的价值传播给他人，Cmd Markdown 是我们给出的答案 —— 我们为记录思想和分享知识提供更专业的工具。",
@@ -43,13 +45,15 @@
         "path": "/assets/img/posts/markdown-notes/cover.png",
         "alt": "Markdown 写作工具箱"
       }
-    }
+    },
+    "previousUrl": "/blog/post-2023-04-06-02",
+    "originalUrl": "https://yenchiu.com/posts/markdown/"
   },
   {
     "source": "_posts\\2023-04-23-记录中国.md",
     "sha256": "384aca41fce01042ea72c00c82c98365f590bc97a28d3dfddc8dfe7c0bb1b83c",
     "destination": "src\\content\\blog\\杂记\\Writing\\post-2023-04-23-03.md",
-    "url": "/blog/post-2023-04-23-03",
+    "url": "/blog/记录中国",
     "originalMetadata": {
       "title": "记录一次志愿活动",
       "date": "2023-04-23 12:47:00 +0800",
@@ -64,13 +68,15 @@
       "image": {
         "path": "/assets/img/posts/volunteer-visit/cover.png"
       }
-    }
+    },
+    "previousUrl": "/blog/post-2023-04-23-03",
+    "originalUrl": "https://yenchiu.com/posts/%E8%AE%B0%E5%BD%95%E4%B8%AD%E5%9B%BD/"
   },
   {
     "source": "_posts\\2023-06-12-GitHub Fork仓库同步.md",
     "sha256": "3621102f73c2b575db53f41f20c5a5e4a9c9b743756db08f2a2bb6ef0dd27a61",
     "destination": "src\\content\\blog\\Uncategories\\Git\\post-2023-06-12-04.md",
-    "url": "/blog/post-2023-06-12-04",
+    "url": "/blog/GitHub-Fork仓库同步",
     "originalMetadata": {
       "title": "Github进行fork后如何与原仓库同步",
       "date": "2023-06-12 08:32:00 +0800",
@@ -83,13 +89,15 @@
         "GitHub"
       ],
       "image": "/assets/img/posts/github-fork-sync/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2023-06-12-04",
+    "originalUrl": "https://yenchiu.com/posts/GitHub-Fork%E4%BB%93%E5%BA%93%E5%90%8C%E6%AD%A5/"
   },
   {
     "source": "_posts\\2023-10-11-MyBlog.md",
     "sha256": "a2464afc84f97252f6f3ffb9a9a417f99f45c51b424c9b9ccf650e4ca472a115",
     "destination": "src\\content\\blog\\杂记\\Feeling\\post-2023-10-11-05.md",
-    "url": "/blog/post-2023-10-11-05",
+    "url": "/blog/MyBlog",
     "originalMetadata": {
       "title": "MyBlog",
       "author": "Wendell",
@@ -104,13 +112,15 @@
       ],
       "pin": true,
       "image": "/assets/img/posts/my-first-blog/cover.jpg"
-    }
+    },
+    "previousUrl": "/blog/post-2023-10-11-05",
+    "originalUrl": "https://yenchiu.com/posts/MyBlog/"
   },
   {
     "source": "_posts\\2024-11-13-关于Github page的引用路径问题.md",
     "sha256": "c2b50ffd52795492147650af0ef8caba9090a690f65aa036be89b0d50eb6d4c6",
     "destination": "src\\content\\blog\\Blog\\Markdown\\post-2024-11-13-06.md",
-    "url": "/blog/post-2024-11-13-06",
+    "url": "/blog/关于Github-page的引用路径问题",
     "originalMetadata": {
       "title": "关于Github page的引用路径问题",
       "date": "2024-11-13 18:57:46 +0800",
@@ -123,13 +133,15 @@
       "tags": [
         "Bug"
       ]
-    }
+    },
+    "previousUrl": "/blog/post-2024-11-13-06",
+    "originalUrl": "https://yenchiu.com/posts/%E5%85%B3%E4%BA%8EGithub-page%E7%9A%84%E5%BC%95%E7%94%A8%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98/"
   },
   {
     "source": "_posts\\2026-11-03-device-login.md",
     "sha256": "59b33f25e53ac6644b1274f4ae2597e72e0f3c9590085fdf9ebf07aef5d9a994",
     "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2026-11-03-07.md",
-    "url": "/blog/post-2026-11-03-07",
+    "url": "/blog/device-login",
     "originalMetadata": {
       "title": "GitHub App 设备码：让写作台「点一下」就登录",
       "date": "2026-11-03 07:40:00 +0800",
@@ -148,13 +160,15 @@
         "path": "/assets/img/posts/device-login/cover.png",
         "alt": "GitHub 设备码登录"
       }
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-07",
+    "originalUrl": "https://yenchiu.com/posts/device-login/"
   },
   {
     "source": "_posts\\2026-11-03-qq-bot-postmortem.md",
     "sha256": "f90d95bd338ffc690a36d9fd87e561823e05e2ce863287c5892935ca2ba0c17e",
     "destination": "src\\content\\blog\\技术\\折腾\\post-2026-11-03-08.md",
-    "url": "/blog/post-2026-11-03-08",
+    "url": "/blog/qq-bot-postmortem",
     "originalMetadata": {
       "title": "我把 QQ 接进 AI 助手，失败了三次",
       "date": "2026-11-03 09:50:00 +0800",
@@ -170,13 +184,15 @@
         "插件"
       ],
       "image": "/assets/img/posts/qq-bot-postmortem/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-08",
+    "originalUrl": "https://yenchiu.com/posts/qq-bot-postmortem/"
   },
   {
     "source": "_posts\\2026-11-03-r2-migration.md",
     "sha256": "dd4c0f3e8e58b03b51b7ddbf25721589a1445e63db74bce32364a15fe3f3f5bd",
     "destination": "src\\content\\blog\\技术\\运维\\post-2026-11-03-09.md",
-    "url": "/blog/post-2026-11-03-09",
+    "url": "/blog/r2-migration",
     "originalMetadata": {
       "title": "把 72MB 视频搬进 Cloudflare R2，顺手吊销了一张泄露的证书",
       "date": "2026-11-03 10:20:00 +0800",
@@ -192,13 +208,15 @@
         "安全"
       ],
       "image": "/assets/img/posts/r2-migration/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-09",
+    "originalUrl": "https://yenchiu.com/posts/r2-migration/"
   },
   {
     "source": "_posts\\2026-11-03-refresh-button.md",
     "sha256": "51766e63ed405189c7f053dee5af3ef6247d965ccf1243ec54a8b0606faf20d9",
     "destination": "src\\content\\blog\\杂记\\折腾\\post-2026-11-03-10.md",
-    "url": "/blog/post-2026-11-03-10",
+    "url": "/blog/refresh-button",
     "originalMetadata": {
       "title": "刷新一下",
       "date": "2026-11-03 13:30:00 +0800",
@@ -212,13 +230,15 @@
         "前端"
       ],
       "image": "/assets/img/posts/refresh-button/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-10",
+    "originalUrl": "https://yenchiu.com/posts/refresh-button/"
   },
   {
     "source": "_posts\\2026-11-03-site-diet.md",
     "sha256": "c1603938c1588af3bb5161ac667ab6291aadc26776f933038865a333f6acd0b7",
     "destination": "src\\content\\blog\\Blogging\\post-2026-11-03-11.md",
-    "url": "/blog/post-2026-11-03-11",
+    "url": "/blog/site-diet",
     "originalMetadata": {
       "title": "一次站点瘦身：从 390MB 到 179MB",
       "date": "2026-11-03 08:05:00 +0800",
@@ -236,13 +256,15 @@
         "path": "/assets/img/posts/site-diet/cover.png",
         "alt": "站点瘦身"
       }
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-11",
+    "originalUrl": "https://yenchiu.com/posts/site-diet/"
   },
   {
     "source": "_posts\\2026-11-03-writing-studio.md",
     "sha256": "1a02a4574d8c5042e446b74230ffcaec4c361d6d4dbaa6eeb21f7882bca2bf74",
     "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2026-11-03-12.md",
-    "url": "/blog/post-2026-11-03-12",
+    "url": "/blog/writing-studio",
     "originalMetadata": {
       "title": "给自己的博客装一个「写作台」",
       "date": "2026-11-03 07:10:00 +0800",
@@ -261,13 +283,15 @@
         "path": "/assets/img/posts/writing-studio/cover.png",
         "alt": "写作台"
       }
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-12",
+    "originalUrl": "https://yenchiu.com/posts/writing-studio/"
   },
   {
     "source": "_posts\\2026-11-03-xss-audit.md",
     "sha256": "bf2aae2a0dce8ae169cab5766f6bd02ffcbf1795ce0814ce9b668201d60b4ae9",
     "destination": "src\\content\\blog\\技术\\安全\\post-2026-11-03-13.md",
-    "url": "/blog/post-2026-11-03-13",
+    "url": "/blog/xss-audit",
     "originalMetadata": {
       "title": "一次真实的安全审计：我自己的写作台被 XSS 绕过了",
       "date": "2026-11-03 09:20:00 +0800",
@@ -283,13 +307,15 @@
         "Cloudflare Worker"
       ],
       "image": "/assets/img/posts/xss-audit/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-03-13",
+    "originalUrl": "https://yenchiu.com/posts/xss-audit/"
   },
   {
     "source": "_posts\\2026-11-04-ai动画.md",
     "sha256": "cb92c95aa0d0f8814a324acd3d9bbe75c1fc10c94970996e22a7e5097f2873f6",
     "destination": "src\\content\\blog\\杂记\\影视\\post-2026-11-04-14.md",
-    "url": "/blog/post-2026-11-04-14",
+    "url": "/blog/ai动画",
     "originalMetadata": {
       "title": "「科学修仙时代」：把修仙拍成村口吵架",
       "date": "2026-11-04 00:57:00 +0800",
@@ -308,13 +334,15 @@
         "alt": "高灵聘请：性感美人鱼，在线发灵"
       },
       "pin": true
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-04-14",
+    "originalUrl": "https://yenchiu.com/posts/ai%E5%8A%A8%E7%94%BB/"
   },
   {
     "source": "_posts\\2026-11-05-dsh-rea-install.md",
     "sha256": "0cae95da0d8121cacd26f903c885677f523e9fe30a9d6511e667e444deb94750",
     "destination": "src\\content\\blog\\技术\\折腾\\post-2026-11-05-15.md",
-    "url": "/blog/post-2026-11-05-15",
+    "url": "/blog/dsh-rea-install",
     "originalMetadata": {
       "title": "给 AI 装一双逆向之眼：REA 接入 DeepSeek Harness",
       "date": "2026-11-05 19:40:00 +0800",
@@ -331,13 +359,15 @@
         "Windows"
       ],
       "image": "/assets/img/posts/rea-install/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-05-15",
+    "originalUrl": "https://yenchiu.com/posts/dsh-rea-install/"
   },
   {
     "source": "_posts\\2026-11-05-nianzhen-web-architecture.md",
     "sha256": "fb9b59bd8f01652962100be5febdf3fce675218a1191599fd7400f3b285ac2ab",
     "destination": "src\\content\\blog\\技术\\运维\\post-2026-11-05-16.md",
-    "url": "/blog/post-2026-11-05-16",
+    "url": "/blog/nianzhen-web-architecture",
     "originalMetadata": {
       "title": "念真怎么上网：纯静态站的搜索与读页架构",
       "date": "2026-11-05 00:55:00 +0800",
@@ -354,13 +384,15 @@
         "CORS"
       ],
       "image": "/assets/img/posts/nianzhen-web/cover.png"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-05-16",
+    "originalUrl": "https://yenchiu.com/posts/nianzhen-web-architecture/"
   },
   {
     "source": "_posts\\2026-11-06-miko-web.md",
     "sha256": "e1273f65f7be935bb0fe1219d24106c92f1cb5f07f153e0630e3c7362773cded",
     "destination": "src\\content\\blog\\技术\\逆向\\post-2026-11-06-17.md",
-    "url": "/blog/post-2026-11-06-17",
+    "url": "/blog/miko-web",
     "originalMetadata": {
       "title": "把《异次元通讯·次元复苏》搬进浏览器",
       "date": "2026-11-05 22:30:00 +0800",
@@ -377,6 +409,8 @@
         "静态站点"
       ],
       "image": "/assets/img/posts/miko-web/cover.webp"
-    }
+    },
+    "previousUrl": "/blog/post-2026-11-06-17",
+    "originalUrl": "https://yenchiu.com/posts/miko-web/"
   }
 ]

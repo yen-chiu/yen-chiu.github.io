@@ -78,6 +78,9 @@ export async function getStaticPaths() {
       })
     }
 
+    for (const alias of post.data.aliases) {
+      if (!paths.some(path => path.params.id === alias)) paths.push({params:{id:alias},props:{post,posts,backlinks,outgoingLinks,redirectTo:`/blog/${canonicalSlug}`}})
+    }
     return paths
   })
 }
