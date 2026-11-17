@@ -628,15 +628,15 @@
     }
   }
 
-  .graph-mobile-settings { display:none; }
+  .graph-dialog-header .graph-mobile-settings { display:none;width:auto;height:auto;border-radius:.65rem;white-space:nowrap; }
   .graph-zoom-actions { display:flex;gap:.4rem; }
   .graph-zoom-actions button { min-width:44px;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:hsl(var(--background)); }
   @media (max-width: 639px) {
-    .graph-mobile-settings { display:block;font-size:.85rem;padding:.4rem .75rem;min-height:44px; }
+    .graph-dialog-header .graph-mobile-settings { display:block;font-size:.85rem;padding:.4rem .75rem;min-height:44px; }
     .graph-dialog-header { gap:.4rem; }
     .graph-dialog-header > button { min-width:44px;min-height:44px; }
     .graph-controls { display:none;order:2; }
-    .graph-settings-expanded .graph-controls { display:block; }
+    .graph-settings-expanded .graph-controls { display:flex; }
     .graph-workspace { order:1;min-width:0; }
     .graph-details { order:3; }
     .graph-controls input[type=search], .graph-controls select { font-size:16px;min-height:44px; }
