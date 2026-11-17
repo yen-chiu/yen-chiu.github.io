@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-17",
+  "selection": "User selected candidate 4, Moon Stars by Nishanth kunder (SVG Repo)",
+  "passed": [
+    "SVG retains hollow geometry and has no background rectangle",
+    "16,32,48,180,192,512 PNG exports all RGBA with corner alpha=0",
+    "ICO contains 16x16,32x32,48x48 PNG frames",
+    "Default social card dimensions 1200x630",
+    "101 normal pages reference new SVG; 34 redirect pages intentionally unchanged",
+    "No normal page references old favicon GIF or incorrect root default share-card path",
+    "Chrome preview: all six image samples loaded; no horizontal overflow",
+    "Chrome actual homepage: correct SVG/PNG/ICO, Apple icon and manifest links",
+    "Chrome actual homepage: og:image includes /yen-chiu-astro/images/wendell-moon-stars.png",
+    "Page avatar source and about page unchanged"
+  ],
+  "pageAvatarSha256": "F41FDA39BDA3150B283E6DDE5B899DB5855E3A168D1127E54061DC578B723D54",
+  "screenshot": "C:/03_Github/.work/iris-favicon-preview.jpg",
+  "attribution": "Public /terms page, public/favicon/NOTICE.md and SVG metadata",
+  "limits": [
+    "SVG includes prefers-color-scheme dark palette; dark preview used exported dark PNG, OS theme was not changed",
+    "Physical iOS/Android home-screen installation not tested; OS may apply its own background",
+    "Existing browser bookmark icon caches may refresh independently"
+  ]
+}

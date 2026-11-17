@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><linearGradient id="paper" x2="1" y2="1"><stop stop-color="#eee8f7"/><stop offset="1" stop-color="#fcfbfe"/></linearGradient></defs>
+  <rect width="1200" height="630" fill="url(#paper)"/>
+  <svg x="110" y="160" width="290" height="290" viewBox="0 0 70 70" fill="none">
+  <title>Wendell 月牙与星星</title>
+  <metadata>Moon Stars by Nishanth kunder, https://www.svgrepo.com/svg/426321/moon-stars . CC Attribution: https://www.svgrepo.com/page/licensing/ . Adapted for Wendell: purple palette, dark-mode palette, thicker rounded strokes and padding.</metadata>
+  
+  <g class="moon-stars" transform="translate(4 3.5)" stroke="#8653b3" stroke-width="3.1" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M48.7 45.8C30.8 45.8 16.3 31.3 16.3 13.4c0-4.8 1-9.3 2.9-13.3C7.9 5.2.1 16.5.1 29.7c0 17.9 14.5 32.4 32.4 32.4 13.2 0 24.5-7.8 29.6-19.1-4.2 1.8-8.7 2.8-13.4 2.8Z"/>
+    <path d="m28.7 1.8 4.5 3.7L38.8 4l-2.2 5.4 3.2 4.9-5.8-.4-3.7 4.5-1.4-5.7-5.4-2 4.9-3.1.3-5.8Z"/>
+    <path d="m49.5 22.5.7 5.8 5.2 2.7-5.3 2.5-.9 5.7-4-4.2-5.8.9 2.8-5.1-2.6-5.2 5.7 1 4.2-4.1Z"/>
+    <path d="m56.7 3.8-.4 4.7 3.6 3.1-4.6 1-1.8 4.4-2.4-4.1-4.7-.3 3.1-3.6-1.2-4.6 4.4 1.9 4-2.5Z"/>
+  </g>
+</svg>
+
+  <path d="M450 180v270" stroke="#d7c9e7" stroke-width="2"/>
+  <text x="510" y="300" fill="#251d30" font-size="82" font-weight="650" font-family="Arial,sans-serif">Wendell</text>
+  <text x="515" y="372" fill="#6d587d" font-size="32" font-family="Microsoft YaHei,Noto Sans CJK SC,sans-serif">读书，买花，长大。</text>
+  <text x="515" y="445" fill="#8653b3" font-size="24" font-family="Arial,sans-serif">yenchiu.com</text>
+</svg>
