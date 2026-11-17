@@ -1,3 +1,4 @@
+import { graphLabel } from '@/utils/graph-label'
 import { sitePath } from '@/utils/site-path'
 import * as d3 from 'd3'
 
@@ -445,8 +446,11 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .data(graph.nodes)
       .join('g')
       .attr('tabindex', 0)
+      .attr('role', 'button')
+      .attr('aria-label', item => item.label)
       .style('cursor', 'pointer')
 
+    node.append('title').text(item => item.label)
     node.append('circle').attr('r', item => Math.max(item.radius, mobile ? 22 : 14)).attr('fill', 'transparent')
     node
       .append('circle')
@@ -462,7 +466,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .attr('fill', 'hsl(var(--foreground))')
       .attr('font-size', mobile ? 13 : 11)
       .attr('font-weight', (item) => (item.id === state.focus ? 700 : 480))
-      .text((item) => item.label)
+      .text((item) => graphLabel(item.label, item.kind, mobile, item.id === state.focus))
       .style('pointer-events', 'none')
 
     const neighbours = new Map<string, Set<string>>()
@@ -476,6 +480,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     })
     const focus = (item: GraphNode | null) => {
       const connected = item ? neighbours.get(item.id) : null
+      labels.text(candidate => graphLabel(candidate.label, candidate.kind, mobile, candidate.id === item?.id || candidate.id === state.focus))
       node.attr('opacity', (candidate) =>
         !item || candidate.id === item.id || connected?.has(candidate.id) ? 1 : 0.12
       )
