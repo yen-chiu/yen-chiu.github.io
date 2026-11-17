@@ -3,12 +3,13 @@ import config from '@/site-config'
 interface Props {
   term?: string
   class?: string
+  defer?: boolean
 }
 
-const { class: className, term } = Astro.props
+const { class: className, term, defer = false } = Astro.props
 ---
 
-<div id='giscus' class={className} data-repo={config.integ.giscus?.repo} data-repo-id={config.integ.giscus?.repoId} data-category={config.integ.giscus?.category} data-category-id={config.integ.giscus?.categoryId} data-term={term}>
+<div id='giscus' class={className} data-repo={config.integ.giscus?.repo} data-repo-id={config.integ.giscus?.repoId} data-category={config.integ.giscus?.category} data-category-id={config.integ.giscus?.categoryId} data-term={term} data-defer={defer ? 'true' : undefined}>
   <p class='giscus-loading'>评论正在预加载...</p>
 </div>
 
@@ -59,6 +60,15 @@ const { class: className, term } = Astro.props
     const container = document.getElementById('giscus')
     if (!container || container.dataset.giscusObserved === 'true') return
     container.dataset.giscusObserved = 'true'
+
+    const disclosure = container.closest('details')
+    if (container.dataset.defer === 'true' && disclosure) {
+      if (disclosure.open) loadGiscus(container)
+      disclosure.addEventListener('toggle', () => {
+        if (disclosure.open) loadGiscus(container)
+      })
+      return
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {

@@ -1,0 +1,50 @@
+---
+import manifest from '../../../migration/content-manifest.json'
+import { sitePath } from '@/utils/site-path'
+
+interface Entry {
+  date: string
+  kind: string
+  scope?: string
+  title: string
+  note?: string
+  links?: { label: string; url: string }[]
+  commit?: string
+}
+interface Props { entries: Entry[] }
+const { entries } = Astro.props
+const kinds: Record<string, string> = { content: '内容', feature: '新功能', fix: '修复', style: '样式', infra: '基建' }
+const linkTo = (url: string) => {
+  const original = new URL(url, 'https://yenchiu.com')
+  const migrated = manifest.find(item => item.originalUrl === original.href.split(/[?#]/)[0])
+  return migrated ? sitePath(migrated.url) + original.search + original.hash : original.href
+}
+---
+<ol class='updates'>
+  {entries.map(entry => <li>
+    <time datetime={entry.date}>{entry.date}</time>
+    <div class='update-body'>
+      <div class='update-meta'><span class='kind'>{kinds[entry.kind] ?? '更新'}</span>{entry.scope && <span>{entry.scope}</span>}</div>
+      <h3>{entry.title}</h3>
+      {entry.note && <p>{entry.note}</p>}
+      {entry.links?.length && <div class='update-links'>{entry.links.map(link => <a href={linkTo(link.url)}>{link.label} <span aria-hidden='true'>↗</span></a>)}</div>}
+      {entry.commit && <code>{entry.commit}</code>}
+    </div>
+  </li>)}
+</ol>
+<style>
+  .updates {list-style:none;padding:0;margin:0;}
+  li {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));}
+  li:last-child {border-bottom:0;}
+  time {font-size:.75rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;padding-top:.2rem;}
+  .update-meta {display:flex;align-items:center;gap:.65rem;font-size:.67rem;color:hsl(var(--muted-foreground));margin-bottom:.45rem;}
+  .kind {border-radius:.3rem;padding:.15rem .4rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
+  h3 {font-size:.95rem;font-weight:600;line-height:1.7;margin:0;}
+  p {font-size:.82rem;color:hsl(var(--muted-foreground));line-height:1.9;margin:.3rem 0 0;}
+  .update-links {display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.5rem;}
+  a {font-size:.78rem;color:hsl(var(--primary));text-underline-offset:.25em;}
+  a:hover {text-decoration:underline;}
+  a:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:4px;}
+  code {font-size:.7rem;overflow-wrap:anywhere;}
+  @media(max-width:600px) {li {grid-template-columns:1fr;gap:.5rem;}time {font-size:.7rem;}.update-meta {margin-bottom:.25rem;}}
+</style>

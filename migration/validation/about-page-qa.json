@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-17",
+  "environment": "Chrome extension against local production build",
+  "content": {
+    "profileMatchesOriginalYaml": true,
+    "changelogMatchesOriginalYaml": true,
+    "changelogEntries": 30,
+    "posts": 17,
+    "categoryPaths": 16,
+    "tags": 52
+  },
+  "passed": [
+    "No horizontal overflow at CSS widths 320,390,768,1280",
+    "Profile image complete with naturalWidth=200",
+    "Native archive disclosure expands and collapses all 27 older entries",
+    "No Giscus script or iframe before comments opened",
+    "Comments disclosure loads exactly one script, retained after repeated close and reopen",
+    "Giscus iframe uses original repository and specific term 关于 | Wendell",
+    "Click 留言 opens disclosure after both initial load and client-side return from blog",
+    "Read articles link navigates to preview blog; header About returns to correct preview page",
+    "Dark theme applied successfully, original system theme restored afterward",
+    "Primary action uses white text on dark purple background",
+    "Back to Top button restored scrollY=0",
+    "Temporary browser viewport override reset successfully"
+  ],
+  "screenshots": [
+    "C:/03_Github/.work/iris-about-mobile-final.jpg",
+    "C:/03_Github/.work/iris-about-desktop-final.jpg"
+  ],
+  "limits": [
+    "Physical mobile device not tested",
+    "Giscus body and historical comments not verified; script and iframe bindings only",
+    "No comments or emails sent"
+  ]
+}

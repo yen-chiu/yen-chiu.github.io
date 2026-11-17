@@ -1,18 +1,296 @@
 ---
-import PageLayout from '@/layouts/CommonPage.astro'
+import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import { BackToTop } from 'astro-pure/components/pages'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { Giscus } from '@/components/giscus'
+import UpdateList from '@/components/about/UpdateList.astro'
+import avatar from '@/assets/avatar.png'
 import profile from '../data/about.json'
 import changelog from '../data/changelog.json'
-import {Giscus} from '@/components/giscus'
+import { getAllCategories, getPostPath } from '@/utils/content-paths'
+import { sitePath } from '@/utils/site-path'
+
+const posts = (await getCollection('blog')).filter(post => !post.data.draft)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+const stats = [
+  { label: '文章', value: posts.length, href: sitePath('/blog') },
+  { label: '分类', value: getAllCategories(posts).size, href: sitePath('/categories') },
+  { label: '标签', value: new Set(posts.flatMap(post => post.data.tags)).size, href: sitePath('/tags') }
+]
+const since = profile.milestones[0].datetime
+const days = Math.max(0, Math.floor((Date.now() - Date.parse(since)) / 86400000))
+const dateLabel = (date: Date) => date.toLocaleDateString('zh-CN', {
+  year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Shanghai'
+})
+const sections = [
+  { id: 'about', label: '关于我' }, { id: 'writing', label: '最近在写' },
+  { id: 'journey', label: '站点历程' }, { id: 'changelog', label: '更新日志' },
+  { id: 'comments', label: '留言' }
+]
 ---
-<PageLayout title="关于" hideBack>
-<section><p class="text-muted-foreground">{profile.profile.handle} · {profile.profile.role} · {profile.profile.location}</p><h1 class="text-4xl font-bold my-5">{profile.profile.name}</h1><p class="text-xl mb-8">{profile.profile.tagline}</p><h2>{profile.about.title}</h2><p>{profile.about.intro}</p><p>{profile.about.note}</p><ul class="chips">{profile.about.interests.map(item=><li>{item}</li>)}</ul></section>
-<section><h2>最近在做</h2><ul>{profile.now.map(item=><li>{item}</li>)}</ul></section>
-<section><h2>工具箱</h2><ul class="chips">{profile.tools.map(item=><li>{item}</li>)}</ul></section>
-<section><h2>站点历程</h2>{profile.milestones.map(item=><article><time datetime={item.datetime}>{item.datetime.slice(0,10)}</time><h3>{item.title}</h3><p>{item.text}</p></article>)}</section>
-<section id="changelog"><h2>更新日志</h2>{changelog.map(item=><article><time datetime={item.date}>{item.date}</time><p class="text-sm text-muted-foreground">{item.scope} · {item.kind}</p><h3>{item.title}</h3><p>{item.note}</p>{item.links?.map(link=><a href={link.url.startsWith('/')?'https://yenchiu.com'+link.url:link.url}>{link.label} →</a>)}</article>)}</section>
-<p>原站：Jekyll + Chirpy；当前预览：Astro + Iris。写作台与聊天仍由原站提供。</p>
-<Giscus term="关于 | Wendell" />
-</PageLayout>
+
+<BaseLayout meta={{ title: '关于', description: '关于 Wendell：数据分析、代码、阅读与生活，以及这个博客的更新日志。' }}>
+  <main class='about-page'>
+    <about-page id='about-content'>
+      <section class='about-hero' aria-labelledby='about-title'>
+        <div class='hero-copy'>
+          <p class='eyebrow'><span class='status-dot' aria-hidden='true'></span>{profile.profile.location} · 数据与代码</p>
+          <h1 id='about-title'>你好，我是<br /><span>{profile.profile.name}。</span></h1>
+          <p class='hero-tagline'>{profile.profile.tagline}</p>
+          <p class='hero-lede'>一名做数据分析的业余编程爱好者。白天和数字、模型打交道，晚上折腾 Linux、博客和自动化小工具。</p>
+          <div class='hero-actions'>
+            <a class='action-primary' href={sitePath('/blog')}>读我的文章 <span aria-hidden='true'>↗</span></a>
+            <a href={sitePath('/rss.xml')}>订阅 RSS</a>
+            <a href='https://github.com/yen-chiu' target='_blank' rel='noopener noreferrer'>GitHub <span aria-hidden='true'>↗</span></a>
+          </div>
+          <p class='hero-since'>从 <time datetime={since}>2023.05.20</time> 开始，写着第 <strong data-about-days data-since={since}>{days.toLocaleString('zh-CN')}</strong> 天。</p>
+        </div>
+        <aside class='profile-card' aria-label='个人资料'>
+          <div class='avatar-wrap'><Image src={avatar} alt='Wendell 的头像' width={200} height={200} loading='eager' /></div>
+          <p class='profile-handle'>{profile.profile.handle}</p>
+          <p class='profile-role'>{profile.profile.role}</p>
+          <dl class='profile-stats'>
+            {stats.map(stat => <div><dt>{stat.label}</dt><dd><a href={stat.href} aria-label={`浏览 ${stat.value} 个${stat.label}`}>{stat.value}</a></dd></div>)}
+          </dl>
+          <p class='profile-note'>记录本身，就是一种整理。</p>
+        </aside>
+      </section>
+
+      <nav class='section-nav' aria-label='关于页章节'>
+        {sections.map(section => <a href={`#${section.id}`}>{section.label}</a>)}
+      </nav>
+
+      <section id='about' aria-labelledby='intro-title'>
+        <header class='section-heading'><p class='eyebrow'>01 / 关于</p><h2 id='intro-title'>关于我，和这个站</h2></header>
+        <div class='intro-grid'>
+          <div class='intro-copy'>
+            <h3>{profile.about.title}</h3>
+            <p>{profile.about.intro}</p><p>{profile.about.note}</p>
+            <ul class='chips' aria-label='兴趣与方向'>{profile.about.interests.map(item => <li>{item}</li>)}</ul>
+          </div>
+          <figure class='quote'>
+            <span aria-hidden='true' class='quote-mark'>“</span>
+            <blockquote>我希望在这里的世界<br />是豁达平静的。</blockquote>
+            <figcaption><a href={sitePath('/blog/MyBlog')}>《MyBlog》</a> · 2023.10</figcaption>
+          </figure>
+        </div>
+        <div class='notes-grid'>
+          <article class='note-card'><p class='eyebrow'>日常 / Now</p><h3>最近在做</h3><ul class='now-list'>{profile.now.map(item => <li>{item}</li>)}</ul></article>
+          <article class='note-card'><p class='eyebrow'>习惯 / Tools</p><h3>常用工具</h3><ul class='chips tools' aria-label='常用工具'>{profile.tools.map(item => <li>{item}</li>)}</ul></article>
+          <article class='note-card'><p class='eyebrow'>记录 / This site</p><h3>这个站</h3>
+            <dl class='site-facts'><div><dt>现在</dt><dd>Astro + Iris</dd></div><div><dt>原站</dt><dd>Jekyll + Chirpy</dd></div><div><dt>托管</dt><dd>GitHub Pages</dd></div><div><dt>媒体</dt><dd>Cloudflare R2</dd></div></dl>
+            <p class='site-note'>写作台与聊天页继续在原站运行。</p><a class='text-link' href='#changelog'>看看最近的变化 <span aria-hidden='true'>→</span></a>
+          </article>
+        </div>
+        <article class='play-note'>
+          <div><p class='eyebrow'>代码之外，也想做点有趣的</p><h3>把一段故事，重新带回浏览器。</h3><p>把下架的《异次元通讯·次元复苏》拆开，逆向出剧情的 CSV 指令语法，重写成能在浏览器里玩的版本。</p></div>
+          <a class='text-link' href='https://yenchiu.com/chat/play.html?a=miko' target='_blank' rel='noopener noreferrer'>去玩《异次元通讯》 <span aria-hidden='true'>↗</span></a>
+        </article>
+      </section>
+
+      <div class='writing-journey'>
+        <section id='writing' aria-labelledby='writing-title'>
+          <header class='section-heading'><p class='eyebrow'>02 / 文字</p><div class='heading-row'><h2 id='writing-title'>最近在写</h2><a class='text-link' href={sitePath('/archives')}>全部文章 →</a></div></header>
+          <ol class='recent-posts'>{posts.slice(0, 3).map((post, index) => <li><a href={sitePath(getPostPath(post))}><span class='post-number' aria-hidden='true'>0{index + 1}</span><div><time datetime={post.data.publishDate.toISOString()}>{dateLabel(post.data.publishDate)}</time><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span class='post-arrow' aria-hidden='true'>↗</span></a></li>)}</ol>
+        </section>
+        <section id='journey' aria-labelledby='journey-title'>
+          <header class='section-heading'><p class='eyebrow'>03 / 时间</p><h2 id='journey-title'>不着急，慢慢来</h2></header>
+          <ol class='milestones'>{profile.milestones.map(item => <li><time datetime={item.datetime}>{item.datetime.slice(0, 7).replace('-', '.')}</time><h3>{item.title}</h3><p>{item.text}</p></li>)}</ol>
+        </section>
+      </div>
+
+      <section id='changelog' aria-labelledby='changelog-title'>
+        <header class='section-heading'><p class='eyebrow'>04 / 更新</p><div class='heading-row'><h2 id='changelog-title'>这个站，最近的变化</h2><span class='section-note'>{changelog.length} 条记录</span></div></header>
+        <UpdateList entries={changelog.slice(0, 3)} />
+        <details class='archive-details'>
+          <summary><span class='when-closed'>展开其余 {changelog.length - 3} 条更新</span><span class='when-open'>收起历史更新</span><span class='details-plus' aria-hidden='true'>＋</span></summary>
+          <UpdateList entries={changelog.slice(3)} />
+        </details>
+      </section>
+
+      <section id='comments' aria-labelledby='comments-title'>
+        <header class='section-heading'><p class='eyebrow'>05 / 相遇</p><h2 id='comments-title'>说点什么</h2></header>
+        <p class='comments-lede'>如果你也在做类似的事，或者只是想打个招呼，欢迎留句话。也可以<a href='mailto:yenchiu.he@gmail.com'>写信给我</a>。</p>
+        <details class='comments-details' data-about-comments>
+          <summary><span class='when-closed'>展开留言板</span><span class='when-open'>收起留言板</span><span class='details-plus' aria-hidden='true'>＋</span></summary>
+          <p class='comment-hint'>留言同步到 GitHub Discussions。</p>
+          <Giscus term='关于 | Wendell' defer />
+        </details>
+      </section>
+      <p class='signature'><span>{profile.profile.tagline}</span><span>— Wendell</span></p>
+    </about-page>
+  </main>
+  <BackToTop header='about-title' content='about-content' slot='overlay' />
+</BaseLayout>
+
+<script>
+  class AboutPage extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const counter = this.querySelector<HTMLElement>('[data-about-days]')
+      const start = Date.parse(counter?.dataset.since ?? '')
+      if (counter && Number.isFinite(start)) counter.textContent = Math.max(0, Math.floor((Date.now() - start) / 86400000)).toLocaleString('zh-CN')
+      const openComments = () => {
+        const comments = this.querySelector<HTMLDetailsElement>('[data-about-comments]')
+        if (location.hash === '#comments' && comments) comments.open = true
+      }
+      openComments()
+      window.addEventListener('hashchange', openComments, { signal: this.controller.signal })
+      document.addEventListener('astro:page-load', openComments, { signal: this.controller.signal })
+      this.addEventListener('click', event => {
+        if (!(event.target instanceof Element) || !event.target.closest('a[href="#comments"]')) return
+        const comments = this.querySelector<HTMLDetailsElement>('[data-about-comments]')
+        if (comments) comments.open = true
+      }, { signal: this.controller.signal })
+    }
+    disconnectedCallback() { this.controller?.abort() }
+  }
+  if (!customElements.get('about-page')) customElements.define('about-page', AboutPage)
+</script>
+
 <style>
-section{margin-block:2.5rem}h2{font-size:1.5rem;font-weight:650;margin-bottom:1rem}h3{font-size:1.1rem;font-weight:600}p,li{line-height:1.9}p{margin-block:.7rem}article{padding:1.2rem 0;border-bottom:1px solid hsl(var(--border))}time{font-size:.85rem;color:hsl(var(--muted-foreground))}.chips{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0}.chips li{padding:.2rem .8rem;border:1px solid hsl(var(--border));border-radius:2rem}a{color:hsl(var(--primary));text-decoration:underline;text-underline-offset:.2em}
+  .about-page {max-width:64rem;margin:2.5rem auto 4rem;}
+  about-page {display:block;}
+  .about-page :is(h1,h2,h3,p,figure,blockquote,dl,dd,ol,ul) {margin:0;}
+  .about-page :is(ol,ul) {padding:0;list-style:none;}
+  .about-page a {text-underline-offset:.25em;}
+  .about-page a:focus-visible,.about-page summary:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:5px;border-radius:.25rem;}
+  .about-page section[id] {scroll-margin-top:7rem;}
+  .eyebrow {font-size:.72rem;letter-spacing:.12em;color:hsl(var(--primary));font-weight:600;line-height:1.6;}
+  .status-dot {display:inline-block;width:.45rem;height:.45rem;border-radius:50%;background:#219a82;margin-right:.6rem;vertical-align:middle;}
+  .about-hero {display:grid;grid-template-columns:minmax(0,1.5fr) minmax(16rem,1fr);gap:3rem;align-items:center;padding:1rem 0 3rem;}
+  h1 {font-size:clamp(2.8rem,6vw,4.6rem);line-height:1.12;letter-spacing:-.055em;font-weight:750;padding:1.1rem 0;}
+  h1 span {color:hsl(var(--primary));}
+  .hero-tagline {font-size:1.3rem;letter-spacing:.06em;padding:.6rem 0 1.1rem;}
+  .hero-lede {max-width:33rem;line-height:1.95;color:hsl(var(--muted-foreground));}
+  .hero-actions {display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:1.5rem 0;}
+  .hero-actions a {display:inline-flex;align-items:center;justify-content:center;gap:1rem;min-height:44px;padding:.65rem 1rem;border:1px solid hsl(var(--border));border-radius:.7rem;font-size:.85rem;}
+    .hero-actions .action-primary {color:#fff;background:hsl(267 42% 46%);border-color:transparent;}
+  .hero-actions a:hover {filter:brightness(.95);}
+  .hero-since {font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.8;}
+  .hero-since strong {color:hsl(var(--foreground));font-weight:600;}
+  .profile-card {border:1px solid hsl(var(--border));border-radius:1.8rem;padding:2rem 1.5rem 1.2rem;text-align:center;background:linear-gradient(155deg,hsl(var(--primary)/.08),hsl(var(--background)/.8) 70%);}
+  .avatar-wrap {width:9rem;aspect-ratio:1;margin:0 auto 1.1rem;padding:.4rem;border-radius:50%;border:1px solid hsl(var(--primary)/.25);}
+  .avatar-wrap :global(img) {width:100%;height:100%;border-radius:50%;object-fit:cover;}
+  .profile-handle {font-size:1rem;font-weight:650;}
+  .profile-role {font-size:.8rem;color:hsl(var(--muted-foreground));padding:.5rem 0 1.4rem;}
+  .profile-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid hsl(var(--border));padding:1rem 0;}
+  .profile-stats dt {font-size:.7rem;color:hsl(var(--muted-foreground));}
+  .profile-stats dd {font-size:1.65rem;line-height:1.5;font-weight:650;font-variant-numeric:tabular-nums;}
+  .profile-stats a {display:inline-block;min-width:44px;min-height:44px;}
+  .profile-note {font-size:.75rem;color:hsl(var(--muted-foreground));padding-top:1rem;}
+  .section-nav {display:flex;flex-wrap:wrap;gap:.3rem 1.5rem;border-block:1px solid hsl(var(--border));padding:.65rem 0;margin-bottom:3.5rem;}
+  .section-nav a {display:flex;align-items:center;min-height:44px;font-size:.85rem;color:hsl(var(--muted-foreground));}
+  .section-nav a:hover,.text-link:hover {color:hsl(var(--primary));text-decoration:underline;}
+  .section-heading {margin-bottom:1.6rem;}
+  h2 {font-size:clamp(1.4rem,3vw,1.8rem);font-weight:650;letter-spacing:-.03em;line-height:1.5;padding-top:.35rem;}
+  h3 {font-size:1.05rem;line-height:1.65;font-weight:650;}
+  .intro-grid {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:2.5rem;align-items:stretch;margin-bottom:2rem;}
+  .intro-copy h3 {font-size:1.25rem;}
+  .intro-copy p {font-size:.95rem;line-height:2;color:hsl(var(--muted-foreground));padding-top:1rem;}
+  .chips {display:flex;flex-wrap:wrap;gap:.45rem;}
+  .intro-copy .chips {margin-top:1.25rem;}
+  .chips li {padding:.3rem .65rem;border:1px solid hsl(var(--border));border-radius:.5rem;font-size:.75rem;line-height:1.6;color:hsl(var(--muted-foreground));}
+  .quote {display:flex;flex-direction:column;justify-content:center;padding:1.6rem 2rem;border-left:2px solid hsl(var(--primary)/.25);background:linear-gradient(90deg,hsl(var(--primary)/.05),transparent);}
+  .quote-mark {font-family:Georgia,serif;font-size:4rem;line-height:1;color:hsl(var(--primary)/.5);}
+  .quote blockquote {font-size:clamp(1.2rem,2.2vw,1.5rem);line-height:1.9;letter-spacing:.03em;}
+  .quote figcaption {font-size:.78rem;color:hsl(var(--muted-foreground));margin-top:1.4rem;}
+  .quote a:hover {text-decoration:underline;}
+  .notes-grid {display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:1rem;}
+  .note-card {border:1px solid hsl(var(--border));border-radius:1rem;padding:1.4rem;background:hsl(var(--background)/.45);}
+  .note-card h3 {padding:.35rem 0 1rem;}
+  .now-list li {position:relative;padding:0 0 .75rem 1rem;font-size:.82rem;line-height:1.8;color:hsl(var(--muted-foreground));}
+  .now-list li::before {content:'';position:absolute;left:0;top:.6rem;width:.25rem;height:.25rem;border-radius:50%;background:hsl(var(--primary)/.65);}
+  .tools li {font-size:.75rem;color:hsl(var(--foreground));}
+  .site-facts div {display:flex;justify-content:space-between;gap:.75rem;font-size:.78rem;line-height:2.3;}
+  .site-facts dt,.site-note {color:hsl(var(--muted-foreground));}
+  .note-card .site-note {font-size:.75rem;line-height:1.8;margin:.8rem 0;}
+  .text-link {font-size:.8rem;color:hsl(var(--primary));line-height:1.8;}
+  .play-note {display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:1.5rem 0;margin-top:1.5rem;border-block:1px solid hsl(var(--border));}
+  .play-note h3 {padding:.4rem 0;}
+  .play-note p:not(.eyebrow) {font-size:.85rem;line-height:1.9;color:hsl(var(--muted-foreground));max-width:40rem;}
+  .play-note > a {flex-shrink:0;min-height:44px;display:flex;align-items:center;}
+  .writing-journey {display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:3rem;margin:4rem 0;}
+  .heading-row {display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5rem;}
+  .recent-posts li + li {border-top:1px solid hsl(var(--border));}
+  .recent-posts a {display:flex;gap:.85rem;align-items:baseline;padding:1.25rem 0;}
+  .recent-posts li:first-child a {padding-top:0;}
+  .post-number {font-size:.7rem;color:hsl(var(--primary)/.7);font-variant-numeric:tabular-nums;}
+  .recent-posts time {font-size:.7rem;color:hsl(var(--muted-foreground));}
+  .recent-posts h3 {font-size:.95rem;padding:.4rem 0;}
+  .recent-posts p {font-size:.8rem;line-height:1.8;color:hsl(var(--muted-foreground));display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .recent-posts a:hover h3 {color:hsl(var(--primary));}
+  .post-arrow {margin-left:auto;color:hsl(var(--primary));}
+  .milestones {border-left:1px solid hsl(var(--border));margin-left:.3rem!important;}
+  .milestones li {position:relative;padding:0 0 1.4rem 1.3rem;}
+  .milestones li::before {content:'';position:absolute;left:-.25rem;top:.35rem;width:.45rem;height:.45rem;border-radius:50%;background:hsl(var(--primary));box-shadow:0 0 0 4px hsl(var(--background));}
+  .milestones time {font-size:.72rem;color:hsl(var(--primary));font-variant-numeric:tabular-nums;}
+  .milestones h3 {font-size:.9rem;padding:.3rem 0;}
+  .milestones p {font-size:.8rem;color:hsl(var(--muted-foreground));line-height:1.8;}
+  .section-note {font-size:.75rem;color:hsl(var(--muted-foreground));}
+  details {border:1px solid hsl(var(--border));border-radius:.8rem;}
+  summary {display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:1rem 1.2rem;min-height:52px;cursor:pointer;font-size:.85rem;list-style:none;}
+  summary::-webkit-details-marker {display:none;}
+  summary:hover {color:hsl(var(--primary));}
+  .when-open {display:none;}
+  details[open] > summary .when-closed {display:none;}
+  details[open] > summary .when-open {display:inline;}
+  details[open] > summary .details-plus {transform:rotate(45deg);}
+  .details-plus {font-size:1.2rem;color:hsl(var(--primary));}
+  .archive-details {margin-top:1.2rem;}
+  .archive-details[open] {padding:0 1.2rem;}
+  .archive-details[open] > summary {padding-inline:0;border-bottom:1px solid hsl(var(--border));}
+  #comments {margin-top:4rem;}
+  .comments-lede {font-size:.9rem;color:hsl(var(--muted-foreground));line-height:1.95;max-width:42rem;padding-bottom:1.3rem;}
+  .comments-lede a {color:hsl(var(--primary));text-decoration:underline;}
+  .comments-details[open] {padding:0 1.2rem 1.2rem;}
+  .comments-details[open] > summary {padding-inline:0;}
+  .comment-hint {font-size:.75rem;color:hsl(var(--muted-foreground));}
+  .signature {display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem;border-top:1px solid hsl(var(--border));padding-top:1.5rem;margin-top:3rem!important;font-size:.8rem;color:hsl(var(--muted-foreground));letter-spacing:.04em;}
+  @media(max-width:800px) {
+    .about-hero {gap:1.5rem;grid-template-columns:minmax(0,1.3fr) minmax(14rem,1fr);}
+    .notes-grid {grid-template-columns:1fr 1fr;}
+    .note-card:first-child {grid-column:1/-1;}
+    .now-list {display:grid;grid-template-columns:1fr 1fr;gap:0 1rem;}
+    .intro-grid {gap:1.5rem;}
+    .quote {padding:1rem;}
+    .writing-journey {gap:2rem;}
+    .play-note {align-items:flex-start;flex-direction:column;gap:.5rem;}
+  }
+  @media(max-width:600px) {
+    .about-page {margin-top:1.5rem;}
+    .about-hero {grid-template-columns:1fr;gap:2rem;padding-top:0;padding-bottom:2rem;}
+    h1 {font-size:3rem;}
+    .hero-tagline {font-size:1.15rem;}
+    .hero-lede {font-size:.9rem;}
+    .hero-actions {gap:.5rem;}
+    .hero-actions a {padding:.6rem .8rem;font-size:.78rem;gap:.6rem;}
+    .profile-card {display:grid;grid-template-columns:5rem minmax(0,1fr);column-gap:1rem;text-align:left;padding:1.25rem;}
+    .avatar-wrap {width:5rem;grid-row:1/4;margin:0;align-self:center;padding:.2rem;}
+    .profile-handle {font-size:.9rem;align-self:end;}
+    .profile-role {font-size:.73rem;padding:.3rem 0;}
+    .profile-note {font-size:.7rem;padding-top:0;grid-column:2;grid-row:3;}
+    .profile-stats {grid-column:1/-1;margin-top:1.1rem!important;text-align:center;padding:.7rem 0 0;border-bottom:0;}
+    .profile-stats dd {font-size:1.5rem;}
+    .section-nav {gap:0 1.2rem;margin-bottom:2.5rem;}
+    .section-nav a {font-size:.8rem;}
+    .intro-grid,.notes-grid,.writing-journey {grid-template-columns:1fr;}
+    .intro-grid {gap:1.5rem;}
+    .intro-copy p {font-size:.88rem;}
+    .quote {padding:1.2rem 1.5rem;}
+    .quote-mark {font-size:3rem;}
+    .quote blockquote {font-size:1.25rem;}
+    .quote figcaption {margin-top:.8rem;}
+    .now-list {display:block;}
+    .note-card {padding:1.2rem;}
+    .writing-journey {margin:3rem 0;gap:2.5rem;}
+    .recent-posts a {gap:.65rem;}
+    #comments {margin-top:3rem;}
+  }
+  @media(prefers-reduced-motion:no-preference) {
+    .hero-actions a,.recent-posts h3 {transition:color 150ms ease,filter 150ms ease;}
+  }
 </style>
