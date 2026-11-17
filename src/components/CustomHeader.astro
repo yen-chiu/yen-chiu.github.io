@@ -103,6 +103,8 @@ const logoImage = logoImageModule ? await logoImageModule() : null
       </button>
       <button
         id='toggleMenu'
+        aria-controls='headerExpandContent'
+        aria-expanded='false'
         class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
       >
         <span class='sr-only'>Menu</span>
@@ -156,13 +158,27 @@ const logoImage = logoImageModule ? await logoImageModule() : null
       )
 
       // Menu
+      const menuButton = this.querySelector('#toggleMenu')
+      const closeMenu = () => {
+        this.classList.remove('expanded')
+        menuButton?.setAttribute('aria-expanded', 'false')
+      }
       this.querySelector('#toggleMenu')?.addEventListener(
         'click',
         () => {
           this.classList.toggle('expanded')
+          menuButton?.setAttribute('aria-expanded', String(this.classList.contains('expanded')))
         },
         { signal }
       )
+      this.addEventListener('click', (event) => {
+        if ((event.target as Element).closest('a, [data-graph-open], [data-tagcloud-trigger], [data-category-open], .search-button')) closeMenu()
+      }, { signal })
+      document.addEventListener('astro:before-swap', closeMenu, { signal })
+      document.addEventListener('astro:page-load', closeMenu, { signal })
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMenu()
+      }, { signal })
     }
 
     disconnectedCallback() {

@@ -448,6 +448,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .attr('tabindex', 0)
       .attr('role', 'button')
       .attr('aria-label', item => item.label)
+      .attr('aria-pressed', item => String(item.id === state.focus))
       .style('cursor', 'pointer')
 
     node.append('title').text(item => item.label)
@@ -467,7 +468,6 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .attr('font-size', mobile ? 13 : 11)
       .attr('font-weight', (item) => (item.id === state.focus ? 700 : 480))
       .text((item) => graphLabel(item.label, item.kind, mobile, item.id === state.focus))
-      .style('pointer-events', 'none')
 
     const neighbours = new Map<string, Set<string>>()
     graph.edges.forEach((edge) => {
@@ -496,6 +496,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       writeState(root, state)
       if (state.depth > 0 || state.flow !== 'all') render()
       showDetails(item, graph.edges)
+      node.attr('aria-pressed', candidate => String(candidate.id === item.id))
       labels.text(candidate => graphLabel(candidate.label, candidate.kind, mobile, candidate.id === item.id))
     }
     node
@@ -586,6 +587,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       showDetails(target, graph.edges)
       state.focus = target.id
       writeState(root, state)
+      node.attr('aria-pressed', item => String(item.id === target.id))
       svg
         .transition()
         .duration(450)
@@ -600,9 +602,9 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     }
     if (state.focus) window.setTimeout(() => zoomToNode?.(state.focus!), 350)
 
-    root.querySelector<HTMLButtonElement>('[data-graph-zoom-in]')!.onclick = () => { svg.transition().duration(180).call(zoom.scaleBy, 1.3) }
-    root.querySelector<HTMLButtonElement>('[data-graph-zoom-out]')!.onclick = () => { svg.transition().duration(180).call(zoom.scaleBy, 1 / 1.3) }
-    root.querySelector<HTMLButtonElement>('[data-graph-fit]')!.onclick = () => { svg.transition().duration(180).call(zoom.transform, d3.zoomIdentity) }
+    root.querySelector<HTMLButtonElement>('[data-graph-zoom-in]')!.onclick = (event) => { event.stopPropagation(); svg.interrupt().call(zoom.scaleBy, 1.3) }
+    root.querySelector<HTMLButtonElement>('[data-graph-zoom-out]')!.onclick = (event) => { event.stopPropagation(); svg.interrupt().call(zoom.scaleBy, 1 / 1.3) }
+    root.querySelector<HTMLButtonElement>('[data-graph-fit]')!.onclick = (event) => { event.stopPropagation(); svg.interrupt().call(zoom.transform, d3.zoomIdentity) }
     root.querySelector<HTMLButtonElement>('[data-graph-reset]')!.onclick = () => {
       svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity)
     }

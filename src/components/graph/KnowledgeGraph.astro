@@ -569,6 +569,14 @@
     height: 100%;
   }
 
+  .graph-canvas :global(g[role='button']:focus) { outline:none; }
+  .graph-canvas :global(g[role='button']:focus-visible > circle:last-of-type),
+  .graph-canvas :global(g[aria-pressed='true'] > circle:last-of-type) {
+    stroke:hsl(var(--primary));
+    stroke-width:3;
+    filter:drop-shadow(0 0 3px hsl(var(--primary)/.45));
+  }
+
   .graph-details > span {
     color: hsl(var(--primary));
     font-size: 0.65rem;
@@ -629,8 +637,9 @@
   }
 
   .graph-dialog-header .graph-mobile-settings { display:none;width:auto;height:auto;border-radius:.65rem;white-space:nowrap; }
-  .graph-zoom-actions { display:flex;gap:.4rem; }
-  .graph-zoom-actions button { min-width:44px;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:hsl(var(--background)); }
+  .graph-zoom-actions { display:flex;gap:.4rem;position:relative;z-index:2;flex-shrink:0;pointer-events:auto; }
+  .graph-zoom-actions button { display:grid;place-items:center;min-width:44px;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:hsl(var(--background));color:hsl(var(--foreground));font:inherit;font-size:1rem;cursor:pointer;touch-action:manipulation; }
+  .graph-zoom-actions button:focus-visible { outline:2px solid hsl(var(--primary));outline-offset:2px; }
   @media (max-width: 639px) {
     .graph-dialog-header .graph-mobile-settings { display:block;font-size:.85rem;padding:.4rem .75rem;min-height:44px; }
     .graph-dialog-header { gap:.4rem; }
@@ -643,6 +652,7 @@
     .graph-controls button { min-height:44px;font-size:.85rem; }
     .graph-details p,.graph-details :global(li),.graph-details :global(a) { font-size:.9rem; }
     .graph-canvas { touch-action:none; }
+    .graph-workspace > footer {position:sticky;bottom:0;z-index:3;align-items:flex-start;flex-direction:column;gap:.5rem;background:hsl(var(--background));}
 
     .knowledge-graph-dialog {
       width: 100vw;

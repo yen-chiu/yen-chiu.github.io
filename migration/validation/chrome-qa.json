@@ -7,13 +7,13 @@
     "standalone search 念真 returns one article",
     "graph zoom button changes SVG transform to scale 1.3",
     "graph settings aria-expanded becomes true",
+    "2026-11-17 final mobile controls build: node title selection updates inspector; see mobile-controls-qa.json",
     "mobile graph retains 85 nodes and reduces visible labels to 17",
     "MyBlog 5 body images loaded with nonzero naturalWidth",
     "MyBlog no horizontal overflow at CSS 391x844,768x1024,1440x900",
     "video duration 198.766667 seconds, readyState4; playback progressed to25.76 seconds without media error; paused after test"
   ],
   "pending": [
-    "graph node selection detail did not change through automation; keyboard support and drag tolerance added but new live behavior not retested",
     "Giscus iframe parameters correct but frame body read empty; no comments posted",
     "nested preview interaction and all article media not fully tested",
     "Chrome screenshot capture and debugger attachment became unstable at end; viewport reset attempted but debugger detached"

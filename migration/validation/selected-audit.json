@@ -17,5 +17,5 @@
   "comments": "17 pages bound to original repository and title",
   "redirects": "17 original posts paths and 17 previous staging URLs",
   "seo": "original canonical and noindex follow; sitemap emitted",
-  "browser": "See chrome-qa report: partial live acceptance completed, remaining items explicitly pending"
+  "browser": "see chrome-qa report for partial live browser acceptance; untested items remain pending"
 }
