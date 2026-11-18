@@ -19,11 +19,13 @@ import '@/assets/styles/app.css'
 interface Props {
   meta: SiteMeta
   highlightColor?: string
+  pageKind?: 'home' | 'content'
 }
 
 const {
   meta: { articleDate, description = config.description, ogImage, title },
   highlightColor = '#B19CD9',
+  pageKind = 'content',
   ...props
 } = Astro.props
 ---
@@ -36,7 +38,7 @@ const {
     <PageTransition />
   </head>
 
-  <body class='bg-background text-foreground' {...props}>
+  <body class='bg-background text-foreground' data-page={pageKind} {...props}>
     <div class='site-wallpaper' style={`background-image:url('${sitePath('/images/moonlit-cover.svg')}')`} aria-hidden='true'></div>
     <div
       id='highlight-gradient'
@@ -63,8 +65,8 @@ const {
     <style is:global>
       .site-wallpaper{display:none;position:fixed;inset:0;pointer-events:none;z-index:0;background-position:center;background-size:cover;}
       #main-container{position:relative;z-index:1;}
-      html[data-wallpaper='fullscreen'] .site-wallpaper{display:block;opacity:.24;}
-      html[data-wallpaper='overlay'] .site-wallpaper{display:block;opacity:.13;filter:blur(3px);}
+      html[data-wallpaper='fullscreen'] body[data-page='content'] .site-wallpaper{display:block;opacity:.24;}
+      html[data-wallpaper='overlay'] body[data-page='content'] .site-wallpaper{display:block;opacity:.13;filter:blur(3px);}
     </style>
     <style define:vars={{ highlightColor }}>
       :global(.highlight) {

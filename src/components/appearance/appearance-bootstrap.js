@@ -3,13 +3,14 @@
 (() => {
   if (window.wendellAppearance) { window.wendellAppearance.apply(); return }
   const key = 'wendell-appearance-v1'
-  const defaults = { hue:267, theme:'system', wallpaper:'banner', layout:'list', title:true, waves:false }
+  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:false }
   const normalize = value => {
     const v = value && typeof value === 'object' ? value : {}
     return {
       hue:typeof v.hue === 'number' && Number.isFinite(v.hue) ? Math.max(0,Math.min(360,Math.round(v.hue))) : defaults.hue,
       theme:['system','light','dark'].includes(v.theme) ? v.theme : defaults.theme,
-      wallpaper:['banner','fullscreen','overlay','hidden'].includes(v.wallpaper) ? v.wallpaper : defaults.wallpaper,
+      wallpaper:['banner','fullscreen','overlay'].includes(v.wallpaper) ? v.wallpaper : defaults.wallpaper,
+      cover:typeof v.cover === 'boolean' ? v.cover : v.wallpaper==='hidden' ? false : defaults.cover,
       layout:['list','grid'].includes(v.layout) ? v.layout : defaults.layout,
       title:typeof v.title === 'boolean' ? v.title : defaults.title,
       waves:typeof v.waves === 'boolean' ? v.waves : defaults.waves
@@ -37,6 +38,7 @@
     root.style.setProperty('--primary-dark',`${h} 68% 78%`)
     root.classList.toggle('dark',settings.theme==='dark'||(settings.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches))
     root.dataset.wallpaper=settings.wallpaper
+    root.dataset.homeCover=String(settings.cover)
     root.dataset.postLayout=settings.layout
     root.dataset.bannerTitle=String(settings.title)
     root.dataset.bannerWaves=String(settings.waves)

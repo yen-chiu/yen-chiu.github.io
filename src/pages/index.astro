@@ -16,7 +16,7 @@ const entries = [
 ]
 ---
 
-<BaseLayout meta={{ title: 'Wendell', description: '读书，买花，长大。Wendell 的个人博客。' }}>
+<BaseLayout pageKind='home' meta={{ title: 'Wendell', description: '读书，买花，长大。Wendell 的个人博客。' }}>
   <main class='home-page'>
     <landing-hero class='landing-track'>
       <section class='home-cover' aria-label='首页封面'>
@@ -361,10 +361,10 @@ const entries = [
   :global(html[data-banner-title='false']) :is(h1, .eyebrow, .tagline) {
     visibility: hidden;
   }
-  :global(html[data-wallpaper='hidden']) :is(.cover-image, .star-field) {
+  :global(html[data-home-cover='false']) :is(.cover-image, .star-field) {
     display: none;
   }
-  :global(html[data-wallpaper='hidden']) .cover-credit {
+  :global(html[data-home-cover='false']) .cover-credit {
     display: none;
   }
   .home-doorway {
@@ -513,6 +513,8 @@ const entries = [
       animation: glitch-fragment 0.55s steps(2, end) reverse;
     }
   }
+  @media(prefers-reduced-motion:no-preference){:global(html[data-banner-waves='true']) .cover-wave{animation:cover-edge-drift 7s ease-in-out infinite alternate;}}
+  @keyframes cover-edge-drift{to{translate:3% 0;}}
   @keyframes intro-in {
     from {
       opacity: 0;

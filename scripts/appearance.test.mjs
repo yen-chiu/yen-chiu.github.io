@@ -51,3 +51,25 @@ for(let hue=0;hue<=360;hue++){
  assert.ok(1.05/(luminance(h,s,l)+.05)>=5.2-1e-6,`Contrast failed at hue ${hue}`)
 }
 console.log('Appearance persistence, storage recovery, theme behavior and 361 hue contrast checks passed')
+
+// Existing wallpaper preferences survive while the old combined hidden mode
+// migrates into independent home-cover and inner-page background controls.
+const legacyHidden=boot(new Map([['wendell-appearance-v1',JSON.stringify({wallpaper:'hidden',hue:165,theme:'dark',layout:'grid'})]]))
+assert.equal(legacyHidden.dataset.wallpaper,'banner')
+assert.equal(legacyHidden.dataset.homeCover,'false')
+assert.equal(legacyHidden.api.get().hue,165)
+assert.equal(legacyHidden.api.get().layout,'grid')
+for(const wallpaper of ['banner','fullscreen','overlay']){
+ const existing=boot(new Map([['wendell-appearance-v1',JSON.stringify({wallpaper})]]))
+ assert.equal(existing.dataset.wallpaper,wallpaper)
+ assert.equal(existing.dataset.homeCover,'true')
+ existing.api.set({cover:false})
+ assert.equal(existing.dataset.wallpaper,wallpaper)
+ const reloaded=boot(existing.saved)
+ assert.equal(reloaded.dataset.homeCover,'false')
+ reloaded.api.set({wallpaper:'overlay'})
+ assert.equal(reloaded.dataset.homeCover,'false')
+ reloaded.api.reset()
+ assert.equal(reloaded.dataset.homeCover,'true')
+}
+console.log('Legacy background migration and independent cover persistence passed')

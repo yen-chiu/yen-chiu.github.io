@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-18",
+  "browser": "Chrome local production build; viewport simulation",
+  "list_alignment": {
+    "390px": {
+      "buttons": 8,
+      "right_edge": 339.6042,
+      "height": 44,
+      "time_vertical_center_delta": 0,
+      "tags_above_action": true
+    },
+    "320px": {
+      "buttons": 8,
+      "right_edge": 269.6042,
+      "overflow": false
+    },
+    "1280px": {
+      "buttons": 8,
+      "right_edge": 1127.6667,
+      "overflow": false
+    }
+  },
+  "grid_320px": {
+    "columns": [
+      131.135,
+      131.135
+    ],
+    "button_width": 102.6146,
+    "button_height": 44,
+    "paired_button_bottoms_equal": true,
+    "overflow": false
+  },
+  "navigation": "7th read link opened the QQ/NapCat article; returned to list",
+  "background": {
+    "content_plain": "wallpaper display none",
+    "content_wallpaper": "display block / opacity .24 / no blur",
+    "content_soft": "display block / opacity .13 / blur 3px",
+    "home": "all inner-background modes keep wallpaper element hidden; cover has separate setting"
+  },
+  "persistence": {
+    "home_cover_false_with_overlay": "survived reload",
+    "reenabling_cover": "did not change inner background",
+    "wave_enabled": "cover-edge-drift observed",
+    "restore_defaults": "passed"
+  },
+  "automated": "legacy hidden migration; separate cover persistence; appearance recovery/themes/361 hue contrast passed",
+  "build": {
+    "pages": 136,
+    "type_errors": 0,
+    "type_warnings": 0,
+    "existing_hints": 2,
+    "missing_local_resources": 0
+  },
+  "screenshots": [
+    ".work/iris-card-actions-mobile.jpg",
+    ".work/iris-background-settings-mobile.jpg"
+  ],
+  "cleanup": "Default site appearance restored; temporary viewport reset",
+  "limits": [
+    "Not a physical phone test",
+    "OS reduced-motion setting not directly toggled"
+  ]
+}

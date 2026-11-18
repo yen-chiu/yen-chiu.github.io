@@ -1,7 +1,8 @@
 export interface AppearanceSettings {
   hue: number
   theme: 'system' | 'light' | 'dark'
-  wallpaper: 'banner' | 'fullscreen' | 'overlay' | 'hidden'
+  wallpaper: 'banner' | 'fullscreen' | 'overlay'
+  cover: boolean
   layout: 'list' | 'grid'
   title: boolean
   waves: boolean
