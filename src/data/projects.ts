@@ -35,6 +35,20 @@ export const projects = [
     secondary: null
   },
   {
+    id: 'inhuman',
+    group: 'interactive',
+    name: 'Inhuman · 整活网页合集',
+    kind: '开源小游戏维护',
+    status: '在线体验',
+    description: '八个不按常理出牌的小游戏：验证码、假网盘、抽奖转盘……基于 CS-LX 的开源项目维护。',
+    tags: ['整活小游戏', '纯静态', '开源维护'],
+    cover: '/images/projects/inhuman-cover.svg',
+    coverWidth: 1280,
+    coverHeight: 720,
+    primary: { label: '开始整活', href: 'https://yenchiu.com/Inhuman/' },
+    secondary: { label: '查看源码', href: 'https://github.com/yen-chiu/Inhuman' }
+  },
+  {
     id: 'astro',
     group: 'building',
     name: 'Wendell · Astro 博客',
