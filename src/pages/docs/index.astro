@@ -1,79 +1,21 @@
 ---
-import { Button, Icon } from 'astro-pure/user'
+import {getCollection} from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
-
+import ContentPageHero from '@/components/pages/ContentPageHero.astro'
 import DocsContents from './DocsContents.astro'
-
-const meta = {
-  title: 'Documentation',
-  description: 'Official documentation and knowledge base'
-}
+const docs=await getCollection('docs')
+const resources=[
+ {title:'WendellManual',description:'建站笔记、工具备忘与长期维护的文档主库。',href:'https://github.com/yen-chiu/WendellManual',mark:'▤'},
+ {title:'Astro 迁移记录',description:'迁移过程、备份、交互验收与待处理问题。',href:'https://github.com/yen-chiu/WendellManual/tree/master/docs/Website%20Building%20Notes/astro-migration',mark:'↗'}
+]
 ---
-
-<PageLayout {meta}>
-  <main class='mt-6 lg:mt-10 flex flex-col items-center w-full'>
-    {/* Hero Section */}
-    <div
-      id='hero-header'
-      class='animate w-full flex flex-col items-center text-center py-12 px-4 md:py-20'
-    >
-      <div
-        class='mb-6 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary shadow-sm'
-      >
-        <Icon name='earth' class='mr-2 size-4' />
-        Astro Theme Iris
-      </div>
-      <h1
-        class='text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl text-foreground mb-6'
-      >
-        Knowledge Base & <span class='text-primary drop-shadow-sm'>Documentation</span>
-      </h1>
-      <p class='max-w-2xl text-lg text-muted-foreground sm:text-xl'>
-        Explore comprehensive guides, API references, and advanced tutorials to build your site with
-        Iris.
-      </p>
-
-      <div class='mt-8 flex flex-wrap justify-center gap-4'>
-        <Button href='/blog' class='rounded-full px-8'> Get Started </Button>
-        <Button
-          href='https://github.com/LemonAdorable/astro-theme-iris'
-          target='_blank'
-          class='rounded-full px-8 bg-muted text-foreground/90 hover:bg-muted/80'
-        >
-          <Icon name='github' class='mr-2 size-5' /> View on GitHub
-        </Button>
-      </div>
-    </div>
-
-    {/* Content / Bento Config */}
-    <div id='content' class='animate w-full max-w-6xl px-4 mt-2 mb-10'>
-      <DocsContents layout='grid' />
-    </div>
-
-    {/* Auxiliary Resources Segment */}
-    <div
-      class='animate w-full max-w-4xl px-4 mt-4 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-6 pb-12'
-    >
-      <div class='flex items-center gap-4'>
-        <div class='p-3 bg-muted rounded-full'>
-          <Icon name='github' class='size-6 text-foreground/80' />
-        </div>
-        <div>
-          <h3 class='font-medium text-foreground'>Need Community Support?</h3>
-          <p class='text-sm text-muted-foreground'>
-            Find solutions or report an issue directly on GitHub.
-          </p>
-        </div>
-      </div>
-      <div>
-        <Button
-          href='https://github.com/cworld1/astro-theme-pure/issues'
-          target='_blank'
-          class='bg-muted text-foreground hover:bg-muted/80'
-        >
-          Open Issues
-        </Button>
-      </div>
-    </div>
-  </main>
+<PageLayout meta={{title:'文档',description:'Wendell 的建站笔记、工具备忘和网站维护记录。'}}>
+ <main class='docs-index'>
+  <ContentPageHero title='文档' eyebrow='NOTES & MANUALS' description='把做过的事、踩过的坑，整理成下次能找到的笔记。'/>
+  <section class='docs-resources' aria-label='文档入口'>{resources.map(item=><a href={item.href} target='_blank' rel='noopener noreferrer'><span class='resource-mark' aria-hidden='true'>{item.mark}</span><div><h2>{item.title}</h2><p>{item.description}</p></div><span class='arrow' aria-hidden='true'>↗</span></a>)}</section>
+  {docs.length>0?<section class='local-docs'><h2>站内文档</h2><DocsContents layout='list'/></section>:<p class='docs-note'>站内文档正在整理，完整笔记可先从文档库查看。</p>}
+ </main>
 </PageLayout>
+<style>
+.docs-index{max-width:64rem;margin:1rem auto 3rem;}.docs-resources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}.docs-resources a{display:flex;align-items:center;gap:1rem;min-width:0;padding:1.25rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.9);}.resource-mark{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:.75rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);font-size:1.4rem;}h2{font-size:1rem;font-weight:600;margin:0;}.docs-resources p{font-size:.78rem;line-height:1.8;color:hsl(var(--muted-foreground));margin:.4rem 0 0;}.arrow{margin-left:auto;color:hsl(var(--primary));}.docs-resources a:hover{border-color:hsl(var(--primary)/.4);}.docs-resources a:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px;}.local-docs{margin-top:2rem;}.docs-note{font-size:.75rem;line-height:1.8;color:hsl(var(--muted-foreground));margin-top:1.25rem;}@media(max-width:640px){.docs-resources{grid-template-columns:1fr;gap:.65rem;}.docs-resources a{padding:1rem;gap:.75rem;}h2{font-size:.9rem;}.docs-resources p{font-size:.74rem;}}
+</style>

@@ -154,8 +154,17 @@ const { icon, eyebrow, title, description, stats, statsLabel, symbol } = Astro.p
   }
 
   @media (max-width: 640px) {
-    .index-hero__stats {
-      grid-template-columns: 1fr;
-    }
+    .index-hero{padding:1rem;gap:1rem;border-radius:1rem;}
+    .index-hero::after{font-size:7rem;bottom:-2.5rem;}
+    .index-hero__eyebrow{display:none;}
+    h1{font-size:1.65rem;line-height:1.2;margin:0 0 .4rem;letter-spacing:-.035em;}
+    .index-hero__copy p{font-size:.78rem;line-height:1.65;}
+    .index-hero__stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding-top:.8rem;border-top:1px solid hsl(var(--border)/.7);}
+    .index-hero__stats>div:nth-child(n){padding:.1rem .65rem;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;}
+    .index-hero__stats>div:first-child{padding-left:0;}
+    .index-hero__stats>div+div{border-left:1px solid hsl(var(--border)/.7);}
+    .index-hero__stats dt{font-size:.62rem;letter-spacing:0;}
+    .index-hero__stats dd{font-size:1.25rem;margin-top:.35rem;}
+
   }
 </style>

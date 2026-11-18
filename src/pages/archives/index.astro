@@ -94,6 +94,7 @@ const meta = {
       symbol='∞'
     />
 
+    <details class='archive-tools' data-archive-tools><summary>日历、数据与雨声 <span aria-hidden='true'>⌄</span></summary>
     <section class='archive-dashboard' aria-label='写作日历与数据'>
       <ArchiveCalendar items={calendarItems} />
       <div class='archive-sidecards'>
@@ -112,6 +113,7 @@ const meta = {
         >
       </div>
     </section>
+    </details>
     {
       allPosts.length > 0 ? (
         <>
@@ -355,6 +357,8 @@ const meta = {
   <script>
     let archiveController: AbortController | undefined
     const setupArchive = () => {
+      const tools=document.querySelector<HTMLDetailsElement>('[data-archive-tools]')
+      if(tools&&!tools.dataset.initialized){tools.open=!matchMedia('(max-width:640px)').matches;tools.dataset.initialized='true'}
       archiveController?.abort()
       archiveController = new AbortController()
       const { signal } = archiveController
@@ -481,6 +485,8 @@ const meta = {
   </script>
 
   <style>
+    .archive-tools{margin-top:.8rem;}.archive-tools>summary{display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:.65rem 1rem;border:1px solid hsl(var(--border));border-radius:.8rem;background:hsl(var(--background)/.9);font-size:.8rem;font-weight:550;cursor:pointer;list-style:none;}.archive-tools>summary::-webkit-details-marker{display:none;}.archive-tools[open]>summary span{rotate:180deg;}.archive-tools>summary:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:2px;}
+
     .archive-dashboard {
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);

@@ -312,6 +312,10 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
   let state = readState(dialog?.dataset.graphParams)
   let simulation: d3.Simulation<GraphNode, GraphEdge> | null = null
   let zoomToNode: ((id: string) => void) | null = null
+  let resizeCanvas:(()=>void)|null=null
+  let renderPending=false
+  let lastSize=''
+  let resizeFrame=0
   const canvas = root.querySelector<HTMLElement>('[data-graph-canvas]')
   const status = root.querySelector<HTMLElement>('[data-graph-status]')
   const stats = root.querySelector<HTMLElement>('[data-graph-stats]')
@@ -358,36 +362,48 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
 
   const showDetails = (node: GraphNode, edges: GraphEdge[]) => {
     const incoming = edges.filter(
-      (edge) => String((edge.target as GraphNode).id) === node.id
+      (edge) => (typeof edge.target==='string'?edge.target:edge.target.id) === node.id
     ).length
     const outgoing = edges.filter(
-      (edge) => String((edge.source as GraphNode).id) === node.id
+      (edge) => (typeof edge.source==='string'?edge.source:edge.source.id) === node.id
     ).length
+    root.classList.add('has-selection')
+    const signature=JSON.stringify([node.id,node.label,node.degree,incoming,outgoing])
+    if(details.dataset.signature===signature)return
+    details.dataset.signature=signature
+    const kind=node.kind==='blog'?'文章':node.kind==='docs'?'文档':node.kind==='tag'?'标签':'分类'
     details.innerHTML = `
-      <span>Node inspector</span>
-      <h2>${escapeHtml(node.label)}</h2>
-      <p>${node.kind === 'blog' ? '博客文章' : node.kind === 'docs' ? '文档' : node.kind === 'tag' ? '标签' : '分类'}节点</p>
-      <dl>
-        <div><dt>连接</dt><dd>${node.degree}</dd></div>
-        <div><dt>入 / 出</dt><dd>${incoming} / ${outgoing}</dd></div>
-      </dl>
-      <a href="${escapeHtml(node.href)}" data-astro-prefetch>打开对应页面 →</a>
+      <div class="graph-selection-main"><div class="graph-selection-copy">
+        <span class="graph-node-kind">${kind}</span>
+        <h3 title="${escapeHtml(node.label)}">${escapeHtml(node.label)}</h3>
+      </div><a class="graph-node-open" href="${escapeHtml(node.href)}" aria-label="打开：${escapeHtml(node.label)}" data-astro-prefetch>打开 ↗</a></div>
+      <details class="graph-node-more"><summary>连接详情 · ${node.degree} 条</summary>
+        <p class="graph-full-label">${escapeHtml(node.label)}</p>
+        <dl><div><dt>连接</dt><dd>${node.degree}</dd></div><div><dt>入 / 出</dt><dd>${incoming} / ${outgoing}</dd></div></dl>
+      </details>
     `
   }
 
   const render = () => {
+    if(canvas.clientWidth<1||canvas.clientHeight<1){renderPending=true;return}
+    renderPending=false;lastSize=`${canvas.clientWidth}x${canvas.clientHeight}`
     simulation?.stop()
     d3.select(canvas).selectAll('*').remove()
     const graph = buildGraph(index, state)
+    root.classList.remove('is-loading')
+    root.classList.toggle('is-empty',!graph.nodes.length)
     const width = canvas.clientWidth || 760
     const height = canvas.clientHeight || 580
+    const selected=graph.nodes.find(node=>node.id===state.focus)
+    if(selected)showDetails(selected,graph.edges)
+    else{root.classList.remove('has-selection');details.replaceChildren();delete details.dataset.signature}
     const mobile = window.matchMedia('(max-width: 639px)').matches
     const directed = (edge: GraphEdge) =>
       state.direction === 'directed' || (state.direction === 'mixed' && edge.directed)
     const scopeLabels: Record<Scope, string> = {
       all: '全部知识',
-      blog: 'Blog 网络',
-      docs: 'Docs 网络',
+      blog: '文章关系',
+      docs: '文档关系',
       tags: '标签共现',
       categories: '分类结构'
     }
@@ -561,6 +577,19 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
         node.attr('transform', (item) => `translate(${item.x ?? 0},${item.y ?? 0})`)
       })
 
+    resizeCanvas=()=>{
+      const nextWidth=canvas.clientWidth,nextHeight=canvas.clientHeight
+      if(!nextWidth||!nextHeight)return
+      lastSize=`${nextWidth}x${nextHeight}`
+      svg.attr('viewBox',`0 0 ${nextWidth} ${nextHeight}`)
+      ;(simulation?.force('center') as d3.ForceCenter<GraphNode>)?.x(nextWidth/2).y(nextHeight/2)
+      ;(simulation?.force('x') as d3.ForceX<GraphNode>)?.x(nextWidth/2)
+      ;(simulation?.force('y') as d3.ForceY<GraphNode>)?.y(nextHeight/2)
+      const radial=simulation?.force('radial') as d3.ForceRadial<GraphNode>|undefined
+      radial?.x(nextWidth/2).y(nextHeight/2).radius(item=>Math.min(nextWidth,nextHeight)*({blog:.28,docs:.28,tag:.5,category:.7}[item.kind]))
+      simulation?.alpha(.2).restart()
+    }
+
     node.call(
       d3
         .drag<SVGGElement, GraphNode>()
@@ -605,9 +634,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     root.querySelector<HTMLButtonElement>('[data-graph-zoom-in]')!.onclick = (event) => { event.stopPropagation(); svg.interrupt().call(zoom.scaleBy, 1.3) }
     root.querySelector<HTMLButtonElement>('[data-graph-zoom-out]')!.onclick = (event) => { event.stopPropagation(); svg.interrupt().call(zoom.scaleBy, 1 / 1.3) }
     root.querySelector<HTMLButtonElement>('[data-graph-fit]')!.onclick = (event) => { event.stopPropagation(); svg.interrupt().call(zoom.transform, d3.zoomIdentity) }
-    root.querySelector<HTMLButtonElement>('[data-graph-reset]')!.onclick = () => {
-      svg.transition().duration(350).call(zoom.transform, d3.zoomIdentity)
-    }
+
   }
 
   root.querySelectorAll<HTMLButtonElement>('[data-graph-scope] button').forEach((button) => {
@@ -669,6 +696,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
   })
   root.querySelector<HTMLButtonElement>('[data-graph-clear]')?.addEventListener('click', () => {
     state = readState()
+    search.value='';suggestions.hidden=true;suggestions.replaceChildren()
     syncControls()
     writeState(root, state)
     render()
@@ -692,7 +720,13 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       button.addEventListener('click', () => {
         search.value = node.label
         suggestions.hidden = true
-        zoomToNode?.(node.id)
+        if(dialog?.classList.contains('graph-settings-expanded')){
+          state.focus=node.id;writeState(root,state)
+          dialog.classList.remove('graph-settings-expanded')
+          const button=dialog.querySelector<HTMLButtonElement>('[data-graph-settings]')
+          button?.setAttribute('aria-expanded','false');if(button)button.textContent='筛选'
+          requestAnimationFrame(render)
+        }else zoomToNode?.(node.id)
       })
       suggestions.append(button)
     })
@@ -701,6 +735,14 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
 
   syncControls()
   render()
+  const resizeObserver=new ResizeObserver(()=>{
+    if(canvas.clientWidth<1||canvas.clientHeight<1){simulation?.stop();return}
+    if(renderPending||lastSize!==`${canvas.clientWidth}x${canvas.clientHeight}`){
+      cancelAnimationFrame(resizeFrame)
+      resizeFrame=requestAnimationFrame(()=>{if(renderPending)render();else resizeCanvas?.()})
+    }else simulation?.restart()
+  })
+  resizeObserver.observe(canvas)
 
   return (search?: string) => {
     if (!search) return

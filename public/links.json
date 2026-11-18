@@ -36,8 +36,8 @@
     },
     {
       "id_name": "references",
-      "title": "开源与阅读",
-      "desc": "本站使用的主题、参考站与原站收录的链接。",
+      "title": "参考与发现",
+      "desc": "开源主题、常读内容和有趣的网站。",
       "link_list": [
         {
           "name": "Iris · 灵的梦境",
@@ -73,9 +73,21 @@
           "link": "https://996.icu/",
           "avatar": "",
           "mark": "↗"
+        },
+        {
+          "name": "996忍者",
+          "intro": "摸鱼主题的小游戏、工具与趣味内容。",
+          "link": "https://996.ninja/",
+          "avatar": "",
+          "mark": "🥷"
         }
       ]
     },
-    { "id_name": "friends", "title": "友好邻居", "desc": "慢慢认识，认真收录。", "link_list": [] }
+    {
+      "id_name": "friends",
+      "title": "友好邻居",
+      "desc": "慢慢认识，认真收录。",
+      "link_list": []
+    }
   ]
 }

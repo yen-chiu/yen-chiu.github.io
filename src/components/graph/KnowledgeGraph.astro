@@ -9,7 +9,7 @@
       <span>Knowledge explorer</span>
       <h2 id='knowledge-graph-title'>知识图谱</h2>
     </div>
-    <button type='button' class='graph-mobile-settings' data-graph-settings aria-expanded='false'>筛选与设置</button>
+    <button type='button' class='graph-mobile-settings' data-graph-settings aria-expanded='false' aria-controls='graph-filter-panel'>筛选</button>
     <button type='button' data-graph-close aria-label='关闭知识图谱'>
       <svg viewBox='0 0 24 24' aria-hidden='true'>
         <path d='M18 6 6 18M6 6l12 12'></path>
@@ -17,8 +17,8 @@
     </button>
   </div>
 
-  <section class='knowledge-graph' data-knowledge-graph>
-    <aside class='graph-controls' aria-label='图谱控制'>
+  <section class='knowledge-graph is-loading' data-knowledge-graph>
+    <aside class='graph-controls' id='graph-filter-panel' aria-label='图谱筛选'>
       <label class='graph-search'>
         <span>搜索节点</span>
         <input type='search' placeholder='文章、文档、标签...' data-graph-search />
@@ -29,13 +29,14 @@
         <legend>范围</legend>
         <div class='segmented' data-graph-scope>
           <button type='button' data-value='all'>全部</button>
-          <button type='button' data-value='blog'>Blog</button>
-          <button type='button' data-value='docs'>Docs</button>
+          <button type='button' data-value='blog'>文章</button>
+          <button type='button' data-value='docs'>文档</button>
           <button type='button' data-value='tags'>标签</button>
           <button type='button' data-value='categories'>分类</button>
         </div>
       </fieldset>
 
+      <details class='graph-advanced'><summary>节点、关系与布局</summary>
       <fieldset>
         <legend>节点</legend>
         <div class='check-grid'>
@@ -96,9 +97,10 @@
         仅显示孤立节点
       </label>
 
+      </details>
       <div class='graph-actions'>
-        <button type='button' data-graph-reset>重置视图</button>
-        <button type='button' data-graph-clear>恢复默认</button>
+        <button type='button' data-graph-clear>恢复默认筛选</button>
+        <button type='button' data-graph-apply>查看图谱</button>
       </div>
     </aside>
 
@@ -121,16 +123,13 @@
       </div>
 
       <footer>
-        <div class='graph-zoom-actions'><button type='button' data-graph-zoom-in aria-label='放大图谱'>＋</button><button type='button' data-graph-zoom-out aria-label='缩小图谱'>−</button><button type='button' data-graph-fit>重置</button></div>
-        <span>拖动节点或画布 · 双指缩放 · 点击节点查看详情</span>
+        <div class='graph-zoom-actions'><button type='button' data-graph-zoom-in aria-label='放大图谱'>＋</button><button type='button' data-graph-zoom-out aria-label='缩小图谱'>−</button><button type='button' data-graph-fit aria-label='重置图谱视图'>复位</button></div>
+        <details class='graph-help'><summary aria-label='图谱操作说明'>?</summary><p>拖动节点或画布，双指缩放。点击节点查看名称，双击打开页面；键盘可用 Tab 选择节点，Enter 查看详情。</p></details>
+
       </footer>
     </div>
 
-    <aside class='graph-details' data-graph-details>
-      <span>Node inspector</span>
-      <h2>选择一个节点</h2>
-      <p>查看节点类型、连接数量、入链、出链以及关联页面。</p>
-    </aside>
+    <aside class='graph-details' data-graph-details aria-label='所选节点'></aside>
   </section>
 </dialog>
 
@@ -144,6 +143,7 @@
       settings.addEventListener('click', () => {
         const expanded = dialog.classList.toggle('graph-settings-expanded')
         settings.setAttribute('aria-expanded', String(expanded))
+        settings.textContent=expanded?'返回图谱':'筛选'
       })
     }
 
@@ -153,7 +153,9 @@
     overlayWindow.graphOverlayAbort = controller
     const { signal } = controller
 
+    dialog.querySelector<HTMLButtonElement>('[data-graph-apply]')!.onclick=()=>{dialog.classList.remove('graph-settings-expanded');settings?.setAttribute('aria-expanded','false');if(settings)settings.textContent='筛选'}
     const open = (href: string) => {
+      dialog.classList.remove('graph-settings-expanded');settings?.setAttribute('aria-expanded','false');if(settings)settings.textContent='筛选'
       const url = new URL(href, location.href)
       const hashParams = url.hash.includes('?') ? url.hash.slice(url.hash.indexOf('?')) : ''
       const explicitParams = hashParams || url.search
@@ -201,6 +203,7 @@
       },
       { signal }
     )
+    document.addEventListener('astro:before-swap',()=>{if(dialog.open)dialog.close();document.documentElement.classList.remove('graph-overlay-open')},{signal})
     dialog.addEventListener(
       'close',
       () => {
@@ -626,59 +629,66 @@
     font-size: 0.72rem;
   }
 
-  @media (max-width: 959px) {
-    .knowledge-graph {
-      grid-template-columns: minmax(12rem, 14rem) minmax(0, 1fr);
-    }
-
-    .graph-details {
-      grid-column: 1 / -1;
-    }
+  .knowledge-graph-dialog[open]{display:flex;flex-direction:column;overflow:hidden;}
+  .graph-dialog-header{flex-shrink:0;}
+  .knowledge-graph{flex:1;min-height:0;height:auto;grid-template-rows:minmax(0,1fr);}
+  .knowledge-graph:not(.has-selection){grid-template-columns:minmax(13rem,15rem) minmax(0,1fr);}
+  .graph-details{display:none;}
+  .has-selection .graph-details{display:block;}
+  .graph-workspace{position:relative;grid-template-rows:auto minmax(0,1fr);overflow:hidden;}
+  .knowledge-graph.is-empty .graph-legend{display:none;}
+  .knowledge-graph.is-empty .graph-workspace>footer,.knowledge-graph.is-loading .graph-workspace>footer{display:none;}
+  .graph-workspace>footer{position:absolute;bottom:.6rem;left:.6rem;z-index:3;padding:.25rem;gap:.3rem;border:1px solid hsl(var(--border));border-radius:.8rem;background:hsl(var(--background)/.92);backdrop-filter:blur(10px);}
+  .graph-dialog-header .graph-mobile-settings,[data-graph-apply]{display:none;}
+  .graph-zoom-actions{display:flex;gap:.2rem;pointer-events:auto;}
+  .graph-zoom-actions button,.graph-help>summary{display:grid;place-items:center;min-width:44px;min-height:44px;padding:.3rem .5rem;border:0;border-radius:.55rem;background:transparent;color:inherit;font:inherit;font-size:.85rem;cursor:pointer;touch-action:manipulation;}
+  .graph-zoom-actions button:hover,.graph-help>summary:hover{background:hsl(var(--primary)/.1);}
+  .graph-help>summary{list-style:none;font-size:.9rem;}
+  .graph-help>summary::-webkit-details-marker{display:none;}
+  .graph-help>p{position:absolute;left:0;bottom:calc(100% + .5rem);width:min(17rem,calc(100vw - 3rem));padding:.85rem;margin:0;border:1px solid hsl(var(--border));border-radius:.7rem;background:hsl(var(--background)/.98);font-size:.72rem;line-height:1.8;box-shadow:0 5px 18px #0002;}
+  .graph-advanced{display:grid;gap:.85rem;}
+  .graph-advanced>summary{min-height:44px;padding:.6rem .1rem;font-size:.75rem;color:hsl(var(--muted-foreground));cursor:pointer;}
+  .graph-advanced[open]>fieldset,.graph-advanced[open]>.select-grid,.graph-advanced[open]>.isolated-toggle{margin-top:.8rem;}
+  .graph-controls .graph-actions{gap:.5rem;}
+  .graph-details :global(.graph-selection-main){display:flex;gap:.6rem;align-items:center;justify-content:space-between;}
+  .graph-details :global(.graph-selection-copy){min-width:0;flex:1;}
+  .graph-details :global(.graph-node-kind){font-size:.65rem;color:hsl(var(--muted-foreground));}
+  .graph-details :global(h3){font-size:.9rem;line-height:1.5;margin:.15rem 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .graph-details :global(.graph-node-open){display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.4rem .65rem;border-radius:.6rem;border:1px solid hsl(var(--primary)/.2);background:hsl(var(--primary)/.07);color:hsl(var(--primary));white-space:nowrap;font-size:.75rem;}
+  .graph-details :global(.graph-node-more>summary){display:flex;justify-content:space-between;align-items:center;gap:.5rem;min-height:36px;font-size:.68rem;cursor:pointer;color:hsl(var(--muted-foreground));list-style:none;}
+  .graph-details :global(.graph-node-more>summary::after){content:'⌄';}
+  .graph-details :global(.graph-node-more[open]>summary::after){rotate:180deg;}
+  .graph-details :global(.graph-node-more>summary::-webkit-details-marker){display:none;}
+  .graph-details :global(dl){margin:.5rem 0;}
+  .graph-details :global(.graph-full-label){font-size:.75rem;overflow-wrap:anywhere;margin:.4rem 0;}
+  .graph-zoom-actions button:focus-visible,.graph-help>summary:focus-visible,.graph-details :global(a:focus-visible),.graph-details :global(summary:focus-visible){outline:2px solid hsl(var(--primary));outline-offset:2px;}
+  @media(max-width:959px){
+    .knowledge-graph-dialog{height:calc(100dvh - 1rem);padding:.5rem;}
+    .graph-dialog-header{gap:.4rem;padding:.1rem .2rem .5rem;}
+    .graph-dialog-header>div{margin-right:auto;}
+    .graph-dialog-header>div>span{display:none;}
+    .graph-dialog-header h2{font-size:1rem;}
+    .graph-dialog-header>button{min-width:44px;min-height:44px;}
+    .graph-dialog-header .graph-mobile-settings{display:block;width:auto;height:auto;padding:.4rem .7rem;border-radius:.65rem;font-size:.78rem;white-space:nowrap;}
+    .knowledge-graph,.knowledge-graph:not(.has-selection){display:flex;flex-direction:column;gap:.5rem;overflow:hidden;}
+    .graph-controls{display:none;min-height:0;overflow:auto;padding:.8rem;gap:.7rem;}
+    .graph-workspace{flex:1;min-height:0;border-radius:.9rem;}
+    .graph-workspace>header{padding:.6rem .75rem;gap:.5rem;align-items:center;flex-wrap:wrap;}
+    .graph-workspace header strong{font-size:.78rem;}
+    .graph-workspace header [data-graph-stats]{font-size:.64rem;}
+    .graph-legend{gap:.4rem;font-size:.6rem;}
+    .graph-details{flex-shrink:0;max-height:38dvh;overflow:auto;padding:.45rem .75rem;border-radius:.9rem;}
+    .graph-details :global(.graph-node-kind){font-size:.6rem;}
+    .graph-details :global(h3){font-size:.82rem;}
+    .graph-canvas{touch-action:none;}
+    .graph-settings-expanded .graph-controls{display:flex;flex:1;}
+    .graph-settings-expanded .graph-workspace,.graph-settings-expanded .graph-details{display:none;}
+    [data-graph-apply]{display:block;}
+    .graph-controls .graph-actions{position:sticky;bottom:-.8rem;padding:.6rem 0;background:hsl(var(--background)/.96);}
+    .graph-controls input[type=search],.graph-controls select{font-size:16px;min-height:44px;}
+    .graph-controls button{min-height:44px;font-size:.8rem;}
+    .graph-controls .segmented{display:flex;flex-wrap:wrap;gap:.3rem;}
+    .graph-controls .segmented button{flex:1 0 28%;}
   }
-
-  .graph-dialog-header .graph-mobile-settings { display:none;width:auto;height:auto;border-radius:.65rem;white-space:nowrap; }
-  .graph-zoom-actions { display:flex;gap:.4rem;position:relative;z-index:2;flex-shrink:0;pointer-events:auto; }
-  .graph-zoom-actions button { display:grid;place-items:center;min-width:44px;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:hsl(var(--background));color:hsl(var(--foreground));font:inherit;font-size:1rem;cursor:pointer;touch-action:manipulation; }
-  .graph-zoom-actions button:focus-visible { outline:2px solid hsl(var(--primary));outline-offset:2px; }
-  @media (max-width: 639px) {
-    .graph-dialog-header .graph-mobile-settings { display:block;font-size:.85rem;padding:.4rem .75rem;min-height:44px; }
-    .graph-dialog-header { gap:.4rem; }
-    .graph-dialog-header > button { min-width:44px;min-height:44px; }
-    .graph-controls { display:none;order:2; }
-    .graph-settings-expanded .graph-controls { display:flex; }
-    .graph-workspace { order:1;min-width:0; }
-    .graph-details { order:3; }
-    .graph-controls input[type=search], .graph-controls select { font-size:16px;min-height:44px; }
-    .graph-controls button { min-height:44px;font-size:.85rem; }
-    .graph-details p,.graph-details :global(li),.graph-details :global(a) { font-size:.9rem; }
-    .graph-canvas { touch-action:none; }
-    .graph-workspace > footer {position:sticky;bottom:0;z-index:3;align-items:flex-start;flex-direction:column;gap:.5rem;background:hsl(var(--background));}
-
-    .knowledge-graph-dialog {
-      width: 100vw;
-      height: 100dvh;
-      padding: 0.55rem;
-      border: 0;
-      border-radius: 0;
-    }
-
-    .knowledge-graph {
-      grid-template-columns: 1fr;
-      height: calc(100% - 3rem);
-      overflow: auto;
-    }
-
-    .graph-workspace {
-      grid-template-rows: auto minmax(22rem, calc(100dvh - 15rem)) auto;
-    }
-
-    .graph-workspace > header {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .graph-legend {
-      justify-content: flex-start;
-    }
-  }
+  @media(max-width:639px){.knowledge-graph-dialog{width:100vw;height:100dvh;border:0;border-radius:0;}}
 </style>

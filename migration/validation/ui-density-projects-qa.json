@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-18",
+  "scope": "Shared mobile density, knowledge graph, archives/docs and project portfolio",
+  "graph": {
+    "all_nodes": 85,
+    "all_edges": 273,
+    "tags_nodes": 52,
+    "tags_edges": 158,
+    "390_canvas_no_selection": 719.8,
+    "390_canvas_selected": 614,
+    "selection_bar_height": 97.8,
+    "320_canvas_selected": 510,
+    "filter_view": "workspace, zoom toolbar and selection hidden",
+    "empty_docs": "0 nodes, zoom toolbar hidden",
+    "selection_more": "native disclosure expands counts/full name",
+    "zoom": "1.3 scale verified; maintained when only viewport dimensions change",
+    "search_suggestion": "automatically returned from filters to graph and selected node",
+    "navigation": "jekyll page opened, dialog closed and scroll unlocked",
+    "desktop_columns": [
+      240,
+      707.5,
+      256
+    ]
+  },
+  "mobile_pages": {
+    "blog_hero": 165.1,
+    "archives_hero": 185.7,
+    "tags_hero": 185.7,
+    "categories_hero": 185.7,
+    "links_hero": 165.1,
+    "docs": "Chinese heading and own documentation links; template marketing removed",
+    "horizontal_overflow": false
+  },
+  "archives": {
+    "mobile_auxiliary_closed_by_default": true,
+    "manual_expand_shows_calendar": true,
+    "desktop_auxiliary_open_by_default": true
+  },
+  "projects": {
+    "count": 5,
+    "interactive": 3,
+    "building": 2,
+    "tested_widths": [
+      320,
+      390,
+      1280
+    ],
+    "horizontal_overflow": false,
+    "primary_action_height": 44,
+    "cover_image_loaded": true,
+    "live_chat_game_shells_http": 200,
+    "lifeline_url": "https://yenchiu.com/chat/play.html?a=lifeline",
+    "note": "Existing game runtimes were not modified or re-migrated"
+  },
+  "links": {
+    "name": "996忍者",
+    "url": "https://996.ninja/",
+    "group": "参考与发现",
+    "search": "name search returns intended card"
+  },
+  "build": {
+    "pages": 136,
+    "type_errors": 0,
+    "type_warnings": 0,
+    "existing_hints": 2,
+    "missing_local_resources": 0
+  },
+  "limits": [
+    "Chrome viewport simulation, not physical mobile hardware",
+    "OS reduced-motion not toggled; CSS guard inspected"
+  ],
+  "cleanup": "Temporary appearance restored; viewport reset"
+}

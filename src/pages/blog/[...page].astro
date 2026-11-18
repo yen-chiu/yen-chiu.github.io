@@ -817,5 +817,20 @@ const meta = {
       :global(html[data-post-layout='grid']) .post-card__read{width:100%;min-width:0;justify-content:space-between;padding:.5rem .65rem;font-size:.7rem;}
 
     }
+    @media(max-width:640px){
+      .blog-index{margin-top:1rem;}
+      .blog-portals{grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;margin-top:.65rem;}
+      .blog-portals a{display:flex;flex-direction:column;justify-content:center;gap:.35rem;padding:.6rem .3rem;border-radius:.8rem;min-height:64px;text-align:center;}
+      .portal-icon{width:1.5rem;height:1.5rem;border-radius:.45rem;}
+      .portal-icon :global(svg){width:15px;height:15px;}
+      .blog-portals strong{font-size:.7rem;}.blog-portals small,.portal-arrow{display:none;}
+      .post-stream{margin-top:1.3rem;}
+      .stream-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.35rem .5rem;align-items:center;}
+      .stream-header>div:first-child{grid-column:1;grid-row:1;}
+      .stream-header>div:first-child>span{display:none;}
+      .stream-header>p{grid-column:1/-1;grid-row:2;}
+      .stream-header :global(post-layout-toggle){grid-column:2;grid-row:1;}
+
+    }
   </style>
 </PageLayout>
