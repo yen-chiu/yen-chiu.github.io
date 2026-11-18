@@ -50,7 +50,19 @@
     "cover_image_loaded": true,
     "live_chat_game_shells_http": 200,
     "lifeline_url": "https://yenchiu.com/chat/play.html?a=lifeline",
-    "note": "Existing game runtimes were not modified or re-migrated"
+    "note": "Existing game runtimes were not modified or re-migrated",
+    "miko_cover": {
+      "source": "user attachment",
+      "size": [
+        1280,
+        720
+      ],
+      "path": "/images/projects/miko-cover.webp",
+      "loaded_in_browser": true,
+      "mobile_overflow": false,
+      "source_sha256": "dc582f5cd72b5b251532d4e75801058afdfdde7db232de08875996bf883e17da",
+      "preview": ".work/iris-miko-cover-mobile.jpg"
+    }
   },
   "links": {
     "name": "996忍者",

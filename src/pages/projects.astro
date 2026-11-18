@@ -51,8 +51,8 @@ const external = (href: string) => href.startsWith('https:')
                         {'cover' in project ? (
                           <img
                             src={sitePath(project.cover)}
-                            width='1080'
-                            height='440'
+                            width={project.coverWidth}
+                            height={project.coverHeight}
                             alt=''
                             loading='lazy'
                           />

@@ -18,7 +18,8 @@ export const projects = [
     status: '原站体验',
     description: '把停服后的文字聊天游戏搬进浏览器，重新体验打字、分支选择、词典与图鉴。',
     tags: ['互动剧情', '纯静态', '怀旧复现'],
-    cover: '/assets/img/posts/miko-web/cover.webp',
+    cover: '/images/projects/miko-cover.webp',
+    coverWidth:1280,coverHeight:720,
     primary: { label: '开始体验', href: 'https://yenchiu.com/chat/play.html?a=miko' },
     secondary: { label: '制作记录', href: '/blog/miko-web' }
   },
