@@ -23,70 +23,101 @@ import './styles/search.css'
       </g>
     </svg>
   </button>
-  <div class='search-container' style='visibility: hidden; opacity: 0; pointer-events: none;'>
-    <div class='search-space'>
+  <dialog class='search-container' aria-labelledby='site-search-title'>
+    <div class='search-space centered'>
+      <header class='search-heading'>
+        <h2 id='site-search-title'>搜索本站</h2><button
+          type='button'
+          data-search-close
+          aria-label='关闭搜索'>×</button
+        >
+      </header>
       <input
         autocomplete='off'
         class='search-bar'
         name='search'
-        type='text'
+        type='search'
         aria-label='搜索'
-        placeholder='搜索文章...'
+        placeholder='搜索文章、标签或关键词…'
       />
-      <div class='search-filters'>
-        <div class='filter-group'>
-          <label class='filter-label'>时间范围</label>
-          <select class='filter-select' data-filter='date'>
-            <option value='all'>全部时间</option>
-            <option value='year'>今年</option>
-            <option value='6months'>近6个月</option>
-            <option value='3months'>近3个月</option>
-            <option value='month'>近1个月</option>
-          </select>
-        </div>
-        <div class='filter-group'>
-          <label class='filter-label'>标签</label>
-          <div class='filter-multiselect' data-filter='tags'>
-            <button class='filter-multiselect-button' type='button' aria-label='选择标签'>
-              <span class='filter-multiselect-text'>全部</span>
-              <span class='filter-multiselect-arrow'>▼</span>
-            </button>
-            <div class='filter-multiselect-dropdown'>
-              <!-- 选项将由 JavaScript 动态生成 -->
-            </div>
+      <details class='search-filter-panel'>
+        <summary
+          ><span>筛选条件</span><small data-filter-summary>未设置</small><i aria-hidden='true'>⌄</i
+          ></summary
+        >
+        <div class='search-filters'>
+          <div class='filter-group'>
+            <label class='filter-label'>时间范围</label>
+            <select class='filter-select' data-filter='date' aria-label='时间范围'>
+              <option value='all'>全部时间</option>
+              <option value='year'>今年</option>
+              <option value='6months'>近6个月</option>
+              <option value='3months'>近3个月</option>
+              <option value='month'>近1个月</option>
+            </select>
           </div>
-        </div>
-        <div class='filter-group'>
-          <label class='filter-label'>类型</label>
-          <div class='filter-multiselect' data-filter='type'>
-            <button class='filter-multiselect-button' type='button' aria-label='选择类型'>
-              <span class='filter-multiselect-text'>全部</span>
-              <span class='filter-multiselect-arrow'>▼</span>
-            </button>
-            <div class='filter-multiselect-dropdown'>
-              <div class='filter-multiselect-option'>
-                <input type='checkbox' id='type-all' value='all' checked />
-                <label for='type-all'>全部</label>
-              </div>
-              <div class='filter-multiselect-option'>
-                <input type='checkbox' id='type-blog' value='blog' />
-                <label for='type-blog'>文章</label>
-              </div>
-              <div class='filter-multiselect-option'>
-                <input type='checkbox' id='type-docs' value='docs' />
-                <label for='type-docs'>文档</label>
+          <div class='filter-group'>
+            <label class='filter-label'>标签</label>
+            <div class='filter-multiselect' data-filter='tags'>
+              <button
+                class='filter-multiselect-button'
+                type='button'
+                aria-label='选择标签'
+                aria-expanded='false'
+              >
+                <span class='filter-multiselect-text'>全部</span>
+                <span class='filter-multiselect-arrow'>▼</span>
+              </button>
+              <div class='filter-multiselect-dropdown'>
+                <!-- 选项将由 JavaScript 动态生成 -->
               </div>
             </div>
           </div>
+          <div class='filter-group'>
+            <label class='filter-label'>类型</label>
+            <div class='filter-multiselect' data-filter='type'>
+              <button
+                class='filter-multiselect-button'
+                type='button'
+                aria-label='选择类型'
+                aria-expanded='false'
+              >
+                <span class='filter-multiselect-text'>全部</span>
+                <span class='filter-multiselect-arrow'>▼</span>
+              </button>
+              <div class='filter-multiselect-dropdown'>
+                <div class='filter-multiselect-option'>
+                  <input type='checkbox' id='type-all' value='all' checked />
+                  <label for='type-all'>全部</label>
+                </div>
+                <div class='filter-multiselect-option'>
+                  <input type='checkbox' id='type-blog' value='blog' />
+                  <label for='type-blog'>文章</label>
+                </div>
+                <div class='filter-multiselect-option'>
+                  <input type='checkbox' id='type-docs' value='docs' />
+                  <label for='type-docs'>文档</label>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <button type='button' class='search-reset-filters' data-search-reset>清除筛选</button>
+      </details>
+      <p class='search-status' role='status' aria-live='polite' data-search-status>
+        输入关键词开始搜索
+      </p>
+      <div class='search-empty-state'>
+        <strong>搜索文章与文档</strong><p>输入标题、正文关键词，或用 #标签 查找。</p>
       </div>
       <div class='search-layout' data-preview='true'></div>
     </div>
-  </div>
+  </dialog>
 </div>
 
 <script>
   import { sitePath } from '@/utils/site-path'
+
   function setupLazySearch() {
     document.querySelectorAll<HTMLElement>('.search').forEach((search) => {
       if (search.dataset.lazyReady === 'true') return
@@ -97,15 +128,32 @@ import './styles/search.css'
 
       let loadPromise: Promise<typeof import('./scripts/search.ts')> | undefined
       const loadSearch = () => {
-        loadPromise ??= import('./scripts/search.ts').then(async (mod) => {
-          await mod.initSearch()
-          return mod
-        }).catch((error) => { loadPromise = undefined; throw error })
+        loadPromise ??= import('./scripts/search.ts')
+          .then(async (mod) => {
+            await mod.initSearch()
+            return mod
+          })
+          .catch((error) => {
+            loadPromise = undefined
+            throw error
+          })
         return loadPromise
       }
 
-      button.addEventListener('pointerenter', () => { void loadSearch().catch(() => {}) }, { once: true })
-      button.addEventListener('focus', () => { void loadSearch().catch(() => {}) }, { once: true })
+      button.addEventListener(
+        'pointerenter',
+        () => {
+          void loadSearch().catch(() => {})
+        },
+        { once: true }
+      )
+      button.addEventListener(
+        'focus',
+        () => {
+          void loadSearch().catch(() => {})
+        },
+        { once: true }
+      )
       button.addEventListener(
         'click',
         async (event) => {

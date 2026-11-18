@@ -1,0 +1,99 @@
+{
+  "date": "2026-11-18",
+  "scope": [
+    "search modal and filters",
+    "landing hero scroll motion"
+  ],
+  "build": {
+    "pages": 136,
+    "errors": 0,
+    "warnings": 0,
+    "existingHints": 2
+  },
+  "content": {
+    "originalArticlesUnchanged": 17,
+    "personaAssetReferences": 57,
+    "missing": 0
+  },
+  "search": {
+    "viewports": [
+      320,
+      390,
+      1280
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "mobile": {
+      "panelInset": 8,
+      "inputFontPx": 16,
+      "defaultPreviewSelection": false,
+      "previewVisible": false,
+      "customMarkers": 0,
+      "filterTypeBottom": 541,
+      "filterPanelBottom": 549,
+      "panelBottom": 836
+    },
+    "checks": [
+      "empty input readable opaque surface",
+      "type dropdown in-flow within scrollable filter panel",
+      "keyword 一: 13 results",
+      "keyword 1: 8 results",
+      "empty query + article filter:17 results",
+      "empty query + 技术 tag:6 results",
+      "literal [ query:7 results without regex exception",
+      "unknown keyword:0 with empty message",
+      "desktop first result labeled 预览中",
+      "ArrowDown selects first result",
+      "search result navigates and unlocks scroll",
+      "native modal close and Escape",
+      "final native dialog stays inside persistent header",
+      "home → blog → search result → home: URL and content agree",
+      "no HierarchyRequestError after final topology fix",
+      "Ctrl+K after lazy initialization works across persistent header navigation"
+    ],
+    "knownLimit": "Desktop responsive browser testing; physical phone keyboard and touch scroll remain user acceptance.",
+    "implementation": "Native dialog kept inside persistent header; no DOM reparenting or nested persistence"
+  },
+  "hero": {
+    "method": "scroll-linked cover geometry; damped spring for child transforms and opacity",
+    "staggeredLayers": [
+      "avatar",
+      "eyebrow",
+      "name",
+      "tagline",
+      "actions"
+    ],
+    "partialState": {
+      "trackTop": -389.33,
+      "avatarOpacity": 0.000291,
+      "nameOpacity": 0.037668,
+      "actionsOpacity": 0.148636
+    },
+    "checks": [
+      "collapse reaches 340px desktop-height-limited mobile cover",
+      "reverse restores avatar opacity1 and cover844px",
+      "30/60/120fps convergence and bounded overshoot tests",
+      "reduced-motion media guard",
+      "cancel RAF and disconnect observer on removal",
+      "root ResizeObserver accounts for scrollbar width changes",
+      "final collapse340/expand844; avatar and name opacity restored1",
+      "after search closes root scrollWidth equals clientWidth375"
+    ],
+    "limit": "Reduced-motion branch inspected in source; OS preference not changed. No claim of physical-phone frame rate."
+  },
+  "backups": [
+    ".work/iris-before-search-motion-20261118.bundle",
+    ".work/manual-before-search-motion-20261118.bundle"
+  ],
+  "screenshots": [
+    ".work/iris-search-empty-mobile.jpg",
+    ".work/iris-search-filters-mobile.jpg",
+    ".work/iris-search-dark-320.jpg",
+    ".work/iris-search-desktop.jpg",
+    ".work/iris-hero-motion-partial.jpg",
+    ".work/iris-search-results-mobile.jpg",
+    ".work/iris-home-spring-mobile.jpg"
+  ]
+}

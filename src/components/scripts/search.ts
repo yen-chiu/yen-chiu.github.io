@@ -1,5 +1,6 @@
-import { sitePath } from '@/utils/site-path'
 import FlexSearch, { type DefaultDocumentSearchResults } from 'flexsearch'
+
+import { sitePath } from '@/utils/site-path'
 
 interface ContentDetails {
   slug: string
@@ -110,34 +111,7 @@ function removeAllChildren(node: HTMLElement) {
   }
 }
 
-function registerEscapeHandler(outsideContainer: HTMLElement | null, cb: () => void) {
-  if (!outsideContainer) return
-  function click(this: HTMLElement, e: MouseEvent) {
-    if (e.target !== this) return
-    e.preventDefault()
-    e.stopPropagation()
-    cb()
-  }
-
-  function esc(e: KeyboardEvent) {
-    const isInput = document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA'
-    if (e.key === 'Escape' || (e.key === 'q' && !isInput)) {
-      e.preventDefault()
-      // Blur active element to remove navigation focus artifacts
-      ;(document.activeElement as HTMLElement)?.blur()
-      cb()
-    }
-  }
-
-  outsideContainer?.addEventListener('click', click)
-  document.addEventListener('keydown', esc)
-
-  // Cleanup function
-  return () => {
-    outsideContainer?.removeEventListener('click', click)
-    document.removeEventListener('keydown', esc)
-  }
-}
+const escapePattern = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 const tokenizeTerm = (term: string) => {
   const tokens = term.split(/\s+/).filter((t) => t.trim() !== '')
@@ -183,7 +157,7 @@ function highlight(searchTerm: string, text: string, trim?: boolean) {
       // see if this tok is prefixed by any search terms
       for (const searchTok of tokenizedTerms) {
         if (tok.toLowerCase().includes(searchTok.toLowerCase())) {
-          const regex = new RegExp(searchTok.toLowerCase(), 'gi')
+          const regex = new RegExp(escapePattern(searchTok), 'gi')
           return tok.replace(regex, `<span class="highlight">$&</span>`)
         }
       }
@@ -210,13 +184,13 @@ function highlightHTML(searchTerm: string, el: HTMLElement) {
   const highlightTextNodes = (node: Node, term: string) => {
     if (node.nodeType === Node.TEXT_NODE) {
       const nodeText = node.nodeValue ?? ''
-      const regex = new RegExp(term.toLowerCase(), 'gi')
+      const regex = new RegExp(escapePattern(term), 'gi')
       const matches = nodeText.match(regex)
       if (!matches || matches.length === 0) return
       const spanContainer = document.createElement('span')
       let lastIndex = 0
       for (const match of matches) {
-        const matchIndex = nodeText.indexOf(match, lastIndex)
+        const matchIndex = nodeText.toLowerCase().indexOf(match.toLowerCase(), lastIndex)
         spanContainer.appendChild(document.createTextNode(nodeText.slice(lastIndex, matchIndex)))
         spanContainer.appendChild(createHighlightSpan(match))
         lastIndex = matchIndex + match.length
@@ -244,7 +218,9 @@ function getCurrentSlug(): string {
 }
 
 // Resolve relative URL
-function resolveUrl(slug: string): string { return new URL(sitePath(slug), window.location.origin).href }
+function resolveUrl(slug: string): string {
+  return new URL(sitePath(slug), window.location.origin).href
+}
 
 // Normalize relative URLs in HTML
 function normalizeRelativeURLs(el: Element | Document, destination: string | URL) {
@@ -269,9 +245,11 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
   const searchRoot = searchElement as HTMLElement
   if (searchRoot.dataset.searchReady === 'true') return
 
-  const container = searchElement.querySelector('.search-container') as HTMLElement
+  const container = searchElement.querySelector('.search-container') as HTMLDialogElement
   if (!container) return
 
+  const controller = new AbortController()
+  const signal = controller.signal
   // Ensure container is completely hidden on initial load
   container.style.visibility = 'hidden'
   container.style.opacity = '0'
@@ -411,18 +389,25 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     tagsButton.addEventListener('click', (e) => {
       e.stopPropagation()
       tagsMultiselect.classList.toggle('open')
+      tagsButton.setAttribute('aria-expanded', String(tagsMultiselect.classList.contains('open')))
       // Close other multiselects
       if (typeMultiselect) {
         typeMultiselect.classList.remove('open')
+        typeMultiselect.querySelector('button')?.setAttribute('aria-expanded', 'false')
       }
     })
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!tagsMultiselect.contains(e.target as Node)) {
-        tagsMultiselect.classList.remove('open')
-      }
-    })
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (!tagsMultiselect.contains(e.target as Node)) {
+          tagsMultiselect.classList.remove('open')
+          tagsMultiselect.querySelector('button')?.setAttribute('aria-expanded', 'false')
+        }
+      },
+      { signal }
+    )
   }
 
   // Initialize type multiselect
@@ -483,19 +468,26 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
       })
 
     // Toggle dropdown
-    typeButton.addEventListener('click', (e) => {
-      e.stopPropagation()
-      typeMultiselect.classList.toggle('open')
-      // Close other multiselects
-      if (tagsMultiselect) {
-        tagsMultiselect.classList.remove('open')
-      }
-    })
+    typeButton.addEventListener(
+      'click',
+      (e) => {
+        e.stopPropagation()
+        typeMultiselect.classList.toggle('open')
+        typeButton.setAttribute('aria-expanded', String(typeMultiselect.classList.contains('open')))
+        // Close other multiselects
+        if (tagsMultiselect) {
+          tagsMultiselect.classList.remove('open')
+          tagsMultiselect.querySelector('button')?.setAttribute('aria-expanded', 'false')
+        }
+      },
+      { signal }
+    )
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (!typeMultiselect.contains(e.target as Node)) {
         typeMultiselect.classList.remove('open')
+        typeMultiselect.querySelector('button')?.setAttribute('aria-expanded', 'false')
       }
     })
   }
@@ -508,7 +500,9 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
   const enablePreview = searchLayout.dataset.preview === 'true'
   let preview: HTMLDivElement | undefined = undefined
   let previewInner: HTMLDivElement | undefined = undefined
-  let markersContainer: HTMLDivElement | undefined = undefined
+  const previewMedia = matchMedia('(min-width:768px)')
+  let previewRequest = 0
+  let searchRequest = 0
   const results = document.createElement('div')
   results.className = 'results-container'
   appendLayout(results)
@@ -522,11 +516,6 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     preview.className = 'preview-container'
     appendLayout(preview)
 
-    // Create markers container as separate column
-    markersContainer = document.createElement('div')
-    markersContainer.className = 'markers-container'
-    appendLayout(markersContainer)
-
     // Save scroll position when user scrolls
     preview.addEventListener('scroll', () => {
       if (currentPreviewSlug && preview) {
@@ -535,78 +524,72 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     })
   }
 
-  function hideSearch() {
-    container.classList.remove('active')
-    // Close all multiselect dropdowns
-    if (tagsMultiselect) {
-      tagsMultiselect.classList.remove('open')
+  function closeDropdowns() {
+    for (const element of [tagsMultiselect, typeMultiselect]) {
+      element?.classList.remove('open')
+      element?.querySelector('button')?.setAttribute('aria-expanded', 'false')
     }
-    if (typeMultiselect) {
-      typeMultiselect.classList.remove('open')
-    }
-    requestAnimationFrame(() => {
-      container.style.visibility = 'hidden'
-      container.style.opacity = '0'
-      container.style.pointerEvents = 'none'
-    })
-    searchBar.value = ''
-    removeAllChildren(results)
-    if (preview) {
-      removeAllChildren(preview)
-    }
-    if (markersContainer) {
-      removeAllChildren(markersContainer)
-    }
-    // Clean up markers
-    if (scrollbarMarkersContainer) {
-      scrollbarMarkersContainer.remove()
-      scrollbarMarkersContainer = null
-    }
-    viewportIndicatorEl = null
-    if (scrollHandler && preview) {
-      preview.removeEventListener('scroll', scrollHandler)
-      scrollHandler = null
-    }
-    if (resizeObserver) {
-      resizeObserver.disconnect()
-      resizeObserver = null
-    }
-    scrollbarMarkers = []
-    highlightElements = []
-    searchLayout.classList.remove('display-results')
-    searchType = 'basic'
-    // Reset to centered state - find searchSpace from container (which may be in body)
-    const searchSpace = container.querySelector('.search-space') as HTMLElement
-    if (searchSpace) {
-      searchSpace.classList.add('centered')
-    }
-    searchButton.focus()
   }
-
+  function hideSearch(returnFocus = true) {
+    previewRequest++
+    searchRequest++
+    if (timeout !== null) clearTimeout(timeout)
+    container.classList.remove('active')
+    document.documentElement.classList.remove('search-overlay-open')
+    closeDropdowns()
+    if (container.open) container.close()
+    container.style.visibility = 'hidden'
+    container.style.opacity = '0'
+    container.style.pointerEvents = 'none'
+    searchBar.value = ''
+    currentSearchTerm = ''
+    results.replaceChildren()
+    preview?.replaceChildren()
+    searchLayout.classList.remove('display-results')
+    container.querySelector('.search-space')?.classList.add('centered')
+    const status = container.querySelector<HTMLElement>('[data-search-status]')
+    if (status) status.textContent = '输入关键词开始搜索'
+    if (returnFocus) searchButton.focus()
+  }
   function showSearch(searchTypeNew: SearchType) {
     searchType = searchTypeNew
-    // Keep the modal outside the persisted header. Astro view transitions replace
-    // the body, so reattach it if a previous navigation detached the node.
-    if (container.parentElement !== document.body) {
-      document.body.appendChild(container)
-    }
-
-    // Use requestAnimationFrame to ensure visibility applies smoothly
-    requestAnimationFrame(() => {
-      container.classList.add('active')
-      container.style.visibility = 'visible'
-      container.style.opacity = '1'
-      container.style.pointerEvents = 'auto'
-    })
-    // Start in centered state - find searchSpace from container (which may be in body)
-    const searchSpace = container.querySelector('.search-space') as HTMLElement
-    if (searchSpace) {
-      searchSpace.classList.add('centered')
-    }
+    // Native dialog renders in the top layer while staying inside the persistent header.
+    container.classList.add('active')
+    container.style.visibility = 'visible'
+    container.style.opacity = '1'
+    container.style.pointerEvents = 'auto'
+    if (!container.open) container.showModal()
+    document.documentElement.classList.add('search-overlay-open')
     searchBar.focus()
+    triggerSearch()
   }
-
-  let currentHover: HTMLElement | null = null
+  container.querySelector('[data-search-close]')?.addEventListener('click', () => hideSearch())
+  container.addEventListener('click', (event) => {
+    if (event.target === container) hideSearch()
+  })
+  container.addEventListener('cancel', (event) => {
+    event.preventDefault()
+    if (container.querySelector('.filter-multiselect.open')) closeDropdowns()
+    else hideSearch()
+  })
+  container.addEventListener('close', () => {
+    if (container.classList.contains('active')) hideSearch()
+  })
+  // The dialog stays inside the persistent header, sharing its lifecycle.
+  document.addEventListener('astro:before-swap', () => hideSearch(false), { signal })
+  container.querySelector('[data-search-reset]')?.addEventListener('click', () => {
+    currentFilters = { date: 'all', tags: [], types: [] }
+    dateSelect.value = 'all'
+    for (const element of [tagsMultiselect, typeMultiselect]) {
+      element
+        ?.querySelectorAll<HTMLInputElement>('input[type=checkbox]')
+        .forEach((input) => (input.checked = input.value === 'all'))
+      const label = element?.querySelector('.filter-multiselect-text')
+      if (label) label.textContent = '全部'
+    }
+    closeDropdowns()
+    triggerSearch()
+  })
   async function shortcutHandler(e: KeyboardEvent) {
     if (e.key === 'k' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
       e.preventDefault()
@@ -618,50 +601,35 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
       const searchBarOpen = container.classList.contains('active')
       searchBarOpen ? hideSearch() : showSearch('tags')
       searchBar.value = '#'
+      triggerSearch()
       return
     }
 
-    if (currentHover) {
-      currentHover.classList.remove('focus')
+    if (!container.open) return
+    const active = document.activeElement
+    if (e.key === 'Enter' && !e.isComposing && active === searchBar) {
+      e.preventDefault()
+      results.querySelector<HTMLAnchorElement>('a.result-card[href]')?.click()
+      return
     }
-
-    if (!container.classList.contains('active')) return
-    if (e.key === 'Enter' && !e.isComposing) {
-      if (results.contains(document.activeElement)) {
-        const active = document.activeElement as HTMLElement
-        if (active.classList.contains('no-match')) return
-        await displayPreview(active)
-        active.click()
-      } else {
-        const anchor = document.getElementsByClassName('result-card')[0] as HTMLElement | null
-        if (!anchor || anchor.classList.contains('no-match')) return
-        await displayPreview(anchor)
-        anchor.click()
-      }
-    } else if (e.key === 'ArrowUp' || (e.shiftKey && e.key === 'Tab')) {
+    if (
+      (e.key === 'ArrowDown' || e.key === 'ArrowUp') &&
+      (active === searchBar || results.contains(active))
+    ) {
       e.preventDefault()
-      if (results.contains(document.activeElement)) {
-        const currentResult = currentHover || (document.activeElement as HTMLElement | null)
-        const prevResult = currentResult?.previousElementSibling as HTMLElement | null
-        if (prevResult) {
-          prevResult.focus()
-          await displayPreview(prevResult)
-        }
-      }
-    } else if (e.key === 'ArrowDown' || e.key === 'Tab') {
-      e.preventDefault()
-      if (document.activeElement === searchBar || currentHover !== null) {
-        const firstResult =
-          currentHover || (document.getElementsByClassName('result-card')[0] as HTMLElement | null)
-        const nextResult = firstResult?.nextElementSibling as HTMLElement | null
-        if (nextResult) {
-          nextResult.focus()
-          await displayPreview(nextResult)
-        } else if (!currentHover && firstResult) {
-          // If no current hover and we have a first result, focus it
-          firstResult.focus()
-          await displayPreview(firstResult)
-        }
+      const cards = [...results.querySelectorAll<HTMLAnchorElement>('a.result-card[href]')]
+      const index = cards.indexOf(active as HTMLAnchorElement)
+      const next =
+        index < 0
+          ? e.key === 'ArrowDown'
+            ? 0
+            : cards.length - 1
+          : Math.max(0, Math.min(cards.length - 1, index + (e.key === 'ArrowDown' ? 1 : -1)))
+      const card = cards[next]
+      if (card) {
+        card.focus({ preventScroll: true })
+        card.scrollIntoView({ block: 'nearest' })
+        await displayPreview(card)
       }
     }
   }
@@ -705,15 +673,20 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     `
     itemTile.addEventListener('click', (event) => {
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
-      hideSearch()
+      event.preventDefault()
+      const destination = itemTile.href
+      hideSearch(false)
+      window.location.assign(destination)
     })
 
     async function onMouseEnter(ev: MouseEvent) {
       if (!ev.target) return
       const target = (ev.target as HTMLElement).closest('.result-card') as HTMLElement
       if (!target) return
-      updateActiveHighlight(target)
-      await displayPreview(target)
+      if (previewMedia.matches) {
+        updateActiveHighlight(target)
+        await displayPreview(target)
+      }
     }
 
     itemTile.addEventListener('mouseenter', onMouseEnter)
@@ -723,37 +696,51 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
   async function displayResults(finalResults: Item[]) {
     removeAllChildren(results)
     if (finalResults.length === 0) {
-      results.innerHTML = `<a class="result-card no-match">
+      results.innerHTML = `<div class="result-card no-match">
           <h3>没有找到结果</h3>
-          <p>试试其他搜索词？</p>
-      </a>`
+          <p>试试其他搜索词，或清除筛选条件。</p>
+      </div>`
     } else {
       results.append(...finalResults.map(resultToHTML))
     }
 
-    if (finalResults.length === 0 && preview) {
-      removeAllChildren(preview)
-    } else {
-      const firstChild = results.firstElementChild as HTMLElement
-      if (firstChild) {
-        currentHover = firstChild
-        await displayPreview(firstChild)
-      }
+    const searching = searchLayout.classList.contains('display-results')
+    const status = container.querySelector<HTMLElement>('[data-search-status]')
+    if (status)
+      status.textContent = searching
+        ? `${finalResults.length} 条结果 · 点选打开文章`
+        : '输入关键词开始搜索'
+
+    if (!finalResults.length) preview?.replaceChildren()
+    else if (previewMedia.matches) {
+      const first = results.querySelector<HTMLElement>('a.result-card[href]')
+      if (first) await displayPreview(first)
     }
   }
 
-  // Update highlight for the active preview
   function updateActiveHighlight(activeElement: HTMLElement | null) {
-    // Remove focus from all result cards
-    const allCards = results.querySelectorAll('.result-card')
-    allCards.forEach((card) => card.classList.remove('focus'))
-
-    // Add focus to the active element
-    if (activeElement && activeElement.classList.contains('result-card')) {
+    results.querySelectorAll('.result-card').forEach((card) => {
+      card.classList.remove('focus')
+      card.removeAttribute('aria-current')
+    })
+    if (activeElement && previewMedia.matches) {
       activeElement.classList.add('focus')
-      currentHover = activeElement
+      activeElement.setAttribute('aria-current', 'true')
     }
   }
+  previewMedia.addEventListener(
+    'change',
+    () => {
+      previewRequest++
+      if (!previewMedia.matches) {
+        updateActiveHighlight(null)
+      } else if (container.open) {
+        const card = results.querySelector<HTMLElement>('a.result-card[href]')
+        if (card) void displayPreview(card)
+      }
+    },
+    { signal }
+  )
 
   // Apply filters to results
   function applyFilters(resultIds: number[]): number[] {
@@ -808,10 +795,7 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
 
   // Trigger search update
   function triggerSearch() {
-    if (currentSearchTerm || searchLayout.classList.contains('display-results')) {
-      const event = new Event('input', { bubbles: true })
-      searchBar.dispatchEvent(event)
-    }
+    searchBar.dispatchEvent(new Event('input', { bubbles: true }))
   }
 
   async function fetchContent(slug: string): Promise<Element[]> {
@@ -921,351 +905,72 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     return breadcrumb
   }
 
-  // Scrollbar markers
-  let scrollbarMarkersContainer: HTMLElement | null = null
-  let scrollbarMarkers: HTMLElement[] = []
-  let highlightElements: HTMLElement[] = []
-  let scrollHandler: (() => void) | null = null
-  let resizeObserver: ResizeObserver | null = null
-
-  function createScrollbarMarkers() {
-    if (!preview || !previewInner || !markersContainer) return
-
-    // Remove existing markers and event listener
-    if (scrollbarMarkersContainer) {
-      scrollbarMarkersContainer.remove()
-    }
-    if (scrollHandler && preview) {
-      preview.removeEventListener('scroll', scrollHandler)
-      scrollHandler = null
-    }
-    if (resizeObserver) {
-      resizeObserver.disconnect()
-      resizeObserver = null
-    }
-
-    // Find all highlight elements
-    highlightElements = Array.from(preview.querySelectorAll('.highlight')) as HTMLElement[]
-
-    if (highlightElements.length === 0) {
-      // Clear markers container if no highlights
-      removeAllChildren(markersContainer)
-      return
-    }
-
-    // Create markers container inside the separate markers column
-    scrollbarMarkersContainer = document.createElement('div')
-    scrollbarMarkersContainer.className = 'scrollbar-markers'
-    removeAllChildren(markersContainer)
-    markersContainer.appendChild(scrollbarMarkersContainer)
-
-    // Create markers for each highlight
-    scrollbarMarkers = highlightElements.map((highlight, index) => {
-      const marker = document.createElement('div')
-      marker.className = 'scrollbar-marker'
-      marker.dataset.index = String(index)
-      marker.title = `匹配项 ${index + 1}`
-
-      // Calculate position
-      const position = calculateMarkerPosition(highlight)
-      marker.style.top = `${position}%`
-
-      // Click handler to scroll to highlight and flash it
-      marker.addEventListener('click', () => {
-        highlight.scrollIntoView({ block: 'center', behavior: 'smooth' })
-        // Flash the highlight after scroll completes
-        setTimeout(() => {
-          highlight.classList.remove('flash-highlight')
-          // Force reflow so re-adding the class restarts the animation
-          void highlight.offsetWidth
-          highlight.classList.add('flash-highlight')
-          highlight.addEventListener(
-            'animationend',
-            () => {
-              highlight.classList.remove('flash-highlight')
-            },
-            { once: true }
-          )
-        }, 300)
-      })
-
-      scrollbarMarkersContainer!.appendChild(marker)
-      return marker
-    })
-
-    // Create viewport indicator (custom scrollbar thumb replacement)
-    createViewportIndicator()
-
-    // Update markers on scroll
-    scrollHandler = () => {
-      updateScrollbarMarkers()
-      updateViewportIndicator()
-    }
-    preview.addEventListener('scroll', scrollHandler, { passive: true })
-
-    // Update marker positions on resize
-    resizeObserver = new ResizeObserver(() => {
-      // Recalculate all marker positions when content or viewport changes
-      highlightElements.forEach((highlight, index) => {
-        const marker = scrollbarMarkers[index]
-        if (marker) {
-          const position = calculateMarkerPosition(highlight)
-          marker.style.top = `${position}%`
-        }
-      })
-      updateScrollbarMarkers()
-      updateViewportIndicator()
-    })
-
-    // Observe both preview container (for viewport size) and previewInner (for content size)
-    if (preview) {
-      resizeObserver.observe(preview)
-    }
-    if (previewInner) {
-      resizeObserver.observe(previewInner)
-    }
-
-    // Initial update
-    updateScrollbarMarkers()
-    updateViewportIndicator()
-  }
-
-  function calculateMarkerPosition(element: HTMLElement): number {
-    if (!preview || !previewInner || !markersContainer) return 0
-
-    // Get element's position relative to previewInner in document coordinates
-    let offsetTop = 0
-    let currentElement: HTMLElement | null = element
-
-    // Calculate offset from previewInner
-    while (currentElement && currentElement !== previewInner && currentElement !== preview) {
-      offsetTop += currentElement.offsetTop
-      currentElement = currentElement.offsetParent as HTMLElement | null
-    }
-
-    // Calculate position as percentage of total scrollable height
-    const scrollHeight = preview.scrollHeight
-
-    // Map document position to markers container position
-    // Markers container height equals viewport height (clientHeight)
-    // So we map: document position -> markers container position
-    const position = scrollHeight > 0 ? (offsetTop / scrollHeight) * 100 : 0
-
-    return Math.max(0, Math.min(100, position))
-  }
-
-  function updateScrollbarMarkers() {
-    if (!preview || !previewInner || highlightElements.length === 0) return
-
-    const viewportTop = preview.scrollTop
-    const viewportBottom = preview.scrollTop + preview.clientHeight
-    const previewInnerRect = previewInner.getBoundingClientRect()
-
-    highlightElements.forEach((highlight, index) => {
-      const marker = scrollbarMarkers[index]
-      if (!marker) return
-
-      // Calculate highlight position relative to previewInner
-      const highlightRect = highlight.getBoundingClientRect()
-      const highlightTop = highlightRect.top - previewInnerRect.top + preview.scrollTop
-      const highlightBottom = highlightTop + highlight.offsetHeight
-
-      // Check if highlight is visible in viewport
-      const isVisible = highlightBottom >= viewportTop && highlightTop <= viewportBottom
-
-      if (isVisible) {
-        marker.classList.add('active')
-      } else {
-        marker.classList.remove('active')
-      }
-    })
-  }
-
-  let viewportIndicatorEl: HTMLElement | null = null
-
-  function createViewportIndicator() {
-    if (!preview || !scrollbarMarkersContainer) return
-
-    // Remove existing indicator
-    if (viewportIndicatorEl) {
-      viewportIndicatorEl.remove()
-      viewportIndicatorEl = null
-    }
-
-    // Create viewport indicator element
-    viewportIndicatorEl = document.createElement('div')
-    viewportIndicatorEl.className = 'viewport-indicator'
-
-    // Create red center line
-    const line = document.createElement('div')
-    line.className = 'viewport-indicator-line'
-    viewportIndicatorEl.appendChild(line)
-
-    scrollbarMarkersContainer.appendChild(viewportIndicatorEl)
-
-    // Make it draggable
-    let isDragging = false
-    let dragStartY = 0
-    let dragStartScrollTop = 0
-
-    viewportIndicatorEl.addEventListener('mousedown', (e: MouseEvent) => {
-      e.preventDefault()
-      isDragging = true
-      dragStartY = e.clientY
-      dragStartScrollTop = preview!.scrollTop
-      viewportIndicatorEl!.classList.add('dragging')
-
-      const onMouseMove = (e: MouseEvent) => {
-        if (!isDragging || !preview || !scrollbarMarkersContainer) return
-        const containerHeight = scrollbarMarkersContainer.clientHeight
-        const scrollHeight = preview.scrollHeight
-        const clientHeight = preview.clientHeight
-        const maxScrollTop = scrollHeight - clientHeight
-
-        // How many pixels of scroll per pixel of drag
-        const scrollRatio =
-          maxScrollTop / (containerHeight - containerHeight * (clientHeight / scrollHeight))
-        const deltaY = e.clientY - dragStartY
-        const newScrollTop = Math.max(
-          0,
-          Math.min(maxScrollTop, dragStartScrollTop + deltaY * scrollRatio)
-        )
-
-        preview.scrollTop = newScrollTop
-      }
-
-      const onMouseUp = () => {
-        isDragging = false
-        viewportIndicatorEl?.classList.remove('dragging')
-        document.removeEventListener('mousemove', onMouseMove)
-        document.removeEventListener('mouseup', onMouseUp)
-      }
-
-      document.addEventListener('mousemove', onMouseMove)
-      document.addEventListener('mouseup', onMouseUp)
-    })
-
-    // Also support clicking on the markers container track to jump
-    scrollbarMarkersContainer.addEventListener('mousedown', (e: MouseEvent) => {
-      if (e.target !== scrollbarMarkersContainer) return
-      if (!preview) return
-      const rect = scrollbarMarkersContainer!.getBoundingClientRect()
-      const clickY = e.clientY - rect.top
-      const clickRatio = clickY / rect.height
-      const scrollHeight = preview.scrollHeight
-      const clientHeight = preview.clientHeight
-      const maxScrollTop = scrollHeight - clientHeight
-      preview.scrollTo({
-        top: maxScrollTop * clickRatio,
-        behavior: 'smooth'
-      })
-    })
-
-    // Enable pointer events on the container for track clicking
-    scrollbarMarkersContainer.style.pointerEvents = 'auto'
-  }
-
-  function updateViewportIndicator() {
-    if (!preview || !viewportIndicatorEl || !scrollbarMarkersContainer) return
-
-    const scrollHeight = preview.scrollHeight
-    const clientHeight = preview.clientHeight
-    const scrollTop = preview.scrollTop
-    const containerHeight = scrollbarMarkersContainer.clientHeight
-
-    if (scrollHeight <= clientHeight) {
-      // Content fits, indicator covers everything
-      viewportIndicatorEl.style.top = '0px'
-      viewportIndicatorEl.style.height = '100%'
-      return
-    }
-
-    // Calculate indicator size and position
-    const viewportRatio = clientHeight / scrollHeight
-    const indicatorHeight = Math.max(20, containerHeight * viewportRatio)
-    const maxIndicatorTop = containerHeight - indicatorHeight
-    const scrollRatio = scrollTop / (scrollHeight - clientHeight)
-    const indicatorTop = maxIndicatorTop * scrollRatio
-
-    viewportIndicatorEl.style.top = `${indicatorTop}px`
-    viewportIndicatorEl.style.height = `${indicatorHeight}px`
-  }
-
   async function displayPreview(el: HTMLElement | null) {
-    if (!searchLayout || !enablePreview || !el || !preview) return
+    if (!enablePreview || !previewMedia.matches || !el || !preview) return
     const slug = el.id
     if (!slug) return
-
-    // Save current scroll position before switching
-    if (currentPreviewSlug && currentPreviewSlug !== slug) {
+    const request = ++previewRequest
+    if (currentPreviewSlug && currentPreviewSlug !== slug)
       scrollPositions.set(currentPreviewSlug, preview.scrollTop)
-    }
-
-    // Update highlight before fetching content
     updateActiveHighlight(el)
-
-    // Check if we have a saved scroll position for this article
-    const savedScrollPosition = scrollPositions.get(slug)
-    const isReturningToArticle = savedScrollPosition !== undefined
-
     try {
-      const innerDiv = await fetchContent(slug).then((contents) =>
-        contents.flatMap((el) => [...highlightHTML(currentSearchTerm, el as HTMLElement).children])
-      )
+      const contents = await fetchContent(slug)
+      if (request !== previewRequest || !container.open || !previewMedia.matches) return
+      const innerDiv = contents.flatMap((item) => [
+        ...highlightHTML(currentSearchTerm, item as HTMLElement).children
+      ])
       previewInner = document.createElement('div')
-      previewInner.classList.add('preview-inner')
-
-      // Add breadcrumb for docs
-      const breadcrumb = generateBreadcrumb(slug, data[slug]?.title || '')
-      if (breadcrumb) {
-        previewInner.appendChild(breadcrumb)
-      }
-
+      previewInner.className = 'preview-inner'
+      const heading = document.createElement('header')
+      heading.className = 'preview-heading'
+      const title = document.createElement('strong')
+      title.textContent = data[slug]?.title ?? ''
+      const open = document.createElement('a')
+      open.href = resolveUrl(slug)
+      open.textContent = '阅读全文 ↗'
+      open.addEventListener('click', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
+        event.preventDefault()
+        const destination = open.href
+        hideSearch(false)
+        window.location.assign(destination)
+      })
+      heading.append(title, open)
+      previewInner.append(heading)
+      const breadcrumb = generateBreadcrumb(slug, data[slug]?.title ?? '')
+      if (breadcrumb) previewInner.append(breadcrumb)
       previewInner.append(...innerDiv)
       preview.replaceChildren(previewInner)
-
-      // Update current preview slug
       currentPreviewSlug = slug
-
-      // Create scrollbar markers after content is loaded and layout is complete
       requestAnimationFrame(() => {
-        // Wait for layout to settle
-        setTimeout(() => {
-          createScrollbarMarkers()
-
-          // Restore scroll position if returning to this article, otherwise scroll to highlight
-          if (isReturningToArticle && savedScrollPosition !== undefined) {
-            if (preview) {
-              preview.scrollTop = savedScrollPosition
-              updateScrollbarMarkers()
-            }
-          } else {
-            // scroll to longest highlight for new articles
-            const highlights = [...preview.getElementsByClassName('highlight')].sort(
-              (a, b) => b.innerHTML.length - a.innerHTML.length
-            )
-            if (highlights[0]) {
-              highlights[0].scrollIntoView({ block: 'start' })
-              // Update markers after scroll
-              setTimeout(() => {
-                updateScrollbarMarkers()
-              }, 100)
-            }
-          }
-        }, 50)
+        if (request !== previewRequest || !preview) return
+        const saved = scrollPositions.get(slug)
+        const match = preview.querySelector<HTMLElement>('.highlight')
+        preview.scrollTop =
+          saved ??
+          (match
+            ? Math.max(
+                0,
+                preview.scrollTop +
+                  match.getBoundingClientRect().top -
+                  preview.getBoundingClientRect().top -
+                  heading.offsetHeight -
+                  12
+              )
+            : 0)
       })
     } catch (error) {
+      if (request !== previewRequest || !container.open) return
       console.error('Error fetching preview:', error)
-      previewInner = document.createElement('div')
-      previewInner.classList.add('preview-inner')
-      previewInner.textContent = '无法加载预览'
-      preview.replaceChildren(previewInner)
+      preview.textContent = '无法加载预览，可从左侧直接打开文章。'
       currentPreviewSlug = null
     }
   }
 
   async function onType(e: Event) {
     if (!searchLayout || !index) return
+    previewRequest++
+    const request = ++searchRequest
     currentSearchTerm = (e.target as HTMLInputElement).value
     const hasSearchTerm = currentSearchTerm.trim() !== ''
     const hasActiveFilters =
@@ -1273,7 +978,16 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
       currentFilters.tags.length > 0 ||
       currentFilters.types.length > 0
 
-    // Animate search space when user starts typing - find searchSpace from container (which may be in body)
+    const activeCount =
+      Number(currentFilters.date !== 'all') +
+      Number(currentFilters.tags.length > 0) +
+      Number(currentFilters.types.length > 0)
+    const summary = container.querySelector<HTMLElement>('[data-filter-summary]')
+    if (summary) {
+      summary.textContent = activeCount ? `已启用 ${activeCount} 项` : '未设置'
+      summary.dataset.active = String(activeCount > 0)
+    }
+    // Update search space when user starts typing - find searchSpace from container (which may be in body)
     const searchSpace = container.querySelector('.search-space') as HTMLElement
     let searching = searchSpace && (hasSearchTerm || hasActiveFilters)
     if (searching) {
@@ -1301,6 +1015,7 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
             index: ['title', 'content'],
             tag: { tags: tag }
           })
+          if (request !== searchRequest || !container.open) return
           for (const searchResult of searchResults) {
             searchResult.result = searchResult.result.slice(0, numSearchResults)
           }
@@ -1337,17 +1052,20 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
       allIds = Array.from({ length: idDataMap.length }, (_, i) => i)
     }
 
+    if (request !== searchRequest || !container.open) return
     // Apply filters
     const filteredIds = applyFilters(searching ? allIds : [])
     const finalResults = filteredIds.map((id) => formatForDisplay(currentSearchTerm || '', id))
     await displayResults(finalResults)
   }
 
-  document.addEventListener('keydown', shortcutHandler)
+  document.addEventListener('keydown', shortcutHandler, { signal })
   searchButton.addEventListener('click', () => showSearch('basic'))
   let timeout: ReturnType<typeof setTimeout> | null = null
   function onTypeLazy(e: Event) {
     if (timeout !== null) clearTimeout(timeout)
+    searchRequest++
+    previewRequest++
     const value = (e.target as HTMLInputElement).value
     // If first char or empty, search immediately
     if (value.length <= 1) {
@@ -1357,7 +1075,6 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     }
   }
   searchBar.addEventListener('input', onTypeLazy)
-  registerEscapeHandler(container, hideSearch)
 
   await fillDocument(data)
   searchRoot.dataset.searchReady = 'true'
@@ -1395,7 +1112,10 @@ export async function initSearch() {
     return response.json() as Promise<ContentIndex>
   })
 
-  const data = await contentIndexPromise.catch(error => { contentIndexPromise = undefined; throw error })
+  const data = await contentIndexPromise.catch((error) => {
+    contentIndexPromise = undefined
+    throw error
+  })
   const searchElements = document.getElementsByClassName('search')
 
   for (const element of searchElements) {
