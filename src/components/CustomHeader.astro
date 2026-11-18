@@ -29,7 +29,8 @@ const groups=[
   ]}
 ] as const
 ---
-<header-component class='site-header group' transition:persist='site-header'>
+<!-- Recreate the header on navigation so scoped styles and markup stay in sync after deployments. -->
+<header-component class='site-header group'>
   <a class='brand' href={sitePath('/')} aria-label='Brand' data-astro-prefetch>
     {logoImage && <Image id='header-avatar' src={logoImage.default} alt={config.logo.alt || 'Avatar'} width={64} height={64} loading='eager' />}
     <span>{config.title}</span>
