@@ -12,7 +12,7 @@ const logoImage=images[config.logo.src] ? await images[config.logo.src]() : null
 // Icon-labelled groups and single expanded section follow Mizuki's NavMenuPanel.
 const groups=[
   {title:'阅读',icon:'document',items:[
-    {title:'博客',icon:'document',href:'/blog'},{title:'分类',icon:'package',href:'/categories'},
+    {title:'分类',icon:'package',href:'/categories'},
     {title:'标签',icon:'hashtag',href:'/tags'},{title:'时光机',icon:'calendar',href:'/archives'}
   ]},
   {title:'探索',icon:'earth',items:[
@@ -36,6 +36,7 @@ const groups=[
   </a>
   <div id='headerExpandContent' class='navigation-panel'>
     <nav aria-label='主导航'>
+      <a class='nav-reading' href={sitePath('/blog')}><Icon name='document' />博客</a>
       <a class='nav-home' href={sitePath('/')}><Icon name='location' />首页</a>
       {groups.map(group=><details class='nav-group'>
         <summary><Icon name={group.icon}/><span>{group.title}</span><i class='chevron' aria-hidden='true'></i></summary>
@@ -51,10 +52,8 @@ const groups=[
     </nav>
   </div>
   <div class='header-tools'>
+    <a class='mobile-reading' href={sitePath('/blog')}>博客 <span aria-hidden='true'>↗</span></a>
     <Search />
-    <button type='button' aria-label='标签云' data-tagcloud-trigger><Icon name='hashtag'/></button>
-    <button type='button' class='header-folder' aria-label='文件管理器' data-category-open><Icon name='package'/></button>
-    <button type='button' aria-label='知识图谱' data-graph-open><Icon name='earth'/></button>
     <button type='button' id='toggleAppearance' aria-label='外观设置' aria-expanded='false' aria-controls='appearance-panel'>
       <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' aria-hidden='true'><path d='M12 3a9 9 0 1 0 0 18h1a2.5 2.5 0 0 0 1.8-4.2c-.8-.8-.2-2.1.9-2.1H18a3 3 0 0 0 3-3C21 6.8 17 3 12 3Z'/><circle cx='7.5' cy='11' r='.8'/><circle cx='10' cy='7' r='.8'/><circle cx='15' cy='7.5' r='.8'/></svg>
     </button>
@@ -106,8 +105,10 @@ const groups=[
       const sync=()=>{
         closeAll()
         const path=location.pathname.replace(/\/$/,'')
-        this.querySelectorAll<HTMLAnchorElement>('nav a').forEach(a=>{
-          const current=new URL(a.href).pathname.replace(/\/$/,'')===path&&!a.hash
+        this.querySelectorAll<HTMLAnchorElement>('nav a,.mobile-reading').forEach(a=>{
+          const destination=new URL(a.href).pathname.replace(/\/$/,'')
+          const readingLink=a.matches('.mobile-reading,.nav-reading')
+          const current=!a.hash&&(destination===path||(readingLink&&path.startsWith(destination+'/')))
           if(current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')
         })
       }
@@ -123,16 +124,16 @@ const groups=[
   .brand{display:flex;align-items:center;gap:.55rem;font-size:1.1rem;font-weight:650;white-space:nowrap;flex-shrink:0;}
   .brand :global(img){width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid hsl(var(--border));}
   .header-tools{display:flex;align-items:center;gap:.15rem;}
-  .header-tools>button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:.7rem;background:transparent;cursor:pointer;color:inherit;flex-shrink:0;}
-  .header-tools :global(.search-button){width:40px;height:40px;padding:0;border-radius:.7rem;}
+  .header-tools>button{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:.7rem;background:transparent;cursor:pointer;color:inherit;flex-shrink:0;}
+  .header-tools :global(.search-button){width:44px;height:44px;padding:0;border-radius:.7rem;}
   .header-tools :global(svg){width:21px;height:21px;}
   .header-tools>button:hover,.header-tools>button[aria-expanded=true]{background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
   #toggleMenu{display:none;}
   nav{display:flex;gap:.15rem;}
   .nav-group{position:relative;}
-  summary,.nav-home{display:flex;align-items:center;gap:.45rem;min-height:40px;padding:.4rem .65rem;border-radius:.6rem;font-size:.85rem;font-weight:550;cursor:pointer;list-style:none;}
+  summary,.nav-home,.nav-reading{display:flex;align-items:center;gap:.45rem;min-height:40px;padding:.4rem .65rem;border-radius:.6rem;font-size:.85rem;font-weight:550;cursor:pointer;list-style:none;}
   summary::-webkit-details-marker{display:none;}
-  summary :global(svg),.nav-home :global(svg),.nav-submenu :global(svg){width:18px;height:18px;flex-shrink:0;color:hsl(var(--primary));}
+  summary :global(svg),.nav-home :global(svg),.nav-reading :global(svg),.nav-submenu :global(svg){width:18px;height:18px;flex-shrink:0;color:hsl(var(--primary));}
   summary:hover,.nav-group[open]>summary{color:hsl(var(--primary));background:hsl(var(--primary)/.09);}
   .chevron{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-left:auto;}
   .nav-group[open]>summary .chevron{transform:rotate(225deg);}
@@ -140,15 +141,20 @@ const groups=[
   .nav-submenu :is(a,button){display:flex;align-items:center;gap:.65rem;width:100%;min-height:42px;padding:.55rem .65rem;border:0;border-radius:.5rem;text-align:left;font:inherit;font-size:.82rem;color:inherit;background:transparent;cursor:pointer;}
   .nav-submenu :is(a,button):hover,.nav-submenu a[aria-current=page]{background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
   .nav-submenu small{margin-left:auto;}
-  .nav-home{display:none;}
+  .nav-home,.mobile-reading{display:none;}
+  .nav-reading,.mobile-reading{color:hsl(var(--primary));}
+  .nav-reading:hover,.nav-reading[aria-current=page],.mobile-reading{background:hsl(var(--primary)/.1);}
+  .mobile-reading{align-items:center;gap:.35rem;min-height:44px;padding:.45rem .8rem;border-radius:.7rem;font-size:.85rem;font-weight:600;white-space:nowrap;}
   :is(a,button,summary):focus-visible{outline:2px solid hsl(var(--primary));outline-offset:2px;}
   @media(max-width:1050px){summary{padding-inline:.45rem;gap:.3rem;}summary :global(svg){display:none;}.brand span{font-size:1rem;}}
   @media(max-width:900px){
     #toggleMenu{display:grid;}
+    .mobile-reading{display:flex;}
+    .nav-reading{display:none;}
     .navigation-panel{display:none;position:absolute;top:calc(100% + .6rem);right:0;width:min(17.5rem,calc(100vw - 2rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;padding:.5rem;border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;background:hsl(var(--background)/.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px hsl(var(--foreground)/.14);}
     .expanded .navigation-panel{display:block;}
     nav{display:block;}
-    summary,.nav-home{min-height:44px;padding:.65rem .7rem;font-size:.88rem;gap:.7rem;}
+    summary,.nav-home,.nav-reading{min-height:44px;padding:.65rem .7rem;font-size:.88rem;gap:.7rem;}
     summary :global(svg){display:block;}
     .nav-home{display:flex;}
     .nav-group{position:static;}
@@ -156,5 +162,5 @@ const groups=[
     .nav-submenu :is(a,button){min-height:42px;font-size:.82rem;}
   }
   @media(max-width:600px){header-component{gap:.3rem;padding:.4rem .5rem;margin-bottom:1.25rem;}.brand span{display:none;}.brand :global(img){width:32px;height:32px;}.header-tools{gap:0;}}
-  @media(max-width:370px){.header-folder{display:none!important;}}
+  @media(max-width:370px){.mobile-reading{padding-inline:.6rem;}.mobile-reading span{display:none;}}
 </style>

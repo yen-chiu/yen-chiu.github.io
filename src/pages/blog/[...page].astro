@@ -42,7 +42,7 @@ export const getStaticPaths = (async ({ paginate }) => {
       tags,
       categories,
       collectionsCount: collections.length,
-      categoryCount: getAllCategories(collections).size,
+      categoryCount: categories.length,
       tagCount: getUniqueTagsWithCount(collections).length
     }
   })
@@ -90,7 +90,7 @@ const meta = {
       description='记录技术实践、阶段思考与持续整理中的知识线索。'
       stats={[
         { label: '文章', value: collectionsCount },
-        { label: '分类', value: categoryCount },
+        { label: '主题栏目', value: categoryCount },
         { label: '标签', value: tagCount }
       ]}
       statsLabel='博客统计'
@@ -102,7 +102,7 @@ const meta = {
         <span class='portal-icon'><Icon name='package' /></span>
         <span>
           <strong>按分类浏览</strong>
-          <small>{categoryCount} 个知识目录</small>
+          <small>{categoryCount} 个主题栏目</small>
         </span>
         <span class='portal-arrow'>↗</span>
       </a>

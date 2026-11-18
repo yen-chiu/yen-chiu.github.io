@@ -4,10 +4,21 @@ import { getCollection } from 'astro:content'
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import InteractiveAvatar from '@/components/InteractiveAvatar.astro'
+import { getPostPath, getPostSlug } from '@/utils/content-paths'
 import { sitePath } from '@/utils/site-path'
 import avatar from '@/assets/avatar.png'
 
 const posts = (await getCollection('blog')).filter((p) => !p.data.draft)
+const selections = [
+  { slug: 'qq-bot-postmortem', label: '从一次失败开始', reason: '三次碰壁之后，写下 QQ 接入 AI 助手的排查过程与取舍。' },
+  { slug: 'xss-audit', label: '看一次真正的修复', reason: '审查自己的写作台，跟着一个 XSS 漏洞走完发现与修复。' },
+  { slug: 'miko-web', label: '认识一个作品', reason: '从旧游戏的逆向分析，到异次元通讯网页版的重建故事。' }
+]
+const featuredPosts = selections.map(selection => {
+  const post = posts.find(post => getPostSlug(post) === selection.slug)
+  if (!post) throw new Error(`Missing curated article: ${selection.slug}`)
+  return { ...selection, post }
+})
 const entries = [
   { title: '博客', desc: '技术实践与生活记录', path: '/blog', symbol: '✎' },
   { title: '时光机', desc: '在日历里回看写作', path: '/archives', symbol: '◷' },
@@ -54,7 +65,7 @@ const entries = [
           </h1>
           <p class='tagline'>读书，买花，长大。</p>
           <nav class='cover-actions' aria-label='首页入口'>
-            <a href={sitePath('/blog')}>进入博客 ↗</a><a href={sitePath('/about')}>关于我</a><a
+            <a class='primary-reading' href={sitePath('/blog')}>进入博客 ↗</a><a href={sitePath('/about')}>关于我</a><a
               href='https://github.com/yen-chiu'
               target='_blank'
               rel='noopener noreferrer'>GitHub ↗</a
@@ -79,10 +90,23 @@ const entries = [
         <div>
           <p class='section-kicker'>WELCOME TO MY CORNER</p><h2 id='doorway-title'>
             你好，路过的朋友。
-          </h2><p>这里收集思考，也留下生活。找一个入口，慢慢逛。</p>
+          </h2><p>第一次来，可以先读这三篇。这里有折腾的过程，也有做成的作品。</p>
         </div><a href='#' class='expand-cover'>展开封面 ↑</a>
       </header>
-      <nav class='entry-grid' aria-label='探索本站'>
+      <section class='reading-guide' aria-labelledby='reading-guide-title'>
+        <h3 id='reading-guide-title' class='guide-heading'>精选导读</h3>
+        <div class='guide-grid'>
+          {featuredPosts.map(({ label, reason, post }, index) => (
+            <article class='guide-card'>
+              <span class='guide-label'><b aria-hidden='true'>0{index + 1}</b>{label}</span>
+              <h4><a href={sitePath(getPostPath(post))}>{post.data.title}</a></h4>
+              <p>{reason}</p>
+              <a class='guide-read' href={sitePath(getPostPath(post))} aria-label={`阅读：${post.data.title}`}>开始阅读 <span aria-hidden='true'>↗</span></a>
+            </article>
+          ))}
+        </div>
+      </section>
+      <nav class='entry-grid'  aria-label='探索本站'>
         {
           entries.map((e) => (
             <a href={sitePath(e.path)}>
@@ -415,6 +439,13 @@ const entries = [
     border-radius: 2rem;
     backdrop-filter: blur(12px);
   }
+  .cover-actions .primary-reading {
+    color: #172338;
+    background: #f1f5ff;
+    border-color: #f1f5ff;
+    font-weight: 650;
+  }
+  .cover-actions .primary-reading:hover { background: #fff; }
   .cover-actions a:hover {
     background: #ffffff30;
   }
@@ -523,6 +554,16 @@ const entries = [
     display: flex;
     align-items: center;
   }
+  .reading-guide { margin: 0 0 2rem; }
+  .guide-heading { font-size: .85rem; font-weight: 600; margin-bottom: .85rem; color: hsl(var(--muted-foreground)); }
+  .guide-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
+  .guide-card { display: flex; flex-direction: column; min-width: 0; padding: 1.3rem; border: 1px solid hsl(var(--border)); border-radius: 1.1rem; background: hsl(var(--background)/.92); }
+  .guide-label { display:flex; align-items:center; gap:.6rem; color:hsl(var(--primary)); font-size:.7rem; }
+  .guide-label b { font-size:.85rem; font-variant-numeric:tabular-nums; }
+  .guide-card h4 { font-size: 1rem; line-height:1.65; font-weight:600; margin:.85rem 0 .6rem; overflow-wrap:anywhere; }
+  .guide-card h4 a:hover { color:hsl(var(--primary)); }
+  .guide-card p { font-size:.78rem; line-height:1.8; color:hsl(var(--muted-foreground)); margin:0 0 1rem; }
+  .guide-read { display:flex; align-items:center; gap:.5rem; min-height:44px; margin-top:auto; font-size:.75rem; font-weight:600; color:hsl(var(--primary)); }
   .entry-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -582,6 +623,10 @@ const entries = [
       width: 100px;
       height: 100px;
     }
+    .guide-grid { grid-template-columns: 1fr; gap:.75rem; }
+    .guide-card { padding:1.1rem; }
+    .guide-card h4 { margin-top:.6rem; }
+    .guide-card p { margin-bottom:.4rem; }
     .entry-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.7rem;

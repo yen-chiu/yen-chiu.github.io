@@ -23,6 +23,7 @@ import {
   transformerRemoveNotationEscape
 } from './src/plugins/shiki-official/transformers.ts'
 import config from './src/site.config.ts'
+import { categoryRedirects } from './src/data/category-taxonomy.ts'
 
 // https://astro.build/config
 export default defineConfig({
@@ -36,6 +37,10 @@ export default defineConfig({
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
   trailingSlash: 'never',
+  // Static redirect destinations must include the Pages subpath as well.
+  redirects: Object.fromEntries(
+    Object.entries(categoryRedirects).map(([from, to]) => [from, `/yen-chiu-astro${to}`])
+  ),
   // root: './my-project-directory',
   server: { host: true },
   // https://docs.astro.build/en/guides/prefetch/

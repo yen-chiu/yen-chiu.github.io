@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content'
 
+import { categoryTopics } from '../../data/category-taxonomy'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
@@ -49,8 +50,8 @@ const topTags = [...tagCounts]
 const defaultPreviewKey = 'overview'
 
 const meta = {
-  title: 'Categories',
-  description: 'Browse posts by their folder-based knowledge structure'
+  title: '分类',
+  description: '按建站笔记、技术实践和生活记录浏览文章'
 }
 ---
 
@@ -60,7 +61,7 @@ const meta = {
       icon='package'
       eyebrow='Knowledge folders'
       title='分类'
-      description='目录负责稳定归档，标签负责跨目录连接，链接负责建立文章之间的关系。'
+      description='从建站笔记、技术实践、生活记录三个栏目开始，按主题找到想读的文章。'
       stats={[
         { label: '目录', value: categories.length },
         { label: '一级目录', value: rootCategories.length },
@@ -141,6 +142,7 @@ const meta = {
                       </span>
                       <span>
                         <strong>{category.label}</strong>
+                        <small>{categoryTopics.find(topic => topic.title === category.path)?.description}</small>
                         <small>
                           {category.totalPosts} 篇 · {insight.childCategories} 个子目录
                         </small>

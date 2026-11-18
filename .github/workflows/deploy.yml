@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build && node scripts/pages-paths.mjs
+        run: npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

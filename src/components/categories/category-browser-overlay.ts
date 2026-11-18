@@ -1,4 +1,5 @@
 import { sitePath } from '@/utils/site-path'
+import { isDirectCategory } from '@/utils/category-membership'
 type ContentEntry = {
   slug: string
   title: string
@@ -226,9 +227,9 @@ const initialize = () => {
 
   const entriesInFolder = (path: string, direct = false) =>
     entries.filter((entry) =>
-      entryCategories(entry).some((category) =>
-        direct ? category === path : !path || category === path || category.startsWith(`${path}/`)
-      )
+      direct
+        ? isDirectCategory(entryCategories(entry), path)
+        : entryCategories(entry).some(category => !path || category === path || category.startsWith(`${path}/`))
     )
 
   const childFolders = (path: string) => {

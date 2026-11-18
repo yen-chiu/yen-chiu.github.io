@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content'
+import { canonicalCategory } from '../data/category-taxonomy.ts'
 
 type BlogPost = CollectionEntry<'blog'>
 
@@ -35,7 +36,7 @@ export function getPostSourceId(post: BlogPost): string {
 export function getPostCategory(post: BlogPost): string | undefined {
   const sourceId = getPostSourceId(post)
   const separator = sourceId.lastIndexOf('/')
-  return separator === -1 ? undefined : sourceId.slice(0, separator)
+  return separator === -1 ? undefined : canonicalCategory(sourceId.slice(0, separator))
 }
 
 export function getCategorySegments(category?: string): CategorySegment[] {
