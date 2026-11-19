@@ -80,15 +80,18 @@ const groups=[
     connectedCallback(){
       this.controller?.abort();this.controller=new AbortController()
       const {signal}=this.controller
-      // Hysteresis keeps the bar stable while crossing the sticky threshold.
-      const updateCompact=()=>{
-        const scrolled=window.scrollY
-        if(scrolled>96)this.classList.add('is-compact')
-        else if(scrolled<40)this.classList.remove('is-compact')
+      // Same rhythm as the reference header: bare content at the top, floating bar once
+      // scrolled, and the bar steps aside while reading downward (returns on scroll up).
+      let lastScroll=window.scrollY
+      const updateScrollState=()=>{
+        const y=window.scrollY
+        this.classList.toggle('not-top',y>20)
+        this.dataset.show=String(y<350||y<lastScroll)
+        lastScroll=y
       }
-      window.addEventListener('scroll',updateCompact,{passive:true,signal})
-      window.addEventListener('pageshow',updateCompact,{signal})
-      updateCompact()
+      window.addEventListener('scroll',updateScrollState,{passive:true,signal})
+      window.addEventListener('pageshow',updateScrollState,{signal})
+      updateScrollState()
       const menu=this.querySelector<HTMLButtonElement>('#toggleMenu')!
       const appearance=this.querySelector<HTMLButtonElement>('#toggleAppearance')!
       const panel=this.querySelector<HTMLElement>('#appearance-panel')!
@@ -173,7 +176,7 @@ const groups=[
           if(current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')
         })
       }
-      document.addEventListener('astro:page-load',()=>{sync();updateCompact()},{signal});sync()
+      document.addEventListener('astro:page-load',()=>{sync();lastScroll=window.scrollY;updateScrollState()},{signal});sync()
     }
     disconnectedCallback(){this.controller?.abort()}
   }
@@ -181,7 +184,7 @@ const groups=[
 </script>
 <style>
   header-component{display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:1rem;z-index:60;isolation:isolate;margin:0 0 2rem;padding:.55rem .7rem;min-height:58px;border:1px solid hsl(var(--border)/.7);border-radius:1rem;}
-  header-component::before{content:'';position:absolute;inset:0;z-index:-1;background:hsl(var(--background)/.84);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:inherit;box-shadow:0 6px 24px hsl(var(--foreground)/.05);pointer-events:none;}
+  header-component::before{content:none;}
   .brand{display:flex;align-items:center;gap:.55rem;font-size:1.1rem;font-weight:650;white-space:nowrap;flex-shrink:0;}
   .brand :global(img){width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid hsl(var(--border));}
   .header-tools{display:flex;align-items:center;gap:.15rem;}
@@ -232,16 +235,20 @@ const groups=[
   }
   @media(max-width:600px){header-component{gap:.3rem;padding:.4rem .5rem;margin-bottom:1.25rem;}.brand span{display:none;}.brand :global(img){width:32px;height:32px;}.header-tools{gap:0;}}
   @media(max-width:370px){.mobile-reading{padding-inline:.6rem;}.mobile-reading span{display:none;}}
-  /* At the top, controls sit on the page. Scrolling reveals their floating shell. */
-  header-component{flex-shrink:0;align-self:center;width:100%;box-sizing:border-box;border-color:transparent;border-radius:1rem;transition:padding .28s ease,border-color .28s ease,top .28s ease;}
-  header-component::before{opacity:0;transition:opacity .28s ease,box-shadow .28s ease;}
-  header-component.is-compact{top:.65rem;border-color:hsl(var(--border)/.8);}
-  header-component.is-compact::before,header-component.expanded::before{opacity:1;background:hsl(var(--background)/.94);box-shadow:0 6px 24px hsl(var(--foreground)/.1);}
-  header-component.expanded{border-color:hsl(var(--border)/.8);}
+  /* Reference rhythm: bare controls on the page, floating bar after scrolling, and the bar
+     steps aside while reading downward. */
+  header-component{flex-shrink:0;align-self:center;width:100%;box-sizing:border-box;background:transparent;border-color:transparent;box-shadow:none;transition:width .3s ease,padding .3s ease,transform .3s ease,border-color .18s ease,background-color .18s ease,box-shadow .3s ease;}
+  header-component.not-top{background:hsl(var(--background));border-color:hsl(var(--border));padding-inline:.4rem;box-shadow:0 10px 15px -3px hsl(var(--foreground)/.07),0 4px 6px -4px hsl(var(--foreground)/.07);}
+  header-component.not-top .brand{margin-inline-start:.25rem;}
+  header-component.not-top .header-tools{gap:.05rem;}
+  header-component.expanded{background:hsl(var(--background));border-color:hsl(var(--border));box-shadow:0 6px 24px hsl(var(--foreground)/.1);}
+  :global(html.dark) header-component.not-top{background:hsl(var(--muted));}
+  header-component[data-show=false]:not(.expanded){transform:translateY(-6rem);}
+  @media(min-width:800px){header-component.not-top{width:84%;}}
   @media(max-width:900px){
     header-component{padding:.4rem 0;gap:.4rem;}
-    header-component.is-compact,header-component.expanded{padding:.4rem .55rem;}
+    header-component.not-top,header-component.expanded{padding:.4rem .5rem;}
     .header-tools{gap:.2rem;}
   }
-  @media(prefers-reduced-motion:reduce){header-component,header-component::before{transition:none;}}
+  @media(prefers-reduced-motion:reduce){header-component{transition:none;}}
 </style>
