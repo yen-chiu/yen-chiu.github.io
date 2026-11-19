@@ -2,19 +2,25 @@
 import manifest from '../../../migration/content-manifest.json'
 import { sitePath } from '@/utils/site-path'
 
-interface Entry {
-  version?: string
-  date: string
-  kind: string
+interface Item {
+  kind?: string
   scope?: string
   title: string
   note?: string
   links?: { label: string; url: string }[]
+}
+interface Entry {
+  version?: string
+  gen?: number
+  date: string
+  title: string
+  summary?: string
+  items: Item[]
   commit?: string
 }
 interface Props { entries: Entry[] }
 const { entries } = Astro.props
-const kinds: Record<string, string> = { content: '内容', feature: '新功能', fix: '修复', style: '样式', infra: '基建' }
+const kinds: Record<string, string> = { content: '内容', feature: '新功能', fix: '修复', style: '样式', infra: '基建', docs: '文档' }
 const linkTo = (url: string) => {
   const original = new URL(url, 'https://yenchiu.com')
   const migrated = manifest.find(item => item.originalUrl === original.href.split(/[?#]/)[0])
@@ -29,28 +35,58 @@ const linkTo = (url: string) => {
   {entries.map(entry => <li>
     <time datetime={entry.date}>{entry.date}</time>
     <div class='update-body'>
-      <div class='update-meta'>{entry.version && <span class='version'>v{entry.version}</span>}<span class='kind'>{kinds[entry.kind] ?? '更新'}</span>{entry.scope && <span>{entry.scope}</span>}</div>
+      <div class='update-meta'>{entry.version && <span class='version'>v{entry.version}</span>}{entry.gen && <span class='gen'>第 {entry.gen} 代</span>}<span class='count'>{entry.items.length} 项</span></div>
       <h3>{entry.title}</h3>
-      {entry.note && <p>{entry.note}</p>}
-      {entry.links?.length && <div class='update-links'>{entry.links.map(link => <a href={linkTo(link.url)}>{link.label} <span aria-hidden='true'>↗</span></a>)}</div>}
+      {entry.summary && <p class='summary'>{entry.summary}</p>}
+      <ul class='update-items'>
+        {entry.items.map(item => <li class='update-item' title={item.note ?? item.title}>
+          <div class='item-line'>
+            {item.kind && <span class='kind'>{kinds[item.kind] ?? '更新'}</span>}
+            <span class='item-title'>{item.title}</span>
+            {item.scope && <span class='item-scope'>{item.scope}</span>}
+            {item.links?.map(link => <a class='item-link' href={linkTo(link.url)} aria-label={link.label}>↗</a>)}
+          </div>
+          {item.note && <p class='item-note'>{item.note}</p>}
+        </li>)}
+      </ul>
       {entry.commit && <code>{entry.commit}</code>}
     </div>
   </li>)}
 </ol>
 <style>
-  .updates {list-style:none;padding:0;margin:0;}
+  /* 每条固定行高，超过 3 条就在框内滚动，避免一天内容多时把页面撑长 */
+  .updates {--row-h:3.8rem;list-style:none;padding:0;margin:0;}
   li {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));}
   li:last-child {border-bottom:0;}
   time {font-size:.75rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;padding-top:.2rem;}
   .update-meta {display:flex;align-items:center;gap:.65rem;font-size:.67rem;color:hsl(var(--muted-foreground));margin-bottom:.45rem;}
-  .kind {border-radius:.3rem;padding:.15rem .4rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
   .version {font-variant-numeric:tabular-nums;font-size:.68rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
+  .count {font-variant-numeric:tabular-nums;}
+  .gen {font-size:.62rem;letter-spacing:.02em;color:hsl(var(--muted-foreground));border-radius:.3rem;padding:.1rem .35rem;background:hsl(var(--muted-foreground)/.08);}
   h3 {font-size:.95rem;font-weight:600;line-height:1.7;margin:0;}
-  p {font-size:.82rem;color:hsl(var(--muted-foreground));line-height:1.9;margin:.3rem 0 0;}
-  .update-links {display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.5rem;}
-  a {font-size:.78rem;color:hsl(var(--primary));text-underline-offset:.25em;}
-  a:hover {text-decoration:underline;}
-  a:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:4px;}
+  .summary {font-size:.8rem;color:hsl(var(--muted-foreground));line-height:1.7;margin:.2rem 0 0;}
+  .update-items {
+    list-style:none;margin:.7rem 0 0;padding:0;
+    max-height:calc(var(--row-h) * 3);overflow-y:auto;overscroll-behavior:contain;
+    border-top:1px solid hsl(var(--border));
+    scrollbar-width:thin;scrollbar-color:hsl(var(--border)) transparent;
+  }
+  .update-items::-webkit-scrollbar {width:.4rem;}
+  .update-items::-webkit-scrollbar-thumb {background:hsl(var(--border));border-radius:1rem;}
+  .update-item {height:var(--row-h);padding:.5rem 0;border-bottom:1px solid hsl(var(--border)/.55);overflow:hidden;}
+  .update-item:last-child {border-bottom:0;}
+  .item-line {display:flex;align-items:center;gap:.5rem;min-width:0;}
+  .kind {flex:0 0 auto;font-size:.62rem;border-radius:.3rem;padding:.1rem .35rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
+  .item-title {min-width:0;font-size:.82rem;font-weight:600;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .item-scope {flex:0 0 auto;font-size:.62rem;color:hsl(var(--muted-foreground));}
+  .item-link {flex:0 0 auto;font-size:.7rem;color:hsl(var(--primary));text-decoration:none;line-height:1;}
+  .item-link:hover {text-decoration:underline;}
+  .item-note {font-size:.72rem;color:hsl(var(--muted-foreground));line-height:1.55;margin:.15rem 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  a:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:3px;}
   code {font-size:.7rem;overflow-wrap:anywhere;}
-  @media(max-width:600px) {li {grid-template-columns:1fr;gap:.5rem;}time {font-size:.7rem;}.update-meta {margin-bottom:.25rem;}}
+  @media(max-width:600px) {
+    li {grid-template-columns:1fr;gap:.5rem;}
+    time {font-size:.7rem;}
+    .update-meta {margin-bottom:.25rem;}
+  }
 </style>

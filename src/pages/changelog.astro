@@ -4,30 +4,48 @@ import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
 import UpdateList from '@/components/about/UpdateList.astro'
 import { sitePath } from '@/utils/site-path'
 import changelog from '../data/changelog.json'
+import generations from '../data/site-generations.json'
 
 const latest = changelog[0]
-const first = changelog[changelog.length - 1]
+const total = changelog.reduce((sum, entry) => sum + entry.items.length, 0)
+const commits = generations.reduce((sum, gen) => sum + gen.commits, 0)
 ---
 
-<PageLayout meta={{ title: '更新日志', description: '这个站的版本记录：功能、样式、修复与基建，按版本归并。' }}>
+<PageLayout meta={{ title: '更新日志', description: '这个站的版本记录：功能、样式、修复与基建，一天最多一个版本。' }}>
   <main class='changelog-page'>
     <KnowledgeIndexHero
       icon='list'
       eyebrow='CHANGELOG'
       title='更新日志'
-      description='只记站点本身真正变过的部分，按版本归并；文章发布不在这里。'
+      description='只记站点本身真正变过的部分，一天最多一个版本；文章发布不在这里。'
       stats={[
         { label: '版本', value: changelog.length },
-        { label: '最新', value: `v${latest.version}` },
-        { label: '起点', value: `v${first.version}` }
+        { label: '条目', value: total },
+        { label: '最新', value: `v${latest.version}` }
       ]}
       statsLabel='更新概览'
       symbol='✳'
     />
+    <section class='gens' aria-labelledby='gens-title'>
+      <header class='list-head'>
+        <h2 id='gens-title'>站点沿革</h2>
+        <span>{generations.length} 代 · {commits.toLocaleString('zh-CN')} 次提交</span>
+      </header>
+      <ol class='gen-list'>
+        {generations.map(gen => <li>
+          <span class='gen-mark'>G{gen.gen}</span>
+          <div class='gen-main'>
+            <div class='gen-name'>{gen.name}<span class='gen-engine'>{gen.engine}</span></div>
+            <p class='gen-note'>{gen.note}</p>
+          </div>
+          <div class='gen-meta'><span>{gen.span}</span><span>{gen.commits.toLocaleString('zh-CN')} 次提交</span></div>
+        </li>)}
+      </ol>
+    </section>
     <section class='changelog-list' aria-labelledby='changelog-list-title'>
       <header class='list-head'>
         <h2 id='changelog-list-title'>全部版本</h2>
-        <span>{changelog.length} 个版本</span>
+        <span>{changelog.length} 个版本 · {total} 项</span>
       </header>
       <UpdateList entries={changelog} />
     </section>
@@ -38,6 +56,15 @@ const first = changelog[changelog.length - 1]
 <style>
   .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;}
   .changelog-list {margin-top:2.5rem;}
+  .gens {margin-top:2.5rem;}
+  .gen-list {list-style:none;padding:0;margin:0;}
+  .gen-list li {display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.9rem;align-items:baseline;padding:.85rem 0;border-bottom:1px solid hsl(var(--border)/.6);}
+  .gen-list li:last-child {border-bottom:0;}
+  .gen-mark {font-size:.68rem;font-variant-numeric:tabular-nums;color:hsl(var(--primary));border:1px solid hsl(var(--primary)/.35);border-radius:.3rem;padding:.1rem .3rem;text-align:center;}
+  .gen-name {font-size:.86rem;font-weight:600;}
+  .gen-engine {font-size:.66rem;font-weight:400;color:hsl(var(--muted-foreground));margin-left:.5rem;}
+  .gen-note {font-size:.74rem;color:hsl(var(--muted-foreground));line-height:1.7;margin:.15rem 0 0;}
+  .gen-meta {display:flex;flex-direction:column;align-items:flex-end;gap:.15rem;font-size:.68rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;white-space:nowrap;}
   .list-head {display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid hsl(var(--border));}
   .list-head h2 {font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:650;letter-spacing:-.02em;}
   .list-head span {font-size:.75rem;color:hsl(var(--muted-foreground));}
