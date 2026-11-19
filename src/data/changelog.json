@@ -2,6 +2,7 @@
   {
     "status": "unreleased",
     "gen": 3,
+    "site": "main",
     "title": "准备切根站",
     "summary": "预览验收通过后再切域名，切换当天记进正式版本。",
     "items": [
@@ -16,9 +17,10 @@
   },
   {
     "gen": 3,
+    "site": "main",
     "date": "2026-11-19",
     "title": "更新日志独立成页，版本号定为「代次.日期」",
-    "summary": "关于页只留最近三条，完整记录搬到 /changelog/；按代次收拢、按改动方式分类，并留了未发布的位置。",
+    "summary": "关于页只留最近三条，完整记录搬到 /changelog/；按代次与站点收拢、按改动方式分类，并留了未发布的位置。",
     "items": [
       {
         "change": "added",
@@ -31,8 +33,8 @@
         "change": "changed",
         "area": "feature",
         "scope": "主站",
-        "title": "记录按代次收拢",
-        "note": "第 1、2、3 代各自一个可展开的分组，不用在一条时间线里翻二十年。"
+        "title": "记录按代次与站点收拢",
+        "note": "第 1、2、3 代各自一个可展开的分组，代内再按主站 / 聊天子站分栏。"
       },
       {
         "change": "added",
@@ -52,6 +54,7 @@
   },
   {
     "gen": 3,
+    "site": "main",
     "date": "2026-11-18",
     "title": "新站界面收尾",
     "summary": "导航、移动端浮层、项目展示与阅读页在一夜之间反复调。",
@@ -81,6 +84,7 @@
   },
   {
     "gen": 3,
+    "site": "main",
     "date": "2026-11-17",
     "title": "从 Jekyll 迁到 Astro",
     "summary": "把文章、设定页和评论一起搬进独立的 Astro 站点，先发在预览路径上。",
@@ -110,9 +114,10 @@
   },
   {
     "gen": 2,
+    "site": "main",
     "date": "2026-11-04",
-    "title": "子站三模块，媒体搬到 R2",
-    "summary": "PDF 与站点快照迁到 Cloudflare R2，聊天子站补上三个模块与深色主题。",
+    "title": "媒体文件迁到 R2",
+    "summary": "PDF 与站点快照都搬出仓库，主站只剩代码。",
     "items": [
       {
         "change": "changed",
@@ -130,21 +135,31 @@
         "links": [
           { "label": "发布页", "url": "https://github.com/yen-chiu/yen-chiu.github.io/releases/tag/2026-11-04" }
         ]
-      },
-      {
-        "change": "added",
-        "area": "feature",
-        "scope": "子站",
-        "title": "聊天子站：三个模块与深色主题",
-        "note": "对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页，配色可切浅色 / 深色 / 跟随系统。"
       }
     ]
   },
   {
     "gen": 2,
+    "site": "chat",
+    "date": "2026-11-04",
+    "title": "聊天子站补上三个模块",
+    "summary": "对话游戏、自带 Key 的 AI 页与致谢页一起上线，并支持深色主题。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "子站",
+        "title": "三个模块与深色主题",
+        "note": "对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页；抽屉里可切浅色 / 深色 / 跟随系统。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
     "date": "2026-11-03",
     "title": "站点重做：写作台、索引页与侧边栏",
-    "summary": "从早上八点的设备码登录，到夜里十一点的侧边栏收尾，一天里改了 13 处。",
+    "summary": "从早上八点的设备码登录，到夜里十一点的侧边栏收尾，一天里改了十二处。",
     "items": [
       {
         "change": "added",
@@ -180,13 +195,6 @@
         "scope": "写作台",
         "title": "写作台可用性改造",
         "note": "手机端新建抽屉补关闭键与遮罩、日期换成原生控件、保存前先查一遍格式。"
-      },
-      {
-        "change": "changed",
-        "area": "infra",
-        "scope": "子站",
-        "title": "子站换了落脚点",
-        "note": "「来聊聊吧」重新发布到 /chat/，2.4MB 的照片压到 90K；Manual 站改挂 /WendellManual/。"
       },
       {
         "change": "added",
@@ -247,6 +255,23 @@
   },
   {
     "gen": 2,
+    "site": "chat",
+    "date": "2026-11-03",
+    "title": "聊天子站换了落脚点",
+    "summary": "「来聊聊吧」重新发布到 /chat/，顺手把体积压下来。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "子站",
+        "title": "迁到独立路径 /chat/",
+        "note": "2.4MB 的照片压到 90K，Manual 站改挂 /WendellManual/。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
     "date": "2026-04-09",
     "title": "2025–2026：只做维护的一年半",
     "summary": "这两年几乎没动结构，CNAME 调整了几次，站点改了名。",
@@ -262,6 +287,7 @@
   },
   {
     "gen": 2,
+    "site": "main",
     "date": "2024-12-31",
     "title": "把模板改成自己的站",
     "summary": "2024 年提交 270 次，重心从搬模板转向写内容、调版式。",
@@ -298,6 +324,7 @@
   },
   {
     "gen": 2,
+    "site": "main",
     "date": "2023-11-01",
     "title": "搬到 Chirpy，第二代开张",
     "summary": "把 Chirpy 模板拉下来改成自己的站，10 月 17 日开始以本人身份提交。",
@@ -320,6 +347,7 @@
   },
   {
     "gen": 1,
+    "site": "main",
     "date": "2019-12-02",
     "title": "2019：更名与收尾",
     "summary": "最后一年主要是改站名、收拾索引，随后站点停更。",
@@ -342,6 +370,7 @@
   },
   {
     "gen": 1,
+    "site": "main",
     "date": "2018-11-20",
     "title": "2018：主题细节与评论修复",
     "summary": "这一年在打磨模板细节，Gitalk 的报错也在此时修掉。",
@@ -364,6 +393,7 @@
   },
   {
     "gen": 1,
+    "site": "main",
     "date": "2017-12-21",
     "title": "2017：第一代站开张",
     "summary": "2 月初始化，年底换成 Gitalk 评论，第一代博客就这么跑起来了。",

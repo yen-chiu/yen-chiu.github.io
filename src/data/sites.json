@@ -1,0 +1,26 @@
+[
+  {
+    "id": "main",
+    "label": "主站",
+    "note": "根站本体与写作台",
+    "repo": "yen-chiu/yen-chiu-astro"
+  },
+  {
+    "id": "chat",
+    "label": "聊天子站",
+    "note": "挂在 /chat/ 的对话页与 AI 模块",
+    "repo": "yen-chiu/Chat"
+  },
+  {
+    "id": "manual",
+    "label": "文档库",
+    "note": "WendellManual，课件与笔记",
+    "repo": "yen-chiu/WendellManual"
+  },
+  {
+    "id": "folio",
+    "label": "Folio",
+    "note": "作品集",
+    "repo": "yen-chiu/folio"
+  }
+]
