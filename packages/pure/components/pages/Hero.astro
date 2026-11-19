@@ -81,22 +81,15 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     {
       // Tags
       !!tags?.length && (
-        <span class='flex items-center gap-1'>
+        <div class='article-tags' aria-label='文章标签'>
           <Icon name='hashtag' class='size-5' />
-          {tags.map((tag: string, i: number) => (
-            <div>
-              <a
-                aria-label={`View more blogs with the tag ${tag}`}
-                class='hover:underline hover:underline-offset-4'
-                data-pagefind-filter='tag'
-                href={`/tags/${tag}`}
-              >
-                {tag}
-              </a>
-              {i < tags.length - 1 && '/'}
-            </div>
-          ))}
-        </span>
+          <div class='article-tags__list'>
+            {tags.map((tag: string) => (
+              <a aria-label={`查看标签 ${tag} 的文章`} data-pagefind-filter='tag'
+                href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+            ))}
+          </div>
+        </div>
       )
     }
   </div>
@@ -138,6 +131,12 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 </script>
 
 <style>
+  .article-tags{display:flex;align-items:flex-start;gap:.4rem;min-width:0;max-width:100%;flex-basis:100%;}
+  .article-tags :global(svg){flex-shrink:0;margin-top:.2rem;}
+  .article-tags__list{display:flex;flex-wrap:wrap;gap:.3rem .4rem;min-width:0;}
+  .article-tags__list a{display:inline-block;max-width:100%;padding:.05rem .45rem;border:1px solid hsl(var(--border));border-radius:.4rem;line-height:1.7;overflow-wrap:anywhere;background:hsl(var(--muted)/.4);}
+  .article-tags__list a:hover{color:hsl(var(--primary));border-color:hsl(var(--primary));}
+
   #blurImage {
     --un-blur: blur(24px);
     filter: var(--un-blur);
