@@ -174,3 +174,7 @@ bundle exec htmlproofer "_site" --disable-external --ignore-urls "/^http:\/\/127
 ## License
 
 遵循 MIT 许可证，详见 [LICENSE](LICENSE)。
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yen-chiu/yen-chiu.github.io&type=Date)](https://star-history.com/#yen-chiu/yen-chiu.github.io&Date)
