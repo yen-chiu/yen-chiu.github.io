@@ -46,6 +46,7 @@ const toc = generateToc(headings)
     headings: HTMLElement[] = []
     tocLinks: TOCLink[] = []
     headingProgress: Record<string, HeadingProgress> = {}
+    userScrolledAt = 0
 
     constructor() {
       super()
@@ -100,6 +101,36 @@ const toc = generateToc(headings)
           bar.style.setProperty('height', `${progress * 90}%`)
         }
       })
+
+      this.centerCurrent()
+    }
+
+    // 把「正在读的那一节」滚到目录框的中间；到头/到尾时自然贴边
+    centerCurrent = () => {
+      const wrapper = this.querySelector('.toc-content-wrapper') as HTMLElement | null
+      if (!wrapper) return
+      if (Date.now() - this.userScrolledAt < 4000) return
+
+      const max = wrapper.scrollHeight - wrapper.clientHeight
+      if (max <= 2) return
+
+      const current =
+        this.tocLinks.find((link) => this.headingProgress[link.slug]?.inView) ||
+        [...this.tocLinks]
+          .reverse()
+          .find((link) => (this.headingProgress[link.slug]?.progress ?? 0) >= 1) ||
+        this.tocLinks[this.tocLinks.length - 1]
+      if (!current) return
+
+      const rect = current.element.getBoundingClientRect()
+      const wrapperRect = wrapper.getBoundingClientRect()
+      const offsetWithin = rect.top - wrapperRect.top + wrapper.scrollTop
+      const target = Math.max(
+        0,
+        Math.min(max, offsetWithin - (wrapper.clientHeight - rect.height) / 2)
+      )
+      if (Math.abs(wrapper.scrollTop - target) < 6) return
+      wrapper.scrollTo({ top: target, behavior: 'smooth' })
     }
 
     connectedCallback() {
@@ -126,6 +157,17 @@ const toc = generateToc(headings)
       // Initial first and listen to scroll event
       setInterval(this.updatePositionAndStyle, 100)
       window.addEventListener('scroll', this.updatePositionAndStyle)
+
+      // 用户自己滚目录时，先别抢着把它拉回去
+      const wrapper = this.querySelector('.toc-content-wrapper')
+      if (wrapper) {
+        const markUser = () => {
+          this.userScrolledAt = Date.now()
+        }
+        wrapper.addEventListener('wheel', markUser, { passive: true })
+        wrapper.addEventListener('touchmove', markUser, { passive: true })
+        wrapper.addEventListener('pointerdown', markUser)
+      }
     }
   }
 
