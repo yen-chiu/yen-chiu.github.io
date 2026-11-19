@@ -4,7 +4,7 @@ const since = '2023-05-20T13:14:00+08:00'
 <site-status data-since={since}>
   <p><span class='status-dot' aria-hidden='true'></span><span data-runtime>建站于 2023 年 5 月 20 日</span></p>
   <button type='button' data-refresh title='重新获取最新页面，保留本地设置'>刷新页面 <span aria-hidden='true'>↻</span></button>
-  <span class='sr-only' data-refresh-status role='status'></span>
+  <span class='refresh-status' data-refresh-status role='status'></span>
 </site-status>
 <script>
   class SiteStatus extends HTMLElement {
@@ -30,15 +30,23 @@ const since = '2023-05-20T13:14:00+08:00'
         const target = new URL(location.href)
         target.searchParams.delete('qa')
         target.searchParams.set('v', String(Date.now()))
+        const status = this.querySelector<HTMLElement>('[data-refresh-status]')
+        if (status) status.textContent = ''
+        const request = new AbortController()
+        const timeout = window.setTimeout(() => request.abort(), 15000)
+        const cancelRequest = () => request.abort()
+        this.controller?.signal.addEventListener('abort', cancelRequest, { once: true })
         try {
-          const response = await fetch(target.href, { cache: 'reload', signal: AbortSignal.timeout(15000) })
+          const response = await fetch(target.href, { cache: 'reload', signal: request.signal })
           if (!response.ok) throw new Error(`HTTP ${response.status}`)
           location.replace(target.href)
         } catch {
           button.disabled = false
           button.textContent = '刷新页面 ↻'
-          const status = this.querySelector('[data-refresh-status]')
           if (status) status.textContent = '刷新失败，请检查网络后重试。'
+        } finally {
+          window.clearTimeout(timeout)
+          this.controller?.signal.removeEventListener('abort', cancelRequest)
         }
       }, { signal: this.controller.signal })
     }
@@ -56,6 +64,8 @@ const since = '2023-05-20T13:14:00+08:00'
   button {min-height:44px;padding:.4rem .7rem;border:1px solid hsl(var(--border));border-radius:.7rem;cursor:pointer;color:inherit;background:transparent;}
   button:hover {color:hsl(var(--primary));background:hsl(var(--muted)/.4);}
   button:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:3px;}
+  .refresh-status:empty{display:none;}
+  .refresh-status{flex-basis:100%;text-align:center;font-size:.72rem;}
   button:disabled {opacity:.65;cursor:wait;}
   @media(max-width:639px) { site-status{font-size:.75rem;gap:.35rem;} }
 </style>
