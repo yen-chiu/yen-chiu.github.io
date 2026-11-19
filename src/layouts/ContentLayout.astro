@@ -409,11 +409,12 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
 <style is:global>
   .article-reading-layout {
     width: min(78rem, calc(100vw - 3rem));
-    margin-inline: 50%;
+    margin-left: calc((100% - min(78rem, calc(100vw - 3rem))) / 2);
+    margin-right: 0;
     display: grid;
     grid-template-columns: minmax(10rem, 1fr) minmax(0, 44rem) minmax(10rem, 1fr);
     gap: clamp(1rem, 2.5vw, 2rem);
-    transform: translateX(-50%);
+    transform: none;
   }
 
   .article-reading-column {
@@ -431,6 +432,8 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
     scrollbar-width: thin;
   }
 
