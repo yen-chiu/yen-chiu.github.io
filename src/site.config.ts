@@ -53,7 +53,7 @@ export const theme: ThemeUserConfig = {
       { title: '分类', link: '/categories' },
       { title: '标签', link: '/tags' },
       { title: '时光机', link: '/archives' },
-      { title: '文档', link: '/docs' },
+      { title: '文档', link: 'https://yenchiu.com/folio/' },
       { title: '链接', link: '/links' },
       { title: '项目', link: '/projects' },
       { title: '关于', link: '/about' }

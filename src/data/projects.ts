@@ -59,18 +59,18 @@ export const projects = [
     primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu-astro' },
     secondary: {
       label: '迁移记录',
-      href: 'https://github.com/yen-chiu/WendellManual/tree/master/docs/Website%20Building%20Notes/astro-migration'
+      href: 'https://yenchiu.com/folio/building/astro-migration/'
     }
   },
   {
     id: 'manual',
     group: 'building',
-    name: 'WendellManual',
+    name: 'Folio',
     kind: '文档与知识整理',
     status: '文档库',
     description: '把建站过程、工具用法、踩坑记录与验证结果留下来，方便下一次查找和复用。',
     tags: ['建站笔记', '工具备忘', '工作记录'],
-    primary: { label: '阅读文档', href: 'https://github.com/yen-chiu/WendellManual' },
+    primary: { label: '阅读文档', href: 'https://yenchiu.com/folio/' },
     secondary: null
   }
 ] as const
