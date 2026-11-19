@@ -1,5 +1,6 @@
 ---
 import manifest from '../../../migration/content-manifest.json'
+import sites from '../../data/sites.json'
 import { sitePath } from '@/utils/site-path'
 
 interface Item {
@@ -13,14 +14,16 @@ interface Item {
 interface Entry {
   status?: string
   gen?: number
+  site?: string
   date?: string
   title: string
   summary?: string
   items: Item[]
   commit?: string
 }
-interface Props { entries: Entry[] }
-const { entries } = Astro.props
+interface Props { entries: Entry[]; showSite?: boolean }
+const { entries, showSite = false } = Astro.props
+const siteLabel = (id?: string) => sites.find(site => site.id === id)?.label ?? ''
 const changes: Record<string, string> = {
   added: '新增', changed: '调整', fixed: '修复', improved: '优化',
   removed: '移除', deprecated: '弃用', security: '安全', planned: '计划',
@@ -47,6 +50,7 @@ const linkTo = (url: string) => {
     <div class='update-body'>
       <div class='update-meta'>
         {versionOf(entry) && <span class='version'>{versionOf(entry)}</span>}
+        {showSite && siteLabel(entry.site) && <span class='site-tag'>{siteLabel(entry.site)}</span>}
         {entry.status === 'unreleased' && <span class='version pending'>在途改动</span>}
         <span class='count'>{entry.items.length} 项</span>
       </div>
@@ -79,6 +83,7 @@ const linkTo = (url: string) => {
   .update-meta {display:flex;align-items:center;gap:.65rem;font-size:.67rem;color:hsl(var(--muted-foreground));margin-bottom:.45rem;}
   .version {font-variant-numeric:tabular-nums;font-size:.68rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
   .version.pending {border-style:dashed;color:hsl(var(--muted-foreground));}
+  .site-tag {font-size:.66rem;color:hsl(var(--primary));letter-spacing:.02em;}
   .count {font-variant-numeric:tabular-nums;}
   h3 {font-size:.95rem;font-weight:600;line-height:1.7;margin:0;}
   .summary {font-size:.8rem;color:hsl(var(--muted-foreground));line-height:1.7;margin:.2rem 0 0;}
