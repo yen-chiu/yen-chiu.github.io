@@ -37,10 +37,10 @@ const sections = [
   <main class='about-page'>
     <about-page id='about-content'>
       <section class='about-hero' aria-labelledby='about-title'>
-        <div class='hero-copy'>
+        <div class='hero-copy' data-reveal>
           <p class='eyebrow'><span class='status-dot' aria-hidden='true'></span>{profile.profile.location} · 数据与代码</p>
           <h1 id='about-title'>你好，我是<br /><span>{profile.profile.name}。</span></h1>
-          <p class='hero-tagline'>{profile.profile.tagline}</p>
+          <p class='hero-tagline'><span class='prompt' aria-hidden='true'>~$</span><span class='typing' data-typing data-phrases={JSON.stringify(profile.profile.typing ?? [profile.profile.tagline])}>{profile.profile.typing?.[0] ?? profile.profile.tagline}</span><span class='caret' aria-hidden='true'></span></p>
           <p class='hero-lede'>一名做数据分析的业余编程爱好者。白天和数字、模型打交道，晚上折腾 Linux、博客和自动化小工具。</p>
           <div class='hero-actions'>
             <a class='action-primary' href={sitePath('/blog')}>读我的文章 <span aria-hidden='true'>↗</span></a>
@@ -49,7 +49,7 @@ const sections = [
           </div>
           <p class='hero-since'>从 <time datetime={since}>2023.05.20</time> 开始，写着第 <strong data-about-days data-since={since}>{days.toLocaleString('zh-CN')}</strong> 天。</p>
         </div>
-        <aside class='profile-card' aria-label='个人资料'>
+        <aside class='profile-card fx-card' aria-label='个人资料' data-reveal>
           <div class='avatar-wrap'><InteractiveAvatar><Image src={avatar} alt='Wendell 的头像' width={200} height={200} loading='eager' /></InteractiveAvatar></div>
           <p class='profile-handle'>{profile.profile.handle}</p>
           <p class='profile-role'>{profile.profile.role}</p>
@@ -122,7 +122,82 @@ const sections = [
     </about-page>
   </main>
   <BackToTop header='about-title' content='about-content' slot='overlay' />
+  <canvas class='click-fireworks' aria-hidden='true'></canvas>
 </BaseLayout>
+
+<script is:inline>
+  (() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const canvas = document.querySelector('.click-fireworks')
+    if (!canvas || !(canvas instanceof HTMLCanvasElement)) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const dpr = () => Math.min(window.devicePixelRatio || 1, 2)
+    let width = 0
+    let height = 0
+    let frame = 0
+    let particles = []
+    const resize = () => {
+      const ratio = dpr()
+      width = Math.floor(window.innerWidth * ratio)
+      height = Math.floor(window.innerHeight * ratio)
+      canvas.width = width
+      canvas.height = height
+      canvas.style.width = `${window.innerWidth}px`
+      canvas.style.height = `${window.innerHeight}px`
+    }
+    const palette = () => {
+      const styles = getComputedStyle(document.documentElement)
+      const primary = styles.getPropertyValue('--primary').trim() || '267 52% 42%'
+      return [`hsl(${primary})`, `hsl(${primary} / .75)`, '#f0c987', '#7bd0bf']
+    }
+    const burst = (x, y) => {
+      const colors = palette()
+      const ratio = dpr()
+      for (let i = 0; i < 22; i += 1) {
+        const angle = (Math.PI * 2 * i) / 22 + (Math.random() - 0.5) * 0.4
+        const speed = (3 + Math.random() * 3.4) * ratio
+        particles.push({
+          x: x * ratio,
+          y: y * ratio,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 1,
+          radius: (2.4 + Math.random() * 1.8) * ratio,
+          color: colors[i % colors.length]
+        })
+      }
+      if (!frame) frame = requestAnimationFrame(tick)
+    }
+    const tick = () => {
+      ctx.clearRect(0, 0, width, height)
+      const ratio = dpr()
+      particles = particles.filter(item => item.life > 0)
+      for (const item of particles) {
+        item.x += item.vx
+        item.y += item.vy
+        item.vy += 0.05 * ratio
+        item.vx *= 0.99
+        item.vy *= 0.99
+        item.life -= 0.015
+        ctx.globalAlpha = Math.max(0, item.life)
+        ctx.fillStyle = item.color
+        ctx.beginPath()
+        ctx.arc(item.x, item.y, Math.max(0.5, item.radius * (0.4 + item.life * 0.6)), 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+      frame = particles.length ? requestAnimationFrame(tick) : 0
+      if (!frame) ctx.clearRect(0, 0, width, height)
+    }
+    resize()
+    window.addEventListener('resize', resize, { passive: true })
+    window.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return
+      burst(event.clientX, event.clientY)
+    }, { passive: true })
+  })()
+</script>
 
 <script>
   class AboutPage extends HTMLElement {
@@ -145,9 +220,95 @@ const sections = [
         const comments = this.querySelector<HTMLDetailsElement>('[data-about-comments]')
         if (comments) comments.open = true
       }, { signal: this.controller.signal })
+      this.setupEffects(this.controller.signal)
     }
     disconnectedCallback() { this.controller?.abort() }
+
+    private setupEffects(signal: AbortSignal) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (reduce) return
+      const typeTarget = this.querySelector<HTMLElement>('[data-typing]')
+      if (typeTarget) {
+        let phrases: string[] = []
+        try {
+          const parsed = JSON.parse(typeTarget.dataset.phrases ?? '[]')
+          if (Array.isArray(parsed)) phrases = parsed.filter(item => typeof item === 'string' && item.length > 0)
+        } catch { /* 数据坏了就用静态文案 */ }
+        if (phrases.length > 1) this.runTyping(typeTarget, phrases, signal)
+      }
+      const revealTargets = Array.from(
+        this.querySelectorAll<HTMLElement>(
+          '.hero-copy,.profile-card,.section-heading,.intro-copy,.quote,.note-card,.play-note,.recent-posts li,.milestones li,.changelog-more,.comments-lede,.comments-details,.signature'
+        )
+      )
+      if (revealTargets.length && 'IntersectionObserver' in window) {
+        document.documentElement.classList.add('reveal-ready')
+        revealTargets.forEach(node => node.setAttribute('data-wxp-reveal', ''))
+        const observer = new IntersectionObserver((entries) => {
+          let index = 0
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue
+            const node = entry.target as HTMLElement
+            node.style.setProperty('--i', String(index % 6))
+            index += 1
+            node.classList.add('is-in')
+            observer.unobserve(node)
+          }
+        }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 })
+        revealTargets.forEach(node => observer.observe(node))
+        signal.addEventListener('abort', () => observer.disconnect())
+      }
+      const cards = Array.from(this.querySelectorAll<HTMLElement>('.fx-card,.note-card,.play-note,.recent-posts li,.quote'))
+      for (const card of cards) {
+        let frame = 0
+        card.addEventListener('pointermove', (event) => {
+          if (frame) return
+          const { clientX, clientY } = event
+          frame = requestAnimationFrame(() => {
+            frame = 0
+            const rect = card.getBoundingClientRect()
+            card.style.setProperty('--mx', `${clientX - rect.left}px`)
+            card.style.setProperty('--my', `${clientY - rect.top}px`)
+          })
+        }, { signal, passive: true })
+      }
+    }
+
+    private runTyping(node: HTMLElement, phrases: string[], signal: AbortSignal) {
+      let phraseIndex = 0
+      let charCount = phrases[0].length
+      let deleting = true
+      let timer = 0
+      const schedule = (delay: number) => { timer = window.setTimeout(step, delay) }
+      const step = () => {
+        if (signal.aborted) return
+        const phrase = phrases[phraseIndex] ?? ''
+        if (deleting) {
+          charCount -= 1
+          node.textContent = phrase.slice(0, Math.max(0, charCount))
+          if (charCount <= 0) {
+            deleting = false
+            phraseIndex = (phraseIndex + 1) % phrases.length
+            schedule(380)
+          } else {
+            schedule(34)
+          }
+          return
+        }
+        charCount += 1
+        node.textContent = phrase.slice(0, charCount)
+        if (charCount >= phrase.length) {
+          deleting = true
+          schedule(1900)
+        } else {
+          schedule(88)
+        }
+      }
+      schedule(2400)
+      signal.addEventListener('abort', () => window.clearTimeout(timer))
+    }
   }
+
   if (!customElements.get('about-page')) customElements.define('about-page', AboutPage)
 </script>
 
@@ -291,4 +452,43 @@ const sections = [
   @media(prefers-reduced-motion:no-preference) {
     .hero-actions a,.recent-posts h3 {transition:color 150ms ease,filter 150ms ease;}
   }
+
+  /* ---- 原站动效：网格底、呼吸灯、打字、卡片聚光、逐项浮现、点击烟花 ---- */
+  .about-hero {position:relative;overflow:hidden;isolation:isolate;}
+  .about-hero::before {
+    content:'';position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(hsl(var(--border)) 1px,transparent 1px),linear-gradient(90deg,hsl(var(--border)) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(75% 70% at 18% 0%,#000 0%,transparent 78%);
+    mask-image:radial-gradient(75% 70% at 18% 0%,#000 0%,transparent 78%);
+  }
+  @media(prefers-reduced-motion:no-preference) {
+    .status-dot {position:relative;animation:dot-breathe 2.4s ease-out infinite;}
+    .status-dot::after {content:'';position:absolute;inset:-.18rem;border-radius:50%;border:1px solid hsl(167 62% 40% / .55);animation:dot-ring 2.4s ease-out infinite;}
+  }
+  @keyframes dot-breathe {0%,100%{box-shadow:0 0 0 0 hsl(167 62% 40% / .35);}50%{box-shadow:0 0 0 .28rem hsl(167 62% 40% / 0);}}
+  @keyframes dot-ring {0%{transform:scale(.7);opacity:.7;}70%,100%{transform:scale(1.9);opacity:0;}}
+  .prompt {color:hsl(var(--primary));font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-right:.5rem;opacity:.85;}
+  .caret {display:inline-block;width:.5rem;height:1.05em;margin-left:.12rem;translate:0 .18em;background:hsl(var(--primary));border-radius:1px;}
+  @media(prefers-reduced-motion:no-preference) {.caret {animation:caret-blink 1.05s steps(2,end) infinite;}}
+  @keyframes caret-blink {0%,49%{opacity:1;}50%,100%{opacity:0;}}
+  .typing {white-space:pre-wrap;}
+
+  .fx-card {position:relative;isolation:isolate;transition:transform .38s cubic-bezier(.22,1,.36,1),border-color .38s ease,box-shadow .38s ease;}
+  .fx-card::after {
+    content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;opacity:0;pointer-events:none;transition:opacity .38s ease;
+    background:radial-gradient(340px circle at var(--mx,50%) var(--my,0%),hsl(var(--primary)/.16),transparent 62%);
+  }
+  .fx-card:hover {transform:translateY(-3px);border-color:hsl(var(--primary)/.35);box-shadow:0 22px 44px -30px hsl(var(--primary)/.55);}
+  .fx-card:hover::after {opacity:1;}
+  .avatar-wrap {background:conic-gradient(from 200deg,hsl(var(--primary)),hsl(var(--primary)/.45),hsl(var(--primary)/.9),hsl(var(--primary)));box-shadow:0 0 0 6px hsl(var(--primary)/.12);}
+  .avatar-wrap :global(img) {border:3px solid hsl(var(--background));}
+
+  html.reveal-ready [data-wxp-reveal] {opacity:0;transform:translateY(16px);}
+  html.reveal-ready [data-wxp-reveal].is-in {opacity:1;transform:none;transition:opacity .62s cubic-bezier(.22,1,.36,1),transform .62s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i,0) * 70ms);}
+  @media(prefers-reduced-motion:reduce) {
+    html.reveal-ready [data-wxp-reveal] {opacity:1;transform:none;}
+    .fx-card:hover {transform:none;}
+  }
+  .click-fireworks {position:fixed;inset:0;z-index:60;pointer-events:none;}
 </style>
