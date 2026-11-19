@@ -1,0 +1,48 @@
+---
+import PageLayout from '@/layouts/BaseLayout.astro'
+import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
+import UpdateList from '@/components/about/UpdateList.astro'
+import { sitePath } from '@/utils/site-path'
+import changelog from '../data/changelog.json'
+
+const latest = changelog[0]
+const first = changelog[changelog.length - 1]
+---
+
+<PageLayout meta={{ title: '更新日志', description: '这个站的版本记录：功能、样式、修复与基建，按版本归并。' }}>
+  <main class='changelog-page'>
+    <KnowledgeIndexHero
+      icon='list'
+      eyebrow='CHANGELOG'
+      title='更新日志'
+      description='只记站点本身真正变过的部分，按版本归并；文章发布不在这里。'
+      stats={[
+        { label: '版本', value: changelog.length },
+        { label: '最新', value: `v${latest.version}` },
+        { label: '起点', value: `v${first.version}` }
+      ]}
+      statsLabel='更新概览'
+      symbol='✳'
+    />
+    <section class='changelog-list' aria-labelledby='changelog-list-title'>
+      <header class='list-head'>
+        <h2 id='changelog-list-title'>全部版本</h2>
+        <span>{changelog.length} 个版本</span>
+      </header>
+      <UpdateList entries={changelog} />
+    </section>
+    <p class='changelog-foot'>最近三个版本也会出现在<a href={sitePath('/about#changelog')}>关于页</a>底部。</p>
+  </main>
+</PageLayout>
+
+<style>
+  .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;}
+  .changelog-list {margin-top:2.5rem;}
+  .list-head {display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid hsl(var(--border));}
+  .list-head h2 {font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:650;letter-spacing:-.02em;}
+  .list-head span {font-size:.75rem;color:hsl(var(--muted-foreground));}
+  .changelog-foot {font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.9;margin-top:1.5rem;}
+  .changelog-foot a {color:hsl(var(--primary));text-underline-offset:.25em;}
+  .changelog-foot a:hover {text-decoration:underline;}
+  @media(max-width:640px) {.changelog-page {margin-top:1rem;}}
+</style>

@@ -3,6 +3,7 @@ import manifest from '../../../migration/content-manifest.json'
 import { sitePath } from '@/utils/site-path'
 
 interface Entry {
+  version?: string
   date: string
   kind: string
   scope?: string
@@ -17,14 +18,18 @@ const kinds: Record<string, string> = { content: '内容', feature: '新功能',
 const linkTo = (url: string) => {
   const original = new URL(url, 'https://yenchiu.com')
   const migrated = manifest.find(item => item.originalUrl === original.href.split(/[?#]/)[0])
-  return migrated ? sitePath(migrated.url) + original.search + original.hash : original.href
+  if (migrated) return sitePath(migrated.url) + original.search + original.hash
+  // 站内链接走站点根，避免在预览路径下跳到线上域名；站点用 trailingSlash: 'never'，去掉尾斜杠。
+  return original.origin === 'https://yenchiu.com'
+    ? sitePath(original.pathname.replace(/\/+$/, '') || '/') + original.search + original.hash
+    : original.href
 }
 ---
 <ol class='updates'>
   {entries.map(entry => <li>
     <time datetime={entry.date}>{entry.date}</time>
     <div class='update-body'>
-      <div class='update-meta'><span class='kind'>{kinds[entry.kind] ?? '更新'}</span>{entry.scope && <span>{entry.scope}</span>}</div>
+      <div class='update-meta'>{entry.version && <span class='version'>v{entry.version}</span>}<span class='kind'>{kinds[entry.kind] ?? '更新'}</span>{entry.scope && <span>{entry.scope}</span>}</div>
       <h3>{entry.title}</h3>
       {entry.note && <p>{entry.note}</p>}
       {entry.links?.length && <div class='update-links'>{entry.links.map(link => <a href={linkTo(link.url)}>{link.label} <span aria-hidden='true'>↗</span></a>)}</div>}
@@ -39,6 +44,7 @@ const linkTo = (url: string) => {
   time {font-size:.75rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;padding-top:.2rem;}
   .update-meta {display:flex;align-items:center;gap:.65rem;font-size:.67rem;color:hsl(var(--muted-foreground));margin-bottom:.45rem;}
   .kind {border-radius:.3rem;padding:.15rem .4rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
+  .version {font-variant-numeric:tabular-nums;font-size:.68rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
   h3 {font-size:.95rem;font-weight:600;line-height:1.7;margin:0;}
   p {font-size:.82rem;color:hsl(var(--muted-foreground));line-height:1.9;margin:.3rem 0 0;}
   .update-links {display:flex;flex-wrap:wrap;gap:.8rem;margin-top:.5rem;}
