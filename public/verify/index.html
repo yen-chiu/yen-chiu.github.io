@@ -126,6 +126,60 @@
     let stageTimeout = null;
     let resultTimeout = null;
     let roundId = 0;
+    const RETURN_GUARD_KEY = 'focusReturnGuard';
+    let returnGuardId = null;
+    let returnWasUsed = false;
+    let returnArmed = false;
+
+    function saveReturnState(marker) {
+        const existing = history.state && typeof history.state === 'object' ? history.state : {};
+        history.replaceState({ ...existing, [RETURN_GUARD_KEY]: marker }, '');
+    }
+
+    function armBackGuard() {
+        if (returnArmed || returnWasUsed) return;
+        try {
+            const previous = history.state?.[RETURN_GUARD_KEY];
+            if (previous?.id && ['base', 'guard'].includes(previous.kind)) {
+                returnGuardId = previous.id;
+                returnWasUsed = Boolean(previous.spent);
+                returnArmed = true;
+                return;
+            }
+            returnGuardId = crypto.randomUUID();
+            const marker = { id: returnGuardId, kind: 'base', spent: false };
+            saveReturnState(marker);
+            history.pushState({ ...history.state, [RETURN_GUARD_KEY]: { ...marker, kind: 'guard' } }, '');
+            returnArmed = true;
+        } catch {
+            // If history access is restricted, retain normal browser navigation.
+            returnWasUsed = true;
+        }
+    }
+
+    function handleVerificationBack(event) {
+        const marker = event.state?.[RETURN_GUARD_KEY];
+        if (!returnGuardId || marker?.id !== returnGuardId) return;
+        if (returnWasUsed || marker.spent) {
+            returnWasUsed = true;
+            try { saveReturnState({ ...marker, spent: true }); } catch {}
+            return;
+        }
+        if (marker.kind !== 'base') return;
+        // Consume the extra entry once. Do not push another entry or go forward:
+        // the next Back naturally leaves this document.
+        returnWasUsed = true;
+        try { saveReturnState({ ...marker, spent: true }); } catch {}
+        initGame('验证流程已中断，请重新验证。');
+    }
+
+    function releaseBackGuard() {
+        returnWasUsed = true;
+        try {
+            const marker = history.state?.[RETURN_GUARD_KEY];
+            if (marker?.id === returnGuardId) saveReturnState({ ...marker, spent: true });
+        } catch {}
+    }
 
     const gridEl = document.getElementById('grid');
     const targetNameEl = document.getElementById('target-name');
@@ -141,11 +195,12 @@
     }
 
     // 游戏初始化
-    async function initGame() {
+    async function initGame(notice = '') {
         const thisRound = ++roundId;
         clearTimeout(stageTimeout);
         clearTimeout(resultTimeout);
-        setStatus('');
+        const message = typeof notice === 'string' ? notice : '';
+        setStatus(message, message ? 'error' : '');
         countdownEl.innerText = '';
         phaseDescriptionEl.textContent = '请稍候，正在加载验证内容。';
         clearInterval(timerInterval);
@@ -414,6 +469,7 @@
                 setStatus('正在恢复访问…', 'success');
                 phaseDescriptionEl.textContent = '请保持此页面打开。';
                 resultTimeout = setTimeout(() => {
+                    releaseBackGuard();
                     window.location.href = 'https://www.bilibili.com/video/BV1UT42167xb/';
                 }, 1200);
             }, 900);
@@ -433,6 +489,13 @@
 
     document.getElementById('refresh-btn').addEventListener('click', initGame);
     verifyBtn.addEventListener('click', checkResult);
+
+    // Add at most one entry after a real interaction, so the browser can honor it.
+    // Restoring an existing marker on refresh must not add more history entries.
+    if (history.state?.[RETURN_GUARD_KEY]) armBackGuard();
+    document.addEventListener('pointerdown', event => { if (event.isTrusted) armBackGuard(); }, { passive: true });
+    document.addEventListener('keydown', event => { if (event.isTrusted) armBackGuard(); });
+    window.addEventListener('popstate', handleVerificationBack);
 
     // 启动游戏
     window.onload = initGame;
