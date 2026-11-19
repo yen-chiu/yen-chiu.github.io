@@ -3,9 +3,9 @@
     "gen": 1,
     "name": "blog-v1",
     "engine": "Jekyll · huxpro",
-    "span": "2017-02 – 2019-09",
-    "commits": 550,
-    "note": "第一代博客，从第一行提交开始就是自己的仓库；现在是 /blog-v1/ 存档",
+    "span": "2023-03 – 2023-10",
+    "commits": 159,
+    "note": "从 2023-03-12 接手算起；更早的 391 次提交属于模板作者与前主人。之后是存档，偶有维护。",
     "repo": "yen-chiu/blog-v1"
   },
   {
@@ -14,7 +14,7 @@
     "engine": "Jekyll · Chirpy",
     "span": "2023-10 – 2026-11",
     "commits": 660,
-    "note": "第二代，根站；仓库里留着模板作者 2019 年起的历史，自己的提交从 2023-10-17 开始",
+    "note": "第二代，根站；仓库里留着模板作者 2019 年起的历史，自己的提交从 2023-10-17 开始。",
     "repo": "yen-chiu/yen-chiu.github.io"
   },
   {
@@ -23,7 +23,7 @@
     "engine": "Astro · Iris",
     "span": "2026-11 – 现在",
     "commits": 56,
-    "note": "第三代，2026-11-17 把内容迁进自己的 Astro 站；目前挂在 /yen-chiu-astro/ 预览",
+    "note": "第三代，2026-11-17 把内容迁进自己的 Astro 站；目前挂在 /yen-chiu-astro/ 预览。",
     "repo": "yen-chiu/yen-chiu-astro"
   }
 ]

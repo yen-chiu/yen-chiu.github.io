@@ -49,6 +49,13 @@
         "scope": "主站",
         "title": "版本号改为 v3.2026.11.19",
         "note": "代次加日期，不再用语义化大版本；旧的 v2.0–v7.6.0 原样留在 G2 仓库。"
+      },
+      {
+        "change": "fixed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "三代提交数改按真实起点重算",
+        "note": "G1 从 2023-03-12 的 98b270b 算起，模板作者与前主人的 391 次提交不再计入。"
       }
     ]
   },
@@ -378,76 +385,129 @@
   {
     "gen": 1,
     "site": "main",
-    "date": "2019-12-02",
-    "title": "2019：更名与收尾",
-    "summary": "最后一年主要是改站名、收拾索引，随后站点停更。",
+    "date": "2023-04-09",
+    "title": "第一代站开张：换掉模板内容",
+    "summary": "3 月 12 日接手仓库，接下来一个月把模板里的旧文章清掉，换成自己的文章、图片和视频。",
     "items": [
       {
         "change": "changed",
         "area": "docs",
         "scope": "主站",
-        "title": "站名改过一次",
-        "note": "文章文件名里留着 renamed 的痕迹，说明那阵子换过定位。"
+        "title": "接手仓库，改自己的配置",
+        "note": "2023-03-12 的 98b270b 是第一代站的第一条提交；更早的 391 次属于模板作者与前主人。"
       },
       {
-        "change": "changed",
-        "area": "infra",
+        "change": "removed",
+        "area": "docs",
         "scope": "主站",
-        "title": "索引页与 README 收尾",
-        "note": "index.html 和说明文档反复整理，为后来的迁移留了口子。"
-      }
-    ]
-  },
-  {
-    "gen": 1,
-    "site": "main",
-    "date": "2018-11-20",
-    "title": "2018：主题细节与评论修复",
-    "summary": "这一年在打磨模板细节，Gitalk 的报错也在此时修掉。",
-    "items": [
-      {
-        "change": "fixed",
-        "area": "feature",
-        "scope": "主站",
-        "title": "修 Gitalk 的 Validation Failed",
-        "note": "评论加载失败的报错，补了 md5 计算后再校验通过。"
+        "title": "删掉模板遗留的文章",
+        "note": "三体语那几篇旧文和背单词的记录一起清掉，索引重新排。"
       },
       {
         "change": "added",
         "area": "style",
         "scope": "主站",
-        "title": "换上自己的 Logo",
-        "note": "favicon 与站头标识换成自制版本。"
+        "title": "补上自己的图片与视频",
+        "note": "首页背景、目录、照片在四月初连着改了好几轮。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "换背景、加目录",
+        "note": "模板的默认皮肤换成自己的配色，文章页加了目录位。"
       }
     ]
   },
   {
     "gen": 1,
     "site": "main",
-    "date": "2017-12-21",
-    "title": "2017：第一代站开张",
-    "summary": "2 月初始化，年底换成 Gitalk 评论，第一代博客就这么跑起来了。",
+    "date": "2023-09-19",
+    "title": "内容继续更新",
+    "summary": "那半年里唯一一次正式的文章更新。",
     "items": [
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "发布《三体语首个版本发布》",
+        "note": "顺手把图片、目录和域名那几次反复也收在同一个文件里改完。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-10-17",
+    "title": "第一代站收尾：域名搬到新站",
+    "summary": "CNAME 从旧站删掉，博客整体搬去 yenchiu.com，这里从此是存档。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "CNAME 迁到 yenchiu.com",
+        "note": "同一天删了又建，最后指向新站；旧站留作 /blog-v1/ 存档。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2024-11-22",
+    "title": "旧站降级为存档",
+    "summary": "README 写明已弃用，顺手把 Jekyll 的构建流程修到能跑。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "README 写明弃用",
+        "note": "标题、链接和图片描述一起修，读者一眼知道这里已归档。"
+      },
       {
         "change": "added",
         "area": "infra",
         "scope": "主站",
-        "title": "按 huxpro 主题起了第一版",
-        "note": "GitHub Pages 直接托管，域名沿用 username.github.io。"
+        "title": "补上 Jekyll 构建工作流",
+        "note": "jekyll.yml 与 jekyll-gh-pages.yml 合成一版，Ruby 升到 3.3。"
       },
       {
         "change": "changed",
-        "area": "feature",
+        "area": "infra",
         "scope": "主站",
-        "title": "评论系统从多说换成 Gitalk",
-        "note": "多说当年要关停，换成基于 GitHub Issues 的 Gitalk。"
+        "title": "Gemfile 换源并加平台",
+        "note": "Gemfile 走国内镜像，锁文件补 x86_64-linux。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2026-11-19",
+    "title": "存档站补维护",
+    "summary": "一条 Dependabot 告警引来的一轮清理，顺带修了子路径部署的链接。",
+    "items": [
+      {
+        "change": "security",
+        "area": "infra",
+        "scope": "主站",
+        "title": "清掉依赖告警",
+        "note": "grunt 升到 ^1.6.3 并提交 lockfile，RubyGems 侧升 addressable 与 concurrent-ruby。"
       },
       {
-        "change": "removed",
-        "area": "feature",
+        "change": "fixed",
+        "area": "infra",
         "scope": "主站",
-        "title": "删掉 Portfolio 页面",
-        "note": "作品集页一直没内容，干脆去掉。"
+        "title": "修子路径部署的绝对链接",
+        "note": "站点挂到 /blog-v1/ 之后，canonical 与站内链接才指对地方。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "README 加 Star History 图表",
+        "note": "三个仓库的 README 统一补上。"
       }
     ]
   }
