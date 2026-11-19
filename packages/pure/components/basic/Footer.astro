@@ -1,93 +1,18 @@
 ---
 import config from 'virtual:config'
 import SiteStatus from '@/components/SiteStatus.astro'
-
-import { Icon } from '../user'
-
-const footerConf = config.footer
-const social = footerConf.social || []
-
-const footerLink1 = footerConf.links?.filter(({ pos }) => pos === 1) || []
+import {sitePath} from '@/utils/site-path'
+import {Icon} from '../user'
+const social=config.footer.social||[]
 ---
-
-<footer class='mx-auto mb-5 mt-16 w-full'>
-  <div class='border-t pt-5'>
-    <div class='flex items-center gap-y-3 max-sm:flex-col sm:justify-between sm:gap-y-0'>
-      <div class='flex items-center gap-x-4 gap-y-2 text-muted-foreground max-sm:flex-col'>
-        {
-          /* Position 1 */
-          footerLink1.length > 0 && (
-            <div>
-              {footerLink1.map(({ title, link, style }, index) => (
-                <>
-                  <a href={link} target='_blank' class={style}>
-                    {title}
-                  </a>
-                  {index < footerLink1.length - 1 && <span class='mx-1'>•</span>}
-                </>
-              ))}
-            </div>
-          )
-        }
-        {/* Position 2 */}
-        <div>
-          {config.footer.year}
-          {config.author}
-          {
-            footerConf.links && footerConf.links.length > 0 && (
-              <>
-                &
-                <span>
-                  {footerConf.links
-                    .filter(({ pos }) => pos === 2)
-                    .map(({ title, link, style }) => (
-                      <span>
-                        <a href={link} target='_blank' class={style}>
-                          {title}
-                        </a>
-                      </span>
-                    ))}
-                </span>
-              </>
-            )
-          }
-        </div>
-        {
-          footerConf.credits && (
-            <span>
-              <a href='https://github.com/withastro/astro' target='_blank'>
-                Astro
-              </a>
-              &
-              <a href='https://github.com/LemonAdorable/astro-theme-iris' target='_blank'>
-                Iris
-              </a>
-              theme powered
-            </span>
-          )
-        }
-      </div>
-
-      {/* Social Brands */}
-      <div class='flex items-center gap-x-4'>
-        {
-          social.map(({ label, href, icon }) => (
-            <a {href} rel='me' class='sl-flex'>
-              <span class='sr-only'>{label}</span>
-              <Icon name={icon} />
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </div>
-  <SiteStatus />
+<footer class='site-footer'>
+ <div class='footer-row'>
+  <div class='footer-legal'><span class='footer-owner'>{config.footer.year} {config.author}</span><span class='footer-license'>代码 <a href='https://github.com/yen-chiu/yen-chiu-astro/blob/main/LICENSE'>Apache 2.0</a><span class='separator' aria-hidden='true'>·</span>内容 <a href={sitePath('/terms/copyright')}>版权声明</a></span></div>
+  <nav class='footer-links' aria-label='页脚'><a href={sitePath('/terms')}>站点说明</a>{social.map(({label,href,icon})=><a href={sitePath(href)} rel='me' aria-label={label}><Icon name={icon}/></a>)}</nav>
+ </div>
+ <div class='footer-credit'>基于 <a href='https://astro.build/'>Astro</a> · <a href='https://github.com/LemonAdorable/astro-theme-iris'>Iris</a> / <a href='https://github.com/cworld1/astro-theme-pure'>Pure</a></div>
+ <SiteStatus />
 </footer>
-
 <style>
-  footer a {
-    color: hsl(var(--foreground) / var(--un-text-opacity, 1));
-    text-decoration: underline;
-    font-weight: 500;
-  }
+.site-footer{width:100%;margin:3rem auto 1.25rem;padding-top:1.1rem;border-top:1px solid hsl(var(--border)/.7);color:hsl(var(--muted-foreground));font-size:.72rem;line-height:1.8;}.footer-row,.footer-legal,.footer-links{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem 1.2rem;}.footer-row{justify-content:space-between;}.footer-owner{white-space:nowrap;}.footer-license{display:inline-flex;flex-wrap:wrap;align-items:center;gap:.3rem;}.separator{margin:0 .2rem;}.footer-links{gap:.8rem;}.footer-links a{display:inline-flex;align-items:center;justify-content:center;min-height:36px;}.footer-links :global(svg){width:17px;height:17px;}a{color:inherit;text-decoration:none;}a:hover{color:hsl(var(--primary));text-decoration:underline;text-underline-offset:3px;}a:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:4px;border-radius:2px;}.footer-credit{margin-top:.3rem;font-size:.67rem;}@media(max-width:600px){.site-footer{margin-top:2rem;}.footer-row{justify-content:center;gap:.4rem;}.footer-legal{justify-content:center;gap:.2rem .8rem;}.footer-links{justify-content:center;width:100%;}.footer-credit{text-align:center;}}
 </style>

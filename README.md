@@ -25,3 +25,12 @@ Iris / Pure 原主题使用 Apache-2.0；保留 LICENSE 与原主题归属。原
 ## 公开预览验证
 
 CI 使用 Node 24、npm ci、npm run build 与 node scripts/pages-paths.mjs。路径适配回归检查：node scripts/pages-paths.test.mjs。独立搜索页位于 /search，浮层加载失败时自动回退。
+
+## 版权与内容授权
+
+- 主题及相关代码：Apache-2.0，保留 LICENSE、原作者归属及第三方许可。
+- 除另有说明的原创博客文章与展示文档：CC BY-NC-SA 4.0，https://creativecommons.org/licenses/by-nc-sa/4.0/ 。署名 Wendell，附原文与许可链接，注明修改。
+- 《余白》原创文章：以各期声明为准，当前为 CC BY 4.0，https://creativecommons.org/licenses/by/4.0/ 。
+- 独立摄影、插画等素材以各自声明为准；第三方素材不自动纳入本站授权。
+- 已有授权不会被本声明追溯撤回；商业授权及勘误联系 yenchiu.he@gmail.com。
+- 网站详细说明： https://yenchiu.com/yen-chiu-astro/terms/copyright/ 。

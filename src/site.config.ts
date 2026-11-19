@@ -69,8 +69,8 @@ export const theme: ThemeUserConfig = {
       // Registration link
       // Privacy Policy link
       {
-        title: 'Site Policy',
-        link: '/terms',
+        title: '版权声明',
+        link: '/terms/copyright',
         pos: 2 // position set to 2 will be appended to copyright line
       }
     ],

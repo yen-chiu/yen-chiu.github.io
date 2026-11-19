@@ -1,7 +1,8 @@
 ---
 import type { CollectionKey, InferEntrySchema } from 'astro:content'
 import config from 'virtual:config'
+import {sitePath} from '@/utils/site-path'
 interface Props<T extends CollectionKey> { data: InferEntrySchema<T>; class?: string }
 const { data, class: className } = Astro.props
 ---
-<aside class:list={['rounded-xl border p-4 text-sm', className]}><p>{data.title}</p><p>作者：{config.author}</p><p>转载与引用请参阅原站文章说明。</p><a href="https://yenchiu.com">原博客</a></aside>
+<aside class:list={['rounded-xl border p-4 text-sm', className]}><p>{data.title}</p><p>作者：{config.author}</p><p>除另有说明外，本文采用 CC BY-NC-SA 4.0，转载请署名并附原文链接。</p><a href={sitePath('/terms/copyright')}>版权与许可</a></aside>
