@@ -405,32 +405,25 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     updateTocFade()
   }
 
-  const revealToc = (firstLink: HTMLElement, lastLink: HTMLElement | null) => {
+  const revealToc = (firstLink: HTMLElement, _lastLink: HTMLElement | null) => {
     const group = firstLink.closest<HTMLDetailsElement>('details.toc-group')
     document.querySelectorAll<HTMLDetailsElement>('.toc-group').forEach((item) => {
       item.open = item === group
     })
     if (!tocBody) return
-    const target = lastLink ?? firstLink
-    // 等分组展开后的高度生效，再决定要不要把最后一条滚进来
+    // 让「正在读的那一条」尽量停在目录框的中间；只有到了开头/结尾才贴边。
+    const target = firstLink ?? _lastLink
+    if (!target) return
     requestAnimationFrame(() => {
-      const links = [...(group?.querySelectorAll<HTMLElement>('a.toc-link') ?? [])]
-      const isTail = links.length > 0 && links[links.length - 1] === target
-      if (isTail) {
-        // 末尾那条直接顶到底，避免被上下渐隐裁掉
-        tocBody.scrollTo({ top: tocBody.scrollHeight, behavior: 'smooth' })
-        return
-      }
+      const max = tocBody.scrollHeight - tocBody.clientHeight
+      if (max <= 2) return
       const linkRect = target.getBoundingClientRect()
       const bodyRect = tocBody.getBoundingClientRect()
-      if (linkRect.bottom > bodyRect.bottom - 10) {
-        tocBody.scrollTo({
-          top: tocBody.scrollTop + (linkRect.bottom - bodyRect.bottom) + 16,
-          behavior: 'smooth',
-        })
-      } else if (linkRect.top < bodyRect.top + 10) {
-        tocBody.scrollTo({ top: tocBody.scrollTop - (bodyRect.top - linkRect.top) - 16, behavior: 'smooth' })
-      }
+      const delta = linkRect.top - bodyRect.top - (bodyRect.height - linkRect.height) / 2
+      const next = Math.max(0, Math.min(max, tocBody.scrollTop + delta))
+      if (Math.abs(next - tocBody.scrollTop) < 1) return
+      tocBody.scrollTo({ top: next, behavior: 'auto' })
+      updateTocFade()
     })
   }
 
