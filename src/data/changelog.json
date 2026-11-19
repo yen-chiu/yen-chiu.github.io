@@ -34,7 +34,7 @@
         "area": "feature",
         "scope": "主站",
         "title": "记录按代次与站点收拢",
-        "note": "第 1、2、3 代各自一个可展开的分组，代内再按主站 / 聊天子站分栏。"
+        "note": "第 1、2、3 代各自一个可展开的分组，代内再按主站 / 聊天子站 / 文档库分栏。"
       },
       {
         "change": "added",
@@ -56,6 +56,13 @@
         "scope": "主站",
         "title": "三代提交数改按真实起点重算",
         "note": "G1 从 2023-03-12 的 98b270b 算起，模板作者与前主人的 391 次提交不再计入。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "条目按真实提交重写",
+        "note": "三代仓库的提交逐日扫过一遍，日志条目按实际改动（文件、功能、修复）重排。"
       }
     ]
   },
@@ -64,7 +71,7 @@
     "site": "manual",
     "date": "2026-11-19",
     "title": "文档库换成 Folio：从 Jekyll 迁到 Starlight",
-    "summary": "WendellManual 的内容整体搬进 Astro Starlight 重做的 Folio，旧站保留，迁移脚本留在仓库里。",
+    "summary": "WendellManual 的内容整体搬进 Astro Starlight 重做的 Folio，旧站保留，迁移记录留在仓库里。",
     "items": [
       {
         "change": "changed",
@@ -85,7 +92,7 @@
         "area": "style",
         "scope": "文档库",
         "title": "移动端字号与分页收紧",
-        "note": "手机上正文可读性提高，目录与翻页更紧凑。"
+        "note": "手机正文可读性提高，目录与翻页更紧凑。"
       }
     ]
   },
@@ -124,14 +131,14 @@
     "site": "main",
     "date": "2026-11-17",
     "title": "从 Jekyll 迁到 Astro",
-    "summary": "把文章、设定页和评论一起搬进独立的 Astro 站点，先发在预览路径上。",
+    "summary": "把文章、设置页和评论一起搬进独立的 Astro 站点，先发在预览路径上。",
     "items": [
       {
         "change": "added",
         "area": "infra",
         "scope": "主站",
         "title": "内容迁入 Astro staging 站",
-        "note": "文章、关于页与设定素材整体迁移，线上地址暂时不动。"
+        "note": "文章、关于页与设置素材整体迁移，线上地址暂时不动。"
       },
       {
         "change": "added",
@@ -144,8 +151,287 @@
         "change": "fixed",
         "area": "feature",
         "scope": "主站",
-        "title": "修预览路径与原链接",
+        "title": "修预览路径与旧链接",
         "note": "文章原始地址、讨论区标识和 staging 的 SEO 一起对齐。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-19",
+    "title": "README 与许可说明",
+    "summary": "两个仓库的说明文档补上图表与许可边界。",
+    "items": [
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "README 底部加 Star History",
+        "note": "曲线按仓库实时绘制，点图跳交互页。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "子站",
+        "title": "说明聊天子站的许可边界",
+        "note": "代码走 MIT，角色与文案为原创内容，两者分开说明。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-17",
+    "title": "念真设定页细节收尾",
+    "summary": "修裁切、调排版，把超分对比与量测数据留在页面上。",
+    "items": [
+      {
+        "change": "fixed",
+        "area": "style",
+        "scope": "主站",
+        "title": "修正细节裁切与速写排版",
+        "note": "日常速写那组图重新对齐，边角不再被裁。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "保留超分对比与量测",
+        "note": "四版超分的对比图与实测数据继续挂在页面上。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-16",
+    "title": "设定页重绘，标签关系图加碰撞分离",
+    "summary": "角色素材整体换新，标签图的节点不再叠在一起。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "重绘念真设定页",
+        "note": "配色与版式一起换，角色素材按新版重出。"
+      },
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "关系图节点碰撞分离",
+        "note": "标签图里挤在一起的节点被推开。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "博客补上写作台截图",
+        "note": "首页预览与文章里的截图同步成当前样子。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-11",
+    "title": "设定页面板与部署抖动",
+    "summary": "手机上的量测表恢复成卡片，顺手重触发了一次部署。",
+    "items": [
+      {
+        "change": "fixed",
+        "area": "style",
+        "scope": "主站",
+        "title": "量测表恢复「标签 → 数值」卡片",
+        "note": "补上 data-label 后手机端不再是七列挤成一团。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "折叠块去掉主题自带边框",
+        "note": "只留虚线分隔，版面更干净。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-10",
+    "title": "表情图位与量测表",
+    "summary": "表情改成六格，手机上量测表改竖排，设定稿补齐三视图。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "表情图位改成六格 3+3",
+        "note": "补真笑与戏谑，去掉重复的浅笑。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "量测表手机上改竖排卡片",
+        "note": "七列在窄屏下挤成一团，改成一行一项。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "填入设定稿、三视图与表情细节",
+        "note": "角色设定页的图位一次性补全。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-09",
+    "title": "念真角色设定页上线",
+    "summary": "档案卡、八块图位与配色一次成形，附四版超分对比。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站",
+        "title": "新增念真角色设定页",
+        "note": "档案卡 + 八块图位 + 配色，暗色主题下也适配。"
+      },
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站",
+        "title": "定妆照锚点与超分对比",
+        "note": "四版超分并排对比，实测数据一并放出。"
+      },
+      {
+        "change": "improved",
+        "area": "feature",
+        "scope": "主站",
+        "title": "图位放图即自动替换",
+        "note": "object-fit 与 :has 处理，占位图不用手动删。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-08",
+    "title": "异次元通讯与生命线上线",
+    "summary": "两个网页版游戏挂进聊天抽屉，游戏入口一律指站内。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "子站",
+        "title": "lifeline-web 重做",
+        "note": "逐字输出、键盘、8 语剧情、选择点回溯、词典、PWA 离线、通知、Gist 云存档与本机统计。"
+      },
+      {
+        "change": "changed",
+        "area": "feature",
+        "scope": "子站",
+        "title": "抽屉接入两个网页版游戏",
+        "note": "「异次元通讯」与「生命线」都从抽屉统一进。"
+      },
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "子站",
+        "title": "游戏入口改成站内路径",
+        "note": "指向 /chat/play.html，不再依赖两个独立仓库。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-07",
+    "title": "miko 图鉴与番外修复",
+    "summary": "画风被构建覆盖、番外条被截断，都在这一天手动修回来。",
+    "items": [
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "子站",
+        "title": "图鉴 S1-01-n / S1-02 恢复原版画风",
+        "note": "改成构建期覆盖，重建时不再被上游文件盖掉。"
+      },
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "子站",
+        "title": "锁定的番外条不再截断",
+        "note": "徽章文案改成「谨慎选择」。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "子站",
+        "title": "章节完成文案与图鉴条目",
+        "note": "通关提示的措辞统一了一遍。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-06",
+    "title": "miko-web 节奏游戏上线",
+    "summary": "从零加进一个全屏音游，BGM、按键音与存档都自己处理。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "子站",
+        "title": "首次手势恢复 BGM 与按键音",
+        "note": "浏览器自动播放限制下，用第一次点击/触摸解锁音频。"
+      },
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "子站",
+        "title": "自动存档间隔与本地备份",
+        "note": "进度写到本地备份文件，清缓存不至于全丢。"
+      },
+      {
+        "change": "changed",
+        "area": "feature",
+        "scope": "子站",
+        "title": "头像随剧情解锁，BGM 可分新旧版",
+        "note": "2016 旧版与新编曲都能切。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2026-11-05",
+    "title": "聊天第三季与搜索增强",
+    "summary": "联网搜索加了兜底与缓存，念真的口吻也一并对齐。",
+    "items": [
+      {
+        "change": "improved",
+        "area": "feature",
+        "scope": "子站",
+        "title": "Worker 搜索加 Bing 兜底与 5 分钟缓存",
+        "note": "失败会冷却一段时间，避免连续打空接口。"
+      },
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "子站",
+        "title": "同步头像、口吻与表情渲染",
+        "note": "同一个角色在主站设定页与聊天里长得一样。"
+      },
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "子站",
+        "title": "第三季上线，补第二季时长标注",
+        "note": "死胡同与话题重排也一起修了。"
       }
     ]
   },
@@ -168,10 +454,7 @@
         "area": "infra",
         "scope": "主站",
         "title": "发布站点快照 2026-11-04",
-        "note": "写作台登录、提示轮播与图片缓存修复随此版本上线。",
-        "links": [
-          { "label": "发布页", "url": "https://github.com/yen-chiu/yen-chiu.github.io/releases/tag/2026-11-04" }
-        ]
+        "note": "写作台登录、提示轮播与图片缓存修复随此版本上线。"
       }
     ]
   },
@@ -188,6 +471,13 @@
         "scope": "子站",
         "title": "三个模块与深色主题",
         "note": "对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页；抽屉里可切浅色 / 深色 / 跟随系统。"
+      },
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "子站",
+        "title": "清掉过期域名 chat.wendell.cloud",
+        "note": "统一走 /chat/ 路径。"
       }
     ]
   },
@@ -201,9 +491,9 @@
       {
         "change": "added",
         "area": "feature",
-        "scope": "写作台",
+        "scope": "主站",
         "title": "写作台支持「点一下」GitHub 登录",
-        "note": "设备码走 Worker 代理，不用再手动建令牌。"
+        "note": "设备码走 Worker 代理，不用再手动建令牌；先显示验证码再跳授权页。"
       },
       {
         "change": "improved",
@@ -229,7 +519,7 @@
       {
         "change": "improved",
         "area": "feature",
-        "scope": "写作台",
+        "scope": "主站",
         "title": "写作台可用性改造",
         "note": "手机端新建抽屉补关闭键与遮罩、日期换成原生控件、保存前先查一遍格式。"
       },
@@ -238,20 +528,14 @@
         "area": "feature",
         "scope": "主站",
         "title": "页脚加了「刷新缓存」",
-        "note": "不用再去设置里删网站数据，点一下就好。",
-        "links": [
-          { "label": "相关文章", "url": "/posts/refresh-button/" }
-        ]
+        "note": "不用再去设置里删网站数据，点一下就好。"
       },
       {
         "change": "changed",
         "area": "feature",
         "scope": "主站",
         "title": "关于页重做，更新日志搬了进来",
-        "note": "首屏、便当盒与时间线，滚动入场在「减少动态效果」下自动停下；随后收紧成紧凑双栏。",
-        "links": [
-          { "label": "关于页", "url": "/about/" }
-        ]
+        "note": "首屏、便当盒与时间线；滚动入场在「减少动态效果」下自动停下，随后收紧成紧凑双栏。"
       },
       {
         "change": "changed",
@@ -271,7 +555,7 @@
         "change": "added",
         "area": "feature",
         "scope": "主站",
-        "title": "标签页增加 SVG 关系图与 PMI 预计算",
+        "title": "标签页加 SVG 关系图与 PMI 预估",
         "note": "词云 / 关系图可切换，边权来自站内共现；给 CSS / JS 加版本号避免旧缓存。"
       },
       {
@@ -284,9 +568,9 @@
       {
         "change": "added",
         "area": "feature",
-        "scope": "写作台",
+        "scope": "主站",
         "title": "接入 GitHub App 设备码",
-        "note": "先显示验证码再跳授权页，夜里十一点半补上的最后一块。"
+        "note": "夜里十一点半补上的最后一块。"
       }
     ]
   },
@@ -310,52 +594,284 @@
     "gen": 2,
     "site": "main",
     "date": "2026-04-09",
-    "title": "2025–2026：只做维护的一年半",
-    "summary": "这两年几乎没动结构，CNAME 调整了几次，站点改了名。",
+    "title": "CNAME 定稿",
+    "summary": "域名来回试过几次，这次定下现在的写法。",
     "items": [
       {
         "change": "changed",
         "area": "infra",
         "scope": "主站",
-        "title": "域名与站点名的调整",
-        "note": "CNAME 来回改了几次，2026-03 定下现在的名字。"
+        "title": "CNAME 更新到最终域名",
+        "note": "配合 2026-03-30 的站点改名一起收尾。"
       }
     ]
   },
   {
     "gen": 2,
     "site": "main",
-    "date": "2024-12-31",
-    "title": "把模板改成自己的站",
-    "summary": "2024 年提交 270 次，重心从搬模板转向写内容、调版式。",
+    "date": "2026-03-30",
+    "title": "站点改名",
+    "summary": "站名与配置换了一轮，文章里的署名也一起改。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "站名与署名一起改",
+        "note": "_config.yml、README 与几篇文章的作者信息同步。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2025-06-06",
+    "title": "域名换成 cloud",
+    "summary": "聊天与主站的子域都切到新域名。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "CNAME 与云端域名更新",
+        "note": "_data 里的链接配置一并改。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-25",
+    "title": "接入 last-modified 插件",
+    "summary": "文章页的「最后修改」不再靠手写，由 git 记录算出来。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "启用 jekyll-last-modified-at",
+        "note": "post.html 改成读页面的 last_modified_at，布局与 _config 同步调整。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "补写建站文章",
+        "note": "《我的博客》那篇补上当前的样子。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-24",
+    "title": "页脚与 head 重写",
+    "summary": "主题的页脚、head 换成自己的结构，志愿活动那篇重新配图。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "footer.html 与 head.html 重写",
+        "note": "去掉模板里用不到的部分，补上自己的统计与图标。"
+      },
+      {
+        "change": "fixed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "志愿活动文章图片修正",
+        "note": "尺寸、扩展名与固定标记一起改，缩略图不再错位。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-22",
+    "title": "Google 认证与 robots",
+    "summary": "站点验证、robots 与配置调完，并合并了 OldBlog-2 分支。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "更新 Google 站点验证",
+        "note": "认证代码换新，robots.txt 与 _config.yml 一起调。"
+      },
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "合并 OldBlog-2 分支",
+        "note": "旧博客的改动并回主线，避免两边分叉。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-21",
+    "title": "知识库入口与建站文章",
+    "summary": "首页加了知识库链接，另写了一篇讲搭站过程的长文。",
     "items": [
       {
         "change": "added",
         "area": "feature",
         "scope": "主站",
-        "title": "首页加个人知识库入口",
-        "note": "带图标的知识库链接，顺带整理了首页信息层级。"
-      },
-      {
-        "change": "changed",
-        "area": "style",
-        "scope": "主站",
-        "title": "重构文章页布局",
-        "note": "post.html 重排，「最后修改时间」的逻辑也一并重写。"
+        "title": "加个人知识库入口与图标",
+        "note": "subdomain.yml 里补一条，首页能直接跳。"
       },
       {
         "change": "added",
         "area": "docs",
         "scope": "主站",
-        "title": "写下建站初衷",
-        "note": "一篇讲搭建过程与为什么写博客的长文。"
+        "title": "写建站过程与初衷",
+        "note": "把为什么写博客、怎么搭的记录成文。"
       },
       {
-        "change": "removed",
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "Gemfile.lock 纳入版本管理",
+        "note": "取消 .gitignore 里的排除，依赖版本可复现。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-17",
+    "title": "聊天子域迁到新结构",
+    "summary": "contact 与 subdomain 配置改指新域名，README 同步。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "子站",
+        "title": "聊天链接改指新子域",
+        "note": "contact.yml、subdomain.yml 与 README 一起改，删掉不再使用的文件。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-16",
+    "title": "评论系统与页面骨架",
+    "summary": "Giscus 配置调完，页面布局的注释也翻成中文。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "Giscus 评论主题与语言配置",
+        "note": "改成 transparent_dark，加载设置也重写。"
+      },
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "加 tzinfo 系列 gem 支持时区",
+        "note": "构建时的时间显示不再依赖本机时区。"
+      },
+      {
+        "change": "changed",
         "area": "docs",
         "scope": "主站",
-        "title": "删掉冗余段落，重排旧文章",
-        "note": "理论微课那几篇结构重做，阅读体验跟着提了一截。"
+        "title": "布局注释中文化，_tabs 调整",
+        "note": "后续自己看代码更快。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-15",
+    "title": "图标与素材重做",
+    "summary": "favicon、头像与联系图标换了一轮，课程文章补封面。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "favicon 16/32 与头像更新",
+        "note": "联系信息换成交互图标 svg，旧图标删掉。"
+      },
+      {
+        "change": "improved",
+        "area": "docs",
+        "scope": "主站",
+        "title": "课程标题与日期调整",
+        "note": "图片加低质量预览与替代文本。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-14",
+    "title": "封面图与社交链接",
+    "summary": "文章批量补封面与描述，GitHub、Mastodon、RSS 链接启用。",
+    "items": [
+      {
+        "change": "added",
+        "area": "style",
+        "scope": "主站",
+        "title": "文章补封面图与图片配置",
+        "note": "取消注释图片显示，标题、描述与分类标签一起整理。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "启用 GitHub / Mastodon / RSS 链接",
+        "note": "社交配置从注释里放出来，图标与信息补全。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-13",
+    "title": "中英文案与 404 页",
+    "summary": "语言文件按自己的口吻改写，404 换成一首诗。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "语言文件改写",
+        "note": "中英日期格式、外链文案与阅读时间提示统一。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "404 页换成诗",
+        "note": "不再用主题默认的「页面不存在」。"
+      },
+      {
+        "change": "fixed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "文章 Markdown 链接格式修正",
+        "note": "批量修坏链与多余的转义。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2024-11-12",
+    "title": "个人资料与对话内容",
+    "summary": "关于页的自我介绍与对话选项按自己的经历重写。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "个人介绍与联系方式改写",
+        "note": "_data 里的对话内容、LinkedIn 与邮箱条目重新整理。"
       }
     ]
   },
@@ -363,84 +879,245 @@
     "gen": 2,
     "site": "main",
     "date": "2023-11-01",
-    "title": "搬到 Chirpy，第二代开张",
-    "summary": "把 Chirpy 模板拉下来改成自己的站，10 月 17 日开始以本人身份提交。",
+    "title": "主题配置调整",
+    "summary": "Chirpy 的配置项按需要改了几轮，顺手合并依赖更新。",
     "items": [
-      {
-        "change": "added",
-        "area": "infra",
-        "scope": "主站",
-        "title": "站点换成 Chirpy 主题",
-        "note": "仓库里还留着模板作者的 2019 年历史，真正的改动从 10-17 开始。"
-      },
       {
         "change": "changed",
         "area": "infra",
         "scope": "主站",
-        "title": "配置与依赖整理",
-        "note": "改 _config.yml、CNAME，把依赖升级到能跑的状态。"
+        "title": "_config.yml 多轮调整",
+        "note": "站点信息、导航与评论配置逐项改。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "更新腾讯云 Outline 那篇",
+        "note": "链接与步骤同步现状。"
       }
     ]
   },
   {
-    "gen": 1,
+    "gen": 2,
     "site": "main",
-    "date": "2023-03-12",
-    "title": "接手站点：站名换成自己的",
-    "summary": "第一条提交就改了 _config.yml，把模板留着的「三叶草国际语」换成自己的站名。",
+    "date": "2023-10-23",
+    "title": "README 重写",
+    "summary": "仓库说明换成自己的介绍，补了动图与文章更新。",
     "items": [
       {
         "change": "changed",
         "area": "docs",
         "scope": "主站",
-        "title": "改 _config.yml，站名与 SEO 标题换成自己的",
-        "note": "98b270b 只动了一个文件（+5/−5）：title 与 SEOTitle 从「三叶草国际语」改成 Wendell's bolg。"
+        "title": "README 重写并加动图",
+        "note": "dino.gif 与项目说明一起放上去。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2023-10-21",
+    "title": "换站点图标",
+    "summary": "assets 里的图标与 browserconfig 换成自己的。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "图标与 browserconfig 更新",
+        "note": "浏览器标签与收藏夹里显示新图标。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2023-10-19",
+    "title": "继续导入文章与布局",
+    "summary": "模板示例文章基本清完，布局按中文排版调。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "文章导入与模板示例清理",
+        "note": "一天里新增 33、删除 24 个文件。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "_layouts 与 _tabs 调整",
+        "note": "页头、页脚与标签页按中文站的排版改。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2023-10-18",
+    "title": "批量导入自己的文章",
+    "summary": "一天导进 45 个文件，同时删掉 75 个模板示例。",
+    "items": [
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "导入旧博客文章",
+        "note": "文章与配图一起搬，_posts 的日期前缀保留原样。"
+      },
+      {
+        "change": "removed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "删模板示例文章",
+        "note": "Chirpy 自带的演示文章清掉，避免混进列表。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "site": "main",
+    "date": "2023-10-17",
+    "title": "搬到 Chirpy，第二代开张",
+    "summary": "建仓库当天先清掉 106 个模板文件，再改配置成自己的站。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "从模板建站",
+        "note": "Chirpy 模板拉下来，_config.yml、_data 与 .gitmodules 改成自己的。"
+      },
+      {
+        "change": "removed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "清掉模板自带内容",
+        "note": "一天删了 106 个文件，示例文章与演示素材全去掉。"
       }
     ]
   },
   {
     "gen": 1,
     "site": "main",
-    "date": "2023-04-09",
-    "title": "换掉模板内容，搬进自己的东西",
-    "summary": "接下来一个月把模板里的旧文章清掉，换成自己的文章、图片和视频。",
+    "date": "2026-11-19",
+    "title": "存档站补维护",
+    "summary": "一条 Dependabot 告警引来的一轮清理。",
+    "items": [
+      {
+        "change": "security",
+        "area": "infra",
+        "scope": "主站",
+        "title": "清掉依赖告警",
+        "note": "grunt 升到 ^1.6.3 并提交 lockfile，RubyGems 侧升 addressable 与 concurrent-ruby。"
+      },
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "Grunt 工具链升级",
+        "note": "less、uglify、watch、banner 换新版本，Gruntfile 跟着改，产物重新生成。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "README 加 Star History 图表",
+        "note": "三个仓库的 README 统一补上。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2026-11-18",
+    "title": "子路径部署修复与 CI",
+    "summary": "站点挂到 /blog-v1/ 之后，链接与构建流程重新校准。",
+    "items": [
+      {
+        "change": "fixed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "修子路径的绝对链接与 canonical",
+        "note": "三个 _layouts 与 _config.yml 一起改。"
+      },
+      {
+        "change": "fixed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "CI 在 ubuntu-26.04 上失败",
+        "note": "修正 Setup Ruby 那一步，删掉不再使用的 travis / codecov 配置。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2024-11-22",
+    "title": "旧站降级为存档",
+    "summary": "README 写明弃用，Jekyll 的构建流程修到能跑。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "README 写明弃用",
+        "note": "链接、图片描述与弃用说明一起补。"
+      },
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "补上 Jekyll 构建工作流",
+        "note": "jekyll.yml 与 jekyll-gh-pages.yml 合成一版，Ruby 升到 3.3。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2024-11-17",
+    "title": "依赖与文章格式整理",
+    "summary": "加分页插件、补依赖，把几篇旧文的作者信息统一。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "加 jekyll-paginate 与 csr/base64 gem",
+        "note": "新建 Gemfile 与 Gemfile.lock，删除 Visual Studio 配置文件。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "多篇文章作者信息对齐",
+        "note": "三体语那几篇的署名与格式统一。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2024-11-15",
+    "title": "删旧文、视频改名",
+    "summary": "理论微课那批素材重整理，去掉重复记录。",
     "items": [
       {
         "change": "removed",
         "area": "docs",
         "scope": "主站",
-        "title": "删掉模板遗留的文章",
-        "note": "三体语那几篇旧文和背单词的记录一起清掉，索引重新排。"
-      },
-      {
-        "change": "added",
-        "area": "style",
-        "scope": "主站",
-        "title": "补上自己的图片与视频",
-        "note": "首页背景、目录、照片在四月初连着改了好几轮。"
+        "title": "删掉重复的旧文",
+        "note": "《记录》《记录中国》等几篇被移除，周老的配图一起删。"
       },
       {
         "change": "changed",
-        "area": "style",
+        "area": "infra",
         "scope": "主站",
-        "title": "换背景、加目录",
-        "note": "模板的默认皮肤换成自己的配色，文章页加了目录位。"
-      }
-    ]
-  },
-  {
-    "gen": 1,
-    "site": "main",
-    "date": "2023-09-19",
-    "title": "内容继续更新",
-    "summary": "那半年里唯一一次正式的文章更新。",
-    "items": [
-      {
-        "change": "added",
-        "area": "docs",
-        "scope": "主站",
-        "title": "发布《三体语首个版本发布》",
-        "note": "顺手把图片、目录和域名那几次反复也收在同一个文件里改完。"
+        "title": "理论微课视频改名",
+        "note": "文件名从多人姓名换成 Wendell_理论微课.mp4。"
       }
     ]
   },
@@ -449,7 +1126,7 @@
     "site": "main",
     "date": "2023-10-17",
     "title": "第一代站收尾：域名搬到新站",
-    "summary": "CNAME 从旧站删掉，博客整体搬去 yenchiu.com，这里从此是存档。",
+    "summary": "CNAME 从旧站删掉，博客整体搬去 yenchiu.com。",
     "items": [
       {
         "change": "changed",
@@ -463,60 +1140,209 @@
   {
     "gen": 1,
     "site": "main",
-    "date": "2024-11-22",
-    "title": "旧站降级为存档",
-    "summary": "README 写明已弃用，顺手把 Jekyll 的构建流程修到能跑。",
+    "date": "2023-09-19",
+    "title": "三体语文章更新",
+    "summary": "《三体语首个版本发布》补了内容与排版。",
     "items": [
       {
         "change": "changed",
         "area": "docs",
         "scope": "主站",
-        "title": "README 写明弃用",
-        "note": "标题、链接和图片描述一起修，读者一眼知道这里已归档。"
-      },
-      {
-        "change": "added",
-        "area": "infra",
-        "scope": "主站",
-        "title": "补上 Jekyll 构建工作流",
-        "note": "jekyll.yml 与 jekyll-gh-pages.yml 合成一版，Ruby 升到 3.3。"
-      },
-      {
-        "change": "changed",
-        "area": "infra",
-        "scope": "主站",
-        "title": "Gemfile 换源并加平台",
-        "note": "Gemfile 走国内镜像，锁文件补 x86_64-linux。"
+        "title": "更新《三体语首个版本发布》",
+        "note": "那半年里唯一一次正式的文章改动。"
       }
     ]
   },
   {
     "gen": 1,
     "site": "main",
-    "date": "2026-11-19",
-    "title": "存档站补维护",
-    "summary": "一条 Dependabot 告警引来的一轮清理，顺带修了子路径部署的链接。",
+    "date": "2023-08-10",
+    "title": "试发一篇记录",
+    "summary": "一次「测试」提交，改了《记录》那篇。",
     "items": [
       {
-        "change": "security",
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "测试《记录》的发布",
+        "note": "内容是短文，提交信息也只写了「测试」。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-05-21",
+    "title": "补一张配图",
+    "summary": "理论微课那篇加了一张维纳斯雕像的图。",
+    "items": [
+      {
+        "change": "added",
+        "area": "style",
+        "scope": "主站",
+        "title": "img-post/维纳斯.png",
+        "note": "文章内的插图补上。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-05-09",
+    "title": "CNAME 增删七次",
+    "summary": "域名反复试，一天里建了删、删了建。",
+    "items": [
+      {
+        "change": "changed",
         "area": "infra",
         "scope": "主站",
-        "title": "清掉依赖告警",
-        "note": "grunt 升到 ^1.6.3 并提交 lockfile，RubyGems 侧升 addressable 与 concurrent-ruby。"
+        "title": "CNAME 反复增删",
+        "note": "最终没定下来，10 月才迁到新站。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-05-01",
+    "title": "换背景、加目录",
+    "summary": "三张背景图进仓库，文章页加了目录。",
+    "items": [
+      {
+        "change": "added",
+        "area": "style",
+        "scope": "主站",
+        "title": "新的正文背景图",
+        "note": "cropped-remote-connections、post-bg-desk、post-bg-desk2。"
       },
       {
-        "change": "fixed",
-        "area": "infra",
+        "change": "added",
+        "area": "feature",
         "scope": "主站",
-        "title": "修子路径部署的绝对链接",
-        "note": "站点挂到 /blog-v1/ 之后，canonical 与站内链接才指对地方。"
+        "title": "文章页目录",
+        "note": "长文可以按小标题跳。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-04-23",
+    "title": "两篇文章重排",
+    "summary": "《记录中国》与《理论微课》改了格式与内容。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "改格式、补内容",
+        "note": "同一天来回改了八次。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-04-09",
+    "title": "补上理论微课的视频",
+    "summary": "多人视频入库，同时删掉一个多余的图片文件。",
+    "items": [
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "多人合作-理论微课.mp4",
+        "note": "视频直接托管在仓库里，后来才搬到别处。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-04-06",
+    "title": "清模板文章，换背景图",
+    "summary": "一天十九次提交：删旧文、换 logo、补背景。",
+    "items": [
+      {
+        "change": "removed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "删掉国际语旧文",
+        "note": "《背单词是个老大难问题》《三体语简介》等离开列表。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "换 logo 与正文背景",
+        "note": "post-bg-rwd、post-bg-desk 与 img/logo.png 更新。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-04-05",
+    "title": "改名与补文章",
+    "summary": "把几篇国际语文章从 _posts 移走，另起《理论微课》。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "文章改名与挪位",
+        "note": "2018/2019 那批国际语文章的文件名被改，两篇移出 _posts。"
       },
       {
         "change": "added",
         "area": "docs",
         "scope": "主站",
-        "title": "README 加 Star History 图表",
-        "note": "三个仓库的 README 统一补上。"
+        "title": "新增《理论微课》",
+        "note": "同一天先建、再改名，配了 img/山.jpg。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "site": "main",
+    "date": "2023-03-12",
+    "title": "接手站点：站名、首页与关于页全换",
+    "summary": "一天 48 次提交，把模板留着的「三叶草国际语」彻底换成自己的站。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "站名与 SEO 标题换成自己的",
+        "note": "98b270b 只动一个文件（+5/−5）：title 与 SEOTitle 从「三叶草国际语」改成 Wendell's bolg。"
+      },
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "_config.yml 改了十几次",
+        "note": "社交账号、QQ、地址与图标逐项调，最后才定下来。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "首页与关于页重做",
+        "note": "index.html、3-about.html 与 about-HJ.jpg 一起改。"
+      },
+      {
+        "change": "removed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "删掉模板遗留文章",
+        "note": "2019-11-12-renamed.md 被删，两篇国际语文章移出 _posts。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "补了《孙子兵法》《论语》的 PDF",
+        "note": "资源页多了两份经典文本。"
       }
     ]
   }
