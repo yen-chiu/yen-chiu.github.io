@@ -322,6 +322,7 @@ const entries = [
   .landing-track {
     overflow-anchor: none;
     display: block;
+    height: 100vh; /* Chrome 99: fallback before small viewport units. */
     height: 100svh;
     position: relative;
     width: var(--viewport-width, 100%);
@@ -330,6 +331,7 @@ const entries = [
   .home-cover {
     position: sticky;
     top: 0;
+    height: 100vh; /* Chrome 99: fallback before small viewport units. */
     height: 100svh;
     min-height: 230px;
     isolation: isolate;
@@ -521,6 +523,7 @@ const entries = [
     padding: 3rem 0 1.5rem;
     max-width: 64rem;
     margin: auto;
+    scroll-margin-top: calc(min(42vh, 340px) + 1rem);
     scroll-margin-top: calc(min(42svh, 340px) + 1rem);
   }
   .home-doorway header {
