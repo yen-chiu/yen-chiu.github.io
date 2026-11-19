@@ -1,4 +1,9 @@
 ---
-import PageLayout from '@/layouts/CommonPage.astro'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import ContentPageHero from '@/components/pages/ContentPageHero.astro'
+import {sitePath} from '@/utils/site-path'
 ---
-<PageLayout title="学术日志"><a href="/journal/2026-01-multimodal-vision/">多模态视觉的机制、边界与前沿：从图像表示到统一 token 空间的综述</a></PageLayout>
+<PageLayout meta={{title:'余白 · Margin',description:'个人自出版中文期刊，关注机器如何看。'}}>
+<main class='journal-index'><ContentPageHero title='余白 · Margin' eyebrow='VOL. 1 · NO. 1 · 2026' description='一份关于「机器如何看」的个人自出版中文期刊。'/><section><h2>多模态视觉的机制、边界与前沿</h2><p>从图像表示到统一 token 空间的综述。</p><div><a href={sitePath('/journal/2026-01-multimodal-vision/')}>阅读全文 ↗</a><a href={sitePath('/journal/2026-01-multimodal-vision/paper.pdf')}>下载 PDF ↗</a></div></section><p>开放获取 · CC BY 4.0 · 暂无 ISSN · 未实行外部同行评审</p><a href={sitePath('/docs')}>← 返回文档与期刊</a></main>
+</PageLayout>
+<style>.journal-index{max-width:60rem;margin:auto;}section{padding:1.5rem;margin:2rem 0;border:1px solid hsl(var(--border));border-radius:1rem;}h2{font-size:1.3rem;font-weight:600;}p{line-height:1.8;margin:1rem 0;color:hsl(var(--muted-foreground));}section div{display:flex;flex-wrap:wrap;gap:1rem;}a{color:hsl(var(--primary));}</style>

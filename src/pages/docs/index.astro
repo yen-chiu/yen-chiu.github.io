@@ -2,20 +2,17 @@
 import {getCollection} from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import ContentPageHero from '@/components/pages/ContentPageHero.astro'
-import DocsContents from './DocsContents.astro'
-const docs=await getCollection('docs')
-const resources=[
- {title:'Folio',description:'建站笔记、工具备忘与长期维护的文档主库。',href:'https://yenchiu.com/folio/',mark:'▤'},
- {title:'Astro 迁移记录',description:'迁移过程、备份、交互验收与待处理问题。',href:'https://yenchiu.com/folio/building/astro-migration/',mark:'↗'}
-]
+import {sitePath} from '@/utils/site-path'
+const docs=(await getCollection('docs')).filter(doc=>!doc.data.draft).sort((a,b)=>a.data.order-b.data.order)
 ---
-<PageLayout meta={{title:'文档',description:'Wendell 的建站笔记、工具备忘和网站维护记录。'}}>
+<PageLayout meta={{title:'文档与期刊',description:'精选文档、《余白》期刊与 Folio 知识库。'}}>
  <main class='docs-index'>
-  <ContentPageHero title='文档' eyebrow='NOTES & MANUALS' description='把做过的事、踩过的坑，整理成下次能找到的笔记。'/>
-  <section class='docs-resources' aria-label='文档入口'>{resources.map(item=><a href={item.href} target='_blank' rel='noopener noreferrer'><span class='resource-mark' aria-hidden='true'>{item.mark}</span><div><h2>{item.title}</h2><p>{item.description}</p></div><span class='arrow' aria-hidden='true'>↗</span></a>)}</section>
-  {docs.length>0?<section class='local-docs'><h2>站内文档</h2><DocsContents layout='list'/></section>:<p class='docs-note'>站内文档正在整理，完整笔记可先从文档库查看。</p>}
+  <ContentPageHero title='文档与期刊' eyebrow='DOCUMENTS & JOURNAL' description='在这里展示值得细读的内容，把完整的方法与维护记录留在 Folio。'/>
+  <section><h2>精选文档</h2><div class='cards'>{docs.map(doc=><a href={sitePath('/docs/'+doc.id)}><small>精选文档</small><h3>{doc.data.title}</h3><p>{doc.data.description}</p><span>阅读文档 ↗</span></a>)}</div></section>
+  <section><h2>《余白》Margin</h2><p>关注多模态模型、视觉表征与语言模型接口的个人自出版中文期刊。开放获取，尚无 ISSN，未实行外部同行评审。</p><div class='cards'><a href={sitePath('/journal/')}><small>2026 · 第 1 卷 第 1 期</small><h3>机器如何看</h3><p>多模态视觉的机制、边界与前沿：从图像表示到统一 token 空间的综述。</p><span>浏览期刊 ↗</span></a></div></section>
+  <section><h2>完整文档库</h2><div class='cards'><a href='https://yenchiu.com/folio/' target='_blank' rel='noopener noreferrer'><small>FOLIO</small><h3>经验与方法的长期存档</h3><p>博客指南、建站笔记、工具备忘，以及兼容性补丁与维护记录。</p><span>打开 Folio ↗</span></a><a href='https://yenchiu.com/folio/building/chrome99-compatibility/' target='_blank' rel='noopener noreferrer'><small>维护报告</small><h3>Chrome 99 兼容性补丁</h3><p>逐项记录修复原因、修改位置、验证限制与未来移除方法。</p><span>查看报告 ↗</span></a></div></section>
  </main>
 </PageLayout>
 <style>
-.docs-index{max-width:64rem;margin:1rem auto 3rem;}.docs-resources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;}.docs-resources a{display:flex;align-items:center;gap:1rem;min-width:0;padding:1.25rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.9);}.resource-mark{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:.75rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);font-size:1.4rem;}h2{font-size:1rem;font-weight:600;margin:0;}.docs-resources p{font-size:.78rem;line-height:1.8;color:hsl(var(--muted-foreground));margin:.4rem 0 0;}.arrow{margin-left:auto;color:hsl(var(--primary));}.docs-resources a:hover{border-color:hsl(var(--primary)/.4);}.docs-resources a:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px;}.local-docs{margin-top:2rem;}.docs-note{font-size:.75rem;line-height:1.8;color:hsl(var(--muted-foreground));margin-top:1.25rem;}@media(max-width:640px){.docs-resources{grid-template-columns:1fr;gap:.65rem;}.docs-resources a{padding:1rem;gap:.75rem;}h2{font-size:.9rem;}.docs-resources p{font-size:.74rem;}}
+.docs-index{max-width:64rem;margin:1rem auto 3rem;}section{margin-top:2rem;}h2{font-size:1.2rem;font-weight:650;margin-bottom:1rem;}section>p{color:hsl(var(--muted-foreground));line-height:1.8;font-size:.85rem;}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:1rem;}.cards a{display:block;padding:1.4rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.9);}.cards h3{font-size:1rem;margin:.6rem 0;font-weight:600;}.cards p{font-size:.83rem;color:hsl(var(--muted-foreground));line-height:1.8;margin-bottom:1rem;}.cards small,.cards span{font-size:.75rem;color:hsl(var(--primary));}.cards a:hover{border-color:hsl(var(--primary));}.cards a:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px;}
 </style>

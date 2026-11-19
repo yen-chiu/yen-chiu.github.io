@@ -18,7 +18,7 @@ const groups=[
   ]},
   {title:'探索',icon:'earth',items:[
     {title:'知识图谱',icon:'earth',action:'graph'},{title:'文件管理器',icon:'package',action:'folders'},
-    {title:'标签云',icon:'hashtag',action:'tags'},{title:'文档',icon:'document',href:'https://yenchiu.com/folio/'},
+    {title:'标签云',icon:'hashtag',action:'tags'},{title:'文档',icon:'document',href:'/docs'},
     {title:'链接',icon:'link',href:'/links'},{title:'项目',icon:'bulb',href:'/projects'}
   ]},
   {title:'念真',icon:'moon',items:[
@@ -62,7 +62,11 @@ const groups=[
     </nav>
   </div>
   <div class='header-tools'>
-    <a class='mobile-reading' href={sitePath('/blog')}>博客 <span aria-hidden='true'>↗</span></a>
+    <a class='mobile-reading' href={sitePath('/blog')}><svg class='cat-writing' viewBox='0 0 32 32' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+          <path d='M17 26H12C6 26 3 22 3 17c0-3 1-5 3-7L7 3l6 5h6l6-5 1 8'/>
+          <path d='M9 16q2-3 4 0m4 0q2-3 4 0M7 20l2 .5m5 .5 1 1 1-1'/>
+          <g class='cat-pen'><path d='m18 27 2-7L27 13a2.1 2.1 0 0 1 3 3l-7 7-5 4Zm2-7 3 3m-5 4 4-5'/></g>
+        </svg><span>博客</span></a>
     <Search />
     <button type='button' id='toggleAppearance' aria-label='外观设置' aria-expanded='false' aria-controls='appearance-panel'>
       <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' aria-hidden='true'><path d='M12 3a9 9 0 1 0 0 18h1a2.5 2.5 0 0 0 1.8-4.2c-.8-.8-.2-2.1.9-2.1H18a3 3 0 0 0 3-3C21 6.8 17 3 12 3Z'/><circle cx='7.5' cy='11' r='.8'/><circle cx='10' cy='7' r='.8'/><circle cx='15' cy='7.5' r='.8'/></svg>
@@ -159,7 +163,7 @@ const groups=[
   .nav-reading:is(:hover,:focus-visible){color:hsl(var(--primary));}
   .nav-reading:is(:hover,:focus-visible) .ink-sparkle{opacity:1;transform:scale(1);}
   .nav-reading:is(:hover,:focus-visible) .cat-pen{transform:rotate(-8deg);}
-  .mobile-reading{color:hsl(var(--primary));}
+  .mobile-reading{color:hsl(var(--primary));}.mobile-reading .cat-writing{width:24px;height:24px;flex-shrink:0;overflow:visible;}
   @media(prefers-reduced-motion:reduce){.nav-reading,.cat-pen,.ink-sparkle{transition:none;}.nav-reading:is(:hover,:focus-visible) .cat-pen{transform:none;}}
   .nav-reading:hover,.nav-reading[aria-current=page],.mobile-reading{background:hsl(var(--primary)/.1);}
   .mobile-reading{align-items:center;gap:.35rem;min-height:44px;padding:.45rem .8rem;border-radius:.7rem;font-size:.85rem;font-weight:600;white-space:nowrap;}
