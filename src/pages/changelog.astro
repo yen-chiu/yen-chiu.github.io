@@ -91,7 +91,10 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     <section class='changelog-list' aria-labelledby='changelog-list-title'>
       <header class='list-head'>
         <h2 id='changelog-list-title'>全部版本</h2>
-        <span>{versionCount} 个版本 · {total} 项</span>
+        <div class='list-tools'>
+          <span>{versionCount} 个版本 · {total} 项</span>
+          <button type='button' class='bulk-toggle' data-toggle='all'>一键展开</button>
+        </div>
       </header>
       <div class='groups'>
         {groups.filter(group => group.entries.length > 0).map(group => <details class='gen-group' open={group.gen === 3}>
@@ -99,16 +102,18 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
             <span class='gen-mark'>G{group.gen}</span>
             <span class='group-name'>{group.name}</span>
             <span class='group-meta'>{group.from?.slice(0, 4)}–{group.to?.slice(0, 4)} · {group.versions.length} 个版本 · {group.siteCount} 个站点</span>
+            <button type='button' class='bulk-toggle group-toggle' data-toggle='group'>展开全部</button>
             <span class='group-plus' aria-hidden='true'>＋</span>
           </summary>
-          {group.versions.map(version => <section class='version-block'>
-            <header class='version-head'>
+          {group.versions.map(version => <details class='version-block'>
+            <summary class='version-head'>
               <span class='version-chip'>{version.version}</span>
               <span class='version-date'>{version.date}</span>
               <span class='version-count'>{version.entries.length > 1 ? `${version.entries.length} 个站点 · ` : ''}{version.items} 项</span>
-            </header>
+              <span class='version-plus' aria-hidden='true'>＋</span>
+            </summary>
             <UpdateList entries={version.entries} showSite showVersion={false} showDate={false} />
-          </section>)}
+          </details>)}
         </details>)}
       </div>
     </section>
@@ -117,13 +122,13 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 </PageLayout>
 
 <style>
-  .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;}
+  .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;overflow-wrap:anywhere;}
   .changelog-list {margin-top:2.5rem;}
   .changelog-list.unreleased {margin-top:1.5rem;}
   .changelog-list.unreleased .list-head h2 {color:hsl(var(--primary));}
   .gens {margin-top:2.5rem;}
   .gen-list {list-style:none;padding:0;margin:0;}
-  .gen-list li {display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.9rem;align-items:baseline;padding:.85rem 0;border-bottom:1px solid hsl(var(--border)/.6);}
+  .gen-list li {display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.9rem;align-items:baseline;padding:.85rem 0;border-bottom:1px solid hsl(var(--border)/.6);min-width:0;}
   .gen-list li:last-child {border-bottom:0;}
   .gen-mark {font-size:.68rem;font-variant-numeric:tabular-nums;color:hsl(var(--primary));border:1px solid hsl(var(--primary)/.35);border-radius:.3rem;padding:.1rem .3rem;text-align:center;}
   .gen-name {font-size:.86rem;font-weight:600;}
@@ -133,23 +138,80 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .list-head {display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid hsl(var(--border));}
   .list-head h2 {font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:650;letter-spacing:-.02em;}
   .list-head span {font-size:.75rem;color:hsl(var(--muted-foreground));}
+  .list-tools {display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end;}
+  .bulk-toggle {font-size:.7rem;color:hsl(var(--muted-foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.2rem .5rem;background:none;cursor:pointer;line-height:1.6;}
+  .bulk-toggle:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
   .groups {margin-top:.5rem;}
   .gen-group {border-bottom:1px solid hsl(var(--border));}
   .gen-group:last-of-type {border-bottom:0;}
   .gen-group > summary {display:flex;align-items:center;gap:.6rem;padding:1rem 0;cursor:pointer;list-style:none;}
   .gen-group > summary::-webkit-details-marker {display:none;}
+  .group-toggle {margin-left:auto;}
   .group-name {font-size:.92rem;font-weight:600;}
   .group-meta {font-size:.7rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
-  .group-plus {margin-left:auto;font-size:.8rem;color:hsl(var(--muted-foreground));transition:transform .2s ease;}
+  .group-plus {font-size:.8rem;color:hsl(var(--muted-foreground));transition:transform .2s ease;}
   .gen-group[open] .group-plus {transform:rotate(45deg);}
-  .version-block {padding:.25rem 0 .5rem;border-bottom:1px solid hsl(var(--border)/.6);}
+  .version-block {border-bottom:1px solid hsl(var(--border)/.6);}
   .version-block:last-child {border-bottom:0;}
-  .version-head {display:flex;align-items:baseline;gap:.6rem;padding:.75rem 0 .25rem;font-size:.7rem;color:hsl(var(--muted-foreground));}
+  .version-head {display:flex;align-items:baseline;gap:.6rem;padding:.75rem 0;font-size:.7rem;color:hsl(var(--muted-foreground));cursor:pointer;list-style:none;}
+  .version-head::-webkit-details-marker {display:none;}
+  .version-block[open] > .version-head {padding-bottom:.35rem;}
+  .version-plus {font-size:.72rem;color:hsl(var(--muted-foreground)/.8);transition:transform .2s ease;}
+  .version-block[open] .version-plus {transform:rotate(45deg);}
   .version-chip {font-variant-numeric:tabular-nums;font-size:.7rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
   .version-date {font-variant-numeric:tabular-nums;}
   .version-count {margin-left:auto;font-variant-numeric:tabular-nums;}
+  .version-block > .updates {padding-left:0;}
   .changelog-foot {font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.9;margin-top:1.5rem;}
   .changelog-foot a {color:hsl(var(--primary));text-underline-offset:.25em;}
   .changelog-foot a:hover {text-decoration:underline;}
-  @media(max-width:640px) {.changelog-page {margin-top:1rem;} .group-meta {display:none;}}
+  @media(max-width:640px) {
+    .changelog-page {margin-top:1rem;}
+    .group-meta {display:none;}
+    .group-toggle {font-size:.66rem;padding:.15rem .4rem;}
+    .list-head {flex-wrap:wrap;row-gap:.5rem;}
+    .gen-list li {grid-template-columns:2rem minmax(0,1fr);row-gap:.35rem;}
+    .gen-meta {grid-column:2;flex-direction:row;gap:.6rem;justify-content:flex-start;align-items:baseline;white-space:normal;}
+  }
 </style>
+
+<script>
+  const label = (element: HTMLElement, expand: boolean) => {
+    element.textContent = expand ? '一键收起' : '一键展开'
+  }
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const button = (event.target as HTMLElement | null)?.closest?.('button[data-toggle]') as HTMLElement | null
+      if (!button) return
+      // 按钮长在 <summary> 里，阻止它顺手把上一级折叠切换掉。
+      event.preventDefault()
+      event.stopPropagation()
+
+      if (button.dataset.toggle === 'all') {
+        const groups = [...document.querySelectorAll<HTMLDetailsElement>('details.gen-group')]
+        const shouldOpen = groups.some(group => !group.open)
+        groups.forEach((group) => {
+          group.open = shouldOpen
+          group.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => {
+            version.open = shouldOpen
+          })
+          const groupButton = group.querySelector<HTMLElement>('button[data-toggle="group"]')
+          if (groupButton) groupButton.textContent = shouldOpen ? '收起全部' : '展开全部'
+        })
+        label(button, shouldOpen)
+        return
+      }
+
+      const group = button.closest('details.gen-group') as HTMLDetailsElement | null
+      if (!group) return
+      const versions = [...group.querySelectorAll<HTMLDetailsElement>('details.version-block')]
+      const shouldOpen = !group.open || versions.some(version => !version.open)
+      if (shouldOpen) group.open = true
+      versions.forEach((version) => { version.open = shouldOpen })
+      button.textContent = shouldOpen ? '收起全部' : '展开全部'
+    },
+    true,
+  )
+</script>

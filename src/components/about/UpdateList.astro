@@ -21,8 +21,8 @@ interface Entry {
   items: Item[]
   commit?: string
 }
-interface Props { entries: Entry[]; showSite?: boolean; showVersion?: boolean; showDate?: boolean }
-const { entries, showSite = false, showVersion = true, showDate = showVersion } = Astro.props
+interface Props { entries: Entry[]; showSite?: boolean; showVersion?: boolean; showDate?: boolean; clamp?: boolean; maxItems?: number }
+const { entries, showSite = false, showVersion = true, showDate = showVersion, clamp = false, maxItems = 3 } = Astro.props
 const siteLabel = (id?: string) => sites.find(site => site.id === id)?.label ?? ''
 const changes: Record<string, string> = {
   added: '新增', changed: '调整', fixed: '修复', improved: '优化',
@@ -56,7 +56,7 @@ const linkTo = (url: string) => {
       </div>
       <h3>{entry.title}</h3>
       {entry.summary && <p class='summary'>{entry.summary}</p>}
-      <ul class='update-items'>
+      <ul class:list={['update-items', clamp && entry.items.length > maxItems && 'is-clamped']} data-max={maxItems}>
         {entry.items.map(item => <li class='update-item' title={item.note ?? item.title}>
           <div class='item-line'>
             {item.change && <span class:list={['flag', `f-${item.change}`]}>{changes[item.change] ?? '更新'}</span>}
@@ -68,14 +68,17 @@ const linkTo = (url: string) => {
           {item.note && <p class='item-note'>{item.note}</p>}
         </li>)}
       </ul>
+      {clamp && entry.items.length > maxItems && <button type='button' class='more-toggle' data-more aria-expanded='false'>
+        还有 {entry.items.length - maxItems} 项，展开看
+      </button>}
       {entry.commit && <code>{entry.commit}</code>}
     </div>
   </li>)}
 </ol>
 <style>
-  /* 每条固定行高，超过 3 条就在框内滚动，避免一天内容多时把页面撑长 */
-  .updates {--row-h:3.8rem;list-style:none;padding:0;margin:0;}
-  .entry {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));}
+  /* 不再限制行高与框内滚动：版本本身可折叠，展开时按内容自然撑开 */
+  .updates {list-style:none;padding:0;margin:0;}
+  .entry {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));min-width:0;}
   .entry.no-date {grid-template-columns:minmax(0,1fr);padding-top:.6rem;}
   .entry.no-date .entry-side {display:none;}
   .entry:last-child {border-bottom:0;}
@@ -91,13 +94,12 @@ const linkTo = (url: string) => {
   .summary {font-size:.8rem;color:hsl(var(--muted-foreground));line-height:1.7;margin:.2rem 0 0;}
   .update-items {
     list-style:none;margin:.7rem 0 0;padding:0;
-    max-height:calc(var(--row-h) * 3);overflow-y:auto;overscroll-behavior:contain;
     border-top:1px solid hsl(var(--border));
-    scrollbar-width:thin;scrollbar-color:hsl(var(--border)) transparent;
   }
-  .update-items::-webkit-scrollbar {width:.4rem;}
-  .update-items::-webkit-scrollbar-thumb {background:hsl(var(--border));border-radius:1rem;}
-  .update-item {height:var(--row-h);padding:.5rem 0;border-bottom:1px solid hsl(var(--border)/.55);overflow:hidden;}
+  .update-item {padding:.5rem 0;border-bottom:1px solid hsl(var(--border)/.55);}
+  .update-items.is-clamped > .update-item:nth-child(n+4) {display:none;}
+  .more-toggle {margin-top:.6rem;font-size:.7rem;color:hsl(var(--primary));background:none;border:1px dashed hsl(var(--border));border-radius:.3rem;padding:.3rem .55rem;cursor:pointer;line-height:1.6;}
+  .more-toggle:hover {border-color:hsl(var(--primary)/.5);}
   .update-item:last-child {border-bottom:0;}
   .item-line {display:flex;align-items:center;gap:.4rem;min-width:0;}
   .flag {flex:0 0 auto;font-size:.62rem;border-radius:.3rem;padding:.1rem .32rem;background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
@@ -108,11 +110,11 @@ const linkTo = (url: string) => {
   .f-security {background:hsl(280 60% 50% / .15);color:hsl(280 55% 45%);}
   .f-planned {background:transparent;border:1px dashed hsl(var(--border));color:hsl(var(--muted-foreground));}
   .area {flex:0 0 auto;font-size:.62rem;color:hsl(var(--muted-foreground));}
-  .item-title {min-width:0;font-size:.82rem;font-weight:600;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .item-title {min-width:0;font-size:.82rem;font-weight:600;line-height:1.5;overflow-wrap:anywhere;}
   .item-scope {flex:0 0 auto;font-size:.62rem;color:hsl(var(--muted-foreground));}
   .item-link {flex:0 0 auto;font-size:.7rem;color:hsl(var(--primary));text-decoration:none;line-height:1;}
   .item-link:hover {text-decoration:underline;}
-  .item-note {font-size:.72rem;color:hsl(var(--muted-foreground));line-height:1.55;margin:.15rem 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .item-note {font-size:.72rem;color:hsl(var(--muted-foreground));line-height:1.65;margin:.15rem 0 0;overflow-wrap:anywhere;}
   a:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:3px;}
   code {font-size:.7rem;overflow-wrap:anywhere;}
   @media(max-width:600px) {
@@ -121,3 +123,16 @@ const linkTo = (url: string) => {
     .update-meta {margin-bottom:.25rem;}
   }
 </style>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement | null)?.closest?.('.more-toggle') as HTMLElement | null
+    if (!button) return
+    const list = button.previousElementSibling as HTMLElement | null
+    if (!list) return
+    const clamped = list.classList.toggle('is-clamped')
+    const max = Number(list.dataset.max ?? 3)
+    button.setAttribute('aria-expanded', String(!clamped))
+    button.textContent = clamped ? `还有 ${list.children.length - max} 项，展开看` : '收起'
+  })
+</script>
