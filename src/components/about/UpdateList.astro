@@ -3,16 +3,17 @@ import manifest from '../../../migration/content-manifest.json'
 import { sitePath } from '@/utils/site-path'
 
 interface Item {
-  kind?: string
+  change?: string
+  area?: string
   scope?: string
   title: string
   note?: string
   links?: { label: string; url: string }[]
 }
 interface Entry {
-  version?: string
+  status?: string
   gen?: number
-  date: string
+  date?: string
   title: string
   summary?: string
   items: Item[]
@@ -20,7 +21,12 @@ interface Entry {
 }
 interface Props { entries: Entry[] }
 const { entries } = Astro.props
-const kinds: Record<string, string> = { content: '内容', feature: '新功能', fix: '修复', style: '样式', infra: '基建', docs: '文档' }
+const changes: Record<string, string> = {
+  added: '新增', changed: '调整', fixed: '修复', improved: '优化',
+  removed: '移除', deprecated: '弃用', security: '安全', planned: '计划',
+}
+const areas: Record<string, string> = { feature: '功能', style: '样式', infra: '基建', docs: '文档' }
+const versionOf = (entry: Entry) => (entry.gen && entry.date ? `v${entry.gen}.${entry.date.replace(/-/g, '.')}` : '')
 const linkTo = (url: string) => {
   const original = new URL(url, 'https://yenchiu.com')
   const migrated = manifest.find(item => item.originalUrl === original.href.split(/[?#]/)[0])
@@ -32,16 +38,25 @@ const linkTo = (url: string) => {
 }
 ---
 <ol class='updates'>
-  {entries.map(entry => <li>
-    <time datetime={entry.date}>{entry.date}</time>
+  {entries.map(entry => <li class:list={['entry', entry.status === 'unreleased' && 'is-unreleased']}>
+    <div class='entry-side'>
+      {entry.status === 'unreleased'
+        ? <span class='when'>未发布</span>
+        : <time datetime={entry.date}>{entry.date}</time>}
+    </div>
     <div class='update-body'>
-      <div class='update-meta'>{entry.version && <span class='version'>v{entry.version}</span>}{entry.gen && <span class='gen'>第 {entry.gen} 代</span>}<span class='count'>{entry.items.length} 项</span></div>
+      <div class='update-meta'>
+        {versionOf(entry) && <span class='version'>{versionOf(entry)}</span>}
+        {entry.status === 'unreleased' && <span class='version pending'>在途改动</span>}
+        <span class='count'>{entry.items.length} 项</span>
+      </div>
       <h3>{entry.title}</h3>
       {entry.summary && <p class='summary'>{entry.summary}</p>}
       <ul class='update-items'>
         {entry.items.map(item => <li class='update-item' title={item.note ?? item.title}>
           <div class='item-line'>
-            {item.kind && <span class='kind'>{kinds[item.kind] ?? '更新'}</span>}
+            {item.change && <span class:list={['flag', `f-${item.change}`]}>{changes[item.change] ?? '更新'}</span>}
+            {item.area && <span class='area'>{areas[item.area] ?? item.area}</span>}
             <span class='item-title'>{item.title}</span>
             {item.scope && <span class='item-scope'>{item.scope}</span>}
             {item.links?.map(link => <a class='item-link' href={linkTo(link.url)} aria-label={link.label}>↗</a>)}
@@ -56,13 +71,15 @@ const linkTo = (url: string) => {
 <style>
   /* 每条固定行高，超过 3 条就在框内滚动，避免一天内容多时把页面撑长 */
   .updates {--row-h:3.8rem;list-style:none;padding:0;margin:0;}
-  li {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));}
-  li:last-child {border-bottom:0;}
-  time {font-size:.75rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;padding-top:.2rem;}
+  .entry {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));}
+  .entry:last-child {border-bottom:0;}
+  .entry.is-unreleased {border-bottom-style:dashed;}
+  time, .when {display:block;font-size:.75rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;padding-top:.2rem;}
+  .when {font-size:.7rem;letter-spacing:.04em;color:hsl(var(--primary));}
   .update-meta {display:flex;align-items:center;gap:.65rem;font-size:.67rem;color:hsl(var(--muted-foreground));margin-bottom:.45rem;}
   .version {font-variant-numeric:tabular-nums;font-size:.68rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
+  .version.pending {border-style:dashed;color:hsl(var(--muted-foreground));}
   .count {font-variant-numeric:tabular-nums;}
-  .gen {font-size:.62rem;letter-spacing:.02em;color:hsl(var(--muted-foreground));border-radius:.3rem;padding:.1rem .35rem;background:hsl(var(--muted-foreground)/.08);}
   h3 {font-size:.95rem;font-weight:600;line-height:1.7;margin:0;}
   .summary {font-size:.8rem;color:hsl(var(--muted-foreground));line-height:1.7;margin:.2rem 0 0;}
   .update-items {
@@ -75,8 +92,15 @@ const linkTo = (url: string) => {
   .update-items::-webkit-scrollbar-thumb {background:hsl(var(--border));border-radius:1rem;}
   .update-item {height:var(--row-h);padding:.5rem 0;border-bottom:1px solid hsl(var(--border)/.55);overflow:hidden;}
   .update-item:last-child {border-bottom:0;}
-  .item-line {display:flex;align-items:center;gap:.5rem;min-width:0;}
-  .kind {flex:0 0 auto;font-size:.62rem;border-radius:.3rem;padding:.1rem .35rem;color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
+  .item-line {display:flex;align-items:center;gap:.4rem;min-width:0;}
+  .flag {flex:0 0 auto;font-size:.62rem;border-radius:.3rem;padding:.1rem .32rem;background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
+  .f-fixed {background:hsl(38 90% 50% / .16);color:hsl(32 80% 40%);}
+  .f-improved {background:hsl(160 60% 45% / .16);color:hsl(165 70% 32%);}
+  .f-removed {background:hsl(0 70% 50% / .14);color:hsl(0 65% 45%);}
+  .f-deprecated {background:hsl(20 80% 50% / .14);color:hsl(22 75% 42%);}
+  .f-security {background:hsl(280 60% 50% / .15);color:hsl(280 55% 45%);}
+  .f-planned {background:transparent;border:1px dashed hsl(var(--border));color:hsl(var(--muted-foreground));}
+  .area {flex:0 0 auto;font-size:.62rem;color:hsl(var(--muted-foreground));}
   .item-title {min-width:0;font-size:.82rem;font-weight:600;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .item-scope {flex:0 0 auto;font-size:.62rem;color:hsl(var(--muted-foreground));}
   .item-link {flex:0 0 auto;font-size:.7rem;color:hsl(var(--primary));text-decoration:none;line-height:1;}
@@ -85,8 +109,8 @@ const linkTo = (url: string) => {
   a:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:3px;}
   code {font-size:.7rem;overflow-wrap:anywhere;}
   @media(max-width:600px) {
-    li {grid-template-columns:1fr;gap:.5rem;}
-    time {font-size:.7rem;}
+    .entry {grid-template-columns:1fr;gap:.5rem;}
+    time, .when {font-size:.7rem;}
     .update-meta {margin-bottom:.25rem;}
   }
 </style>

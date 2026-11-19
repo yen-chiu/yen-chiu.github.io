@@ -5,25 +5,25 @@
     "engine": "Jekyll · huxpro",
     "span": "2017-02 – 2019-09",
     "commits": 550,
-    "note": "第一代博客，现在是 /blog-v1/ 存档",
+    "note": "第一代博客，从第一行提交开始就是自己的仓库；现在是 /blog-v1/ 存档",
     "repo": "yen-chiu/blog-v1"
   },
   {
     "gen": 2,
     "name": "yenchiu.com",
     "engine": "Jekyll · Chirpy",
-    "span": "2019-09 – 2026-11",
-    "commits": 2099,
-    "note": "第二代，根站；发布标签从 v2.0 一路走到 v7.6.0",
+    "span": "2023-10 – 2026-11",
+    "commits": 660,
+    "note": "第二代，根站；仓库里留着模板作者 2019 年起的历史，自己的提交从 2023-10-17 开始",
     "repo": "yen-chiu/yen-chiu.github.io"
   },
   {
     "gen": 3,
     "name": "新站",
     "engine": "Astro · Iris",
-    "span": "2024-07 – 现在",
-    "commits": 862,
-    "note": "第三代，目前挂在 /yen-chiu-astro/ 预览，更新日志就从这里开始记",
+    "span": "2026-11 – 现在",
+    "commits": 56,
+    "note": "第三代，2026-11-17 把内容迁进自己的 Astro 站；目前挂在 /yen-chiu-astro/ 预览",
     "repo": "yen-chiu/yen-chiu-astro"
   }
 ]

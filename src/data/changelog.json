@@ -1,40 +1,129 @@
 [
   {
-    "version": "2026.11.19",
+    "status": "unreleased",
     "gen": 3,
-    "date": "2026-11-19",
-    "title": "更新日志独立成页，版本号定下规则",
-    "summary": "关于页只留最近三条，完整记录搬到 /changelog/；顺手把版本号与真实提交日期对齐，并写下命名规范。",
+    "title": "准备切根站",
+    "summary": "预览验收通过后再切域名，切换当天记进正式版本。",
     "items": [
       {
-        "kind": "feature",
+        "change": "planned",
+        "area": "infra",
         "scope": "主站",
-        "title": "更新日志独立成页",
-        "note": "关于页只留最近三个版本，完整记录搬到 /changelog/，导航改指新页；早先误收进日志的文章条目摘掉，文章本身保留。"
-      },
-      {
-        "kind": "docs",
-        "scope": "主站",
-        "title": "版本号与日期对齐，补上命名规范",
-        "note": "每条日期回到仓库里能查到的提交时间；新增《更新日志与版本号规则》文档，写明记什么、怎么编号、日期从哪来。"
+        "title": "根站从 Jekyll 切到 Astro",
+        "note": "切换前先跑通三件事：路径与旧链接、搜索降级、讨论区标识；旧站留只读归档。"
       }
     ]
   },
   {
-    "version": "2026.11.04",
+    "gen": 3,
+    "date": "2026-11-19",
+    "title": "更新日志独立成页，版本号定为「代次.日期」",
+    "summary": "关于页只留最近三条，完整记录搬到 /changelog/；按代次收拢、按改动方式分类，并留了未发布的位置。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站",
+        "title": "更新日志独立成页",
+        "note": "关于页只留最近三个版本，完整记录搬到 /changelog/，导航改指新页。"
+      },
+      {
+        "change": "changed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "记录按代次收拢",
+        "note": "第 1、2、3 代各自一个可展开的分组，不用在一条时间线里翻二十年。"
+      },
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站",
+        "title": "增加改动方式与未发布板块",
+        "note": "每条标出新增 / 调整 / 修复 / 优化 / 移除 / 弃用 / 安全；没上线的先记在「在途改动」。"
+      },
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "版本号改为 v3.2026.11.19",
+        "note": "代次加日期，不再用语义化大版本；旧的 v2.0–v7.6.0 原样留在 G2 仓库。"
+      }
+    ]
+  },
+  {
+    "gen": 3,
+    "date": "2026-11-18",
+    "title": "新站界面收尾",
+    "summary": "导航、移动端浮层、项目展示与阅读页在一夜之间反复调。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站",
+        "title": "项目页与 Lifeline 展示",
+        "note": "博客卡片按钮对齐，首页封面与正文背景分开，项目用统一的封面样式。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "玻璃导航与外观控件",
+        "note": "移动端浮层重做，导航改成玻璃质感，外观设置常驻。"
+      },
+      {
+        "change": "changed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "阅读导航重排",
+        "note": "简化阅读页导航，按主题整理精选文章，搜索在手机上收得更紧。"
+      }
+    ]
+  },
+  {
+    "gen": 3,
+    "date": "2026-11-17",
+    "title": "从 Jekyll 迁到 Astro",
+    "summary": "把文章、设定页和评论一起搬进独立的 Astro 站点，先发在预览路径上。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "内容迁入 Astro staging 站",
+        "note": "文章、关于页与设定素材整体迁移，线上地址暂时不动。"
+      },
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "用 GitHub Pages workflow 发布预览",
+        "note": "路径与静态资源都按子路径加固，搜索有降级方案。"
+      },
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "修预览路径与原链接",
+        "note": "文章原始地址、讨论区标识和 staging 的 SEO 一起对齐。"
+      }
+    ]
+  },
+  {
     "gen": 2,
     "date": "2026-11-04",
     "title": "子站三模块，媒体搬到 R2",
     "summary": "PDF 与站点快照迁到 Cloudflare R2，聊天子站补上三个模块与深色主题。",
     "items": [
       {
-        "kind": "infra",
+        "change": "changed",
+        "area": "infra",
         "scope": "主站",
         "title": "2.2MB 的 PDF 也搬到 R2",
         "note": "仓库里不再存这个文件，地址走 media.yenchiu.com。"
       },
       {
-        "kind": "infra",
+        "change": "added",
+        "area": "infra",
         "scope": "主站",
         "title": "发布站点快照 2026-11-04",
         "note": "写作台登录、提示轮播与图片缓存修复随此版本上线。",
@@ -43,58 +132,65 @@
         ]
       },
       {
-        "kind": "feature",
+        "change": "added",
+        "area": "feature",
         "scope": "子站",
         "title": "聊天子站：三个模块与深色主题",
-        "note": "对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页，抽屉统一入口；配色可切浅色 / 深色 / 跟随系统。"
+        "note": "对话游戏《凌晨两点十七分》、自带 Key 的 AI 页、致谢页，配色可切浅色 / 深色 / 跟随系统。"
       }
     ]
   },
   {
-    "version": "2026.11.03",
     "gen": 2,
     "date": "2026-11-03",
     "title": "站点重做：写作台、索引页与侧边栏",
     "summary": "从早上八点的设备码登录，到夜里十一点的侧边栏收尾，一天里改了 13 处。",
     "items": [
       {
-        "kind": "feature",
+        "change": "added",
+        "area": "feature",
         "scope": "写作台",
         "title": "写作台支持「点一下」GitHub 登录",
         "note": "设备码走 Worker 代理，不用再手动建令牌。"
       },
       {
-        "kind": "infra",
+        "change": "improved",
+        "area": "infra",
         "scope": "主站",
         "title": "站点瘦身 390MB → 179MB",
         "note": "清掉 145MB 无用素材，配图从 167MB 压到 3.5MB。"
       },
       {
-        "kind": "fix",
+        "change": "security",
+        "area": "feature",
         "scope": "主站",
         "title": "修掉写作台预览的 XSS 绕过",
         "note": "一条带控制字符的链接，能把本地令牌读走。"
       },
       {
-        "kind": "infra",
+        "change": "changed",
+        "area": "infra",
         "scope": "主站",
         "title": "72MB 视频迁到 Cloudflare R2",
         "note": "仓库轻了 72MB，拖动播放已验证。"
       },
       {
-        "kind": "feature",
+        "change": "improved",
+        "area": "feature",
         "scope": "写作台",
         "title": "写作台可用性改造",
         "note": "手机端新建抽屉补关闭键与遮罩、日期换成原生控件、保存前先查一遍格式。"
       },
       {
-        "kind": "infra",
+        "change": "changed",
+        "area": "infra",
         "scope": "子站",
         "title": "子站换了落脚点",
-        "note": "「来聊聊吧」重新发布到 /chat/，顺手把 2.4MB 的照片压到 90K；Manual 站旧域名失效，改挂 /WendellManual/。"
+        "note": "「来聊聊吧」重新发布到 /chat/，2.4MB 的照片压到 90K；Manual 站改挂 /WendellManual/。"
       },
       {
-        "kind": "feature",
+        "change": "added",
+        "area": "feature",
         "scope": "主站",
         "title": "页脚加了「刷新缓存」",
         "note": "不用再去设置里删网站数据，点一下就好。",
@@ -103,7 +199,8 @@
         ]
       },
       {
-        "kind": "feature",
+        "change": "changed",
+        "area": "feature",
         "scope": "主站",
         "title": "关于页重做，更新日志搬了进来",
         "note": "首屏、便当盒与时间线，滚动入场在「减少动态效果」下自动停下；随后收紧成紧凑双栏。",
@@ -112,34 +209,185 @@
         ]
       },
       {
-        "kind": "feature",
+        "change": "changed",
+        "area": "feature",
         "scope": "主站",
         "title": "分类、标签、档案页重做",
-        "note": "档案改为滚动浮现，标签云显示关联，分类只统计顶层数量，主题补「跟随系统」三态。"
+        "note": "档案改为滚动浮现，标签云显示关联，分类只统计顶层数量。"
       },
       {
-        "kind": "style",
+        "change": "changed",
+        "area": "style",
         "scope": "主站",
         "title": "首页、子域与侧边栏重新排版",
         "note": "首页加 Now 卡片、去掉重复入口，主题菜单改成弹出圆钮，侧边栏补状态行。"
       },
       {
-        "kind": "feature",
+        "change": "added",
+        "area": "feature",
         "scope": "主站",
         "title": "标签页增加 SVG 关系图与 PMI 预计算",
-        "note": "词云 / 关系图可切换，边权来自站内共现；切换按钮改成下划线标签页，并给 CSS / JS 加版本号避免旧缓存。"
+        "note": "词云 / 关系图可切换，边权来自站内共现；给 CSS / JS 加版本号避免旧缓存。"
       },
       {
-        "kind": "style",
+        "change": "changed",
+        "area": "style",
         "scope": "主站",
         "title": "侧边栏与主题细节收尾",
-        "note": "标题 hover 故障特效、词云按热度放大、恢复头像月牙渐变环，修掉主题按钮图标被挤成 0.8px 与缩放抖动。"
+        "note": "标题 hover 故障特效、词云按热度放大、恢复头像月牙渐变环，修掉按钮图标被挤成 0.8px。"
       },
       {
-        "kind": "feature",
+        "change": "added",
+        "area": "feature",
         "scope": "写作台",
         "title": "接入 GitHub App 设备码",
         "note": "先显示验证码再跳授权页，夜里十一点半补上的最后一块。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "date": "2026-04-09",
+    "title": "2025–2026：只做维护的一年半",
+    "summary": "这两年几乎没动结构，CNAME 调整了几次，站点改了名。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "域名与站点名的调整",
+        "note": "CNAME 来回改了几次，2026-03 定下现在的名字。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "date": "2024-12-31",
+    "title": "把模板改成自己的站",
+    "summary": "2024 年提交 270 次，重心从搬模板转向写内容、调版式。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站",
+        "title": "首页加个人知识库入口",
+        "note": "带图标的知识库链接，顺带整理了首页信息层级。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "重构文章页布局",
+        "note": "post.html 重排，「最后修改时间」的逻辑也一并重写。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "写下建站初衷",
+        "note": "一篇讲搭建过程与为什么写博客的长文。"
+      },
+      {
+        "change": "removed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "删掉冗余段落，重排旧文章",
+        "note": "理论微课那几篇结构重做，阅读体验跟着提了一截。"
+      }
+    ]
+  },
+  {
+    "gen": 2,
+    "date": "2023-11-01",
+    "title": "搬到 Chirpy，第二代开张",
+    "summary": "把 Chirpy 模板拉下来改成自己的站，10 月 17 日开始以本人身份提交。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "站点换成 Chirpy 主题",
+        "note": "仓库里还留着模板作者的 2019 年历史，真正的改动从 10-17 开始。"
+      },
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "配置与依赖整理",
+        "note": "改 _config.yml、CNAME，把依赖升级到能跑的状态。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "date": "2019-12-02",
+    "title": "2019：更名与收尾",
+    "summary": "最后一年主要是改站名、收拾索引，随后站点停更。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "站名改过一次",
+        "note": "文章文件名里留着 renamed 的痕迹，说明那阵子换过定位。"
+      },
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "索引页与 README 收尾",
+        "note": "index.html 和说明文档反复整理，为后来的迁移留了口子。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "date": "2018-11-20",
+    "title": "2018：主题细节与评论修复",
+    "summary": "这一年在打磨模板细节，Gitalk 的报错也在此时修掉。",
+    "items": [
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "修 Gitalk 的 Validation Failed",
+        "note": "评论加载失败的报错，补了 md5 计算后再校验通过。"
+      },
+      {
+        "change": "added",
+        "area": "style",
+        "scope": "主站",
+        "title": "换上自己的 Logo",
+        "note": "favicon 与站头标识换成自制版本。"
+      }
+    ]
+  },
+  {
+    "gen": 1,
+    "date": "2017-12-21",
+    "title": "2017：第一代站开张",
+    "summary": "2 月初始化，年底换成 Gitalk 评论，第一代博客就这么跑起来了。",
+    "items": [
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "按 huxpro 主题起了第一版",
+        "note": "GitHub Pages 直接托管，域名沿用 username.github.io。"
+      },
+      {
+        "change": "changed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "评论系统从多说换成 Gitalk",
+        "note": "多说当年要关停，换成基于 GitHub Issues 的 Gitalk。"
+      },
+      {
+        "change": "removed",
+        "area": "feature",
+        "scope": "主站",
+        "title": "删掉 Portfolio 页面",
+        "note": "作品集页一直没内容，干脆去掉。"
       }
     ]
   }

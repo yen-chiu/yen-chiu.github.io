@@ -6,26 +6,47 @@ import { sitePath } from '@/utils/site-path'
 import changelog from '../data/changelog.json'
 import generations from '../data/site-generations.json'
 
-const latest = changelog[0]
-const total = changelog.reduce((sum, entry) => sum + entry.items.length, 0)
+const unreleased = changelog.filter(entry => entry.status === 'unreleased')
+const released = changelog.filter(entry => entry.status !== 'unreleased')
+const total = released.reduce((sum, entry) => sum + entry.items.length, 0)
 const commits = generations.reduce((sum, gen) => sum + gen.commits, 0)
+const latest = released[0]
+const groups = [...generations].reverse().map(gen => {
+  const entries = released.filter(entry => entry.gen === gen.gen)
+  return {
+    ...gen,
+    entries,
+    items: entries.reduce((sum, entry) => sum + entry.items.length, 0),
+    from: entries[entries.length - 1]?.date,
+    to: entries[0]?.date,
+  }
+})
 ---
 
-<PageLayout meta={{ title: '更新日志', description: '这个站的版本记录：功能、样式、修复与基建，一天最多一个版本。' }}>
+<PageLayout meta={{ title: '更新日志', description: '这个站的版本记录：按代次与日期编号，每条标出改动方式，一天最多一个版本。' }}>
   <main class='changelog-page'>
     <KnowledgeIndexHero
       icon='list'
       eyebrow='CHANGELOG'
       title='更新日志'
-      description='只记站点本身真正变过的部分，一天最多一个版本；文章发布不在这里。'
+      description='只记站点本身真正变过的部分，按代次收拢、按改动方式分类；文章发布不在这里。'
       stats={[
-        { label: '版本', value: changelog.length },
-        { label: '条目', value: total },
-        { label: '最新', value: `v${latest.version}` }
+        { label: '代次', value: generations.length },
+        { label: '版本', value: released.length },
+        { label: '条目', value: total + unreleased.reduce((sum, entry) => sum + entry.items.length, 0) }
       ]}
       statsLabel='更新概览'
       symbol='✳'
     />
+
+    {unreleased.length > 0 && <section class='changelog-list unreleased' aria-labelledby='unreleased-title'>
+      <header class='list-head'>
+        <h2 id='unreleased-title'>在途改动</h2>
+        <span>已提交、尚未发布</span>
+      </header>
+      <UpdateList entries={unreleased} />
+    </section>}
+
     <section class='gens' aria-labelledby='gens-title'>
       <header class='list-head'>
         <h2 id='gens-title'>站点沿革</h2>
@@ -42,20 +63,33 @@ const commits = generations.reduce((sum, gen) => sum + gen.commits, 0)
         </li>)}
       </ol>
     </section>
+
     <section class='changelog-list' aria-labelledby='changelog-list-title'>
       <header class='list-head'>
         <h2 id='changelog-list-title'>全部版本</h2>
-        <span>{changelog.length} 个版本 · {total} 项</span>
+        <span>{released.length} 个版本 · {total} 项</span>
       </header>
-      <UpdateList entries={changelog} />
+      <div class='groups'>
+        {groups.filter(group => group.entries.length > 0).map(group => <details class='gen-group' open={group.gen === 3}>
+          <summary>
+            <span class='gen-mark'>G{group.gen}</span>
+            <span class='group-name'>{group.name}</span>
+            <span class='group-meta'>{group.from?.slice(0, 4)}–{group.to?.slice(0, 4)} · {group.entries.length} 个版本</span>
+            <span class='group-plus' aria-hidden='true'>＋</span>
+          </summary>
+          <UpdateList entries={group.entries} />
+        </details>)}
+      </div>
     </section>
-    <p class='changelog-foot'>最近三个版本也会出现在<a href={sitePath('/about#changelog')}>关于页</a>底部；版本号怎么排、日期从哪里取，见<a href={sitePath('/docs/meta/changelog-convention')}>更新日志规范</a>。</p>
+    <p class='changelog-foot'>最近三个版本也会出现在<a href={sitePath('/about#changelog')}>关于页</a>底部；版本号怎么排、改动方式怎么选、日期从哪里取，见<a href={sitePath('/docs/meta/changelog-convention')}>更新日志规范</a>。</p>
   </main>
 </PageLayout>
 
 <style>
   .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;}
   .changelog-list {margin-top:2.5rem;}
+  .changelog-list.unreleased {margin-top:1.5rem;}
+  .changelog-list.unreleased .list-head h2 {color:hsl(var(--primary));}
   .gens {margin-top:2.5rem;}
   .gen-list {list-style:none;padding:0;margin:0;}
   .gen-list li {display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.9rem;align-items:baseline;padding:.85rem 0;border-bottom:1px solid hsl(var(--border)/.6);}
@@ -68,8 +102,17 @@ const commits = generations.reduce((sum, gen) => sum + gen.commits, 0)
   .list-head {display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid hsl(var(--border));}
   .list-head h2 {font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:650;letter-spacing:-.02em;}
   .list-head span {font-size:.75rem;color:hsl(var(--muted-foreground));}
+  .groups {margin-top:.5rem;}
+  .gen-group {border-bottom:1px solid hsl(var(--border));}
+  .gen-group:last-of-type {border-bottom:0;}
+  .gen-group > summary {display:flex;align-items:center;gap:.6rem;padding:1rem 0;cursor:pointer;list-style:none;}
+  .gen-group > summary::-webkit-details-marker {display:none;}
+  .group-name {font-size:.92rem;font-weight:600;}
+  .group-meta {font-size:.7rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
+  .group-plus {margin-left:auto;font-size:.8rem;color:hsl(var(--muted-foreground));transition:transform .2s ease;}
+  .gen-group[open] .group-plus {transform:rotate(45deg);}
   .changelog-foot {font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.9;margin-top:1.5rem;}
   .changelog-foot a {color:hsl(var(--primary));text-underline-offset:.25em;}
   .changelog-foot a:hover {text-decoration:underline;}
-  @media(max-width:640px) {.changelog-page {margin-top:1rem;}}
+  @media(max-width:640px) {.changelog-page {margin-top:1rem;} .group-meta {display:none;}}
 </style>

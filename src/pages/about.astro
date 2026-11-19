@@ -14,6 +14,7 @@ import { sitePath } from '@/utils/site-path'
 
 const posts = (await getCollection('blog')).filter(post => !post.data.draft)
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+const releasedChangelog = changelog.filter(entry => entry.status !== 'unreleased')
 const stats = [
   { label: '文章', value: posts.length, href: sitePath('/blog') },
   { label: '分类', value: getAllCategories(posts).size, href: sitePath('/categories') },
@@ -102,8 +103,8 @@ const sections = [
       </div>
 
       <section id='changelog' aria-labelledby='changelog-title'>
-        <header class='section-heading'><p class='eyebrow'>04 / 更新</p><div class='heading-row'><h2 id='changelog-title'>这个站，最近的变化</h2><span class='section-note'>{changelog.length} 个版本</span></div></header>
-        <UpdateList entries={changelog.slice(0, 3)} />
+        <header class='section-heading'><p class='eyebrow'>04 / 更新</p><div class='heading-row'><h2 id='changelog-title'>这个站，最近的变化</h2><span class='section-note'>共 {releasedChangelog.length} 个版本</span></div></header>
+        <UpdateList entries={releasedChangelog.slice(0, 3)} />
         <a class='text-link changelog-more' href={sitePath('/changelog')}>查看完整更新日志 <span aria-hidden='true'>→</span></a>
       </section>
 
