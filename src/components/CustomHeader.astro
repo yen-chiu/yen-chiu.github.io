@@ -83,7 +83,51 @@ const groups=[
       const menu=this.querySelector<HTMLButtonElement>('#toggleMenu')!
       const appearance=this.querySelector<HTMLButtonElement>('#toggleAppearance')!
       const panel=this.querySelector<HTMLElement>('#appearance-panel')!
-      const closeGroups=()=>this.querySelectorAll<HTMLDetailsElement>('.nav-group[open]').forEach(d=>d.open=false)
+      const groups=[...this.querySelectorAll<HTMLDetailsElement>('.nav-group')]
+      let desired:HTMLDetailsElement|null=null, switching=false, revision=0
+      const animations=new Set<Animation>()
+      const closeGroups=()=>{
+        revision++;desired=null
+        animations.forEach(animation=>animation.cancel());animations.clear()
+        groups.forEach(group=>{group.open=false;group.style.height='';group.style.overflow=''})
+      }
+      const animateGroup=async(group:HTMLDetailsElement,open:boolean)=>{
+        const version=revision
+        const from=group.getBoundingClientRect().height
+        group.open=true
+        const to=open?group.scrollHeight:group.querySelector('summary')!.getBoundingClientRect().height
+        group.style.overflow='hidden'
+        const animation=group.animate([{height:`${from}px`},{height:`${to}px`}],{
+          duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:open?240:180,
+          easing:'cubic-bezier(.22,.7,.25,1)',fill:'both'
+        })
+        animations.add(animation)
+        try{await animation.finished}catch{return}
+        finally{animations.delete(animation)}
+        if(version!==revision)return
+        group.open=open;animation.cancel();group.style.height='';group.style.overflow=''
+      }
+      const switchGroup=async()=>{
+        if(switching)return
+        switching=true
+        const version=revision
+        try{
+          while(version===revision){
+            const current=groups.find(group=>group.open)
+            if(current===desired||(!current&&!desired))break
+            if(current){await animateGroup(current,false);continue}
+            if(desired)await animateGroup(desired,true)
+          }
+        }finally{switching=false;if(version!==revision&&desired)void switchGroup()}
+      }
+      groups.forEach(group=>group.querySelector('summary')!.addEventListener('click',event=>{
+        event.preventDefault();closeAppearance()
+        desired=desired===group?null:group
+        if(!matchMedia('(max-width:900px)').matches){
+          groups.forEach(other=>other.open=other===desired);return
+        }
+        void switchGroup()
+      },{signal}))
       const closeNav=()=>{this.classList.remove('expanded');menu.setAttribute('aria-expanded','false');closeGroups()}
       const closeAppearance=()=>{panel.hidden=true;appearance.setAttribute('aria-expanded','false')}
       const closeAll=()=>{closeNav();closeAppearance()}
@@ -95,11 +139,6 @@ const groups=[
         const open=panel.hidden;closeAll();panel.hidden=!open;appearance.setAttribute('aria-expanded',String(open))
       },{signal})
       this.querySelector('[data-appearance-close]')?.addEventListener('click',()=>{closeAppearance();appearance.focus()},{signal})
-      this.addEventListener('toggle',event=>{
-        const target=event.target
-        if(!(target instanceof HTMLDetailsElement)||!target.classList.contains('nav-group')||!target.open)return
-        this.querySelectorAll<HTMLDetailsElement>('.nav-group').forEach(other=>{if(other!==target)other.open=false})
-      },{capture:true,signal})
       this.addEventListener('click',event=>{
         const target=event.target as Element
         if(target.closest('summary'))closeAppearance()
@@ -148,7 +187,7 @@ const groups=[
   summary::-webkit-details-marker{display:none;}
   summary :global(svg),.nav-home :global(svg),.nav-reading :global(svg),.nav-submenu :global(svg){width:18px;height:18px;flex-shrink:0;color:hsl(var(--primary));}
   summary:hover,.nav-group[open]>summary{color:hsl(var(--primary));background:hsl(var(--primary)/.09);}
-  .chevron{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-left:auto;}
+  .chevron{width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-left:auto;transition:transform .2s ease;}
   .nav-group[open]>summary .chevron{transform:rotate(225deg);}
   .nav-submenu{position:absolute;top:calc(100% + .55rem);left:0;width:13rem;padding:.4rem;background:hsl(var(--background)/.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid hsl(var(--border)/.7);border-radius:.85rem;box-shadow:0 12px 35px hsl(var(--foreground)/.12);}
   .nav-submenu :is(a,button){display:flex;align-items:center;gap:.65rem;width:100%;min-height:42px;padding:.55rem .65rem;border:0;border-radius:.5rem;text-align:left;font:inherit;font-size:.82rem;color:inherit;background:transparent;cursor:pointer;}
