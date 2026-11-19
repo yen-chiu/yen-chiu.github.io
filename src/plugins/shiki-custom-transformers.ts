@@ -64,6 +64,7 @@ export const addTitle = (): ShikiTransformer => {
         },
         meta.title.toString()
       )
+      this.addClassToHast(node, 'has-code-title')
       node.children.unshift(div)
     }
   }

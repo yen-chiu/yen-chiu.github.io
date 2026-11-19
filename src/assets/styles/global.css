@@ -184,7 +184,7 @@ span.katex-display {
     position: relative;
   }
 
-  &:has(div.title) {
+  &.has-code-title {
     padding-top: 2rem;
 
     & code::before {
@@ -522,4 +522,10 @@ html.dark .astro-code pre span {
 }
 html.dark .astro-code pre code .line::before {
   color: #9da7b3;
+}
+
+/* Color mixing is progressive enhancement; keep text visible in Chrome 99. */
+@supports not (color: color-mix(in srgb, white, black)) {
+  .highlight { color: hsl(var(--foreground)) !important; }
+  .post-preview { --preview-highlight: hsl(var(--primary)); --preview-highlight-bg: hsl(var(--primary) / .12); }
 }

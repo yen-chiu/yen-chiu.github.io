@@ -60,6 +60,14 @@ const { class: className, term, defer = false } = Astro.props
     const container = document.getElementById('giscus')
     if (!container || container.dataset.giscusObserved === 'true') return
     container.dataset.giscusObserved = 'true'
+    // Do not rely on :has() to hide the loading placeholder in older browsers.
+    const frameObserver = new MutationObserver(() => {
+      if (!container.querySelector('iframe.giscus-frame')) return
+      container.querySelector<HTMLElement>('.giscus-loading')?.setAttribute('hidden', '')
+      container.classList.add('giscus-ready')
+      frameObserver.disconnect()
+    })
+    frameObserver.observe(container, { childList: true, subtree: true })
 
     const disclosure = container.closest('details')
     if (container.dataset.defer === 'true' && disclosure) {
@@ -133,7 +141,7 @@ const { class: className, term, defer = false } = Astro.props
     font-size: 0.8rem;
   }
 
-  #giscus:has(iframe.giscus-frame) .giscus-loading {
+  #giscus.giscus-ready .giscus-loading {
     display: none;
   }
 </style>
