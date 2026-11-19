@@ -155,7 +155,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
               <button type='button' class='fb-submit' data-send>发送反馈</button>
               <button type='button' class='fb-copy' data-copy>复制内容</button>
             </div>
-            <p class='fb-hint'>站点没有后端：发送会用你的邮件客户端打开一封填好的信（yenchiu.he@gmail.com）；不想开邮件就点「复制内容」粘到别处。</p>
+            <p class='fb-hint'>站点没有后端：发送会用你的邮件客户端打开一封填好的信；不想开邮件就点「复制内容」粘到别处。</p>
             <p class='fb-state' data-state hidden></p>
           </div>
 
@@ -172,7 +172,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
         <div class='toc-wrap'>
           <div class='toc-gauge' aria-hidden='true'></div>
           <nav class='toc-body'>
-            {groups.map(group => <details class='toc-group' open={group.gen === 3}>
+            {groups.map(group => <details class='toc-group' data-gen={group.gen} open={group.gen === 3}>
               <summary>
                 <span class='toc-gen'>G{group.gen}</span>
                 <span class='toc-name'>{group.name}</span>
@@ -205,7 +205,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-gauge .tick {flex:1 1 0;min-height:2px;border-radius:1px;background:hsl(var(--border));transition:background .2s ease;}
   .toc-gauge .tick.done {background:hsl(var(--muted-foreground)/.5);}
   .toc-gauge .tick.current {background:hsl(var(--primary));}
-  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;
+  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;padding-bottom:.9rem;
     -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .7rem,#000 calc(100% - .7rem),transparent 100%);
     mask-image:linear-gradient(to bottom,transparent 0,#000 .7rem,#000 calc(100% - .7rem),transparent 100%);}
   .toc-group {margin-bottom:.55rem;}
@@ -367,76 +367,99 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   const posLabel = document.querySelector<HTMLElement>('[data-toc-pos]')
   const totalLabel = document.querySelector<HTMLElement>('[data-toc-total]')
 
-  const buildGauge = (group: HTMLElement | null) => {
-    if (!gauge) return
-    const links = group ? [...group.querySelectorAll<HTMLElement>('a.toc-link')] : []
-    gauge.replaceChildren(...links.map((link) => {
-      const tick = document.createElement('span')
-      tick.className = 'tick'
-      tick.dataset.target = link.dataset.target ?? ''
-      return tick
-    }))
-    if (totalLabel) totalLabel.textContent = String(links.length)
+  const tickFor = (link: HTMLElement) => {
+    const tick = document.createElement('span')
+    tick.className = 'tick'
+    tick.dataset.target = link.dataset.target ?? ''
+    return tick
   }
 
-  const paintGauge = (link: HTMLElement | null) => {
-    if (!gauge) return
-    const ticks = [...gauge.querySelectorAll<HTMLElement>('.tick')]
-    const index = link ? ticks.findIndex(tick => tick.dataset.target === link.dataset.target) : -1
+  // 目录跟着「当前视口里正在显示的那几节」走：同时高亮多条，和文章目录一致。
+  const paintToc = (visibleIds: Set<string>, firstLink: HTMLElement | null) => {
+    const group = firstLink?.closest<HTMLElement>('details.toc-group') ?? null
+    const key = group?.dataset.gen ?? ''
+    if (gauge && group && gauge.dataset.group !== key) {
+      const links = [...group.querySelectorAll<HTMLElement>('a.toc-link')]
+      gauge.replaceChildren(...links.map(tickFor))
+      gauge.dataset.group = key
+      if (totalLabel) totalLabel.textContent = String(links.length)
+    }
+    const ticks = gauge ? [...gauge.querySelectorAll<HTMLElement>('.tick')] : []
+    const order = ticks.map((tick) => tick.dataset.target ?? '')
+    const firstTarget = firstLink?.dataset.target ?? ''
+    const firstIndex = firstTarget ? order.indexOf(firstTarget) : -1
     ticks.forEach((tick, i) => {
-      tick.classList.toggle('done', index > 0 && i < index)
-      tick.classList.toggle('current', i === index)
+      tick.classList.toggle('current', visibleIds.has(order[i]))
+      tick.classList.toggle('done', firstIndex > 0 && i < firstIndex)
     })
-    if (posLabel) posLabel.textContent = String(index >= 0 ? index + 1 : 0)
+    if (posLabel) posLabel.textContent = String(firstIndex >= 0 ? firstIndex + 1 : 0)
   }
 
-  const revealToc = (link: HTMLElement) => {
-    const group = link.closest<HTMLDetailsElement>('details.toc-group')
+  const revealToc = (firstLink: HTMLElement, lastLink: HTMLElement | null) => {
+    const group = firstLink.closest<HTMLDetailsElement>('details.toc-group')
     document.querySelectorAll<HTMLDetailsElement>('.toc-group').forEach((item) => {
       item.open = item === group
     })
-    if (group && group.dataset.gauge !== 'built') {
-      group.dataset.gauge = 'built'
-      buildGauge(group)
-    }
     if (!tocBody) return
-    const linkRect = link.getBoundingClientRect()
-    const bodyRect = tocBody.getBoundingClientRect()
-    if (linkRect.top < bodyRect.top + 8 || linkRect.bottom > bodyRect.bottom - 8) {
-      tocBody.scrollTo({
-        top: tocBody.scrollTop + (linkRect.top - bodyRect.top) - bodyRect.height / 2 + linkRect.height / 2,
-        behavior: 'smooth',
-      })
-    }
+    const target = lastLink ?? firstLink
+    // 等分组展开后的高度生效，再决定要不要把最后一条滚进来
+    requestAnimationFrame(() => {
+      const links = [...(group?.querySelectorAll<HTMLElement>('a.toc-link') ?? [])]
+      const isTail = links.length > 0 && links[links.length - 1] === target
+      if (isTail) {
+        // 末尾那条直接顶到底，避免被上下渐隐裁掉
+        tocBody.scrollTo({ top: tocBody.scrollHeight, behavior: 'smooth' })
+        return
+      }
+      const linkRect = target.getBoundingClientRect()
+      const bodyRect = tocBody.getBoundingClientRect()
+      if (linkRect.bottom > bodyRect.bottom - 10) {
+        tocBody.scrollTo({
+          top: tocBody.scrollTop + (linkRect.bottom - bodyRect.bottom) + 16,
+          behavior: 'smooth',
+        })
+      } else if (linkRect.top < bodyRect.top + 10) {
+        tocBody.scrollTo({ top: tocBody.scrollTop - (bodyRect.top - linkRect.top) - 16, behavior: 'smooth' })
+      }
+    })
   }
 
-  const highlight = (link: HTMLElement | null) => {
-    document.querySelectorAll('.toc-link.is-current').forEach(item => item.classList.remove('is-current'))
-    if (!link) {
-      const openGroup = document.querySelector<HTMLElement>('.toc-group[open]')
-      if (openGroup && !gauge?.children.length) buildGauge(openGroup)
-      paintGauge(null)
-      return
-    }
-    link.classList.add('is-current')
-    revealToc(link)
-    paintGauge(link)
-  }
-
-  let activeId = ''
   let tocRaf = 0
+  let tocKey = ''
   const syncToc = () => {
     tocRaf = 0
-    const offset = 110
-    let current: HTMLElement | null = null
-    for (const block of document.querySelectorAll<HTMLElement>('details.version-block')) {
-      if (block.getBoundingClientRect().top - offset <= 0) current = block
-      else break
+    const vh = window.innerHeight
+    const blocks = [...document.querySelectorAll<HTMLElement>('details.version-block')]
+    // 只有展开的版本才谈得上「正在读」；收起时每行只是目录条目，
+    // 全高亮会把半个目录点亮，所以这种情况下退回单条跟随。
+    let visible = blocks.filter((block) => {
+      if (!(block instanceof HTMLDetailsElement) || !block.open) return false
+      const rect = block.getBoundingClientRect()
+      return rect.top < vh - 60 && rect.bottom > 60
+    })
+    // 滑到底时页脚占满视口，没有版本块在框里——退回到「最后一条已经翻过去的版本」，
+    // 这样目录不会在页尾突然空掉。
+    if (!visible.length) {
+      const passed = blocks.filter((block) => block.getBoundingClientRect().top <= vh - 60)
+      if (passed.length) visible = [passed[passed.length - 1]]
+      else {
+        const upcoming = blocks.find((block) => block.getBoundingClientRect().top < vh)
+        if (upcoming) visible = [upcoming]
+      }
     }
-    const nextId = current?.id ?? ''
-    if (nextId === activeId) return
-    activeId = nextId
-    highlight(nextId ? document.querySelector<HTMLElement>(`a.toc-link[data-target="${nextId}"]`) : null)
+    const visibleIds = new Set(visible.map((block) => block.id))
+    const links = [...document.querySelectorAll<HTMLElement>('a.toc-link')]
+    links.forEach((link) => link.classList.toggle('is-current', visibleIds.has(link.dataset.target ?? '')))
+    const firstBlock = visible[0]
+    const lastBlock = visible[visible.length - 1]
+    const firstLink = firstBlock ? links.find((link) => link.dataset.target === firstBlock.id) ?? null : null
+    const lastLink = lastBlock ? links.find((link) => link.dataset.target === lastBlock.id) ?? null : null
+    const key = visible.map((block) => block.id).join('|')
+    if (key !== tocKey) {
+      tocKey = key
+      if (firstLink) revealToc(firstLink, lastLink)
+    }
+    paintToc(visibleIds, firstLink)
   }
 
   window.addEventListener('scroll', () => {
@@ -461,16 +484,13 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     const id = link.dataset.target
     if (!id) return
     event.preventDefault()
-    highlight(link)
     const target = openVersion(id)
     target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   })
 
   document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => {
     version.addEventListener('toggle', () => {
-      if (!version.open) return
-      const link = document.querySelector<HTMLElement>(`a.toc-link[data-target="${version.id}"]`)
-      if (link) highlight(link)
+      if (version.open) syncToc()
     })
   })
 
@@ -489,7 +509,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   fab?.addEventListener('click', () => {
     document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
     document.getElementById('changelog-list-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    highlight(null)
+    syncToc()
   })
 
   // —— 版本级轻反馈：只记在本机，不假造汇总数字 ——
