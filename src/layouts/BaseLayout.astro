@@ -55,11 +55,12 @@ const {
         <slot />
       </div>
       <Footer />
+      {/* Article floating tools share the header stacking context. */}
+      <slot name='overlay' />
     </div>
     <CategoryBrowserOverlay />
     <KnowledgeGraph />
     <TagCloudOverlay />
-    <slot name='overlay' />
 
     {/* Set highlight color */}
     <style is:global>

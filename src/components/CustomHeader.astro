@@ -171,7 +171,7 @@ const groups=[
   if(!customElements.get('header-component'))customElements.define('header-component',HeaderComponent)
 </script>
 <style>
-  header-component{display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:1rem;z-index:50;isolation:isolate;margin:0 0 2rem;padding:.55rem .7rem;min-height:58px;border:1px solid hsl(var(--border)/.7);border-radius:1rem;}
+  header-component{display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:1rem;z-index:60;isolation:isolate;margin:0 0 2rem;padding:.55rem .7rem;min-height:58px;border:1px solid hsl(var(--border)/.7);border-radius:1rem;}
   header-component::before{content:'';position:absolute;inset:0;z-index:-1;background:hsl(var(--background)/.84);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:inherit;box-shadow:0 6px 24px hsl(var(--foreground)/.05);pointer-events:none;}
   .brand{display:flex;align-items:center;gap:.55rem;font-size:1.1rem;font-weight:650;white-space:nowrap;flex-shrink:0;}
   .brand :global(img){width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid hsl(var(--border));}
