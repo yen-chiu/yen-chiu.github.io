@@ -468,7 +468,9 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .style('cursor', 'pointer')
 
     node.append('title').text(item => item.label)
-    node.append('circle').attr('r', item => Math.max(item.radius, mobile ? 22 : 14)).attr('fill', 'transparent')
+    // The invisible target is the dot itself, so a node can always be picked even when
+    // its label sits under (or on top of) another label.
+    node.append('circle').attr('r', item => Math.max(item.radius + 6, mobile ? 24 : 15)).attr('fill', 'transparent')
     node
       .append('circle')
       .attr('r', (item) => item.radius)
@@ -483,6 +485,10 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       .attr('fill', 'hsl(var(--foreground))')
       .attr('font-size', mobile ? 13 : 11)
       .attr('font-weight', (item) => (item.id === state.focus ? 700 : 480))
+      // Resting labels are translucent; picking a node makes its label solid. Text never
+      // takes pointer events, otherwise overlapping labels would swallow the click.
+      .attr('opacity', (item) => (item.id === state.focus ? 1 : 0.55))
+      .style('pointer-events', 'none')
       .text((item) => graphLabel(item.label, item.kind, mobile, item.id === state.focus))
 
     const neighbours = new Map<string, Set<string>>()
@@ -496,7 +502,11 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
     })
     const focus = (item: GraphNode | null) => {
       const connected = item ? neighbours.get(item.id) : null
+      const active = item?.id ?? state.focus
       labels.text(candidate => graphLabel(candidate.label, candidate.kind, mobile, candidate.id === item?.id || candidate.id === state.focus))
+      labels.attr('opacity', (candidate) =>
+        candidate.id === active ? 1 : connected?.has(candidate.id) ? 0.8 : 0.55
+      )
       node.attr('opacity', (candidate) =>
         !item || candidate.id === item.id || connected?.has(candidate.id) ? 1 : 0.12
       )
@@ -514,6 +524,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
       showDetails(item, graph.edges)
       node.attr('aria-pressed', candidate => String(candidate.id === item.id))
       labels.text(candidate => graphLabel(candidate.label, candidate.kind, mobile, candidate.id === item.id))
+      labels.attr('opacity', candidate => (candidate.id === item.id ? 1 : 0.55))
     }
     node
       .on('mouseenter', (_event, item) => focus(item))
@@ -628,6 +639,7 @@ function setupRoot(root: HTMLElement, index: ContentIndex) {
             .translate(-(target.x ?? width / 2), -(target.y ?? height / 2))
         )
       labels.attr('font-weight', (item) => (item.id === target.id ? 700 : 480))
+      labels.attr('opacity', (item) => (item.id === target.id ? 1 : 0.55))
     }
     if (state.focus) window.setTimeout(() => zoomToNode?.(state.focus!), 350)
 
