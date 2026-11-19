@@ -509,3 +509,15 @@ a.wikilink-highlight {
     border-radius: 999px;
   }
 }
+
+/* Keep dark code readable even in browsers without native CSS nesting. */
+html.dark .astro-code pre,
+html.dark .astro-code pre code {
+  color: #e6edf3;
+}
+html.dark .astro-code pre span {
+  color: var(--shiki-dark, #e6edf3) !important;
+}
+html.dark .astro-code pre code .line::before {
+  color: #9da7b3;
+}

@@ -147,6 +147,7 @@ export default defineConfig({
     build: {
       minify: 'esbuild',
       cssMinify: 'esbuild',
+      cssTarget: 'chrome99',
       rollupOptions: {
         output: {
         }
