@@ -302,10 +302,13 @@ const entries = [
           name.classList.remove('is-glitching')
           void name.offsetWidth
           name.classList.add('is-glitching')
+          this.querySelector<HTMLButtonElement>('interactive-avatar button')?.click()
         },
         { signal }
       )
-      name.addEventListener('animationend', () => name.classList.remove('is-glitching'), { signal })
+      name.addEventListener('animationend', (event) => {
+        if (!(event as AnimationEvent).pseudoElement) name.classList.remove('is-glitching')
+      }, { signal })
     }
     disconnectedCallback() {
       this.viewportObserver?.disconnect()
@@ -667,15 +670,12 @@ const entries = [
     .scroll-hint b {
       animation: hint 2s ease-in-out infinite;
     }
-    .glitch-name:hover,
     .glitch-name.is-glitching {
       animation: name-shift 0.55s steps(2, end);
     }
-    .glitch-name:hover::before,
     .glitch-name.is-glitching::before {
       animation: glitch-fragment 0.55s steps(2, end);
     }
-    .glitch-name:hover::after,
     .glitch-name.is-glitching::after {
       animation: glitch-fragment 0.55s steps(2, end) reverse;
     }
