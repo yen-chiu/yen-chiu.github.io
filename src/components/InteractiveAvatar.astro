@@ -9,6 +9,27 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     private controller?: AbortController
     private frame = 0
     private bounce?: Animation
+    private verificationTimer = 0
+    private verificationOverlay?: HTMLDivElement
+    private clearVerification() {
+      window.clearTimeout(this.verificationTimer)
+      this.verificationOverlay?.remove()
+      this.verificationOverlay = undefined
+    }
+    private startVerification() {
+      if (document.querySelector('[data-verification-transition]')) return
+      const overlay = document.createElement('div')
+      overlay.className = 'verification-transition'
+      overlay.dataset.verificationTransition = ''
+      overlay.setAttribute('role', 'status')
+      overlay.setAttribute('aria-live', 'polite')
+      overlay.tabIndex = -1
+      overlay.innerHTML = `<div class="verification-transition-copy"><span class="verification-spinner" aria-hidden="true"></span><strong>正在检查访问环境…</strong><span>请稍候，即将继续访问</span></div>`
+      document.body.appendChild(overlay)
+      this.verificationOverlay = overlay
+      overlay.focus()
+      this.verificationTimer = window.setTimeout(() => window.location.assign(FOCUS_URL), 1100)
+    }
     connectedCallback() {
       this.controller?.abort()
       this.controller = new AbortController()
@@ -42,7 +63,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
           reset()
           this.bounce?.cancel()
           if (tappedFiveTimes(performance.now())) {
-            window.location.assign(FOCUS_URL)
+            this.startVerification()
             return
           }
           if (!reduced.matches)
@@ -63,20 +84,57 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
         () => {
           reset()
           this.bounce?.cancel()
+          this.clearVerification()
         },
         { signal }
       )
+      window.addEventListener('pagehide', () => this.clearVerification(), { signal })
     }
     disconnectedCallback() {
       this.controller?.abort()
       cancelAnimationFrame(this.frame)
       this.bounce?.cancel()
+      this.clearVerification()
     }
   }
   if (!customElements.get('interactive-avatar'))
     customElements.define('interactive-avatar', InteractiveAvatar)
 </script>
 <style>
+  :global(.verification-transition) {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: grid;
+    place-items: center;
+    background: #f6f7f9;
+    color: #253044;
+    animation: verification-enter 180ms ease-out;
+  }
+  :global(.verification-transition-copy) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  }
+  :global(.verification-transition-copy strong) { font-size: 17px; font-weight: 550; }
+  :global(.verification-transition-copy > span:last-child) { font-size: 12px; color: #788292; }
+  :global(.verification-spinner) {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+    border: 2px solid #dce2eb;
+    border-top-color: #3569ab;
+    border-radius: 50%;
+    animation: verification-spin 800ms linear infinite;
+  }
+  @keyframes verification-enter { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes verification-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.verification-transition), :global(.verification-spinner) { animation: none; }
+  }
   interactive-avatar {
     display: inline-block;
     perspective: 650px;

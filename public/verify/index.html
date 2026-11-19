@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>访问验证 · yenchiu.com</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="verification.css">
+</head>
+<body>
+<main class="verification-page">
+    <div class="site-identity"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><span>yenchiu.com</span><span class="connection">访问验证</span></div>
+    <h1>请完成安全验证</h1>
+    <p class="page-description">检测到短时间内的重复操作。<br>请按照下方提示完成验证，以继续访问。</p>
+    <section class="captcha-container" aria-label="图片验证">
+        <div class="header" id="header">
+            <div class="instruction" id="instruction">正在准备验证</div>
+            <div class="target" id="target-name">加载图片</div>
+            <div class="countdown" id="countdown" aria-label="剩余秒数"></div>
+            <div class="phase-description" id="phase-description">请稍候，正在加载验证内容。</div>
+        </div>
+        <div class="grid-container" id="grid" role="group" aria-label="验证图片"></div>
+        <div class="footer">
+            <button type="button" class="refresh-btn" id="refresh-btn" aria-label="重新加载验证" title="重新加载验证"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 7a7 7 0 0 1 11.7-1L20 9M4 15l2.3 3A7 7 0 0 0 18 17"/></svg></button>
+            <span class="verification-label">图片验证</span>
+            <button type="button" class="verify-btn" id="verify-btn">验证</button>
+        </div>
+        <div class="verification-status" id="verification-status" role="status" aria-live="polite"></div>
+    </section>
+    <p class="request-note">验证期间请保持此页面打开</p>
+</main>
+
+<script>
+    // 题目配置
+    const THEMES = [
+        {
+            target: '珠颈斑鸠',
+            distractors: ['山斑鸠', '鸽子', '斑鸠']
+        },
+        {
+            target: '夜鹭',
+            distractors: ['企鹅', '白鹭', '海鸥']
+        }
+    ];
+
+    // 本地图片库（每种 4 张，来源 Wikimedia Commons）
+    const IMAGE_MAP = {
+        '珠颈斑鸠': [
+            'images/zhujing_banjiu_1.jpg',
+            'images/zhujing_banjiu_2.jpg',
+            'images/zhujing_banjiu_3.jpg',
+            'images/zhujing_banjiu_4.jpg'
+        ],
+        '山斑鸠': [
+            'images/shan_banjiu_1.jpg',
+            'images/shan_banjiu_2.jpg',
+            'images/shan_banjiu_3.jpg',
+            'images/shan_banjiu_4.jpg'
+        ],
+        '鸽子': [
+            'images/gezi_1.jpg',
+            'images/gezi_2.jpg',
+            'images/gezi_3.jpg',
+            'images/gezi_4.jpg'
+        ],
+        '斑鸠': [
+            'images/banjiu_1.jpg',
+            'images/banjiu_2.jpg',
+            'images/banjiu_3.jpg',
+            'images/banjiu_4.jpg'
+        ],
+        '夜鹭': [
+            'images/yelu_1.jpg',
+            'images/yelu_2.jpg',
+            'images/yelu_3.jpg',
+            'images/yelu_4.jpg'
+        ],
+        '企鹅': [
+            'images/qie_1.jpg',
+            'images/qie_2.jpg',
+            'images/qie_3.jpg',
+            'images/qie_4.jpg'
+        ],
+        '白鹭': [
+            'images/bailu_1.jpg',
+            'images/bailu_2.jpg',
+            'images/bailu_3.jpg',
+            'images/bailu_4.jpg'
+        ],
+        '海鸥': [
+            'images/haiou_1.jpg',
+            'images/haiou_2.jpg',
+            'images/haiou_3.jpg',
+            'images/haiou_4.jpg'
+        ]
+    };
+
+    // 为 9 格分配图片，同物种尽量用不同照片
+    function assignImages(items) {
+        const used = {};
+        return items.map(name => {
+            const pool = IMAGE_MAP[name] || IMAGE_MAP['珠颈斑鸠'];
+            if (!used[name]) used[name] = new Set();
+            const taken = used[name];
+            let available = pool.filter(url => !taken.has(url));
+            if (available.length === 0) available = pool.slice();
+            const url = available[Math.floor(Math.random() * available.length)];
+            taken.add(url);
+            return url;
+        });
+    }
+
+    // 音乐与动画节奏配置
+    const BPM = 100;
+    const BEAT_MS = 60000 / BPM;        // 一拍的时间 600ms
+    const HALF_BEAT_MS = BEAT_MS / 2;   // 半拍的时间 300ms
+    const TOTAL_TRANSFORMS = 16 * 2;    // 变换次数 32次
+
+    // 状态管理
+    let currentTheme;
+    let cellsData = [];
+    let phase = 0; // 1: 记忆, 2: 打乱, 3: 选择
+    let timerInterval = null;
+    let transformInterval = null;
+    let transformCount = 0;
+    let stageTimeout = null;
+    let resultTimeout = null;
+    let roundId = 0;
+
+    const gridEl = document.getElementById('grid');
+    const targetNameEl = document.getElementById('target-name');
+    const instructionEl = document.getElementById('instruction');
+    const countdownEl = document.getElementById('countdown');
+    const verifyBtn = document.getElementById('verify-btn');
+    const headerEl = document.getElementById('header');
+    const statusEl = document.getElementById('verification-status');
+    const phaseDescriptionEl = document.getElementById('phase-description');
+    function setStatus(message, state = '') {
+        statusEl.textContent = message;
+        statusEl.dataset.state = state;
+    }
+
+    // 游戏初始化
+    async function initGame() {
+        const thisRound = ++roundId;
+        clearTimeout(stageTimeout);
+        clearTimeout(resultTimeout);
+        setStatus('');
+        countdownEl.innerText = '';
+        phaseDescriptionEl.textContent = '请稍候，正在加载验证内容。';
+        clearInterval(timerInterval);
+        clearInterval(transformInterval);
+        gridEl.innerHTML = '';
+        cellsData = [];
+        phase = 1;
+        verifyBtn.style.display = 'none';
+        headerEl.dataset.state = 'active';
+
+        // 随机选定一个主题
+        currentTheme = THEMES[Math.floor(Math.random() * THEMES.length)];
+        targetNameEl.innerText = currentTheme.target;
+        instructionEl.innerText = '请记住所有包含下列内容的图片';
+
+        // 生成9个格子数据 (保证有2-4个目标)
+        let targetCount = Math.floor(Math.random() * 3) + 2;
+        let items = Array(targetCount).fill(currentTheme.target);
+        while (items.length < 9) {
+            items.push(currentTheme.distractors[Math.floor(Math.random() * currentTheme.distractors.length)]);
+        }
+        items = items.sort(() => Math.random() - 0.5);
+        const imageUrls = assignImages(items);
+
+        for (let i = 0; i < 9; i++) {
+            let row = Math.floor(i / 3);
+            let col = i % 3;
+            let isTarget = items[i] === currentTheme.target;
+
+            let cellDiv = document.createElement('div');
+            cellDiv.className = 'cell';
+            cellDiv.setAttribute('role', 'checkbox');
+            cellDiv.setAttribute('aria-label', '图片 ' + (i + 1));
+            cellDiv.setAttribute('aria-checked', 'false');
+            cellDiv.tabIndex = -1;
+            cellDiv.innerHTML = `
+                <div class="flipper">
+                    <div class="front" style="background-image: url('${imageUrls[i]}')"></div>
+                    <div class="back"></div>
+                </div>
+                <div class="selected-overlay"></div>
+                <div class="result-icon"></div>
+            `;
+
+            gridEl.appendChild(cellDiv);
+
+            // 点击事件
+            const selectCell = () => {
+                if (phase === 3) {
+                    let cellData = cellsData.find(c => c.id === i);
+                    cellData.isSelected = !cellData.isSelected;
+                    cellDiv.setAttribute('aria-checked', String(cellData.isSelected));
+                    if (cellData.isSelected) {
+                        cellDiv.classList.add('selected');
+                    } else {
+                        cellDiv.classList.remove('selected');
+                    }
+                }
+            };
+            cellDiv.addEventListener('click', selectCell);
+            cellDiv.addEventListener('keydown', event => {
+                if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); selectCell(); }
+            });
+
+            cellsData.push({
+                id: i,
+                row: row,
+                col: col,
+                isTarget: isTarget,
+                isSelected: false,
+                element: cellDiv
+            });
+        }
+
+        updatePositions();
+        try {
+            await Promise.all(imageUrls.map(url => new Promise((resolve, reject) => {
+                const image = new Image();
+                image.onload = resolve;
+                image.onerror = reject;
+                image.src = url;
+            })));
+        } catch {
+            if (thisRound === roundId) setStatus('图片加载失败，请点击刷新重新验证。', 'error');
+            return;
+        }
+        if (thisRound !== roundId) return;
+        startPhase1();
+    }
+
+    function updatePositions() {
+        cellsData.forEach(cell => {
+            // 每个格子宽104px，间隔大概6px，总宽度330
+            cell.element.style.top = `${cell.row * 100 / 3}%`;
+            cell.element.style.left = `${cell.col * 100 / 3}%`;
+        });
+    }
+
+    // 第一阶段：展示环节
+    function startPhase1() {
+        phaseDescriptionEl.textContent = '请记住图片的位置，随后图片将进行位置调整。';
+        cellsData.forEach(c => c.element.classList.remove('face-down', 'selected'));
+        let timeLeft = 5;
+        countdownEl.innerText = timeLeft;
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            countdownEl.innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                startPhase2();
+            }
+        }, 1000);
+    }
+
+    // 第二阶段：打乱环节
+    function startPhase2() {
+        phase = 2;
+        instructionEl.innerText = '正在调整图片位置';
+        targetNameEl.innerText = '请保持关注';
+        phaseDescriptionEl.textContent = '位置调整结束后，请选择刚才记住的图片。';
+        countdownEl.innerText = '';
+        headerEl.dataset.state = 'processing';
+
+        // 所有卡牌翻面
+        cellsData.forEach(c => c.element.classList.add('face-down'));
+
+        transformCount = 0;
+
+        // 延迟一下等翻面动画结束后开始矩阵变换
+        stageTimeout = setTimeout(() => {
+            transformInterval = setInterval(() => {
+                applyRandomTransform();
+                transformCount++;
+                if (transformCount >= TOTAL_TRANSFORMS) {
+                    clearInterval(transformInterval);
+                    startPhase3();
+                }
+            }, HALF_BEAT_MS); // 半拍变一次
+        }, 500);
+    }
+
+    // 矩阵变换逻辑
+    function applyRandomTransform() {
+        const transformTypes = ['row_swap', 'col_swap', 'transpose', 'h_flip', 'v_flip', 'random_swap'];
+        const type = transformTypes[Math.floor(Math.random() * transformTypes.length)];
+
+        switch(type) {
+            case 'row_swap':
+                let r1 = Math.floor(Math.random() * 3);
+                let r2 = (r1 + 1 + Math.floor(Math.random() * 2)) % 3;
+                cellsData.forEach(c => {
+                    if (c.row === r1) c.row = -1;
+                    else if (c.row === r2) c.row = r1;
+                });
+                cellsData.forEach(c => { if (c.row === -1) c.row = r2; });
+                break;
+            case 'col_swap':
+                let c1 = Math.floor(Math.random() * 3);
+                let c2 = (c1 + 1 + Math.floor(Math.random() * 2)) % 3;
+                cellsData.forEach(c => {
+                    if (c.col === c1) c.col = -1;
+                    else if (c.col === c2) c.col = c1;
+                });
+                cellsData.forEach(c => { if (c.col === -1) c.col = c2; });
+                break;
+            case 'transpose':
+                cellsData.forEach(c => {
+                    let temp = c.row;
+                    c.row = c.col;
+                    c.col = temp;
+                });
+                break;
+            case 'h_flip': // 水平翻转 (列变)
+                cellsData.forEach(c => { c.col = 2 - c.col; });
+                break;
+            case 'v_flip': // 垂直翻转 (行变)
+                cellsData.forEach(c => { c.row = 2 - c.row; });
+                break;
+            case 'random_swap': // 随机交换两个
+                let i1 = Math.floor(Math.random() * 9);
+                let i2 = Math.floor(Math.random() * 9);
+                let tempR = cellsData[i1].row;
+                let tempC = cellsData[i1].col;
+                cellsData[i1].row = cellsData[i2].row;
+                cellsData[i1].col = cellsData[i2].col;
+                cellsData[i2].row = tempR;
+                cellsData[i2].col = tempC;
+                break;
+        }
+        updatePositions();
+    }
+
+    // 第三阶段：选择环节
+    function startPhase3() {
+        phase = 3;
+        headerEl.dataset.state = 'active';
+        instructionEl.innerText = '请选择所有包含下列内容的图片';
+        phaseDescriptionEl.textContent = '完成选择后点击验证。';
+        cellsData.forEach(c => c.element.tabIndex = 0);
+        targetNameEl.innerText = currentTheme.target;
+        verifyBtn.style.display = 'block';
+
+        let timeLeft = 20;
+        countdownEl.innerText = timeLeft;
+
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            countdownEl.innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                checkResult();
+            }
+        }, 1000);
+    }
+
+    // 验证逻辑
+    function checkResult() {
+        if (phase !== 3) return;
+        clearInterval(timerInterval);
+        phase = 4; // 锁定操作
+        countdownEl.innerText = '';
+        verifyBtn.style.display = 'none';
+        cellsData.forEach(c => c.element.tabIndex = -1);
+        setStatus('正在核对验证结果…');
+
+        let isPass = true;
+        let missedCount = 0;
+        let incorrectCount = 0;
+
+        // 翻开所有卡牌并展示对错
+        cellsData.forEach(c => {
+            c.element.classList.remove('face-down');
+            let iconEl = c.element.querySelector('.result-icon');
+            iconEl.style.display = 'flex';
+
+            if (c.isTarget && c.isSelected) {
+                // 选对了
+                iconEl.textContent = '✓';
+                iconEl.style.backgroundColor = '#5cb85c';
+            } else if (c.isTarget && !c.isSelected) {
+                // 漏选了
+                isPass = false;
+                missedCount++;
+                iconEl.textContent = '!';
+                iconEl.style.backgroundColor = '#f0ad4e';
+                c.element.classList.add('selected'); // 标出应该选的
+            } else if (!c.isTarget && c.isSelected) {
+                // 错选了
+                isPass = false;
+                incorrectCount++;
+                iconEl.textContent = '×';
+                iconEl.style.backgroundColor = '#d9534f';
+            } else {
+                iconEl.style.display = 'none';
+            }
+        });
+
+        const hasSelected = cellsData.some(c => c.isSelected);
+        const passed = isPass && hasSelected;
+        if (passed) {
+            setStatus('验证通过。', 'success');
+            headerEl.dataset.state = 'success';
+            phaseDescriptionEl.textContent = '即将继续访问，请稍候。';
+            resultTimeout = setTimeout(() => {
+                setStatus('正在恢复访问…', 'success');
+                phaseDescriptionEl.textContent = '请保持此页面打开。';
+                resultTimeout = setTimeout(() => {
+                    window.location.href = 'https://www.bilibili.com/video/BV1UT42167xb/';
+                }, 1200);
+            }, 900);
+        } else {
+            const message = !hasSelected
+                ? '尚未选择任何图片，请选择所有符合要求的图片。'
+                : missedCount && incorrectCount
+                    ? '存在未选择的目标图片，且包含不符合要求的图片。'
+                    : missedCount
+                        ? '存在未选择的目标图片，请重新验证。'
+                        : '包含不符合要求的图片，请重新验证。';
+            setStatus(message, 'error');
+            phaseDescriptionEl.textContent = '验证未通过，即将加载新的一组图片。';
+            resultTimeout = setTimeout(initGame, 2400);
+        }
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', initGame);
+    verifyBtn.addEventListener('click', checkResult);
+
+    // 启动游戏
+    window.onload = initGame;
+</script>
+
+</body>
+</html>

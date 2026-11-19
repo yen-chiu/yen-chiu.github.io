@@ -6,7 +6,7 @@ test('the fifth consecutive tap triggers FOCUS, then starts a new sequence', () 
   const tap = createAvatarTapCounter()
   assert.deepEqual([0, 200, 400, 600, 800].map(tap), [false, false, false, false, true])
   assert.equal(tap(1000), false)
-  assert.equal(FOCUS_URL, 'https://yenchiu.com/Inhuman/FOCUS/FOCUS.html')
+  assert.equal(FOCUS_URL, '/yen-chiu-astro/verify/')
 })
 
 test('a pause clears the partial sequence; separate avatars have separate counts', () => {

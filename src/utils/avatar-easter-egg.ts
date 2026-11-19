@@ -1,4 +1,4 @@
-export const FOCUS_URL = 'https://yenchiu.com/Inhuman/FOCUS/FOCUS.html'
+export const FOCUS_URL = '/yen-chiu-astro/verify/'
 
 // Count a deliberate burst of taps, rather than ordinary clicks across a visit.
 export function createAvatarTapCounter() {
