@@ -5,7 +5,6 @@ import config from 'virtual:config'
 import { Icon } from 'astro-pure/user'
 import Search from './Search.astro'
 import AppearancePanel from './appearance/AppearancePanel.astro'
-import InteractiveAvatar from './InteractiveAvatar.astro'
 import { sitePath } from '@/utils/site-path'
 
 const images=import.meta.glob<{default:ImageMetadata}>('/src/assets/*.{jpeg,jpg,png,gif,avif,webp}')
@@ -33,7 +32,7 @@ const groups=[
 <!-- Recreate the header on navigation so scoped styles and markup stay in sync after deployments. -->
 <header-component class='site-header group'>
   <div class='brand'>
-    {logoImage && <InteractiveAvatar variant='header' label='Wendell 的头像'><Image id='header-avatar' src={logoImage.default} alt={config.logo.alt || 'Avatar'} width={64} height={64} loading='eager' /></InteractiveAvatar>}
+    {logoImage && <a class='brand-avatar' href={sitePath('/')} aria-label='返回首页' data-astro-prefetch><Image id='header-avatar' src={logoImage.default} alt={config.logo.alt || 'Avatar'} width={64} height={64} loading='eager' /></a>}
     <a href={sitePath('/')} aria-label={`${config.title}，返回首页`} data-astro-prefetch><span>{config.title}</span></a>
   </div>
   <div id='headerExpandContent' class='navigation-panel'>
