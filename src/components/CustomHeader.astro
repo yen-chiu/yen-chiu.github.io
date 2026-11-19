@@ -80,6 +80,15 @@ const groups=[
     connectedCallback(){
       this.controller?.abort();this.controller=new AbortController()
       const {signal}=this.controller
+      // Hysteresis keeps the bar stable while crossing the sticky threshold.
+      const updateCompact=()=>{
+        const scrolled=window.scrollY
+        if(scrolled>96)this.classList.add('is-compact')
+        else if(scrolled<40)this.classList.remove('is-compact')
+      }
+      window.addEventListener('scroll',updateCompact,{passive:true,signal})
+      window.addEventListener('pageshow',updateCompact,{signal})
+      updateCompact()
       const menu=this.querySelector<HTMLButtonElement>('#toggleMenu')!
       const appearance=this.querySelector<HTMLButtonElement>('#toggleAppearance')!
       const panel=this.querySelector<HTMLElement>('#appearance-panel')!
@@ -164,7 +173,7 @@ const groups=[
           if(current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')
         })
       }
-      document.addEventListener('astro:page-load',sync,{signal});sync()
+      document.addEventListener('astro:page-load',()=>{sync();updateCompact()},{signal});sync()
     }
     disconnectedCallback(){this.controller?.abort()}
   }
@@ -223,4 +232,17 @@ const groups=[
   }
   @media(max-width:600px){header-component{gap:.3rem;padding:.4rem .5rem;margin-bottom:1.25rem;}.brand span{display:none;}.brand :global(img){width:32px;height:32px;}.header-tools{gap:0;}}
   @media(max-width:370px){.mobile-reading{padding-inline:.6rem;}.mobile-reading span{display:none;}}
+  header-component{flex-shrink:0;align-self:center;width:100%;box-sizing:border-box;transition:width .26s ease,padding .26s ease,border-radius .26s ease,top .26s ease;}
+  header-component.is-compact{width:96%;top:.6rem;padding:.35rem .65rem;border-radius:1.25rem;}
+  header-component.is-compact::before{background:hsl(var(--background)/.96);box-shadow:0 8px 28px hsl(var(--foreground)/.12);}
+  .brand :global(img){transition:width .26s ease,height .26s ease;}
+  header-component.is-compact .brand :global(img){width:30px;height:30px;}
+  @media(max-width:900px){
+    header-component.is-compact{width:min(94%,20rem);gap:.4rem;justify-content:space-between;}
+    header-component.is-compact .brand>a:last-child{display:none;}
+    header-component.is-compact .header-tools{gap:0;}
+    header-component.is-compact .mobile-reading{padding-inline:.5rem;}
+    header-component.is-compact .mobile-reading span{display:none;}
+  }
+  @media(prefers-reduced-motion:reduce){header-component,.brand :global(img){transition:none;}}
 </style>
