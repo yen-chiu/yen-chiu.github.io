@@ -4,6 +4,7 @@ import { Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
 import GlobalTagGraph from '@/components/tags/GlobalTagGraph.astro'
+import {sitePath} from '@/utils/site-path'
 
 const allPosts = await getBlogCollection()
 const allTags = getUniqueTagsWithCount(allPosts).sort(
@@ -61,18 +62,18 @@ const meta = {
           <>
             <div class='tag-toolbar'>
               <div>
-                <h2 id='tag-browser-title'>Explore topics</h2>
+                <h2 id='tag-browser-title'>浏览主题</h2>
                 <p>
-                  <span data-visible-count>{allTags.length}</span> tags, ordered by activity
+                  <span data-visible-count>{allTags.length}</span> 个标签，按文章数量排序
                 </p>
               </div>
 
               <label class='tag-search'>
                 <Icon name='search' class='size-5' />
-                <span class='sr-only'>Search tags</span>
+                <span class='sr-only'>搜索标签</span>
                 <input
                   type='search'
-                  placeholder='Search tags...'
+                  placeholder='搜索标签…'
                   autocomplete='off'
                   data-tag-search
                 />
@@ -85,7 +86,7 @@ const meta = {
                 <li data-tag-item data-tag-name={tag.toLocaleLowerCase()}>
                   <a
                     class='tag-card'
-                    href={`/tags/${encodeURIComponent(tag)}`}
+                    href={sitePath(`/tags/${encodeURIComponent(tag)}`)}
                     data-astro-prefetch
                     style={`--tag-strength:${Math.max(count / maxTagCount, 0.08)}`}
                     aria-label={`${tag}, ${count} ${count === 1 ? 'post' : 'posts'}`}
@@ -97,7 +98,7 @@ const meta = {
                         {tag}
                       </span>
                       <span class='tag-card__meta'>
-                        {count} {count === 1 ? 'post' : 'posts'}
+                        {count} 篇
                       </span>
                     </span>
                     <span class='tag-card__arrow' aria-hidden='true'>
@@ -113,14 +114,14 @@ const meta = {
 
             <div class='tag-empty' data-tag-empty hidden>
               <span class='tag-empty__icon'>#</span>
-              <strong>No matching tags</strong>
-              <p>Try another keyword.</p>
+              <strong>没有匹配的标签</strong>
+              <p>试试其他关键词。</p>
             </div>
           </>
         ) : (
           <div class='tag-empty'>
             <span class='tag-empty__icon'>#</span>
-            <strong>No tags yet</strong>
+            <strong>暂无标签</strong>
             <p>Published posts with tags will appear here.</p>
           </div>
         )
@@ -251,13 +252,13 @@ const meta = {
     .tag-card {
       position: relative;
       display: flex;
-      min-height: 7rem;
+      min-height: 4.5rem;
       align-items: flex-start;
       gap: 0.85rem;
       overflow: hidden;
-      padding: 1.15rem;
+      padding: .85rem;
       border: 1px solid hsl(var(--border));
-      border-radius: 1.2rem;
+      border-radius: .85rem;
       background: hsl(var(--background));
       color: hsl(var(--foreground));
       text-decoration: none;
@@ -391,6 +392,18 @@ const meta = {
       }
     }
 
+    @media (max-width: 639px) {
+      .tag-browser{margin-top:1.5rem;}
+      .tag-toolbar{gap:.75rem;margin-bottom:.8rem;}
+      .tag-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;}
+      .tag-card{min-height:68px;padding:.65rem .7rem;gap:.3rem;align-items:center;}
+      .tag-card__index,.tag-card__arrow,.tag-card__meter{display:none;}
+      .tag-card__name{font-size:.88rem;}
+      .tag-card__meta{font-size:.7rem;}
+      .tag-card__main{gap:.15rem;}
+      .tag-search input{font-size:16px;}
+      .tag-search kbd{display:none;}
+    }
     @media (prefers-reduced-motion: reduce) {
       .tag-card,
       .tag-card__arrow {

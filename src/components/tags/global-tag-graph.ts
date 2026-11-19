@@ -231,7 +231,7 @@ export function setupGlobalTagGraph() {
       const expanded = toggle.getAttribute('aria-expanded') === 'true'
       toggle.setAttribute('aria-expanded', String(!expanded))
       content.hidden = expanded
-      if (label) label.textContent = expanded ? 'View graph' : 'Hide graph'
+      if (label) label.textContent = expanded ? '展开预览' : '收起预览'
 
       if (!expanded) {
         requestAnimationFrame(() => renderGlobalTagGraph(root, data))

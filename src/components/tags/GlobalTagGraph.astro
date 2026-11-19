@@ -28,18 +28,18 @@ const graphData = JSON.stringify({ nodes, links }).replace(/</g, '\\u003c')
     >
       <div class='global-tag-graph__header'>
         <div>
-          <span class='global-tag-graph__eyebrow'>Knowledge map</span>
-          <h2 id='global-tag-graph-title'>Tag relationships</h2>
-          <p>Tags are connected when they appear in the same post.</p>
+          <span class='global-tag-graph__eyebrow'>知识图谱</span>
+          <h2 id='global-tag-graph-title'>标签之间的联系</h2>
+          <p>同篇文章里的标签，会在图谱中连接起来。</p>
         </div>
 
         <div class='global-tag-graph__actions'>
           <div class='global-tag-graph__stats' aria-label='Graph statistics'>
             <span>
-              <strong>{nodes.length}</strong> nodes
+              <strong>{nodes.length}</strong> 个标签
             </span>
             <span>
-              <strong>{links.length}</strong> links
+              <strong>{links.length}</strong> 条联系
             </span>
           </div>
           <a
@@ -57,7 +57,7 @@ const graphData = JSON.stringify({ nodes, links }).replace(/</g, '\\u003c')
             aria-controls='global-tag-graph-content'
             data-global-tag-graph-toggle
           >
-            <span data-global-tag-graph-toggle-label>View graph</span>
+            <span data-global-tag-graph-toggle-label>展开预览</span>
             <svg viewBox='0 0 24 24' aria-hidden='true'>
               <path d='m9 18 6-6-6-6' />
             </svg>
@@ -69,22 +69,22 @@ const graphData = JSON.stringify({ nodes, links }).replace(/</g, '\\u003c')
         <div class='global-tag-graph__legend' aria-hidden='true'>
           <span>
             <i class='is-node' />
-            Larger node = more posts
+            节点越大，文章越多
           </span>
           <span>
             <i class='is-link' />
-            Thicker line = stronger relationship
+            连线越粗，共现越多
           </span>
         </div>
 
         <div class='global-tag-graph__canvas' data-global-tag-graph-canvas>
-          <p data-global-tag-graph-status>Preparing tag map...</p>
+          <p data-global-tag-graph-status>正在准备图谱…</p>
         </div>
 
         <div class='global-tag-graph__footer'>
-          <span>Drag to rearrange · Scroll to zoom · Select a tag to open</span>
+          <span>拖动节点 · 缩放画布 · 点击标签阅读</span>
           <button type='button' data-global-tag-graph-reset>
-            Reset view
+            重置视图
           </button>
         </div>
       </div>
@@ -142,7 +142,8 @@ const graphData = JSON.stringify({ nodes, links }).replace(/</g, '\\u003c')
 
   .global-tag-graph__actions {
     display: flex;
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.65rem;
   }
@@ -301,11 +302,15 @@ const graphData = JSON.stringify({ nodes, links }).replace(/</g, '\\u003c')
       height: 31rem;
     }
 
-    .global-tag-graph__actions {
-      width: 100%;
-      align-items: stretch;
-      justify-content: space-between;
-    }
+    .global-tag-graph{padding:1rem;margin-top:1.5rem;}
+    .global-tag-graph__header{gap:.75rem;}
+    .global-tag-graph__actions{width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.5rem;}
+    .global-tag-graph__stats{grid-column:1/-1;flex-wrap:wrap;gap:.8rem;}
+    .global-tag-graph__stats span{border:0;background:none;padding:0;font-size:.72rem;white-space:nowrap;}
+    .global-tag-graph__explore,.global-tag-graph__toggle{display:flex;align-items:center;justify-content:center;min-height:44px;min-width:0;padding:.5rem;border:1px solid hsl(var(--border));border-radius:.7rem;white-space:nowrap;font-size:.75rem;}
+    .global-tag-graph__explore{background:hsl(var(--primary)/.08);}
+    .global-tag-graph__canvas{height:22rem;}
+
 
     .global-tag-graph__footer {
       align-items: flex-start;
