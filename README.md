@@ -34,3 +34,7 @@ CI 使用 Node 24、npm ci、npm run build 与 node scripts/pages-paths.mjs。�
 - 独立摄影、插画等素材以各自声明为准；第三方素材不自动纳入本站授权。
 - 已有授权不会被本声明追溯撤回；商业授权及勘误联系 yenchiu.he@gmail.com。
 - 网站详细说明： https://yenchiu.com/yen-chiu-astro/terms/copyright/ 。
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yen-chiu/yen-chiu-astro&type=Date)](https://star-history.com/#yen-chiu/yen-chiu-astro&Date)
