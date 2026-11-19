@@ -54,6 +54,36 @@
   },
   {
     "gen": 3,
+    "site": "manual",
+    "date": "2026-11-19",
+    "title": "文档库换成 Folio：从 Jekyll 迁到 Starlight",
+    "summary": "WendellManual 的内容整体搬进 Astro Starlight 重做的 Folio，旧站保留，迁移脚本留在仓库里。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "文档库",
+        "title": "文档迁到 Astro Starlight",
+        "note": "11-18 起建 Folio 仓库，内容迁移时保留旧链接与迁移记录。"
+      },
+      {
+        "change": "fixed",
+        "area": "feature",
+        "scope": "文档库",
+        "title": "补 Chrome 99 兼容补丁",
+        "note": "旧浏览器上的样式与脚本报错，按兼容清单逐条修。"
+      },
+      {
+        "change": "improved",
+        "area": "style",
+        "scope": "文档库",
+        "title": "移动端字号与分页收紧",
+        "note": "手机上正文可读性提高，目录与翻页更紧凑。"
+      }
+    ]
+  },
+  {
+    "gen": 3,
     "site": "main",
     "date": "2026-11-18",
     "title": "新站界面收尾",

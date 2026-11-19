@@ -51,10 +51,11 @@ order: 2
 
 | `site` | 中文 | 仓库 |
 | --- | --- | --- |
-| `main` | 主站 | `yen-chiu/yen-chiu-astro`（含写作台） |
+| `main` | 主站 | `yen-chiu/yen-chiu-astro` / `yen-chiu.github.io`（含写作台） |
 | `chat` | 聊天子站 | `yen-chiu/Chat`，挂在 `/chat/` |
-| `manual` | 文档库 | `yen-chiu/WendellManual` |
-| `folio` | Folio | `yen-chiu/folio` |
+| `manual` | 文档库 | `yen-chiu/WendellManual` → `yen-chiu/folio`（同一座站的两套架构） |
+
+**子站换代际不算新代次**：文档库从 WendellManual 的 Jekyll 换成 Folio 的 Astro Starlight，站点还是那座站、`site` 还是 `manual`，只是条目里写清「从什么换到什么」。主站换架构才是 `gen +1`——因为那换的是博客本身，子站换架构只是它自己的一次大改。
 
 一天里主站和聊天子站各改了一处，就是两条记录、同一个 `v3.2026.11.19`——版本号是「这一代这一天」，站点是分栏依据，两者不互相顶替。`scope`（主站 / 子站 / 写作台）是条目级的更细标注，和 `site` 不冲突。
 

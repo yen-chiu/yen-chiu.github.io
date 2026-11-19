@@ -3,24 +3,18 @@
     "id": "main",
     "label": "主站",
     "note": "根站本体与写作台",
-    "repo": "yen-chiu/yen-chiu-astro"
+    "repos": ["yen-chiu/yen-chiu-astro", "yen-chiu/yen-chiu.github.io"]
   },
   {
     "id": "chat",
     "label": "聊天子站",
     "note": "挂在 /chat/ 的对话页与 AI 模块",
-    "repo": "yen-chiu/Chat"
+    "repos": ["yen-chiu/Chat"]
   },
   {
     "id": "manual",
     "label": "文档库",
-    "note": "WendellManual，课件与笔记",
-    "repo": "yen-chiu/WendellManual"
-  },
-  {
-    "id": "folio",
-    "label": "Folio",
-    "note": "作品集",
-    "repo": "yen-chiu/folio"
+    "note": "WendellManual → Folio，2026-11 换成新架构",
+    "repos": ["yen-chiu/WendellManual", "yen-chiu/folio"]
   }
 ]
