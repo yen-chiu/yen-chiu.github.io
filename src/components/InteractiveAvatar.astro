@@ -1,9 +1,10 @@
 ---
-const { label = '轻触头像，打个招呼' } = Astro.props
+const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.props
 ---
 
-<interactive-avatar><button type='button' aria-label={label}><slot /></button></interactive-avatar>
+<interactive-avatar data-variant={variant}><button type='button' aria-label={label}><slot /></button></interactive-avatar>
 <script>
+  import { createAvatarTapCounter, FOCUS_URL } from '@/utils/avatar-easter-egg'
   class InteractiveAvatar extends HTMLElement {
     private controller?: AbortController
     private frame = 0
@@ -14,6 +15,7 @@ const { label = '轻触头像，打个招呼' } = Astro.props
       const { signal } = this.controller,
         button = this.querySelector('button')!
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      const tappedFiveTimes = createAvatarTapCounter()
       const reset = () => {
         cancelAnimationFrame(this.frame)
         button.style.transform = ''
@@ -39,6 +41,10 @@ const { label = '轻触头像，打个招呼' } = Astro.props
         () => {
           reset()
           this.bounce?.cancel()
+          if (tappedFiveTimes(performance.now())) {
+            window.location.assign(FOCUS_URL)
+            return
+          }
           if (!reduced.matches)
             this.bounce = button.animate(
               [
@@ -89,6 +95,9 @@ const { label = '轻触头像，打个招呼' } = Astro.props
   }
   button:hover {
     box-shadow: 0 0 0 9px hsl(var(--primary) / 0.13);
+  }
+  interactive-avatar[data-variant='header'] button {
+    box-shadow: none;
   }
   button:focus-visible {
     outline: 3px solid hsl(var(--primary));
