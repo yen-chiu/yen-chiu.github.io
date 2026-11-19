@@ -205,9 +205,11 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-gauge .tick {flex:1 1 0;min-height:2px;border-radius:1px;background:hsl(var(--border));transition:background .2s ease;}
   .toc-gauge .tick.done {background:hsl(var(--muted-foreground)/.5);}
   .toc-gauge .tick.current {background:hsl(var(--primary));}
-  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;padding-bottom:.9rem;
-    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .7rem,#000 calc(100% - .7rem),transparent 100%);
-    mask-image:linear-gradient(to bottom,transparent 0,#000 .7rem,#000 calc(100% - .7rem),transparent 100%);}
+  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;padding-bottom:.9rem;}
+  /* 只在还有内容被卷起来的那一侧做渐隐，顶部一进来就别蒙住第一条 */
+  .toc-body.can-up {mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem);}
+  .toc-body.can-down {mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);}
+  .toc-body.can-up.can-down {mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem,#000 calc(100% - .9rem),transparent 100%);}
   .toc-group {margin-bottom:.55rem;}
   .toc-group > summary {display:flex;align-items:baseline;gap:.3rem;padding:.15rem 0;cursor:pointer;list-style:none;color:hsl(var(--muted-foreground));}
   .toc-group > summary::-webkit-details-marker {display:none;}
@@ -374,6 +376,13 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     return tick
   }
 
+  const updateTocFade = () => {
+    if (!tocBody) return
+    const max = tocBody.scrollHeight - tocBody.clientHeight
+    tocBody.classList.toggle('can-up', tocBody.scrollTop > 2)
+    tocBody.classList.toggle('can-down', max > 2 && tocBody.scrollTop < max - 2)
+  }
+
   // 目录跟着「当前视口里正在显示的那几节」走：同时高亮多条，和文章目录一致。
   const paintToc = (visibleIds: Set<string>, firstLink: HTMLElement | null) => {
     const group = firstLink?.closest<HTMLElement>('details.toc-group') ?? null
@@ -393,6 +402,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       tick.classList.toggle('done', firstIndex > 0 && i < firstIndex)
     })
     if (posLabel) posLabel.textContent = String(firstIndex >= 0 ? firstIndex + 1 : 0)
+    updateTocFade()
   }
 
   const revealToc = (firstLink: HTMLElement, lastLink: HTMLElement | null) => {
@@ -466,6 +476,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     if (!tocRaf) tocRaf = requestAnimationFrame(syncToc)
   }, { passive: true })
   window.addEventListener('resize', syncToc)
+  tocBody?.addEventListener('scroll', updateTocFade, { passive: true })
+  window.addEventListener('resize', updateTocFade)
   syncToc()
 
   const openVersion = (id: string) => {
