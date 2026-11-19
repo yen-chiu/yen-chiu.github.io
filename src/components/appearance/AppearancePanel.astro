@@ -56,7 +56,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
   if(!customElements.get('appearance-panel'))customElements.define('appearance-panel',AppearancePanel)
 </script>
 <style>
-  appearance-panel{position:absolute;right:0;top:calc(100% + .65rem);width:min(21rem,calc(100vw - 2rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;padding:1rem;border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;background:hsl(var(--background)/.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px hsl(var(--foreground)/.13);z-index:60;scrollbar-width:thin;}
+  appearance-panel{position:absolute;right:0;top:calc(100% + .65rem);width:min(21rem,calc(100vw - 2rem));max-height:calc(100vh - 6rem);max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;padding:1rem;border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;background:hsl(var(--background)/.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px hsl(var(--foreground)/.13);z-index:60;scrollbar-width:thin;}
   appearance-panel[hidden]{display:none!important;}
   header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;font-size:.95rem;}
   button{font:inherit;cursor:pointer;color:inherit;}

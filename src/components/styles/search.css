@@ -31,7 +31,7 @@ html.search-overlay-open {
   inset: 0;
   width: 100%;
   max-width: none;
-  height: 100dvh;
+  height: 100vh;height: 100dvh;
   max-height: none;
   margin: 0;
   padding: 0;
@@ -57,7 +57,7 @@ html.search-overlay-open {
   display: flex;
   flex-direction: column;
   width: min(70rem, calc(100% - 3rem));
-  height: min(50rem, calc(100dvh - 4rem));
+  height: min(50rem, calc(100vh - 4rem));height: min(50rem, calc(100dvh - 4rem));
   min-height: 0;
   margin: 2rem auto;
   border: 1px solid hsl(var(--border));
@@ -68,7 +68,7 @@ html.search-overlay-open {
 }
 .search-space.centered {
   height: auto;
-  max-height: calc(100dvh - 4rem);
+  max-height: calc(100vh - 4rem);max-height: calc(100dvh - 4rem);
 }
 .search-heading {
   display: flex;
@@ -125,7 +125,7 @@ html.search-overlay-open {
 .search-filter-panel {
   flex-shrink: 0;
   min-height: 0;
-  max-height: min(50dvh, 27rem);
+  max-height: min(50vh, 27rem);max-height: min(50dvh, 27rem);
   overflow: auto;
   margin: 0.75rem 1rem 0;
   border: 1px solid hsl(var(--border));
@@ -439,11 +439,11 @@ html.search-overlay-open {
   .search-space.centered {
     width: calc(100% - 1rem);
     margin: 0.5rem auto;
-    max-height: calc(100dvh - 1rem);
+    max-height: calc(100vh - 1rem);max-height: calc(100dvh - 1rem);
     border-radius: 0.9rem;
   }
   .search-space {
-    height: calc(100dvh - 1rem);
+    height: calc(100vh - 1rem);height: calc(100dvh - 1rem);
   }
   .search-space.centered {
     height: auto;

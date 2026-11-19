@@ -232,7 +232,7 @@
   .knowledge-graph-dialog {
     width: min(96rem, calc(100vw - 1.5rem));
     max-width: none;
-    height: min(56rem, calc(100dvh - 2rem));
+    height: min(56rem, calc(100vh - 2rem));height: min(56rem, calc(100dvh - 2rem));
     max-height: none;
     padding: 0.8rem;
     border: 1px solid hsl(var(--border));
@@ -663,7 +663,7 @@
   .graph-details :global(.graph-full-label){font-size:.75rem;overflow-wrap:anywhere;margin:.4rem 0;}
   .graph-zoom-actions button:focus-visible,.graph-help>summary:focus-visible,.graph-details :global(a:focus-visible),.graph-details :global(summary:focus-visible){outline:2px solid hsl(var(--primary));outline-offset:2px;}
   @media(max-width:959px){
-    .knowledge-graph-dialog{height:calc(100dvh - 1rem);padding:.5rem;}
+    .knowledge-graph-dialog{height:calc(100vh - 1rem);height:calc(100dvh - 1rem);padding:.5rem;}
     .graph-dialog-header{gap:.4rem;padding:.1rem .2rem .5rem;}
     .graph-dialog-header>div{margin-right:auto;}
     .graph-dialog-header>div>span{display:none;}
@@ -677,7 +677,7 @@
     .graph-workspace header strong{font-size:.78rem;}
     .graph-workspace header [data-graph-stats]{font-size:.64rem;}
     .graph-legend{gap:.4rem;font-size:.6rem;}
-    .graph-details{flex-shrink:0;max-height:38dvh;overflow:auto;padding:.45rem .75rem;border-radius:.9rem;}
+    .graph-details{flex-shrink:0;max-height:38vh;max-height:38dvh;overflow:auto;padding:.45rem .75rem;border-radius:.9rem;}
     .graph-details :global(.graph-node-kind){font-size:.6rem;}
     .graph-details :global(h3){font-size:.82rem;}
     .graph-canvas{touch-action:none;}
@@ -690,5 +690,5 @@
     .graph-controls .segmented{display:flex;flex-wrap:wrap;gap:.3rem;}
     .graph-controls .segmented button{flex:1 0 28%;}
   }
-  @media(max-width:639px){.knowledge-graph-dialog{width:100vw;height:100dvh;border:0;border-radius:0;}}
+  @media(max-width:639px){.knowledge-graph-dialog{width:100vw;height:100vh;height:100dvh;border:0;border-radius:0;}}
 </style>
