@@ -2,6 +2,7 @@
 import PageLayout from '@/layouts/BaseLayout.astro'
 import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
 import UpdateList from '@/components/about/UpdateList.astro'
+import { Giscus } from '@/components/giscus'
 import { sitePath } from '@/utils/site-path'
 import changelog from '../data/changelog.json'
 import generations from '../data/site-generations.json'
@@ -115,25 +116,76 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
                   <span class='version-plus' aria-hidden='true'>＋</span>
                 </summary>
                 <UpdateList entries={version.entries} showSite showVersion={false} showDate={false} />
+                <div class='version-feedback' data-vkey={version.version}>
+                  <span class='vf-q'>这版有用吗</span>
+                  <button type='button' class='vf-btn' data-vote='up'>有用</button>
+                  <button type='button' class='vf-btn' data-vote='down'>没用</button>
+                  <button type='button' class='vf-note-toggle' data-vnote aria-expanded='false'>补充一句</button>
+                  <span class='vf-state' data-vstate hidden></span>
+                  <div class='vf-form' data-vform hidden>
+                    <input type='text' name='note' maxlength='60' placeholder='一句话说清就行（60 字以内）' aria-label='补充说明' />
+                    <button type='button' data-vsave>记下</button>
+                    <span class='vf-limit'><span data-vcount>0</span>/60</span>
+                    <button type='button' class='vf-move' data-vmove hidden>要细说？去下面写</button>
+                  </div>
+                </div>
               </details>)}
             </details>)}
           </div>
         </section>
         <p class='changelog-foot'>最近三个版本也会出现在<a href={sitePath('/about#changelog')}>关于页</a>底部；版本号怎么排、改动方式怎么选、站点怎么分，见<a href={sitePath('/docs/meta/changelog-convention')}>更新日志规范</a>。</p>
+
+        <section class='changelog-feedback' id='changelog-comments' aria-labelledby='changelog-comments-title'>
+          <header class='list-head'>
+            <h2 id='changelog-comments-title'>说说这些改动</h2>
+            <span>反馈与评论</span>
+          </header>
+          <p class='feedback-lede'>哪条写漏了、哪个版本说得不清楚，都可以留在这里。每条版本下面也能先点一下「有用 / 没用」，再决定要不要细说。</p>
+
+          <div class='feedback-form' data-feedback>
+            <label class='fb-field'>
+              <span class='fb-label'>想说的话</span>
+              <textarea name='message' rows='4' maxlength='2000' placeholder='比如：v2.2026.11.03 那条漏了…'></textarea>
+            </label>
+            <label class='fb-field'>
+              <span class='fb-label'>怎么联系你（可选）</span>
+              <input name='contact' type='text' maxlength='120' placeholder='邮箱 / GitHub 账号' />
+            </label>
+            <div class='fb-actions'>
+              <button type='button' class='fb-submit' data-send>发送反馈</button>
+              <button type='button' class='fb-copy' data-copy>复制内容</button>
+            </div>
+            <p class='fb-hint'>站点没有后端：发送会用你的邮件客户端打开一封填好的信（yenchiu.he@gmail.com）；不想开邮件就点「复制内容」粘到别处。</p>
+            <p class='fb-state' data-state hidden></p>
+          </div>
+
+          <details class='comments-details'>
+            <summary><span class='when-closed'>展开评论</span><span class='when-open'>收起评论</span><span class='details-plus' aria-hidden='true'>＋</span></summary>
+            <p class='comment-hint'>评论同步到 GitHub Discussions，和关于页留言板同一套。</p>
+            <Giscus term='更新日志 | Wendell' defer />
+          </details>
+        </section>
       </div>
 
       <aside class='version-toc' aria-label='版本目录'>
-        <p class='toc-title'>版本目录</p>
-        <nav class='toc-body'>
-          {groups.map(group => <div class='toc-group'>
-            <p class='toc-gen'>G{group.gen} {group.name}</p>
-            <ol>
-              {group.versions.map(version => <li>
-                <a class='toc-link' href={`#ver-${group.gen}-${version.date}`} data-target={`ver-${group.gen}-${version.date}`}>{version.version}</a>
-              </li>)}
-            </ol>
-          </div>)}
-        </nav>
+        <p class='toc-title'>版本目录<span class='toc-pos'><span data-toc-pos>0</span>/<span data-toc-total>{groups[0]?.versions.length ?? 0}</span></span></p>
+        <div class='toc-wrap'>
+          <div class='toc-gauge' aria-hidden='true'></div>
+          <nav class='toc-body'>
+            {groups.map(group => <details class='toc-group' open={group.gen === 3}>
+              <summary>
+                <span class='toc-gen'>G{group.gen}</span>
+                <span class='toc-name'>{group.name}</span>
+                <span class='toc-n'>{group.versions.length}</span>
+              </summary>
+              <ol>
+                {group.versions.map(version => <li>
+                  <a class='toc-link' href={`#ver-${group.gen}-${version.date}`} data-target={`ver-${group.gen}-${version.date}`}>{version.version}</a>
+                </li>)}
+              </ol>
+            </details>)}
+          </nav>
+        </div>
       </aside>
     </div>
 
@@ -142,14 +194,29 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 </PageLayout>
 
 <style>
-  .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;overflow-wrap:anywhere;}
+  .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;overflow-wrap:anywhere;padding-bottom:3.5rem;}
   .changelog-layout {display:grid;grid-template-columns:minmax(0,1fr) 10.5rem;gap:2.5rem;align-items:start;}
   .changelog-main {min-width:0;}
-  .version-toc {position:sticky;top:5.5rem;max-height:calc(100vh - 7rem);overflow:auto;font-size:.7rem;padding-top:2.4rem;scrollbar-width:thin;}
-  .toc-title {font-size:.66rem;letter-spacing:.08em;color:hsl(var(--muted-foreground));margin:0 0 .6rem;}
-  .toc-group {margin-bottom:.9rem;}
-  .toc-gen {font-size:.64rem;color:hsl(var(--muted-foreground));margin:0 0 .35rem;}
-  .toc-body ol {list-style:none;margin:0;padding:0;border-left:1px solid hsl(var(--border));}
+  .version-toc {position:sticky;top:5rem;max-height:min(56vh,30rem);overflow:hidden;font-size:.7rem;padding-top:2.4rem;}
+  .toc-title {display:flex;align-items:baseline;justify-content:space-between;gap:.4rem;font-size:.66rem;letter-spacing:.08em;color:hsl(var(--muted-foreground));margin:0 0 .6rem;}
+  .toc-pos {font-size:.6rem;letter-spacing:0;font-variant-numeric:tabular-nums;color:hsl(var(--primary));}
+  .toc-wrap {display:grid;grid-template-columns:.22rem minmax(0,1fr);gap:.55rem;}
+  .toc-gauge {display:flex;flex-direction:column;gap:2px;height:calc(min(56vh,30rem) - 2.6rem);min-height:4rem;}
+  .toc-gauge .tick {flex:1 1 0;min-height:2px;border-radius:1px;background:hsl(var(--border));transition:background .2s ease;}
+  .toc-gauge .tick.done {background:hsl(var(--muted-foreground)/.5);}
+  .toc-gauge .tick.current {background:hsl(var(--primary));}
+  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .7rem,#000 calc(100% - .7rem),transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 .7rem,#000 calc(100% - .7rem),transparent 100%);}
+  .toc-group {margin-bottom:.55rem;}
+  .toc-group > summary {display:flex;align-items:baseline;gap:.3rem;padding:.15rem 0;cursor:pointer;list-style:none;color:hsl(var(--muted-foreground));}
+  .toc-group > summary::-webkit-details-marker {display:none;}
+  .toc-group > summary:hover {color:hsl(var(--primary));}
+  .toc-group[open] > summary {color:hsl(var(--foreground));}
+  .toc-gen {font-size:.62rem;border:1px solid hsl(var(--primary)/.3);border-radius:.25rem;padding:0 .22rem;color:hsl(var(--primary));}
+  .toc-name {font-size:.64rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .toc-n {margin-left:auto;font-size:.6rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
+  .toc-group ol {list-style:none;margin:.25rem 0 0;padding:0;border-left:1px solid hsl(var(--border));}
   .toc-body a {display:block;padding:.12rem .2rem .12rem .55rem;margin-left:-1px;border-left:1px solid transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.7;}
   .toc-body a:hover {color:hsl(var(--primary));}
   .toc-body a.is-current {color:hsl(var(--primary));border-left-color:hsl(var(--primary));}
@@ -197,6 +264,47 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .version-date {font-variant-numeric:tabular-nums;}
   .version-count {margin-left:auto;font-variant-numeric:tabular-nums;}
   .version-block > .updates {padding-left:0;}
+  .version-feedback {display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;padding:.7rem 0 1rem;margin-top:.35rem;border-top:1px dashed hsl(var(--border)/.8);font-size:.72rem;color:hsl(var(--muted-foreground));}
+  .vf-q {margin-right:.15rem;}
+  .vf-btn {font-size:.72rem;line-height:1.6;padding:.28rem .6rem;border-radius:.35rem;border:1px solid hsl(var(--border));background:none;color:hsl(var(--muted-foreground));cursor:pointer;min-height:1.9rem;}
+  .vf-btn:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
+  .vf-btn.is-on {color:hsl(var(--primary));border-color:hsl(var(--primary)/.6);background:hsl(var(--primary)/.08);}
+  .vf-form {display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;flex-basis:100%;margin-top:.25rem;}
+  .vf-form[hidden] {display:none;}
+  .vf-form input {flex:1 1 12rem;min-width:0;font-size:.74rem;padding:.4rem .55rem;border:1px solid hsl(var(--border));border-radius:.35rem;background:hsl(var(--background));color:hsl(var(--foreground));}
+  .vf-form button {font-size:.72rem;padding:.35rem .7rem;border-radius:.35rem;border:1px solid hsl(var(--primary)/.5);background:none;color:hsl(var(--primary));cursor:pointer;}
+  .vf-limit {font-size:.66rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .vf-move {border-color:hsl(var(--border))!important;color:hsl(var(--muted-foreground))!important;text-decoration:underline;text-underline-offset:.2em;}
+  .vf-move:hover {color:hsl(var(--primary))!important;border-color:hsl(var(--primary)/.45)!important;}
+  .vf-note-toggle {font-size:.72rem;line-height:1.6;padding:.28rem .5rem;border:0;background:none;color:hsl(var(--muted-foreground));text-decoration:underline;text-underline-offset:.2em;cursor:pointer;}
+  .vf-note-toggle:hover {color:hsl(var(--primary));}
+  .vf-state {color:hsl(var(--primary));}
+  .changelog-feedback {margin-top:3.5rem;padding-top:.5rem;scroll-margin-top:5rem;}
+  .feedback-lede {font-size:.82rem;color:hsl(var(--muted-foreground));line-height:1.9;padding:.9rem 0 1.4rem;max-width:42rem;}
+  .feedback-form {border:1px solid hsl(var(--border));border-radius:.8rem;padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.9rem;}
+  .fb-field {display:flex;flex-direction:column;gap:.35rem;}
+  .fb-label {font-size:.74rem;color:hsl(var(--muted-foreground));}
+  .fb-field textarea, .fb-field input {width:100%;font-size:.82rem;font-family:inherit;padding:.55rem .7rem;border:1px solid hsl(var(--border));border-radius:.45rem;background:hsl(var(--background));color:hsl(var(--foreground));line-height:1.7;resize:vertical;}
+  .fb-field textarea:focus, .fb-field input:focus {outline:2px solid hsl(var(--primary)/.35);outline-offset:1px;}
+  .fb-actions {display:flex;gap:.6rem;flex-wrap:wrap;}
+  .fb-submit {font-size:.8rem;padding:.5rem 1.1rem;border-radius:.5rem;border:1px solid hsl(var(--primary)/.55);background:hsl(var(--primary)/.1);color:hsl(var(--primary));cursor:pointer;}
+  .fb-copy {font-size:.8rem;padding:.5rem 1rem;border-radius:.5rem;border:1px solid hsl(var(--border));background:none;color:hsl(var(--muted-foreground));cursor:pointer;}
+  .fb-submit:hover {background:hsl(var(--primary)/.16);}
+  .fb-copy:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
+  .fb-hint {font-size:.7rem;color:hsl(var(--muted-foreground));line-height:1.8;margin:0;}
+  .fb-state {font-size:.74rem;color:hsl(var(--primary));margin:0;}
+  .comments-details {margin-top:1.2rem;border:1px solid hsl(var(--border));border-radius:.8rem;}
+  .comments-details > summary {display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:1rem 1.2rem;min-height:52px;cursor:pointer;font-size:.85rem;list-style:none;}
+  .comments-details > summary::-webkit-details-marker {display:none;}
+  .comments-details > summary:hover {color:hsl(var(--primary));}
+  .when-open {display:none;}
+  .comments-details[open] > summary .when-closed {display:none;}
+  .comments-details[open] > summary .when-open {display:inline;}
+  .comments-details[open] > summary .details-plus {transform:rotate(45deg);}
+  .details-plus {font-size:1.2rem;color:hsl(var(--primary));}
+  .comments-details[open] {padding:0 1.2rem 1.2rem;}
+  .comments-details[open] > summary {padding-inline:0;}
+  .comment-hint {font-size:.75rem;color:hsl(var(--muted-foreground));}
   .changelog-foot {font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.9;margin-top:1.5rem;}
   .changelog-foot a {color:hsl(var(--primary));text-underline-offset:.25em;}
   .changelog-foot a:hover {text-decoration:underline;}
@@ -254,10 +362,88 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     true,
   )
 
+  const tocBody = document.querySelector<HTMLElement>('.toc-body')
+  const gauge = document.querySelector<HTMLElement>('.toc-gauge')
+  const posLabel = document.querySelector<HTMLElement>('[data-toc-pos]')
+  const totalLabel = document.querySelector<HTMLElement>('[data-toc-total]')
+
+  const buildGauge = (group: HTMLElement | null) => {
+    if (!gauge) return
+    const links = group ? [...group.querySelectorAll<HTMLElement>('a.toc-link')] : []
+    gauge.replaceChildren(...links.map((link) => {
+      const tick = document.createElement('span')
+      tick.className = 'tick'
+      tick.dataset.target = link.dataset.target ?? ''
+      return tick
+    }))
+    if (totalLabel) totalLabel.textContent = String(links.length)
+  }
+
+  const paintGauge = (link: HTMLElement | null) => {
+    if (!gauge) return
+    const ticks = [...gauge.querySelectorAll<HTMLElement>('.tick')]
+    const index = link ? ticks.findIndex(tick => tick.dataset.target === link.dataset.target) : -1
+    ticks.forEach((tick, i) => {
+      tick.classList.toggle('done', index > 0 && i < index)
+      tick.classList.toggle('current', i === index)
+    })
+    if (posLabel) posLabel.textContent = String(index >= 0 ? index + 1 : 0)
+  }
+
+  const revealToc = (link: HTMLElement) => {
+    const group = link.closest<HTMLDetailsElement>('details.toc-group')
+    document.querySelectorAll<HTMLDetailsElement>('.toc-group').forEach((item) => {
+      item.open = item === group
+    })
+    if (group && group.dataset.gauge !== 'built') {
+      group.dataset.gauge = 'built'
+      buildGauge(group)
+    }
+    if (!tocBody) return
+    const linkRect = link.getBoundingClientRect()
+    const bodyRect = tocBody.getBoundingClientRect()
+    if (linkRect.top < bodyRect.top + 8 || linkRect.bottom > bodyRect.bottom - 8) {
+      tocBody.scrollTo({
+        top: tocBody.scrollTop + (linkRect.top - bodyRect.top) - bodyRect.height / 2 + linkRect.height / 2,
+        behavior: 'smooth',
+      })
+    }
+  }
+
   const highlight = (link: HTMLElement | null) => {
     document.querySelectorAll('.toc-link.is-current').forEach(item => item.classList.remove('is-current'))
-    link?.classList.add('is-current')
+    if (!link) {
+      const openGroup = document.querySelector<HTMLElement>('.toc-group[open]')
+      if (openGroup && !gauge?.children.length) buildGauge(openGroup)
+      paintGauge(null)
+      return
+    }
+    link.classList.add('is-current')
+    revealToc(link)
+    paintGauge(link)
   }
+
+  let activeId = ''
+  let tocRaf = 0
+  const syncToc = () => {
+    tocRaf = 0
+    const offset = 110
+    let current: HTMLElement | null = null
+    for (const block of document.querySelectorAll<HTMLElement>('details.version-block')) {
+      if (block.getBoundingClientRect().top - offset <= 0) current = block
+      else break
+    }
+    const nextId = current?.id ?? ''
+    if (nextId === activeId) return
+    activeId = nextId
+    highlight(nextId ? document.querySelector<HTMLElement>(`a.toc-link[data-target="${nextId}"]`) : null)
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!tocRaf) tocRaf = requestAnimationFrame(syncToc)
+  }, { passive: true })
+  window.addEventListener('resize', syncToc)
+  syncToc()
 
   const openVersion = (id: string) => {
     const target = document.getElementById(id)
@@ -289,11 +475,15 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   })
 
   const fab = document.querySelector<HTMLElement>('.collapse-fab')
+  const feedbackSection = document.getElementById('changelog-comments')
   const syncFab = () => {
     if (!fab) return
-    fab.hidden = window.scrollY < 420
+    // 滑到反馈区就收起，别挡住“展开评论”的按钮。
+    const nearFeedback = feedbackSection ? feedbackSection.getBoundingClientRect().top < window.innerHeight - 60 : false
+    fab.hidden = window.scrollY < 420 || nearFeedback
   }
   window.addEventListener('scroll', syncFab, { passive: true })
+  window.addEventListener('resize', syncFab)
   syncFab()
 
   fab?.addEventListener('click', () => {
@@ -301,4 +491,240 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     document.getElementById('changelog-list-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     highlight(null)
   })
+
+  // —— 版本级轻反馈：只记在本机，不假造汇总数字 ——
+  const STORE_KEY = 'changelog-feedback:v1'
+  type Vote = { vote: 'up' | 'down'; note?: string; at: string }
+
+  const readVotes = (): Record<string, Vote> => {
+    try {
+      const raw = localStorage.getItem(STORE_KEY)
+      const parsed = raw ? JSON.parse(raw) : {}
+      return parsed && typeof parsed === 'object' ? parsed : {}
+    } catch {
+      return {}
+    }
+  }
+
+  const writeVotes = (votes: Record<string, Vote>) => {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(votes))
+    } catch {
+      /* 隐私模式下写不进去就算了 */
+    }
+  }
+
+  const paintRow = (row: HTMLElement) => {
+    const key = row.dataset.vkey
+    if (!key) return
+    const record = readVotes()[key]
+    row.querySelectorAll<HTMLElement>('[data-vote]').forEach((button) => {
+      button.classList.toggle('is-on', !!record && button.dataset.vote === record.vote)
+    })
+    const state = row.querySelector<HTMLElement>('[data-vstate]')
+    if (!state) return
+    if (record?.note) {
+      state.textContent = `已记下：${record.note}`
+      state.hidden = false
+    } else if (record) {
+      state.textContent = '已记下'
+      state.hidden = false
+    } else {
+      state.textContent = ''
+      state.hidden = true
+    }
+  }
+
+  const paintAll = () => {
+    document.querySelectorAll<HTMLElement>('.version-feedback').forEach(paintRow)
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null
+    const row = target?.closest?.('.version-feedback') as HTMLElement | null
+    if (!row || !target) return
+    const key = row.dataset.vkey
+    if (!key) return
+
+    const voteButton = target.closest<HTMLElement>('[data-vote]')
+    if (voteButton) {
+      event.preventDefault()
+      const votes = readVotes()
+      const current = votes[key]
+      const vote = voteButton.dataset.vote === 'down' ? 'down' : 'up'
+      if (current && current.vote === vote) delete votes[key]
+      else votes[key] = { vote, note: current?.note, at: new Date().toISOString() }
+      writeVotes(votes)
+      paintRow(row)
+      return
+    }
+
+    const noteButton = target.closest<HTMLElement>('[data-vnote]')
+    if (noteButton) {
+      event.preventDefault()
+      const form = row.querySelector<HTMLElement>('[data-vform]')
+      if (!form) return
+      const next = form.hidden
+      form.hidden = !next
+      noteButton.setAttribute('aria-expanded', String(next))
+      if (next) form.querySelector<HTMLInputElement>('input[name="note"]')?.focus()
+      return
+    }
+
+    const saveButton = target.closest<HTMLElement>('[data-vsave]')
+    if (saveButton) {
+      event.preventDefault()
+      const input = row.querySelector<HTMLInputElement>('[data-vform] input[name="note"]')
+      const text = (input?.value ?? '').trim().slice(0, 60)
+      const votes = readVotes()
+      const current = votes[key]
+      if (!text) {
+        const state = row.querySelector<HTMLElement>('[data-vstate]')
+        if (state) {
+          state.textContent = '写一句再记下。'
+          state.hidden = false
+        }
+        input?.focus()
+        return
+      }
+      votes[key] = {
+        vote: current?.vote ?? 'up',
+        note: text,
+        at: new Date().toISOString(),
+      }
+      writeVotes(votes)
+      paintRow(row)
+      const form = row.querySelector<HTMLElement>('[data-vform]')
+      if (form) form.hidden = true
+      row.querySelector<HTMLElement>('[data-vnote]')?.setAttribute('aria-expanded', 'false')
+      return
+    }
+
+    const moveButton = target.closest<HTMLElement>('[data-vmove]')
+    if (moveButton) {
+      event.preventDefault()
+      const input = row.querySelector<HTMLInputElement>('[data-vform] input[name="note"]')
+      const text = (input?.value ?? '').trim()
+      const area = document.querySelector<HTMLTextAreaElement>('[data-feedback] textarea[name="message"]')
+      if (!area) return
+      const prefix = `关于 ${key} 的补充：`
+      area.value = text ? `${prefix}${text}` : prefix
+      const form = row.querySelector<HTMLElement>('[data-vform]')
+      if (form) form.hidden = true
+      row.querySelector<HTMLElement>('[data-vnote]')?.setAttribute('aria-expanded', 'false')
+      if (input) input.value = ''
+      const count = row.querySelector<HTMLElement>('[data-vcount]')
+      if (count) count.textContent = '0'
+      moveButton.setAttribute('hidden', '')
+      showState('已挪到下面的反馈框，接着写完再发送。')
+      document.getElementById('changelog-comments')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      area.focus({ preventScroll: true })
+      const end = area.value.length
+      area.setSelectionRange(end, end)
+    }
+  })
+
+  document.addEventListener('input', (event) => {
+    const input = event.target
+    if (!(input instanceof HTMLInputElement) || !input.matches('[data-vform] input[name="note"]')) return
+    const row = input.closest<HTMLElement>('.version-feedback')
+    if (!row) return
+    const count = row.querySelector<HTMLElement>('[data-vcount]')
+    if (count) count.textContent = String(input.value.length)
+    const move = row.querySelector<HTMLElement>('[data-vmove]')
+    if (move) move.hidden = input.value.trim().length < 24
+  })
+
+  // —— 页面级反馈表单：没有后端，走邮件或复制 ——
+  const MAIL = 'yenchiu.he@gmail.com'
+
+  const readFeedback = () => {
+    const panel = document.querySelector<HTMLElement>('[data-feedback]')
+    const message = (panel?.querySelector<HTMLTextAreaElement>('textarea[name="message"]')?.value ?? '').trim()
+    const contact = (panel?.querySelector<HTMLInputElement>('input[name="contact"]')?.value ?? '').trim()
+    return { message, contact }
+  }
+
+  const collectReport = () => {
+    const { message, contact } = readFeedback()
+    const votes = readVotes()
+    const marked = Object.entries(votes).map(([key, value]) => `${key} ${value.vote === 'up' ? '有用' : '没用'}${value.note ? `（${value.note}）` : ''}`)
+    return [
+      message,
+      contact ? `联系方式：${contact}` : '',
+      marked.length ? `点过的版本：\n${marked.join('\n')}` : '',
+      `页面：${location.href}`,
+      `时间：${new Date().toLocaleString('zh-CN', { hour12: false })}`,
+    ].filter(Boolean).join('\n\n')
+  }
+
+  const showState = (text: string) => {
+    const state = document.querySelector<HTMLElement>('[data-feedback] [data-state]')
+    if (!state) return
+    state.textContent = text
+    state.hidden = false
+  }
+
+  document.querySelector<HTMLElement>('[data-send]')?.addEventListener('click', () => {
+    const { message } = readFeedback()
+    if (!message) {
+      showState('先写点什么再发送。')
+      document.querySelector<HTMLTextAreaElement>('[data-feedback] textarea[name="message"]')?.focus()
+      return
+    }
+    const report = collectReport()
+    const subject = '站点反馈 · 更新日志'
+    location.href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(report)}`
+    showState('已调起邮件客户端；如果没有反应，点「复制内容」再粘到别处。')
+  })
+
+  const legacyCopy = (text: string) => {
+    const area = document.createElement('textarea')
+    area.value = text
+    area.setAttribute('readonly', '')
+    area.style.position = 'fixed'
+    area.style.top = '-1000px'
+    area.style.opacity = '0'
+    document.body.appendChild(area)
+    area.select()
+    let ok = false
+    try {
+      ok = document.execCommand('copy')
+    } catch {
+      ok = false
+    }
+    area.remove()
+    return ok
+  }
+
+  const copyText = async (text: string) => {
+    if (navigator.clipboard?.writeText) {
+      const written = await Promise.race([
+        navigator.clipboard.writeText(text).then(() => true).catch(() => false),
+        new Promise<boolean>(resolve => setTimeout(() => resolve(false), 800)),
+      ])
+      if (written) return true
+    }
+    return legacyCopy(text)
+  }
+
+  document.querySelector<HTMLElement>('[data-copy]')?.addEventListener('click', async () => {
+    const report = collectReport()
+    if (!report) return
+    if (await copyText(report)) {
+      showState('已复制到剪贴板。')
+      return
+    }
+    const area = document.querySelector<HTMLTextAreaElement>('[data-feedback] textarea[name="message"]')
+    if (area) {
+      area.focus()
+      area.select()
+      showState('浏览器不让脚本复制，内容已选中，按 Ctrl / ⌘ + C 复制。')
+      return
+    }
+    showState('复制被浏览器拦住了，手动全选文字复制一下。')
+  })
+
+  paintAll()
+  document.addEventListener('astro:page-load', paintAll)
 </script>

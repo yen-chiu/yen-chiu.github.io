@@ -66,39 +66,39 @@ const toc = generateToc(headings)
       const windowHeight = window.innerHeight
       const pageOffset =
         window.scrollY - ((document.querySelector('#content') as HTMLElement)?.offsetTop || 0)
-      const postOffset =
-        ((document.querySelector('#content') as HTMLElement)?.offsetHeight || 0) + 127
 
-      this.headings.forEach((el, index) => {
-        const nextHeadingTop = this.headings[index + 1]?.offsetTop || postOffset
-        const range = [el.offsetTop - pageOffset, nextHeadingTop - pageOffset - el.offsetHeight]
-        const progress = (windowHeight - range[0]) / (range[1] - range[0])
-
-        this.headingProgress[el.id] = {
-          inView: range[0] < windowHeight && range[1] > 0,
-          progress: Math.max(0, Math.min(1, progress))
-        }
+      // 只高亮「当前正在读的那一节」：取最后一个已经越过阈值线的标题。
+      // 旧实现按区间是否与视口相交打勾，短小节会让两三个标题同时亮，看起来像选中了一大块。
+      const threshold = Math.min(180, windowHeight * 0.3)
+      const positions = this.tocLinks.map(({ slug }) => {
+        const heading = this.headings.find((el) => el.id === slug)
+        return heading ? heading.offsetTop - pageOffset : Number.POSITIVE_INFINITY
       })
 
-      this.tocLinks.forEach(({ element: el, progressBar: bar, slug }, i) => {
-        if (this.headingProgress[slug]) {
-          const { inView, progress } = this.headingProgress[slug]
-          el.classList.toggle('highlight', inView)
-          el.classList.toggle('highlight-bg-translucent', inView)
-          el.classList.toggle(
-            'rounded-t-2xl',
-            inView && (i === 0 || !this.headingProgress[this.tocLinks[i - 1]?.slug].inView)
-          )
-          el.classList.toggle(
-            'rounded-b-2xl',
-            inView &&
-              (i === this.tocLinks.length - 1 ||
-                !this.headingProgress[this.tocLinks[i + 1]?.slug].inView)
-          )
-          bar.classList.toggle('is-read', !inView && progress === 1)
-          bar.classList.toggle('highlight-bg', inView)
-          bar.style.setProperty('height', `${progress * 90}%`)
-        }
+      let activeIndex = -1
+      positions.forEach((top, i) => {
+        if (top <= threshold) activeIndex = i
+      })
+      const atBottom =
+        window.scrollY + windowHeight >= document.documentElement.scrollHeight - 4
+      if (atBottom && positions.length) activeIndex = positions.length - 1
+
+      this.tocLinks.forEach(({ element: el, progressBar: bar }, i) => {
+        const top = positions[i]
+        const nextTop = positions[i + 1] ?? Number.POSITIVE_INFINITY
+        const span = Number.isFinite(nextTop) ? Math.max(nextTop - top, 1) : Math.max(windowHeight - top, 1)
+        const progress = Number.isFinite(top)
+          ? Math.max(0, Math.min(1, (threshold - top) / span))
+          : 1
+        const isActive = i === activeIndex
+        const isRead = progress >= 1
+
+        el.classList.toggle('highlight', isActive)
+        el.classList.toggle('highlight-bg-translucent', isActive)
+        el.classList.toggle('rounded-2xl', isActive)
+        bar.classList.toggle('is-read', !isActive && isRead)
+        bar.classList.toggle('highlight-bg', isActive)
+        bar.style.setProperty('height', `${(isActive ? Math.max(progress, 0.35) : progress) * 90}%`)
       })
     }
 
