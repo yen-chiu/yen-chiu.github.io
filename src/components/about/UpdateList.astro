@@ -21,8 +21,8 @@ interface Entry {
   items: Item[]
   commit?: string
 }
-interface Props { entries: Entry[]; showSite?: boolean }
-const { entries, showSite = false } = Astro.props
+interface Props { entries: Entry[]; showSite?: boolean; showVersion?: boolean; showDate?: boolean }
+const { entries, showSite = false, showVersion = true, showDate = showVersion } = Astro.props
 const siteLabel = (id?: string) => sites.find(site => site.id === id)?.label ?? ''
 const changes: Record<string, string> = {
   added: '新增', changed: '调整', fixed: '修复', improved: '优化',
@@ -41,15 +41,15 @@ const linkTo = (url: string) => {
 }
 ---
 <ol class='updates'>
-  {entries.map(entry => <li class:list={['entry', entry.status === 'unreleased' && 'is-unreleased']}>
+  {entries.map(entry => <li class:list={['entry', entry.status === 'unreleased' && 'is-unreleased', !showDate && 'no-date']}>
     <div class='entry-side'>
       {entry.status === 'unreleased'
         ? <span class='when'>未发布</span>
-        : <time datetime={entry.date}>{entry.date}</time>}
+        : showDate && <time datetime={entry.date}>{entry.date}</time>}
     </div>
     <div class='update-body'>
       <div class='update-meta'>
-        {versionOf(entry) && <span class='version'>{versionOf(entry)}</span>}
+        {showVersion && versionOf(entry) && <span class='version'>{versionOf(entry)}</span>}
         {showSite && siteLabel(entry.site) && <span class='site-tag'>{siteLabel(entry.site)}</span>}
         {entry.status === 'unreleased' && <span class='version pending'>在途改动</span>}
         <span class='count'>{entry.items.length} 项</span>
@@ -76,6 +76,8 @@ const linkTo = (url: string) => {
   /* 每条固定行高，超过 3 条就在框内滚动，避免一天内容多时把页面撑长 */
   .updates {--row-h:3.8rem;list-style:none;padding:0;margin:0;}
   .entry {display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1.2rem 0;border-bottom:1px solid hsl(var(--border));}
+  .entry.no-date {grid-template-columns:minmax(0,1fr);padding-top:.6rem;}
+  .entry.no-date .entry-side {display:none;}
   .entry:last-child {border-bottom:0;}
   .entry.is-unreleased {border-bottom-style:dashed;}
   time, .when {display:block;font-size:.75rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;padding-top:.2rem;}
