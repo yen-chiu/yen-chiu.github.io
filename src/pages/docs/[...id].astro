@@ -8,6 +8,7 @@ import PageLayout from '@/layouts/ContentLayout.astro'
 import Backlinks from '@/components/blog/Backlinks.astro'
 import OutgoingLinks from '@/components/blog/OutgoingLinks.astro'
 import HelpSupport from '@/components/docs/HelpSupport.astro'
+import MobileTOC from '@/components/MobileTOC.astro'
 import {
   buildBacklinksMap,
   getBacklinksForPost,
@@ -136,6 +137,11 @@ const updatedLabel = updatedAt
   </div>
 </PageLayout>
 <MediumZoom />
+{
+  tocItems.length > 1 && (
+    <MobileTOC headings={tocItems.map(({ depth, slug, label }) => ({ depth, slug, text: label }))} label='本文目录' />
+  )
+}
 
 <style>
   .doc-masthead__meta {
