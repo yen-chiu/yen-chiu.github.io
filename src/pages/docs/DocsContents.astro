@@ -86,21 +86,17 @@ const { class: className, title = true, layout = 'list', ...props } = Astro.prop
       </div>
     ) : (
       <>
-        {title && <h2 class='text-foreground font-medium mb-4 mt-0'>文档目录</h2>}
-        <ul class='flex flex-col gap-y-5 m-0 p-0 list-none'>
+        {title && <h2 class='docs-rail__title'>文档目录</h2>}
+        <ul class='docs-rail__groups'>
           {Object.entries(docCategories).filter(([id])=>docsByCate[id]?.length).map(([id, meta]) => (
-            <li class='m-0 p-0 text-base'>
-              <h3 class='text-muted-foreground text-xs font-semibold tracking-widest uppercase mb-2 mt-0'>
-                {meta.title}
-              </h3>
-              <ul class='flex flex-col m-0 p-0 list-none'>
+            <li class='docs-rail__group'>
+              <h3 class='docs-rail__label'>{meta.title}</h3>
+              <ul class='docs-rail__items'>
                 {docsByCate[id]
                   ?.sort((a, b) => a.data.order - b.data.order)
                   .map((doc) => (
-                    <li class='docs-item flex relative ms-2 px-3 py-1.5 text-foreground/75 transition-all w-[calc(100%-0.5rem)] rounded-xl'>
-                      <a class='flex-1 hover:text-foreground line-clamp-2' href={sitePath(`/docs/${doc.id}`)}>
-                        {doc.data.title}
-                      </a>
+                    <li class='docs-item'>
+                      <a href={sitePath(`/docs/${doc.id}`)}>{doc.data.title}</a>
                     </li>
                   ))}
               </ul>
@@ -113,36 +109,70 @@ const { class: className, title = true, layout = 'list', ...props } = Astro.prop
 </docs-toc>
 
 <style>
-  docs-toc.list-layout .docs-item::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 5%;
-    bottom: 5%;
-    left: -0.5rem;
-    width: 2px;
-    background-color: hsl(var(--input) / var(--un-bg-opacity));
+  .docs-rail__title {
+    margin: 0 0 0.85rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    color: hsl(var(--muted-foreground));
   }
 
-  docs-toc :global(.docs-item.docs-hl) {
+  .docs-rail__groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .docs-rail__group {
+    margin: 0;
+    padding: 0;
+  }
+
+  .docs-rail__label {
+    margin: 0 0 0.4rem;
+    font-size: 0.66rem;
     font-weight: 500;
-
-    & a {
-      color: hsl(var(--primary) / var(--un-text-opacity));
-    }
-
-    & [data-icon] {
-      color: hsl(var(--primary) / var(--un-text-opacity));
-      opacity: 1;
-    }
+    letter-spacing: 0.16em;
+    color: hsl(var(--muted-foreground) / 0.85);
   }
 
-  docs-toc.list-layout :global(.docs-item.docs-hl) {
-    background-color: hsl(var(--muted) / var(--un-bg-opacity));
+  .docs-rail__items {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-    &::before {
-      background-color: hsl(var(--primary) / var(--un-bg-opacity));
-    }
+  docs-toc .docs-item a {
+    display: block;
+    padding: 0.34rem 0 0.34rem 0.8rem;
+    border-left: 1px solid hsl(var(--border));
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+    transition:
+      color 0.18s ease,
+      border-color 0.18s ease;
+  }
+
+  docs-toc .docs-item a:hover {
+    color: hsl(var(--foreground));
+  }
+
+  docs-toc :global(.docs-item.docs-hl) a {
+    border-left: 2px solid hsl(var(--primary));
+    padding-left: calc(0.8rem - 1px);
+    color: hsl(var(--foreground));
+    font-weight: 600;
+  }
+
+  docs-toc :global(.docs-item.docs-hl) a:hover {
+    color: hsl(var(--foreground));
   }
 </style>
 

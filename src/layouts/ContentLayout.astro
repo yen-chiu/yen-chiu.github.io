@@ -515,7 +515,39 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
     }
   }
 
+  /* Mobile: collapse the floating icons into one opaque horizontal capsule so
+     they stop cutting into the text block. */
   @media (max-width: 769px) {
+    #action-buttons {
+      bottom: 0.9rem;
+      right: 0.7rem;
+      flex-direction: row;
+      gap: 0.15rem;
+      padding: 0.25rem;
+      border: 1px solid hsl(var(--border));
+      border-radius: 999px;
+      background: hsl(var(--background));
+      box-shadow:
+        0 1px 2px hsl(var(--foreground) / 0.05),
+        0 10px 24px -16px hsl(var(--foreground) / 0.45);
+    }
+
+    #action-buttons button {
+      width: 2.1rem;
+      height: 2.1rem;
+      background: transparent;
+      color: hsl(var(--muted-foreground));
+    }
+
+    #action-buttons button:hover {
+      color: hsl(var(--primary));
+    }
+
+    /* The graph entry is also reachable from the 探索 menu on mobile. */
+    #action-buttons button[data-graph-jump] {
+      display: none;
+    }
+
     .article-reading-layout {
       width: 100%;
       margin-inline: 0;

@@ -1,18 +1,444 @@
 ---
-import {getCollection} from 'astro:content'
+import { getCollection } from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import ContentPageHero from '@/components/pages/ContentPageHero.astro'
-import {sitePath} from '@/utils/site-path'
-const docs=(await getCollection('docs')).filter(doc=>!doc.data.draft).sort((a,b)=>a.data.order-b.data.order)
+import { sitePath } from '@/utils/site-path'
+
+const docs = (await getCollection('docs'))
+  .filter((doc) => !doc.data.draft)
+  .sort((a, b) => a.data.order - b.data.order)
+
+const journal = {
+  issue: '第 1 卷 · 第 1 期',
+  year: '2026',
+  title: '机器如何看',
+  summary: '多模态视觉的机制、边界与前沿：从图像表示到统一 token 空间的综述。',
+  href: '/journal/'
+}
+
+const archive = [
+  {
+    title: '经验与方法的长期存档',
+    kind: '知识库',
+    note: '博客指南、建站笔记、工具备忘',
+    href: 'https://yenchiu.com/folio/'
+  },
+  {
+    title: 'Chrome 99 兼容性补丁',
+    kind: '维护报告',
+    note: '修复原因、修改位置与验证限制',
+    href: 'https://yenchiu.com/folio/building/chrome99-compatibility/'
+  }
+]
 ---
-<PageLayout meta={{title:'文档与期刊',description:'精选文档、《余白》期刊与 Folio 知识库。'}}>
- <main class='docs-index'>
-  <ContentPageHero title='文档与期刊' eyebrow='DOCUMENTS & JOURNAL' description='在这里展示值得细读的内容，把完整的方法与维护记录留在 Folio。'/>
-  <section><h2>精选文档</h2><div class='cards'>{docs.map(doc=><a href={sitePath('/docs/'+doc.id)}><small>精选文档</small><h3>{doc.data.title}</h3><p>{doc.data.description}</p><span>阅读文档 ↗</span></a>)}</div></section>
-  <section><h2>《余白》Margin</h2><p>关注多模态模型、视觉表征与语言模型接口的个人自出版中文期刊。开放获取，尚无 ISSN，未实行外部同行评审。</p><div class='cards'><a href={sitePath('/journal/')}><small>2026 · 第 1 卷 第 1 期</small><h3>机器如何看</h3><p>多模态视觉的机制、边界与前沿：从图像表示到统一 token 空间的综述。</p><span>浏览期刊 ↗</span></a></div></section>
-  <section><h2>完整文档库</h2><div class='cards'><a href='https://yenchiu.com/folio/' target='_blank' rel='noopener noreferrer'><small>FOLIO</small><h3>经验与方法的长期存档</h3><p>博客指南、建站笔记、工具备忘，以及兼容性补丁与维护记录。</p><span>打开 Folio ↗</span></a><a href='https://yenchiu.com/folio/building/chrome99-compatibility/' target='_blank' rel='noopener noreferrer'><small>维护报告</small><h3>Chrome 99 兼容性补丁</h3><p>逐项记录修复原因、修改位置、验证限制与未来移除方法。</p><span>查看报告 ↗</span></a></div></section>
- </main>
+
+<PageLayout meta={{ title: '文档与期刊', description: '精选文档、《余白》期刊与 Folio 知识库。' }}>
+  <main class='index-page'>
+    <aside class='folio'>
+      <p class='folio__mark'>书目</p>
+      <p class='folio__year'>2026</p>
+      <dl class='folio__counts'>
+        <div><dt>文档</dt><dd>{String(docs.length).padStart(2, '0')}</dd></div>
+        <div><dt>期刊</dt><dd>01</dd></div>
+        <div><dt>存档</dt><dd>{String(archive.length).padStart(2, '0')}</dd></div>
+      </dl>
+      <p class='folio__note'>Index<br />Wendell</p>
+    </aside>
+
+    <div class='sheet'>
+      <header class='masthead'>
+        <h1>文档与期刊</h1>
+        <p>值得细读的文档、自出版的《余白》期刊，以及留在 Folio 的维护记录。</p>
+        <div class='rule-double'></div>
+      </header>
+
+      <section class='column'>
+        <h2 class='column__label'>精选文档</h2>
+        <ul class='entries'>
+          {docs.map((doc) => (
+            <li class='entry'>
+              <a href={sitePath('/docs/' + doc.id)}>
+                <span class='entry__kind'>文档</span>
+                <span class='entry__body'>
+                  <span class='entry__title'>{doc.data.title}</span>
+                  <span class='entry__desc'>{doc.data.description}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class='column'>
+        <h2 class='column__label'>《余白》· 期刊</h2>
+        <a class='issue' href={sitePath(journal.href)}>
+          <span class='issue__no'>{journal.issue} · {journal.year}</span>
+          <span class='issue__title'>{journal.title}</span>
+          <span class='issue__sum'>{journal.summary}</span>
+          <span class='issue__go'>阅读本期</span>
+        </a>
+      </section>
+
+      <section class='column'>
+        <h2 class='column__label'>完整文档库</h2>
+        <p class='column__note'>长期维护的记录留在 Folio，这里只保留入口。</p>
+        <table class='archive'>
+          <thead>
+            <tr>
+              <th scope='col'>标题</th>
+              <th scope='col'>类型</th>
+              <th scope='col'>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            {archive.map((row) => (
+              <tr>
+                <td>
+                  <a href={row.href} target='_blank' rel='noopener noreferrer'>{row.title}</a>
+                </td>
+                <td class='archive__kind'>{row.kind}</td>
+                <td class='archive__note'>{row.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
 </PageLayout>
+
 <style>
-.docs-index{max-width:64rem;margin:1rem auto 3rem;}section{margin-top:2rem;}h2{font-size:1.2rem;font-weight:650;margin-bottom:1rem;}section>p{color:hsl(var(--muted-foreground));line-height:1.8;font-size:.85rem;}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:1rem;}.cards a{display:block;padding:1.4rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.9);}.cards h3{font-size:1rem;margin:.6rem 0;font-weight:600;}.cards p{font-size:.83rem;color:hsl(var(--muted-foreground));line-height:1.8;margin-bottom:1rem;}.cards small,.cards span{font-size:.75rem;color:hsl(var(--primary));}.cards a:hover{border-color:hsl(var(--primary));}.cards a:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px;}
+  .index-page {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 2.75rem;
+    padding-block: 1.5rem 5rem;
+  }
+
+  .folio {
+    position: sticky;
+    top: 8.5rem;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-right: 1.4rem;
+    border-right: 1px solid hsl(var(--border));
+    color: hsl(var(--muted-foreground));
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    line-height: 1.5;
+  }
+
+  .folio__mark,
+  .folio__note {
+    margin: 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+  }
+
+  .folio__mark {
+    color: hsl(var(--foreground));
+  }
+
+  .folio__year {
+    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    color: hsl(var(--foreground));
+  }
+
+  .folio__counts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin: 0;
+    font-size: 0.72rem;
+  }
+
+  .folio__counts div {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .folio__counts dt {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .folio__counts dd {
+    margin: 0;
+    color: hsl(var(--foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .folio__note {
+    margin-top: auto;
+    color: hsl(var(--muted-foreground) / 0.7);
+    text-transform: uppercase;
+  }
+
+  .masthead h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4.4vw, 3rem);
+    font-weight: 620;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: hsl(var(--foreground));
+  }
+
+  .masthead p {
+    max-width: 32em;
+    margin: 0.9rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .rule-double {
+    height: 6px;
+    margin: 1.9rem 0 2.6rem;
+    border-top: 2.5px solid hsl(var(--foreground));
+    border-bottom: 1px solid hsl(var(--foreground) / 0.32);
+  }
+
+  .column + .column {
+    margin-top: 3rem;
+  }
+
+  .column__label {
+    margin: 0 0 1.1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .column__note {
+    margin: -0.6rem 0 1.2rem;
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .entries {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .entry a {
+    display: grid;
+    grid-template-columns: 3.6rem minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.15rem 0.4rem 1.15rem 0;
+    border-bottom: 1px solid hsl(var(--border));
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.18s ease;
+  }
+
+  .entry a:hover {
+    background: hsl(var(--foreground) / 0.022);
+  }
+
+  .entry__kind {
+    padding-top: 0.15rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .entry__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .entry__title {
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.22em;
+    transition: text-decoration-color 0.18s ease;
+  }
+
+  .entry a:hover .entry__title {
+    text-decoration-color: hsl(var(--primary));
+  }
+
+  .entry__desc {
+    max-width: 46em;
+    font-size: 0.86rem;
+    line-height: 1.75;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .issue {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 1.9rem 2rem;
+    color: hsl(var(--background));
+    background: hsl(var(--foreground));
+    text-decoration: none;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .issue:hover {
+    box-shadow: inset 0 0 0 1px hsl(var(--background) / 0.35);
+  }
+
+  .issue__no {
+    font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    opacity: 0.62;
+  }
+
+  .issue__title {
+    font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+    font-weight: 610;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  .issue__sum {
+    max-width: 40em;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    opacity: 0.76;
+  }
+
+  .issue__go {
+    align-self: start;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.15rem;
+  }
+
+  .archive {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .archive th {
+    padding: 0 0 0.6rem;
+    border-bottom: 1px solid hsl(var(--border));
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: hsl(var(--muted-foreground));
+    text-align: left;
+  }
+
+  .archive td {
+    padding: 0.95rem 1rem 0.95rem 0;
+    border-bottom: 1px solid hsl(var(--border) / 0.7);
+    vertical-align: baseline;
+  }
+
+  .archive tbody tr:hover {
+    background: hsl(var(--foreground) / 0.022);
+  }
+
+  .archive td a {
+    font-size: 0.95rem;
+    font-weight: 550;
+    color: hsl(var(--foreground));
+    text-decoration: none;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .archive td a:hover {
+    border-bottom-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+  }
+
+  .archive__kind,
+  .archive__note {
+    font-size: 0.8rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .archive__kind {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 880px) {
+    .index-page {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.75rem;
+      padding-block: 1rem 3.5rem;
+    }
+
+    .folio {
+      position: static;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 1.25rem;
+      padding: 0 0 0.9rem;
+      border-right: 0;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .folio__note {
+      display: none;
+    }
+
+    .folio__counts {
+      flex-direction: row;
+      gap: 1rem;
+    }
+
+    .folio__counts div {
+      gap: 0.35rem;
+    }
+
+    .masthead h1 {
+      font-size: 1.7rem;
+    }
+
+    .rule-double {
+      margin: 1.2rem 0 1.9rem;
+    }
+
+    .entry a {
+      grid-template-columns: 2.6rem minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+
+    .issue {
+      padding: 1.4rem 1.25rem;
+    }
+
+    .archive thead {
+      display: none;
+    }
+
+    .archive td {
+      display: block;
+      padding: 0.2rem 0;
+      border: 0;
+    }
+
+    .archive td:first-child {
+      padding-top: 0.9rem;
+    }
+
+    .archive tbody tr {
+      display: block;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid hsl(var(--border) / 0.7);
+    }
+
+    .archive__note {
+      display: none;
+    }
+  }
 </style>
