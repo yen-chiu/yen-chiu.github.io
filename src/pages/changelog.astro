@@ -63,66 +63,101 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       symbol='✳'
     />
 
-    {unreleased.length > 0 && <section class='changelog-list unreleased' aria-labelledby='unreleased-title'>
-      <header class='list-head'>
-        <h2 id='unreleased-title'>在途改动</h2>
-        <span>已提交、尚未发布</span>
-      </header>
-      <UpdateList entries={unreleased} />
-    </section>}
+    <div class='changelog-layout'>
+      <div class='changelog-main'>
+        {unreleased.length > 0 && <section class='changelog-list unreleased' aria-labelledby='unreleased-title'>
+          <header class='list-head'>
+            <h2 id='unreleased-title'>在途改动</h2>
+            <span>已提交、尚未发布</span>
+          </header>
+          <UpdateList entries={unreleased} />
+        </section>}
 
-    <section class='gens' aria-labelledby='gens-title'>
-      <header class='list-head'>
-        <h2 id='gens-title'>站点沿革</h2>
-        <span>{generations.length} 代 · {commits.toLocaleString('zh-CN')} 次提交</span>
-      </header>
-      <ol class='gen-list'>
-        {generations.map(gen => <li>
-          <span class='gen-mark'>G{gen.gen}</span>
-          <div class='gen-main'>
-            <div class='gen-name'>{gen.name}<span class='gen-engine'>{gen.engine}</span></div>
-            <p class='gen-note'>{gen.note}</p>
+        <section class='gens' aria-labelledby='gens-title'>
+          <header class='list-head'>
+            <h2 id='gens-title'>站点沿革</h2>
+            <span>{generations.length} 代 · {commits.toLocaleString('zh-CN')} 次提交</span>
+          </header>
+          <ol class='gen-list'>
+            {generations.map(gen => <li>
+              <span class='gen-mark'>G{gen.gen}</span>
+              <div class='gen-main'>
+                <div class='gen-name'>{gen.name}<span class='gen-engine'>{gen.engine}</span></div>
+                <p class='gen-note'>{gen.note}</p>
+              </div>
+              <div class='gen-meta'><span>{gen.span}</span><span>{gen.commits.toLocaleString('zh-CN')} 次提交</span></div>
+            </li>)}
+          </ol>
+        </section>
+
+        <section class='changelog-list' aria-labelledby='changelog-list-title'>
+          <header class='list-head'>
+            <h2 id='changelog-list-title'>全部版本</h2>
+            <div class='list-tools'>
+              <span>{versionCount} 个版本 · {total} 项</span>
+              <button type='button' class='bulk-toggle' data-toggle='all'>一键展开</button>
+            </div>
+          </header>
+          <div class='groups'>
+            {groups.filter(group => group.entries.length > 0).map(group => <details class='gen-group' open={group.gen === 3}>
+              <summary>
+                <span class='gen-mark'>G{group.gen}</span>
+                <span class='group-name'>{group.name}</span>
+                <span class='group-meta'>{group.from?.slice(0, 4)}–{group.to?.slice(0, 4)} · {group.versions.length} 个版本 · {group.siteCount} 个站点</span>
+                <button type='button' class='bulk-toggle group-toggle' data-toggle='group'>展开全部</button>
+                <span class='group-plus' aria-hidden='true'>＋</span>
+              </summary>
+              {group.versions.map(version => <details class='version-block' id={`ver-${group.gen}-${version.date}`} data-version={`ver-${group.gen}-${version.date}`}>
+                <summary class='version-head'>
+                  <span class='version-chip'>{version.version}</span>
+                  <span class='version-date'>{version.date}</span>
+                  <span class='version-count'>{version.entries.length > 1 ? `${version.entries.length} 个站点 · ` : ''}{version.items} 项</span>
+                  <span class='version-plus' aria-hidden='true'>＋</span>
+                </summary>
+                <UpdateList entries={version.entries} showSite showVersion={false} showDate={false} />
+              </details>)}
+            </details>)}
           </div>
-          <div class='gen-meta'><span>{gen.span}</span><span>{gen.commits.toLocaleString('zh-CN')} 次提交</span></div>
-        </li>)}
-      </ol>
-    </section>
-
-    <section class='changelog-list' aria-labelledby='changelog-list-title'>
-      <header class='list-head'>
-        <h2 id='changelog-list-title'>全部版本</h2>
-        <div class='list-tools'>
-          <span>{versionCount} 个版本 · {total} 项</span>
-          <button type='button' class='bulk-toggle' data-toggle='all'>一键展开</button>
-        </div>
-      </header>
-      <div class='groups'>
-        {groups.filter(group => group.entries.length > 0).map(group => <details class='gen-group' open={group.gen === 3}>
-          <summary>
-            <span class='gen-mark'>G{group.gen}</span>
-            <span class='group-name'>{group.name}</span>
-            <span class='group-meta'>{group.from?.slice(0, 4)}–{group.to?.slice(0, 4)} · {group.versions.length} 个版本 · {group.siteCount} 个站点</span>
-            <button type='button' class='bulk-toggle group-toggle' data-toggle='group'>展开全部</button>
-            <span class='group-plus' aria-hidden='true'>＋</span>
-          </summary>
-          {group.versions.map(version => <details class='version-block'>
-            <summary class='version-head'>
-              <span class='version-chip'>{version.version}</span>
-              <span class='version-date'>{version.date}</span>
-              <span class='version-count'>{version.entries.length > 1 ? `${version.entries.length} 个站点 · ` : ''}{version.items} 项</span>
-              <span class='version-plus' aria-hidden='true'>＋</span>
-            </summary>
-            <UpdateList entries={version.entries} showSite showVersion={false} showDate={false} />
-          </details>)}
-        </details>)}
+        </section>
+        <p class='changelog-foot'>最近三个版本也会出现在<a href={sitePath('/about#changelog')}>关于页</a>底部；版本号怎么排、改动方式怎么选、站点怎么分，见<a href={sitePath('/docs/meta/changelog-convention')}>更新日志规范</a>。</p>
       </div>
-    </section>
-    <p class='changelog-foot'>最近三个版本也会出现在<a href={sitePath('/about#changelog')}>关于页</a>底部；版本号怎么排、改动方式怎么选、站点怎么分，见<a href={sitePath('/docs/meta/changelog-convention')}>更新日志规范</a>。</p>
+
+      <aside class='version-toc' aria-label='版本目录'>
+        <p class='toc-title'>版本目录</p>
+        <nav class='toc-body'>
+          {groups.map(group => <div class='toc-group'>
+            <p class='toc-gen'>G{group.gen} {group.name}</p>
+            <ol>
+              {group.versions.map(version => <li>
+                <a class='toc-link' href={`#ver-${group.gen}-${version.date}`} data-target={`ver-${group.gen}-${version.date}`}>{version.version}</a>
+              </li>)}
+            </ol>
+          </div>)}
+        </nav>
+      </aside>
+    </div>
+
+    <button type='button' class='collapse-fab' data-collapse hidden>收起全部版本</button>
   </main>
 </PageLayout>
 
 <style>
   .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;overflow-wrap:anywhere;}
+  .changelog-layout {display:grid;grid-template-columns:minmax(0,1fr) 10.5rem;gap:2.5rem;align-items:start;}
+  .changelog-main {min-width:0;}
+  .version-toc {position:sticky;top:5.5rem;max-height:calc(100vh - 7rem);overflow:auto;font-size:.7rem;padding-top:2.4rem;scrollbar-width:thin;}
+  .toc-title {font-size:.66rem;letter-spacing:.08em;color:hsl(var(--muted-foreground));margin:0 0 .6rem;}
+  .toc-group {margin-bottom:.9rem;}
+  .toc-gen {font-size:.64rem;color:hsl(var(--muted-foreground));margin:0 0 .35rem;}
+  .toc-body ol {list-style:none;margin:0;padding:0;border-left:1px solid hsl(var(--border));}
+  .toc-body a {display:block;padding:.12rem .2rem .12rem .55rem;margin-left:-1px;border-left:1px solid transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.7;}
+  .toc-body a:hover {color:hsl(var(--primary));}
+  .toc-body a.is-current {color:hsl(var(--primary));border-left-color:hsl(var(--primary));}
+  .collapse-fab {position:fixed;right:1.1rem;bottom:1.4rem;z-index:40;font-size:.72rem;padding:.5rem .85rem;border-radius:999px;border:1px solid hsl(var(--border));background:hsl(var(--background)/.94);color:hsl(var(--foreground));box-shadow:0 .3rem 1rem hsl(0 0% 0% / .14);cursor:pointer;line-height:1.6;}
+  .collapse-fab:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
+  .collapse-fab[hidden] {display:none;}
+  .version-block {scroll-margin-top:5rem;}
+  .changelog-list h2, .gens h2 {scroll-margin-top:5.5rem;}
   .changelog-list {margin-top:2.5rem;}
   .changelog-list.unreleased {margin-top:1.5rem;}
   .changelog-list.unreleased .list-head h2 {color:hsl(var(--primary));}
@@ -165,6 +200,10 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .changelog-foot {font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.9;margin-top:1.5rem;}
   .changelog-foot a {color:hsl(var(--primary));text-underline-offset:.25em;}
   .changelog-foot a:hover {text-decoration:underline;}
+  @media(max-width:1024px) {
+    .changelog-layout {grid-template-columns:minmax(0,1fr);gap:0;}
+    .version-toc {display:none;}
+  }
   @media(max-width:640px) {
     .changelog-page {margin-top:1rem;}
     .group-meta {display:none;}
@@ -214,4 +253,52 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     },
     true,
   )
+
+  const highlight = (link: HTMLElement | null) => {
+    document.querySelectorAll('.toc-link.is-current').forEach(item => item.classList.remove('is-current'))
+    link?.classList.add('is-current')
+  }
+
+  const openVersion = (id: string) => {
+    const target = document.getElementById(id)
+    let node: HTMLElement | null = target
+    while (node) {
+      if (node instanceof HTMLDetailsElement) node.open = true
+      node = node.parentElement
+    }
+    return target
+  }
+
+  document.addEventListener('click', (event) => {
+    const link = (event.target as HTMLElement | null)?.closest?.('a.toc-link') as HTMLAnchorElement | null
+    if (!link) return
+    const id = link.dataset.target
+    if (!id) return
+    event.preventDefault()
+    highlight(link)
+    const target = openVersion(id)
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+
+  document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => {
+    version.addEventListener('toggle', () => {
+      if (!version.open) return
+      const link = document.querySelector<HTMLElement>(`a.toc-link[data-target="${version.id}"]`)
+      if (link) highlight(link)
+    })
+  })
+
+  const fab = document.querySelector<HTMLElement>('.collapse-fab')
+  const syncFab = () => {
+    if (!fab) return
+    fab.hidden = window.scrollY < 420
+  }
+  window.addEventListener('scroll', syncFab, { passive: true })
+  syncFab()
+
+  fab?.addEventListener('click', () => {
+    document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
+    document.getElementById('changelog-list-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    highlight(null)
+  })
 </script>
