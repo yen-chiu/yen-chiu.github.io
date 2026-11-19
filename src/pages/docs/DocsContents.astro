@@ -20,16 +20,16 @@ const docsByCate = docsCollection.reduce((acc: { [key: string]: typeof docsColle
 
 const docCategories: Record<string, { title: string; icon: string; desc: string }> = {
   showcase: { title: '精选文档', icon: 'document', desc: '值得反复阅读的主题与阅读入口。' },
-  setup: { title: 'Setup', icon: 'list', desc: 'Get your project up and running.' },
+  setup: { title: '入门指南', icon: 'list', desc: '从基础说明开始，了解内容与使用方式。' },
   integrations: {
-    title: 'Integrations',
+    title: '工具与集成',
     icon: 'package',
-    desc: 'Add plugins, components, and functionalities.'
+    desc: '工具配置、服务连接与功能实践。'
   },
   advanced: {
-    title: 'Advanced',
+    title: '深入实践',
     icon: 'bulb',
-    desc: 'Deep dive into complex usages and concepts.'
+    desc: '整理进阶方法与专题实践。'
   }
 }
 
@@ -49,8 +49,8 @@ const { class: className, title = true, layout = 'list', ...props } = Astro.prop
   {
     layout === 'grid' ? (
       <div class='mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch'>
-        {Object.entries(docCategories).map(([id, meta]) => (
-          <div class='group relative flex flex-col h-full gap-y-3 rounded-2xl border bg-background/50 p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/50 overflow-hidden'>
+        {Object.entries(docCategories).filter(([id])=>docsByCate[id]?.length).map(([id, meta]) => (
+          <div class='group relative flex flex-col h-full gap-y-3 rounded-2xl border bg-background/50 p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/50 overflow-hidden'>
             {/* Subtle light effect on hover */}
             <div class='absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 transition-opacity group-hover:opacity-100' />
 
@@ -86,9 +86,9 @@ const { class: className, title = true, layout = 'list', ...props } = Astro.prop
       </div>
     ) : (
       <>
-        {title && <h2 class='text-foreground font-medium mb-4 mt-0'>DOCS</h2>}
+        {title && <h2 class='text-foreground font-medium mb-4 mt-0'>文档目录</h2>}
         <ul class='flex flex-col gap-y-5 m-0 p-0 list-none'>
-          {Object.entries(docCategories).map(([id, meta]) => (
+          {Object.entries(docCategories).filter(([id])=>docsByCate[id]?.length).map(([id, meta]) => (
             <li class='m-0 p-0 text-base'>
               <h3 class='text-muted-foreground text-xs font-semibold tracking-widest uppercase mb-2 mt-0'>
                 {meta.title}
@@ -165,5 +165,5 @@ const { class: className, title = true, layout = 'list', ...props } = Astro.prop
     }
   }
 
-  customElements.define('docs-toc', DocsTOC)
+  if (!customElements.get('docs-toc')) customElements.define('docs-toc', DocsTOC)
 </script>

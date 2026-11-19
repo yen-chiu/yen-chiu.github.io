@@ -16,6 +16,7 @@ import {
 } from '@/utils/backlinks'
 
 import DocsContents from './DocsContents.astro'
+import {sitePath} from '@/utils/site-path'
 
 export const prerender = true
 
@@ -43,10 +44,10 @@ const { post, backlinks, outgoingLinks } = Astro.props
 const { Content, headings } = await render(post)
 const { description, title } = post.data
 
-const editPath = `https://github.com/cworld1/astro-theme-pure/edit/main/${post.filePath}`
+const editPath = `https://github.com/yen-chiu/yen-chiu-astro/edit/main/${post.filePath}`
 ---
 
-<PageLayout meta={{ description, title }} back='/docs' graphTarget='#docs-graph-view' mode='article'>
+<PageLayout meta={{ description, title }} back={sitePath('/docs')} graphTarget='#docs-graph-view' mode='article'>
   <Fragment slot='left-sidebar'>
     <DocsContents class='docs-toc block mt-3' />
   </Fragment>
@@ -57,7 +58,7 @@ const editPath = `https://github.com/cworld1/astro-theme-pure/edit/main/${post.f
 
   <Fragment slot='header'>
     <div class='mb-8 rounded-2xl bg-muted/30 px-6 py-5 shadow-sm'>
-      <h1 class='text-3xl font-bold tracking-tight text-foreground sm:text-4xl'>
+      <h1 class='text-2xl font-semibold tracking-tight text-foreground sm:text-3xl'>
         {title}
       </h1>
       {
@@ -92,7 +93,7 @@ const editPath = `https://github.com/cworld1/astro-theme-pure/edit/main/${post.f
     {/* Show docs contents grid */}
     <div class='mt-10'>
       <h3 class='text-xl font-bold text-foreground tracking-tight mb-2'>探索更多</h3>
-      <p class='text-sm text-muted-foreground mb-6'>发现知识库中的更多指南与资源</p>
+      <p class='text-sm text-muted-foreground mb-6'>精选文档与阅读入口；完整维护记录请前往 Folio。</p>
       <DocsContents layout='grid' class='!mt-0' />
     </div>
   </div>
