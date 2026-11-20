@@ -114,12 +114,12 @@ const toc = generateToc(headings)
       const max = wrapper.scrollHeight - wrapper.clientHeight
       if (max <= 2) return
 
-      const current =
-        this.tocLinks.find((link) => this.headingProgress[link.slug]?.inView) ||
-        [...this.tocLinks]
-          .reverse()
-          .find((link) => (this.headingProgress[link.slug]?.progress ?? 0) >= 1) ||
-        this.tocLinks[this.tocLinks.length - 1]
+      const inView = this.tocLinks.find((link) => this.headingProgress[link.slug]?.inView)
+      const passed = [...this.tocLinks]
+        .reverse()
+        .find((link) => (this.headingProgress[link.slug]?.progress ?? 0) >= 1)
+      // 到页面顶部、第一节还没进视口时，回到列表最上面，而不是掉到最末一条
+      const current = inView || passed || this.tocLinks[0]
       if (!current) return
 
       const rect = current.element.getBoundingClientRect()
@@ -129,8 +129,14 @@ const toc = generateToc(headings)
         0,
         Math.min(max, offsetWithin - (wrapper.clientHeight - rect.height) / 2)
       )
-      if (Math.abs(wrapper.scrollTop - target) < 6) return
-      wrapper.scrollTo({ top: target, behavior: 'smooth' })
+      const delta = Math.abs(wrapper.scrollTop - target)
+      if (delta < 4) return
+      // 连续滚动时直接跟手，只有大跳才用平滑动画，避免动画被下一帧打断造成延迟感
+      if (delta > 60) {
+        wrapper.scrollTo({ top: target, behavior: 'smooth' })
+      } else {
+        wrapper.scrollTop = target
+      }
     }
 
     connectedCallback() {
@@ -154,9 +160,19 @@ const toc = generateToc(headings)
         })
       })
 
-      // Initial first and listen to scroll event
-      setInterval(this.updatePositionAndStyle, 100)
-      window.addEventListener('scroll', this.updatePositionAndStyle)
+      // 滚动时按帧更新一次，避免每个 scroll 事件都算一遍布局
+      let ticking = false
+      const onScroll = () => {
+        if (ticking) return
+        ticking = true
+        requestAnimationFrame(() => {
+          ticking = false
+          this.updatePositionAndStyle()
+        })
+      }
+      onScroll()
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll, { passive: true })
 
       // 用户自己滚目录时，先别抢着把它拉回去
       const wrapper = this.querySelector('.toc-content-wrapper')
