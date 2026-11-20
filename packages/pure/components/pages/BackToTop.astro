@@ -110,7 +110,7 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
 
     handleEvent(event) {
       if (event.type === 'click') {
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const reduce = (globalThis.wendellMotion && globalThis.wendellMotion.reduce ? globalThis.wendellMotion.reduce() : matchMedia('(prefers-reduced-motion: reduce)').matches)
         window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
       }
     }

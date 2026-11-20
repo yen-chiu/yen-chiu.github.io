@@ -110,7 +110,7 @@ const groups=[
         const to=open?group.scrollHeight:group.querySelector('summary')!.getBoundingClientRect().height
         group.style.overflow='hidden'
         const animation=group.animate([{height:`${from}px`},{height:`${to}px`}],{
-          duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:open?240:180,
+          duration:((globalThis as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches)?0:open?240:180,
           easing:'cubic-bezier(.22,.7,.25,1)',fill:'both'
         })
         animations.add(animation)

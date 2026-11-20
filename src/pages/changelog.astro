@@ -415,7 +415,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 </style>
 
 <script>
-  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const reduceMotion = () => ((globalThis as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches)
   const label = (element: HTMLElement, expand: boolean) => {
     element.textContent = expand ? '一键收起' : '一键展开'
   }

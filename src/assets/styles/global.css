@@ -48,6 +48,18 @@
   }
 }
 
+/* 站点设置里选「减少动画」时，直接按住所有过渡与动画（不用改系统设置） */
+html.motion-off *,
+html.motion-off *::before,
+html.motion-off *::after {
+  animation-duration: 1ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 1ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
 #content-header {
   animation-delay: 50ms;
 }

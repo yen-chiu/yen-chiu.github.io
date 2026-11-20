@@ -602,7 +602,9 @@ const meta = {
 
   if (!cover) return;
 
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduce = window.wendellMotion && window.wendellMotion.reduce
+    ? window.wendellMotion.reduce()
+    : window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------- 灯：跟随指针 ---------- */
   var raf = 0;

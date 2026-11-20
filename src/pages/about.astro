@@ -127,7 +127,7 @@ const sections = [
 
 <script is:inline>
   (() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if ((globalThis.wendellMotion && globalThis.wendellMotion.reduce ? globalThis.wendellMotion.reduce() : matchMedia('(prefers-reduced-motion: reduce)').matches)) return
     const canvas = document.querySelector('.click-fireworks')
     if (!canvas || !(canvas instanceof HTMLCanvasElement)) return
     const ctx = canvas.getContext('2d')
@@ -226,7 +226,7 @@ const sections = [
     disconnectedCallback() { this.controller?.abort() }
 
     private setupEffects(signal: AbortSignal) {
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const reduce = ((window as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches)
       if (reduce) return
       const typeTarget = this.querySelector<HTMLElement>('[data-typing]')
       if (typeTarget) {
@@ -453,6 +453,9 @@ const sections = [
   @media(prefers-reduced-motion:no-preference) {
     .hero-actions a,.recent-posts h3 {transition:color 150ms ease,filter 150ms ease;}
   }
+  /* 站点设置里选了「总是开启」：把系统偏好压过去 */
+  html.motion-always .hero-actions a,
+  html.motion-always .recent-posts h3 {transition:color 150ms ease,filter 150ms ease;}
 
   /* ---- 原站动效：网格底、呼吸灯、打字、卡片聚光、逐项浮现、点击烟花 ---- */
   .about-hero {position:relative;overflow:hidden;isolation:isolate;}
@@ -467,11 +470,14 @@ const sections = [
     .status-dot {position:relative;animation:dot-breathe 2.4s ease-out infinite;}
     .status-dot::after {content:'';position:absolute;inset:-.18rem;border-radius:50%;border:1px solid hsl(167 62% 40% / .55);animation:dot-ring 2.4s ease-out infinite;}
   }
+  html.motion-always .status-dot {position:relative;animation:dot-breathe 2.4s ease-out infinite;}
+  html.motion-always .status-dot::after {content:'';position:absolute;inset:-.18rem;border-radius:50%;border:1px solid hsl(167 62% 40% / .55);animation:dot-ring 2.4s ease-out infinite;}
   @keyframes dot-breathe {0%,100%{box-shadow:0 0 0 0 hsl(167 62% 40% / .35);}50%{box-shadow:0 0 0 .28rem hsl(167 62% 40% / 0);}}
   @keyframes dot-ring {0%{transform:scale(.7);opacity:.7;}70%,100%{transform:scale(1.9);opacity:0;}}
   .prompt {color:hsl(var(--primary));font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-right:.5rem;opacity:.85;}
   .caret {display:inline-block;width:.5rem;height:1.05em;margin-left:.12rem;translate:0 .18em;background:hsl(var(--primary));border-radius:1px;}
   @media(prefers-reduced-motion:no-preference) {.caret {animation:caret-blink 1.05s steps(2,end) infinite;}}
+  html.motion-always .caret {animation:caret-blink 1.05s steps(2,end) infinite;}
   @keyframes caret-blink {0%,49%{opacity:1;}50%,100%{opacity:0;}}
   .typing {white-space:pre-wrap;}
 
@@ -490,6 +496,12 @@ const sections = [
   @media(prefers-reduced-motion:reduce) {
     html.reveal-ready [data-wxp-reveal] {opacity:1;transform:none;}
     .fx-card:hover {transform:none;}
+  }
+  /* 「总是开启」把上面的静态兜底再改回动效 */
+  @media(prefers-reduced-motion:reduce) {
+    html.motion-always.reveal-ready [data-wxp-reveal] {opacity:0;transform:translateY(16px);}
+    html.motion-always.reveal-ready [data-wxp-reveal].is-in {opacity:1;transform:none;}
+    html.motion-always .fx-card:hover {transform:translateY(-3px);}
   }
   .click-fireworks {position:fixed;inset:0;z-index:60;pointer-events:none;}
   /* 触摸设备不发粒子，也就不需要这块画布 */

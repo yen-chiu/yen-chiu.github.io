@@ -385,7 +385,7 @@ const meta = {
 
           requestAnimationFrame(() => {
             target.scrollIntoView({
-              behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+              behavior: ((globalThis as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches)
                 ? 'instant'
                 : 'smooth',
               block: 'start'

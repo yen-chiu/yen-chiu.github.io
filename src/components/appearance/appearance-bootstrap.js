@@ -3,7 +3,7 @@
 (() => {
   if (window.wendellAppearance) { window.wendellAppearance.apply(); return }
   const key = 'wendell-appearance-v1'
-  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:false }
+  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:false, motion:'system' }
   const normalize = value => {
     const v = value && typeof value === 'object' ? value : {}
     return {
@@ -13,7 +13,8 @@
       cover:typeof v.cover === 'boolean' ? v.cover : v.wallpaper==='hidden' ? false : defaults.cover,
       layout:['list','grid'].includes(v.layout) ? v.layout : defaults.layout,
       title:typeof v.title === 'boolean' ? v.title : defaults.title,
-      waves:typeof v.waves === 'boolean' ? v.waves : defaults.waves
+      waves:typeof v.waves === 'boolean' ? v.waves : defaults.waves,
+      motion:['system','always','reduced'].includes(v.motion) ? v.motion : defaults.motion
     }
   }
   let settings = {...defaults}
@@ -42,8 +43,14 @@
     root.dataset.postLayout=settings.layout
     root.dataset.bannerTitle=String(settings.title)
     root.dataset.bannerWaves=String(settings.waves)
+    root.dataset.motion=settings.motion
+    root.classList.toggle('motion-always',settings.motion==='always')
+    root.classList.toggle('motion-off',settings.motion==='reduced')
     window.dispatchEvent(new CustomEvent('wendell:appearance'))
   }
+  // 站点自己的「动画效果」选择优先于系统偏好：只有「跟随系统」才去问操作系统
+  const reduceMotion = () => settings.motion==='reduced' || (settings.motion==='system' && matchMedia('(prefers-reduced-motion: reduce)').matches)
+  window.wendellMotion = { reduce: reduceMotion }
   const set = value => {
     settings=normalize({...settings,...value})
     try {localStorage.setItem(key,JSON.stringify(settings));localStorage.setItem('theme',settings.theme)} catch { /* In-memory settings still work. */ }

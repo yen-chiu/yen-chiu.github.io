@@ -36,6 +36,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
       const { signal } = this.controller,
         button = this.querySelector('button')!
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      const motionReduced = () => (globalThis as any).wendellMotion?.reduce?.() ?? reduced.matches
       const tappedFiveTimes = createAvatarTapCounter()
       const reset = () => {
         cancelAnimationFrame(this.frame)
@@ -44,7 +45,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
       button.addEventListener(
         'pointermove',
         (e) => {
-          if (e.pointerType !== 'mouse' || reduced.matches) return
+          if (e.pointerType !== 'mouse' || motionReduced()) return
           const r = button.getBoundingClientRect(),
             x = (e.clientX - r.left) / r.width - 0.5,
             y = (e.clientY - r.top) / r.height - 0.5
@@ -66,7 +67,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
             this.startVerification()
             return
           }
-          if (!reduced.matches)
+          if (!motionReduced())
             this.bounce = button.animate(
               [
                 { transform: 'scale(1)' },

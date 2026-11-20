@@ -10,6 +10,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
   <fieldset><legend>显示模式</legend><div class='options'>{['system','light','dark'].map((value,i) => <button type='button' data-theme-choice={value} aria-pressed={i===0?'true':'false'}>{['跟随系统','浅色','深色'][i]}</button>)}</div></fieldset>
   <fieldset><legend>内页背景</legend><div class='options wallpaper'>{['banner','fullscreen','overlay'].map((value,i) => <button type='button' data-wallpaper-choice={value} aria-pressed={i===0?'true':'false'}>{['纯色','壁纸','柔化'][i]}</button>)}</div><p class='setting-hint'>用于博客、文章、归档等内页，不改变首页封面。</p></fieldset>
   <fieldset><legend>文章布局</legend><div class='options'><button type='button' data-layout-choice='list' aria-pressed='true'>列表</button><button type='button' data-layout-choice='grid' aria-pressed='false'>网格</button></div></fieldset>
+  <fieldset><legend>动画效果</legend><div class='options'>{['system','always','reduced'].map((value,i) => <button type='button' data-motion-choice={value} aria-pressed={i===0?'true':'false'}>{['跟随系统','总是开启','减少动画'][i]}</button>)}</div><p class='setting-hint'>跟随系统会尊重操作系统的「减少动态效果」；总是开启则保留打字机、卡片浮现与点击烟花等动效。</p></fieldset>
   <fieldset><legend>首页封面</legend><label class='switch'>显示封面插画<input type='checkbox' data-cover-choice checked /></label><label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label><label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label><p class='setting-hint'>首页保留全屏入口，下滑后收起。</p></fieldset>
   <button class='reset' type='button' data-appearance-reset>恢复默认外观</button>
 </appearance-panel>
@@ -24,7 +25,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
         const s=window.wendellAppearance?.get()
         if(!s)return
         this.querySelectorAll<HTMLButtonElement>('[data-hue]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.hue)===s.hue)))
-        for(const [selector,key] of [['theme-choice','theme'],['wallpaper-choice','wallpaper'],['layout-choice','layout']] as const){
+        for(const [selector,key] of [['theme-choice','theme'],['wallpaper-choice','wallpaper'],['layout-choice','layout'],['motion-choice','motion']] as const){
           this.querySelectorAll<HTMLButtonElement>(`[data-${selector}]`).forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute(`data-${selector}`)===s[key])))
         }
         this.querySelector<HTMLOutputElement>('[data-hue-value]')!.value=`${s.hue}°`
@@ -40,6 +41,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
         if(b.dataset.themeChoice)api.set({theme:b.dataset.themeChoice as AppearanceSettings['theme']})
         if(b.dataset.wallpaperChoice)api.set({wallpaper:b.dataset.wallpaperChoice as AppearanceSettings['wallpaper']})
         if(b.dataset.layoutChoice)api.set({layout:b.dataset.layoutChoice as AppearanceSettings['layout']})
+        if(b.dataset.motionChoice)api.set({motion:b.dataset.motionChoice as AppearanceSettings['motion']})
         if(b.hasAttribute('data-appearance-reset'))api.reset()
       },{signal})
       this.querySelector('[data-hue-slider]')?.addEventListener('input',e=>window.wendellAppearance?.set({hue:Number((e.target as HTMLInputElement).value)}),{signal})

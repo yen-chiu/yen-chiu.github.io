@@ -132,7 +132,7 @@ const toc = generateToc(headings)
         Math.min(max, offsetWithin - (wrapper.clientHeight - rect.height) / 2)
       )
       if (Math.abs(wrapper.scrollTop - target) < 4) return
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const reduce = ((globalThis as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches)
       if (this.settleNext && !reduce) {
         // 用户手动动过目录、锁定期刚结束：平滑归位一次
         this.settleNext = false
@@ -161,7 +161,7 @@ const toc = generateToc(headings)
             if (!directHeading.hasAttribute('tabindex')) {
               directHeading.setAttribute('tabindex', '-1')
             }
-            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            const reduce = ((globalThis as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches)
             directHeading.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
             directHeading.focus({ preventScroll: true })
           } else {

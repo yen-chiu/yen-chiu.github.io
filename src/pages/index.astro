@@ -148,6 +148,7 @@ const entries = [
         intro = this.querySelector<HTMLElement>('.hero-intro')!,
         credit = this.querySelector<HTMLElement>('.cover-credit')!
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
+      const motionReduced = () => (globalThis as any).wendellMotion?.reduce?.() ?? reduced.matches
       const layers = [
         {
           element: intro.querySelector<HTMLElement>('interactive-avatar'),
@@ -209,14 +210,14 @@ const entries = [
           const opacity = 1 - fadeProgress(p, layer.start, layer.end)
           const rebound = Math.max(-0.025, Math.min(0.035, -spring.velocity * 0.012))
           element.style.opacity = String(opacity)
-          element.style.transform = reduced.matches
+          element.style.transform = motionReduced()
             ? ''
             : `translate3d(0,${-value * layer.travel}px,0) scale(${1 - value * layer.scale + rebound})`
           element.style.visibility = opacity < 0.001 ? 'hidden' : 'visible'
           element.inert = opacity < 0.02
           if (opacity >= 0.001) visible = true
         }
-        intro.style.transform = reduced.matches
+        intro.style.transform = motionReduced()
           ? ''
           : `translate3d(0,${-value * 9}px,0) scale(${1 - value * 0.08})`
         intro.style.visibility = visible ? 'visible' : 'hidden'
@@ -224,7 +225,7 @@ const entries = [
         const caption = fadeProgress(p, 0.35, 0.8)
         credit.classList.toggle('is-visible', caption > 0.001)
         credit.style.opacity = String(caption)
-        credit.style.transform = reduced.matches ? '' : `translateY(${(1 - caption) * 6}px)`
+        credit.style.transform = motionReduced() ? '' : `translateY(${(1 - caption) * 6}px)`
         const hintOpacity = 1 - fadeProgress(p, 0, 0.35)
         hint.style.opacity = String(hintOpacity)
         hint.style.visibility = hintOpacity < 0.001 ? 'hidden' : 'visible'
@@ -235,7 +236,7 @@ const entries = [
         target = measure()
         const dt = lastTime ? (time - lastTime) / 1000 : 1 / 60
         lastTime = time
-        spring = reduced.matches
+        spring = motionReduced()
           ? { position: target, velocity: 0 }
           : springStep(spring, target, dt)
         const settled =
@@ -290,7 +291,7 @@ const entries = [
           const compact = Math.min(340, innerHeight * 0.42)
           window.scrollTo({
             top: window.scrollY + this.getBoundingClientRect().top + this.offsetHeight - compact,
-            behavior: reduced.matches ? 'instant' : 'smooth'
+            behavior: motionReduced() ? 'instant' : 'smooth'
           })
         },
         { signal }
@@ -685,6 +686,14 @@ const entries = [
       animation: cover-edge-drift 7s ease-in-out infinite alternate;
     }
   }
+  /* 站点设置里选了「总是开启」时，系统偏好压不动这些动效 */
+  html.motion-always .hero-intro {animation: intro-in 0.7s ease-out both;}
+  html.motion-always .star-field {animation: twinkle 7s ease-in-out infinite alternate;}
+  html.motion-always .scroll-hint b {animation: hint 2s ease-in-out infinite;}
+  html.motion-always .glitch-name.is-glitching {animation: name-shift 0.55s steps(2, end);}
+  html.motion-always .glitch-name.is-glitching::before {animation: glitch-fragment 0.55s steps(2, end);}
+  html.motion-always .glitch-name.is-glitching::after {animation: glitch-fragment 0.55s steps(2, end) reverse;}
+  html.motion-always[data-banner-waves='true'] .cover-wave {animation: cover-edge-drift 7s ease-in-out infinite alternate;}
   @keyframes cover-edge-drift {
     to {
       translate: 3% 0;

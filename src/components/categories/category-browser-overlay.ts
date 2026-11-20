@@ -284,7 +284,7 @@ const initialize = () => {
       if (!host || !dialog.open || !target.isConnected) return
       host.scrollTo({
         top: Math.max(0, host.scrollTop + target.getBoundingClientRect().top - host.getBoundingClientRect().top - 8),
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        behavior: ((globalThis as any).wendellMotion?.reduce?.() ?? matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth'
       })
     })
   }
