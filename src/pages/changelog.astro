@@ -264,16 +264,19 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .cl-pct {grid-area:1/1;font-size:.72rem;font-variant-numeric:tabular-nums;transition:opacity .16s ease;}
   .cl-chev {grid-area:1/1;width:1rem;height:1rem;opacity:0;transition:opacity .16s ease,transform .2s ease;}
   .cl-up {grid-area:1/1;width:1.05rem;height:1.05rem;opacity:0;transition:opacity .16s ease;}
-  /* 收起态：显示进度；鼠标移上去换成「‹」，示意可以往左展开 */
+  /* 收起态：显示进度；桌面鼠标移上去才换成「‹」，示意可以往左展开（触屏不套 hover，否则会一直停在箭头） */
   .cl-actions.is-collapsed .cl-pct {opacity:1;}
-  .cl-actions.is-collapsed .cl-top-btn:hover .cl-pct,
+  @media (hover: hover) and (pointer: fine) {
+    .cl-actions.is-collapsed .cl-top-btn:hover .cl-pct {opacity:0;}
+    .cl-actions.is-collapsed .cl-top-btn:hover .cl-chev {opacity:1;}
+    .cl-actions.is-collapsed.at-end .cl-top-btn:hover .cl-chev {opacity:0;}
+  }
   .cl-actions.is-collapsed .cl-top-btn:focus-visible .cl-pct {opacity:0;}
-  .cl-actions.is-collapsed .cl-top-btn:hover .cl-chev,
   .cl-actions.is-collapsed .cl-top-btn:focus-visible .cl-chev {opacity:1;}
+  .cl-actions.is-collapsed.at-end .cl-top-btn:focus-visible .cl-chev {opacity:0;}
   /* 收起态到页底：进度换回向上箭头 */
   .cl-actions.is-collapsed.at-end .cl-pct {opacity:0;}
   .cl-actions.is-collapsed.at-end .cl-up {opacity:1;}
-  .cl-actions.is-collapsed.at-end .cl-top-btn:hover .cl-chev {opacity:0;}
   /* 展开态：向上箭头，点一下收起所有版本并上滑 */
   .cl-actions:not(.is-collapsed) .cl-pct {opacity:0;}
   .cl-actions:not(.is-collapsed) .cl-chev {opacity:0;}
@@ -656,12 +659,12 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   window.addEventListener('resize', updateProgress)
   updateProgress()
 
-  // —— 胶囊会自己收起来：收起时只剩「进度数字」，点开才向左展开另两颗；展开时该键变成向上箭头，点一下收起 ——
-  const COLLAPSE_MS = 4200
-  let collapseTimer = 0
+  // —— 胶囊：收起时只剩「进度数字」，点开才向左展开另两颗；展开时该键变成向上箭头 ——
+  //    展开后只要屏幕滚过一段距离就自动收回，回到「显示进度数字」的样子
+  const COLLAPSE_SCROLL = 140
+  let expandY = 0
   const expanded = () => !!actions && !actions.classList.contains('is-collapsed')
   const collapse = () => {
-    window.clearTimeout(collapseTimer)
     actions?.classList.add('is-collapsed')
     actionTop?.setAttribute('aria-expanded', 'false')
     actionTop?.setAttribute('aria-label', '展开浮动按钮')
@@ -669,22 +672,16 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   }
   const expand = () => {
     actions?.classList.remove('is-collapsed')
+    expandY = window.scrollY
     actionTop?.setAttribute('aria-expanded', 'true')
     actionTop?.setAttribute('aria-label', '收起所有版本并上滑')
     actionTop?.setAttribute('title', '收起所有版本并上滑')
-    window.clearTimeout(collapseTimer)
-    collapseTimer = window.setTimeout(collapse, COLLAPSE_MS)
   }
   collapse()
-  actions?.addEventListener('pointerenter', () => {
+  window.addEventListener('scroll', () => {
     if (!expanded()) return
-    window.clearTimeout(collapseTimer)
-  })
-  actions?.addEventListener('pointerleave', () => {
-    if (!expanded()) return
-    window.clearTimeout(collapseTimer)
-    collapseTimer = window.setTimeout(collapse, COLLAPSE_MS)
-  })
+    if (Math.abs(window.scrollY - expandY) >= COLLAPSE_SCROLL) collapse()
+  }, { passive: true })
 
   actionTop?.addEventListener('click', () => {
     if (!expanded()) {
