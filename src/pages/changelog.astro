@@ -114,7 +114,6 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
               {group.versions.map(version => <details class='version-block' id={`ver-${group.gen}-${version.date}`} data-version={`ver-${group.gen}-${version.date}`}>
                 <summary class='version-head'>
                   <span class='version-chip'>{version.version}</span>
-                  <span class='version-date'>{version.date}</span>
                   <span class='version-count'>{version.entries.length > 1 ? `${version.entries.length} 个站点 · ` : ''}{version.items} 项</span>
                   <span class='version-plus' aria-hidden='true'>＋</span>
                 </summary>
@@ -351,7 +350,6 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .version-plus {font-size:.72rem;color:hsl(var(--muted-foreground)/.8);transition:transform .2s ease;}
   .version-block[open] .version-plus {transform:rotate(45deg);}
   .version-chip {font-variant-numeric:tabular-nums;font-size:.7rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
-  .version-date {font-variant-numeric:tabular-nums;}
   .version-count {margin-left:auto;font-variant-numeric:tabular-nums;}
   .version-block > .updates {padding-left:0;}
   .version-feedback {display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;padding:.7rem 0 1rem;margin-top:.35rem;border-top:1px dashed hsl(var(--border)/.8);font-size:.72rem;color:hsl(var(--muted-foreground));}
@@ -417,6 +415,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 </style>
 
 <script>
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const label = (element: HTMLElement, expand: boolean) => {
     element.textContent = expand ? '一键收起' : '一键展开'
   }
@@ -582,7 +581,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     if (!id) return
     event.preventDefault()
     const target = openVersion(id)
-    target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    rebase(1400)
+    target?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' })
   })
 
   document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => {
@@ -602,6 +602,11 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   const progressBar = document.getElementById('changelog-progress-bar')
   const tocPanel = document.querySelector<HTMLElement>('.version-toc')
   const tocShade = document.querySelector<HTMLElement>('[data-cl-shade]')
+  let rebaseUntil = 0
+  // 程序自己滚动（点评论、点目录、回顶）时别把「滚过一段」算作用户在滚
+  const rebase = (ms = 900) => {
+    rebaseUntil = Date.now() + ms
+  }
 
   const setTocPanel = (open: boolean) => {
     if (!tocPanel) return
@@ -633,6 +638,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       align()
       window.setTimeout(align, 320)
     })
+    rebase()
     collapse()
   })
   actionToc?.addEventListener('click', () => {
@@ -646,8 +652,18 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   document.addEventListener('click', (event) => {
     if (!tocPanel?.classList.contains('is-sheet')) return
     const target = event.target as HTMLElement | null
-    if (target?.closest('a.toc-link')) setTocPanel(false)
+    if (target?.closest('a.toc-link')) {
+      setTocPanel(false)
+      rebase()
+    }
   })
+  // 抽屉是手机形态；窗口放大到桌面宽度就把面板关掉，否则会盖满屏还锁着滚动
+  const wideQuery = window.matchMedia('(min-width: 1025px)')
+  const closeOnWide = () => {
+    if (wideQuery.matches) setTocPanel(false)
+  }
+  wideQuery.addEventListener('change', closeOnWide)
+  window.addEventListener('resize', closeOnWide, { passive: true })
 
   const updateProgress = () => {
     const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
@@ -663,9 +679,22 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       actions?.classList.toggle('hide-comment', near)
     }
   }
-  window.addEventListener('scroll', updateProgress, { passive: true })
-  window.addEventListener('resize', updateProgress)
-  updateProgress()
+  // 每帧最多算一次
+  let progressRaf = 0
+  const scheduleProgress = () => {
+    if (progressRaf) return
+    progressRaf = requestAnimationFrame(() => {
+      progressRaf = 0
+      updateProgress()
+    })
+  }
+  window.addEventListener('scroll', scheduleProgress, { passive: true })
+  window.addEventListener('resize', scheduleProgress)
+  // 展开/收起版本块、评论 iframe 载入都会改变页面高度，百分比要跟着重算
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(scheduleProgress).observe(document.body)
+  }
+  scheduleProgress()
 
   // —— 胶囊：收起时只剩「进度数字」，点开才向左展开另两颗；展开时该键变成向上箭头 ——
   //    展开后只要屏幕滚过一段距离就自动收回，回到「显示进度数字」的样子
@@ -688,6 +717,11 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   collapse()
   window.addEventListener('scroll', () => {
     if (!expanded()) return
+    // 程序滚动期间把基准跟着挪，只有用户自己滚才收起
+    if (Date.now() < rebaseUntil) {
+      expandY = window.scrollY
+      return
+    }
     if (Math.abs(window.scrollY - expandY) >= COLLAPSE_SCROLL) collapse()
   }, { passive: true })
 
@@ -696,7 +730,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       // 收起态：到页底时这一下是回顶，否则是展开左侧两颗
       if (actions?.classList.contains('at-end')) {
         document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        rebase()
+        window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' })
         syncToc()
         return
       }
@@ -705,7 +740,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     }
     // 展开态：收起所有版本 + 上滑回顶，胶囊自己缩回去
     document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    rebase()
+    window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' })
     syncToc()
     collapse()
   })
@@ -835,7 +871,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       if (count) count.textContent = '0'
       moveButton.setAttribute('hidden', '')
       showState('已挪到下面的反馈框，接着写完再发送。')
-      document.getElementById('changelog-comments')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      document.getElementById('changelog-comments')?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' })
       area.focus({ preventScroll: true })
       const end = area.value.length
       area.setSelectionRange(end, end)

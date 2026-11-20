@@ -47,6 +47,8 @@ const toc = generateToc(headings)
     tocLinks: TOCLink[] = []
     headingProgress: Record<string, HeadingProgress> = {}
     userScrolledAt = 0
+    settleNext = false
+    unlockTimer = 0
 
     constructor() {
       super()
@@ -88,13 +90,13 @@ const toc = generateToc(headings)
           el.classList.toggle('highlight-bg-translucent', inView)
           el.classList.toggle(
             'rounded-t-2xl',
-            inView && (i === 0 || !this.headingProgress[this.tocLinks[i - 1]?.slug].inView)
+            inView && (i === 0 || !this.headingProgress[this.tocLinks[i - 1]?.slug]?.inView)
           )
           el.classList.toggle(
             'rounded-b-2xl',
             inView &&
               (i === this.tocLinks.length - 1 ||
-                !this.headingProgress[this.tocLinks[i + 1]?.slug].inView)
+                !this.headingProgress[this.tocLinks[i + 1]?.slug]?.inView)
           )
           bar.classList.toggle('is-read', !inView && progress === 1)
           bar.classList.toggle('highlight-bg', inView)
@@ -109,7 +111,7 @@ const toc = generateToc(headings)
     centerCurrent = () => {
       const wrapper = this.querySelector('.toc-content-wrapper') as HTMLElement | null
       if (!wrapper) return
-      if (Date.now() - this.userScrolledAt < 4000) return
+      if (Date.now() - this.userScrolledAt < 1200) return
 
       const max = wrapper.scrollHeight - wrapper.clientHeight
       if (max <= 2) return
@@ -129,14 +131,16 @@ const toc = generateToc(headings)
         0,
         Math.min(max, offsetWithin - (wrapper.clientHeight - rect.height) / 2)
       )
-      const delta = Math.abs(wrapper.scrollTop - target)
-      if (delta < 4) return
-      // 连续滚动时直接跟手，只有大跳才用平滑动画，避免动画被下一帧打断造成延迟感
-      if (delta > 60) {
+      if (Math.abs(wrapper.scrollTop - target) < 4) return
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (this.settleNext && !reduce) {
+        // 用户手动动过目录、锁定期刚结束：平滑归位一次
+        this.settleNext = false
         wrapper.scrollTo({ top: target, behavior: 'smooth' })
-      } else {
-        wrapper.scrollTop = target
+        return
       }
+      // 跟随滚动一律即时，避免动画被下一帧打断；点击目录跳转才用平滑
+      wrapper.scrollTop = target
     }
 
     connectedCallback() {
@@ -153,7 +157,13 @@ const toc = generateToc(headings)
               directHeading.textContent || '',
               link.element.getAttribute('href')
             )
-            directHeading.scrollIntoView({ behavior: 'smooth' })
+            // 把焦点交给标题，键盘用户跳转后 Tab 能接着往下走
+            if (!directHeading.hasAttribute('tabindex')) {
+              directHeading.setAttribute('tabindex', '-1')
+            }
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            directHeading.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
+            directHeading.focus({ preventScroll: true })
           } else {
             console.warn(`No heading found for slug: ${link.slug}`)
           }
@@ -179,6 +189,12 @@ const toc = generateToc(headings)
       if (wrapper) {
         const markUser = () => {
           this.userScrolledAt = Date.now()
+          window.clearTimeout(this.unlockTimer)
+          // 锁定期结束时补一次归位，用户松手后目录自己回来
+          this.unlockTimer = window.setTimeout(() => {
+            this.settleNext = true
+            this.updatePositionAndStyle()
+          }, 1250)
         }
         wrapper.addEventListener('wheel', markUser, { passive: true })
         wrapper.addEventListener('touchmove', markUser, { passive: true })

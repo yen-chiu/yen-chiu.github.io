@@ -41,20 +41,23 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
 
     calculateScrollPercent() {
       const scrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop)
-      // Before article
-      if (scrollTop < this.articleTop) return 0
-      const maxScrollable = this.scrollHeight - this.clientHeight
-      // After article
-      if (maxScrollable <= 0) return 100
-      const progress = Math.min(scrollTop - this.articleTop, maxScrollable)
-      return Math.round((progress / maxScrollable) * 100)
+      if (!this.articleEl) return 0
+      // 每次都重新量：旋转屏幕、改字号、评论加载都会改变正文与视口的高度
+      const rect = this.articleEl.getBoundingClientRect()
+      const articleTop = rect.top + scrollTop
+      const viewport = document.documentElement.clientHeight || window.innerHeight
+      const span = rect.height - viewport
+      // 正文口径：正文顶部贴住视口顶是 0%，正文底部贴住视口底是 100%
+      if (span <= 0) return scrollTop >= articleTop ? 100 : 0
+      const percent = Math.round(((scrollTop - articleTop) / span) * 100)
+      return Math.max(0, Math.min(100, percent))
     }
 
     updateScrollPercent() {
+      this.ticking = false
       const percent = this.calculateScrollPercent()
       this.scrollPercentEl.textContent = percent.toString()
       this.actionBtns.classList.toggle('ended', percent >= 100)
-      this.ticking = false
     }
 
     connectedCallback() {
@@ -67,7 +70,7 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
 
       if (!this.articleEl) {
         console.error(`Element with ID ${contentName} not found.`)
-        needPercent = false
+        this.needPercent = false
       }
       // Scroll to top action
       this.scrollBtn.addEventListener('click', this)
@@ -84,16 +87,22 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
       }
       // Scroll percent update
       if (this.needPercent) {
-        this.scrollHeight = this.articleEl.scrollHeight
-        this.articleTop = this.articleEl.offsetTop
-        this.clientHeight = document.documentElement.clientHeight
-
-        document.addEventListener('scroll', () => {
-          if (!this.ticking) {
-            requestAnimationFrame(() => this.updateScrollPercent())
-            this.ticking = true
-          }
-        })
+        const onScroll = () => {
+          if (this.ticking) return
+          this.ticking = true
+          requestAnimationFrame(() => {
+            try {
+              this.updateScrollPercent()
+            } catch (error) {
+              // 出错也要解锁，否则就再也不更新了
+              this.ticking = false
+              console.error(error)
+            }
+          })
+        }
+        document.addEventListener('scroll', onScroll, { passive: true })
+        window.addEventListener('resize', onScroll, { passive: true })
+        onScroll()
       } else {
         this.actionBtns.classList.add('ended')
       }
@@ -101,7 +110,8 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
 
     handleEvent(event) {
       if (event.type === 'click') {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
       }
     }
   }
