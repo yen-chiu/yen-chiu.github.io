@@ -55,7 +55,7 @@ test('fifth tap shows the checking screen before navigating to the neutral verif
   const timer = [...env.timers.values()][0]
   assert.equal(timer.delay, 1100)
   timer.callback()
-  assert.deepEqual(env.navigations, ['/yen-chiu-astro/verify/'])
+  assert.deepEqual(env.navigations, ['/verify/'])
   env.avatar.disconnectedCallback()
 })
 

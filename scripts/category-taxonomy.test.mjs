@@ -38,7 +38,7 @@ for (const [oldPath, target] of Object.entries(categoryRedirects)) {
 console.log('Taxonomy: 17 unchanged article paths, 3 topics / 8 subtopics, 16 compatible legacy category routes')
 
 if (process.argv.includes('--built')) {
-  const base = '/yen-chiu-astro'
+  const base = ''
   const index = JSON.parse(readFileSync('dist/contentIndex.json', 'utf8'))
   const blogEntries = Object.values(index).filter(entry => entry.collection === 'blog')
   assert.equal(blogEntries.length, 17)

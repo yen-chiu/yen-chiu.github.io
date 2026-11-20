@@ -91,13 +91,13 @@ const meta = {
     
         <div class="nf-foot">
           <nav aria-label="站内导航">
-            <a href="/yen-chiu-astro/">回到首页</a>
+            <a href="/">回到首页</a>
             <span class="nf-sep" aria-hidden="true">·</span>
-            <a href="/yen-chiu-astro/archives">最近更新</a>
+            <a href="/archives">最近更新</a>
             <span class="nf-sep" aria-hidden="true">·</span>
-            <a href="/yen-chiu-astro/tags">全部标签</a>
+            <a href="/tags">全部标签</a>
             <span class="nf-sep" aria-hidden="true">·</span>
-            <a href="/yen-chiu-astro/about">关于</a>
+            <a href="/about">关于</a>
           </nav>
           <p class="nf-hint">灯照到哪里，字才亮到哪里</p>
         </div>
@@ -589,7 +589,7 @@ const meta = {
 (function () {
   "use strict";
 
-  var BASE = (typeof nfBase !== "undefined" ? nfBase : "/yen-chiu-astro");
+  var BASE = (typeof nfBase !== "undefined" ? nfBase : "");
   
   var cover = document.getElementById("nf-cover");
   var code = document.querySelector(".nf-code");

@@ -1,9 +1,11 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import ts from 'typescript'
-export const base = '/yen-chiu-astro'
+// 2026-11 起部署在根域，不再需要给 dist 补前缀；保留脚本与调用点以便将来回退子路径。
+export const base = ''
 const route = /^\/(?:_astro|assets|favicon|images|blog|tags|categories|archives|docs|search|persona|about|projects|links|terms|journal|contentIndex\.json|rss\.xml|robots\.txt)(?:[/.?#]|$)/
-export function prefix(value) { return route.test(value) ? base + value : value }
+export function prefix(value) { return base && route.test(value) ? base + value : value }
 export function rewriteJavaScript(text) {
+ if (!base) return text
  const source = ts.createSourceFile('bundle.js', text, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS)
  const edits=[]
  function visit(node) {

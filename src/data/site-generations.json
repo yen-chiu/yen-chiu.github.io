@@ -23,7 +23,7 @@
     "engine": "Astro · Iris",
     "span": "2026-11 – 现在",
     "commits": 56,
-    "note": "第三代，2026-11-17 把内容迁进自己的 Astro 站；目前挂在 /yen-chiu-astro/ 预览。",
-    "repo": "yen-chiu/yen-chiu-astro"
+    "note": "第三代，2026-11-17 把内容迁进自己的 Astro 站；2026-11-20 起直接挂在根域 https://yenchiu.com。",
+    "repo": "yen-chiu/yen-chiu.github.io"
   }
 ]

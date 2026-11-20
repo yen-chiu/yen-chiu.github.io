@@ -32,14 +32,15 @@ export default defineConfig({
 
   // [Basic]
   site: 'https://yenchiu.com',
-  base: '/yen-chiu-astro',
+  // 2026-11 起博客迁到根域（GitHub Pages 用户站 yen-chiu.github.io），不再使用子路径
+  base: '/',
   // Deploy to a sub path
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
   trailingSlash: 'never',
-  // Static redirect destinations must include the Pages subpath as well.
+  // 根域部署，静态跳转目标不再需要前缀
   redirects: Object.fromEntries(
-    Object.entries(categoryRedirects).map(([from, to]) => [from, `/yen-chiu-astro${to}`])
+    Object.entries(categoryRedirects).map(([from, to]) => [from, to])
   ),
   // root: './my-project-directory',
   server: { host: true },

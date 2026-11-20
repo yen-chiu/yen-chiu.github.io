@@ -117,8 +117,8 @@ export const integ: IntegrationUserConfig = {
     applyTip: [
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
-      { name: 'Link', val: 'https://yenchiu.com/yen-chiu-astro/' },
-      { name: 'Avatar', val: 'https://yenchiu.com/yen-chiu-astro/favicon/wendell-avatar-192.png' }
+      { name: 'Link', val: 'https://yenchiu.com/' },
+      { name: 'Avatar', val: 'https://yenchiu.com/favicon/wendell-avatar-192.png' }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false
@@ -181,9 +181,11 @@ export const integ: IntegrationUserConfig = {
     //imageUploader: false
   },
   // Giscus comment system configuration
+  // 仓库改名后：老站（现 blog-v2）保留原有 Discussions，repoId 不随改名变化，
+  // 因此这里指向 blog-v2，历史评论仍可挂回原仓库。
   giscus: {
     enable: true,
-    repo: 'yen-chiu/yen-chiu.github.io',
+    repo: 'yen-chiu/blog-v2',
     repoId: 'R_kgDOKhSzCA',
     category: 'Announcements',
     categoryId: 'DIC_kwDOKhSzCM4CaNBZ'

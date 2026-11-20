@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import {rewriteJavaScript,prefix} from './pages-paths.mjs'
-assert.equal(rewriteJavaScript('const r=/blog/; const x="/blog/a";const slash="/";'), 'const r=/blog/; const x="/yen-chiu-astro/blog/a";const slash="/";')
+// 根域部署：base 为空，脚本必须是彻底的 no-op（保留以便将来回退子路径）
+assert.equal(rewriteJavaScript('const r=/blog/; const x="/blog/a";const slash="/";'), 'const r=/blog/; const x="/blog/a";const slash="/";')
 assert.equal(prefix('https://yenchiu.com/chat/'),'https://yenchiu.com/chat/')
-assert.equal(prefix('/yen-chiu-astro/blog/a'),'/yen-chiu-astro/blog/a')
-assert.equal(rewriteJavaScript('const p=`/blog/${slug}`'), 'const p=`/yen-chiu-astro/blog/${slug}`')
+assert.equal(prefix('/blog/a'),'/blog/a')
+assert.equal(rewriteJavaScript('const p=`/blog/${slug}`'), 'const p=`/blog/${slug}`')
 console.log('Pages path regression checks passed')
