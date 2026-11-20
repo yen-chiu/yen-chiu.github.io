@@ -2,13 +2,13 @@
   use_iconfont: true
   name: 本站源码
   automatic_name: false
-  link: https://github.com/yen-chiu/yen-chiu.github.io
+  link: https://github.com/yen-chiu/blog-v2
 # -
 #   icon: icon-github
 #   icon: wendell_icon-github
 #   use_iconfont: true
 #   name: Github 仓库
-#   link: https://github.com/yen-chiu/yen-chiu.github.io
+#   link: https://github.com/yen-chiu/blog-v2
 - icon: https://img.shields.io/badge/link-996.icu-red.svg
   # 是否使用 Iconfont 的图标字体
   use_iconfont: false

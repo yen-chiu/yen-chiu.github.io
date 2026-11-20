@@ -9,7 +9,7 @@ body_class: admin-page
 
 <link rel="stylesheet" href="{{ '/assets/css/admin.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 
-<div id="wx-admin" class="adm" data-owner="yen-chiu" data-repo="yen-chiu.github.io" data-branch="master" data-auth="{{ site.admin_auth_endpoint | default: '' }}">
+<div id="wx-admin" class="adm" data-owner="yen-chiu" data-repo="blog-v2" data-branch="master" data-auth="{{ site.admin_auth_endpoint | default: '' }}">
   <!-- ============ 登录 ============ -->
   <section id="adm-login" class="adm-card adm-login">
     <div class="adm-login-head">
@@ -23,7 +23,7 @@ body_class: admin-page
         <div class="adm-inline">
           <input id="adm-owner" type="text" inputmode="latin" placeholder="owner" value="yen-chiu" required>
           <span class="adm-slash">/</span>
-          <input id="adm-repo" type="text" inputmode="latin" placeholder="repo" value="yen-chiu.github.io" required>
+          <input id="adm-repo" type="text" inputmode="latin" placeholder="repo" value="blog-v2" required>
         </div>
       </label>
 
@@ -91,7 +91,7 @@ body_class: admin-page
     <aside class="adm-side" id="adm-side">
       <div class="adm-side-head">
         <div class="adm-side-title">
-          <strong id="adm-repo-label">yen-chiu/yen-chiu.github.io</strong>
+          <strong id="adm-repo-label">yen-chiu/blog-v2</strong>
           <div class="adm-muted adm-tiny"><span id="adm-branch-label">master</span> · <span id="adm-user-label">已连接</span></div>
         </div>
         <div class="adm-side-actions">
