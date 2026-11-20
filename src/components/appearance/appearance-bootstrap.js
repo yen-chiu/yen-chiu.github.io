@@ -3,7 +3,7 @@
 (() => {
   if (window.wendellAppearance) { window.wendellAppearance.apply(); return }
   const key = 'wendell-appearance-v1'
-  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:false, motion:'system' }
+  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:true, motion:'system' }
   const normalize = value => {
     const v = value && typeof value === 'object' ? value : {}
     return {
