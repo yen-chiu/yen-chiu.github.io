@@ -211,6 +211,9 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       </button>
       <button type='button' class='cl-btn cl-top-btn' data-cl-top aria-label='收起浮动按钮' aria-expanded='false' title='收起'>
         <span class='cl-pct' data-cl-pct>0%</span>
+        <svg class='cl-chev' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+          <path d='M15 5l-7 7 7 7'></path>
+        </svg>
         <svg class='cl-up' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
           <path d='M12 19V5M5 12l7-7 7 7'></path>
         </svg>
@@ -259,13 +262,21 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .cl-actions.is-collapsed .cl-btn[data-cl-toc] {width:0;opacity:0;margin:0;pointer-events:none;transform:translateX(.5rem);overflow:hidden;}
   .cl-top-btn {position:relative;display:grid;place-items:center;min-width:2.2rem;width:auto;padding:0 .5rem;}
   .cl-pct {grid-area:1/1;font-size:.72rem;font-variant-numeric:tabular-nums;transition:opacity .16s ease;}
+  .cl-chev {grid-area:1/1;width:1rem;height:1rem;opacity:0;transition:opacity .16s ease,transform .2s ease;}
   .cl-up {grid-area:1/1;width:1.05rem;height:1.05rem;opacity:0;transition:opacity .16s ease;}
-  /* 收起态：显示进度；到页底进度换成向上箭头 */
+  /* 收起态：显示进度；鼠标移上去换成「‹」，示意可以往左展开 */
   .cl-actions.is-collapsed .cl-pct {opacity:1;}
+  .cl-actions.is-collapsed .cl-top-btn:hover .cl-pct,
+  .cl-actions.is-collapsed .cl-top-btn:focus-visible .cl-pct {opacity:0;}
+  .cl-actions.is-collapsed .cl-top-btn:hover .cl-chev,
+  .cl-actions.is-collapsed .cl-top-btn:focus-visible .cl-chev {opacity:1;}
+  /* 收起态到页底：进度换回向上箭头 */
   .cl-actions.is-collapsed.at-end .cl-pct {opacity:0;}
   .cl-actions.is-collapsed.at-end .cl-up {opacity:1;}
-  /* 展开态：进度让位给向上箭头（点它收起） */
+  .cl-actions.is-collapsed.at-end .cl-top-btn:hover .cl-chev {opacity:0;}
+  /* 展开态：向上箭头，点一下收起所有版本并上滑 */
   .cl-actions:not(.is-collapsed) .cl-pct {opacity:0;}
+  .cl-actions:not(.is-collapsed) .cl-chev {opacity:0;}
   .cl-actions:not(.is-collapsed) .cl-up {opacity:1;}
   .cl-actions.hide-comment [data-cl-comment] {display:none;}
   .cl-actions.is-collapsed .cl-top-btn {padding:0;width:2.2rem;min-width:2.2rem;}
@@ -659,8 +670,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   const expand = () => {
     actions?.classList.remove('is-collapsed')
     actionTop?.setAttribute('aria-expanded', 'true')
-    actionTop?.setAttribute('aria-label', '收起浮动按钮')
-    actionTop?.setAttribute('title', '收起')
+    actionTop?.setAttribute('aria-label', '收起所有版本并上滑')
+    actionTop?.setAttribute('title', '收起所有版本并上滑')
     window.clearTimeout(collapseTimer)
     collapseTimer = window.setTimeout(collapse, COLLAPSE_MS)
   }
@@ -687,6 +698,10 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       expand()
       return
     }
+    // 展开态：收起所有版本 + 上滑回顶，胶囊自己缩回去
+    document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    syncToc()
     collapse()
   })
 
