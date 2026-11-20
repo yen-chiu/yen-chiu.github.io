@@ -1,6 +1,6 @@
 ---
 import {getCollection} from 'astro:content'
-export async function getStaticPaths(){return (await getCollection('blog')).filter(p=>!p.data.draft).map(p=>({params:{slug:p.data.slug},props:{target:import.meta.env.BASE_URL+'/blog/'+p.data.slug}}))}
+export async function getStaticPaths(){return (await getCollection('blog')).filter(p=>!p.data.draft).map(p=>({params:{slug:p.data.slug},props:{target:import.meta.env.BASE_URL.replace(/\/$/,'')+'/blog/'+p.data.slug}}))}
 const {target}=Astro.props
 return Astro.redirect(encodeURI(target),301)
 ---
