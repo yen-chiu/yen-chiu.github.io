@@ -590,6 +590,12 @@ const meta = {
   "use strict";
 
   var BASE = (typeof nfBase !== "undefined" ? nfBase : "");
+
+  /* 旧地址兜底：2026-11 站点从 /yen-chiu-astro/ 迁到根域，老链接 301 到同名路径 */
+  (function () {
+    var m = location.pathname.match(/^\/yen-chiu-astro(\/.*)?$/);
+    if (m) location.replace((m[1] || "/") + location.search + location.hash);
+  })();
   
   var cover = document.getElementById("nf-cover");
   var code = document.querySelector(".nf-code");
