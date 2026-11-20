@@ -190,9 +190,14 @@ const entries = [
       const measure = () => {
         const height = this.offsetHeight,
           compact = Math.min(340, innerHeight * 0.42)
+        /* 封面被 margin-top:-90px 拉到页面顶上方，rect.top 一开局就是负数；
+           直接拿 -top 当进度会让首屏就先收起十几像素。以文档内起点（不小于 0）为基准，
+           保证 scrollY=0 时进度正好是 0，封面完整铺满。 */
+        const docTop = this.getBoundingClientRect().top + window.scrollY
+        const start = Math.max(0, docTop)
         const target = Math.max(
           0,
-          Math.min(1, -this.getBoundingClientRect().top / Math.max(1, height - compact))
+          Math.min(1, (window.scrollY - start) / Math.max(1, height - compact))
         )
         cover.style.height = `${height - (height - compact) * target}px`
         return target

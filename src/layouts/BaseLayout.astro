@@ -35,6 +35,18 @@ const {
     <BaseHead {articleDate} {description} {ogImage} {title} />
     <ThemeProvider />
     <AppearanceBootstrap />
+    <script is:inline>
+      /* 首页封面是整屏铺满，宽度必须在首帧就拿到真实视口宽度，
+         否则会先按容器 100% 画一版（左右露出页面底色），JS 再撑开就会闪一下。
+         先同步量一次保证首帧，再在下一帧补量一次，把滚动条占掉的宽度也扣掉。 */
+      const syncViewportWidth = () =>
+        document.documentElement.style.setProperty(
+          '--viewport-width',
+          document.documentElement.clientWidth + 'px'
+        )
+      syncViewportWidth()
+      requestAnimationFrame(syncViewportWidth)
+    </script>
     <PageTransition />
   </head>
 
