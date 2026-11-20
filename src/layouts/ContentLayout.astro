@@ -298,8 +298,17 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
       if (button.dataset.ready === 'true') return
       button.dataset.ready = 'true'
       button.addEventListener('click', () => {
-        const target = document.querySelector(button.dataset.commentJump || '')
-        target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        const el = document.querySelector(button.dataset.commentJump || '')
+        if (!el) return
+        // 一次到位：长距离的平滑滚动在手机上容易被下一次手势打断，变成「点一下走一段」；
+        // 跳完再补一次校正，防止评论 iframe 撑开后把位置顶下去
+        const align = () => window.scrollTo({ top: Math.max(0, window.scrollY + el.getBoundingClientRect().top - 72), behavior: 'auto' })
+        align()
+        requestAnimationFrame(() => {
+          align()
+          window.setTimeout(align, 320)
+          window.setTimeout(align, 900)
+        })
       })
     })
 
@@ -311,7 +320,7 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
     let ticking = false
     const update = () => {
       ticking = false
-      const near = target.getBoundingClientRect().top < window.innerHeight - 80
+      const near = target.getBoundingClientRect().top < 150
       actions.classList.toggle('comment-near', near)
     }
     const request = () => {
