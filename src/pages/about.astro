@@ -47,7 +47,7 @@ const sections = [
             <a href={sitePath('/rss.xml')}>订阅 RSS</a>
             <a href='https://github.com/yen-chiu' target='_blank' rel='noopener noreferrer'>GitHub <span aria-hidden='true'>↗</span></a>
           </div>
-          <p class='hero-since'>从 <time datetime={since}>2023.05.20</time> 开始，写着第 <strong data-about-days data-since={since}>{days.toLocaleString('zh-CN')}</strong> 天。</p>
+          <p class='hero-since'>从 <time datetime={since}>{dateLabel(new Date(since)).replaceAll('/', '.')}</time> 开始，写着第 <strong data-about-days data-since={since}>{days.toLocaleString('zh-CN')}</strong> 天。</p>
         </div>
         <aside class='profile-card fx-card' aria-label='个人资料' data-reveal>
           <div class='avatar-wrap'><InteractiveAvatar><Image src={avatar} alt='Wendell 的头像' width={200} height={200} loading='eager' /></InteractiveAvatar></div>
