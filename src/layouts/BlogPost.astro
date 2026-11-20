@@ -13,7 +13,6 @@ import PageLayout from '@/layouts/ContentLayout.astro'
 import ArticleRail from '@/components/blog/ArticleRail.astro'
 import Backlinks from '@/components/blog/Backlinks.astro'
 import CategoryBreadcrumbs from '@/components/blog/CategoryBreadcrumbs.astro'
-import MobileTOC from '@/components/MobileTOC.astro'
 import OutgoingLinks from '@/components/blog/OutgoingLinks.astro'
 import { Giscus } from '@/components/giscus'
 import { PageInfo } from '@/components/waline'
@@ -114,8 +113,6 @@ const currentPostSlug = getPostSlug(Astro.props.post)
     {!isDraft && enableComment && config.integ.giscus?.enable && <Giscus class='mt-3 sm:mt-6' term={`${title} | Wendell`} />}
   </Fragment>
 </PageLayout>
-
-{!!headings.length && <MobileTOC headings={headings} label='本文目录' />}
 
 {config.integ.mediumZoom.enable && <MediumZoom />}
 

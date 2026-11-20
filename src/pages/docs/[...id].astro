@@ -8,7 +8,7 @@ import PageLayout from '@/layouts/ContentLayout.astro'
 import Backlinks from '@/components/blog/Backlinks.astro'
 import OutgoingLinks from '@/components/blog/OutgoingLinks.astro'
 import HelpSupport from '@/components/docs/HelpSupport.astro'
-import MobileTOC from '@/components/MobileTOC.astro'
+import { Giscus } from '@/components/giscus'
 import {
   buildBacklinksMap,
   getBacklinksForPost,
@@ -69,6 +69,7 @@ const updatedLabel = updatedAt
   meta={{ description, title }}
   back={sitePath('/docs')}
   graphTarget='#docs-graph-view'
+  commentTarget='#doc-comments'
   mode='article'
   mainClass='docs-reading'
 >
@@ -128,6 +129,15 @@ const updatedLabel = updatedAt
   <div slot='bottom'>
     <HelpSupport editPath={editPath} />
 
+    {/* 评论：和文章页同一套 Giscus，term 用文档标题 */}
+    <section id='doc-comments' class='doc-comments'>
+      <header class='doc-comments__head'>
+        <h3 class='doc-comments__title'>关于这篇文档</h3>
+        <p class='doc-comments__lede'>哪里写得不清楚、或者有更新的做法，都可以留在这里。</p>
+      </header>
+      <Giscus term={`${title} | Wendell 文档`} defer />
+    </section>
+
     {/* Show docs contents grid */}
     <div class='mt-10'>
       <h3 class='text-xl font-bold text-foreground tracking-tight mb-2'>探索更多</h3>
@@ -137,11 +147,6 @@ const updatedLabel = updatedAt
   </div>
 </PageLayout>
 <MediumZoom />
-{
-  tocItems.length > 1 && (
-    <MobileTOC headings={tocItems.map(({ depth, slug, label }) => ({ depth, slug, text: label }))} label='本文目录' />
-  )
-}
 
 <style>
   .doc-masthead__meta {
@@ -322,6 +327,30 @@ const updatedLabel = updatedAt
   main.docs-reading #content td {
     padding: 0.55rem 0.75rem 0.55rem 0;
     border-bottom: 1px solid hsl(var(--border) / 0.8);
+  }
+
+  .doc-comments {
+    margin-top: 2.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid hsl(var(--border));
+    scroll-margin-top: 6rem;
+  }
+
+  .doc-comments__head {
+    margin-bottom: 1rem;
+  }
+
+  .doc-comments__title {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .doc-comments__lede {
+    margin: 0;
+    font-size: 0.82rem;
+    color: hsl(var(--muted-foreground));
   }
 </style>
 

@@ -379,15 +379,17 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
       animation: none !important;
       position: fixed !important;
       right: 0;
-      top: 0 !important;
-      height: 100vh !important;
-      max-height: 100vh !important;
+      top: 4.25rem !important;
+      height: calc(100vh - 4.25rem) !important;
+      max-height: calc(100vh - 4.25rem) !important;
       min-width: 40vw !important;
       max-width: 75vw !important;
       overflow-y: auto !important;
+      border-top-left-radius: 1rem !important;
       border-top-right-radius: 0 !important;
       border-bottom-right-radius: 0 !important;
-      padding-top: 1.5rem !important;
+      border-bottom-left-radius: 0 !important;
+      padding-top: 1rem !important;
       padding-bottom: 1.5rem !important;
       background-color: hsl(var(--background)) !important;
     }

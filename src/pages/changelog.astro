@@ -189,7 +189,22 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       </aside>
     </div>
 
-    <button type='button' class='collapse-fab' data-collapse hidden>收起全部版本</button>
+    <div class='cl-shade' data-cl-shade hidden></div>
+    <div class='cl-actions' id='changelog-actions'>
+      <button type='button' class='cl-btn' data-cl-comment aria-label='反馈与评论' title='反馈与评论'>
+        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+          <path d='M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z' />
+        </svg>
+      </button>
+      <button type='button' class='cl-btn cl-toc-btn' data-cl-toc aria-label='版本目录' title='版本目录' aria-expanded='false'>
+        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' aria-hidden='true'>
+          <path d='M4 6h16M4 12h11M4 18h7' />
+        </svg>
+      </button>
+      <button type='button' class='cl-btn cl-top-btn' data-cl-top aria-label='回到顶部并收起全部版本' title='回到顶部并收起全部版本'>
+        <span class='cl-pct' data-cl-pct>0%</span>
+      </button>
+    </div>
   </main>
 </PageLayout>
 
@@ -222,9 +237,20 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-body a {display:block;padding:.12rem .2rem .12rem .55rem;margin-left:-1px;border-left:1px solid transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.7;}
   .toc-body a:hover {color:hsl(var(--primary));}
   .toc-body a.is-current {color:hsl(var(--primary));border-left-color:hsl(var(--primary));}
-  .collapse-fab {position:fixed;right:1.1rem;bottom:1.4rem;z-index:40;font-size:.72rem;padding:.5rem .85rem;border-radius:999px;border:1px solid hsl(var(--border));background:hsl(var(--background)/.94);color:hsl(var(--foreground));box-shadow:0 .3rem 1rem hsl(0 0% 0% / .14);cursor:pointer;line-height:1.6;}
-  .collapse-fab:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
-  .collapse-fab[hidden] {display:none;}
+  .cl-actions {position:fixed;right:.9rem;bottom:1rem;z-index:62;display:flex;flex-direction:row;align-items:center;gap:.1rem;padding:.28rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background)/.95);backdrop-filter:blur(10px);box-shadow:0 1px 2px hsl(var(--foreground)/.05),0 10px 24px -16px hsl(var(--foreground)/.45);opacity:0;transform:translateY(.4rem);pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
+  .cl-actions.is-visible {opacity:1;transform:none;pointer-events:auto;}
+  .cl-btn {display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;border:0;border-radius:999px;background:transparent;color:hsl(var(--muted-foreground));cursor:pointer;transition:color .18s ease,background .18s ease;}
+  .cl-btn svg {width:1.05rem;height:1.05rem;}
+  .cl-btn:hover {color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
+  .cl-top-btn {width:auto;padding:0 .55rem;gap:.1rem;}
+  .cl-pct {font-size:.72rem;font-variant-numeric:tabular-nums;}
+  .cl-actions.at-end .cl-pct::after {content:' ↑';}
+  .cl-toc-btn[aria-expanded='true'] {color:hsl(var(--primary));background:hsl(var(--primary)/.1);}
+  .cl-shade {position:fixed;inset:0;z-index:60;background:hsl(var(--foreground)/.28);backdrop-filter:blur(2px);}
+  .cl-shade[hidden] {display:none;}
+  .version-toc.is-sheet {display:flex;position:fixed;inset:auto 0 0 0;z-index:61;top:auto;max-height:72vh;padding:1rem 1.1rem calc(1rem + env(safe-area-inset-bottom,0px));border-top:1px solid hsl(var(--border));border-radius:1.1rem 1.1rem 0 0;background:hsl(var(--background));box-shadow:0 -18px 48px -30px hsl(var(--foreground)/.5);}
+  .version-toc.is-sheet .toc-body {max-height:calc(72vh - 5rem);}
+  html.cl-toc-open,html.cl-toc-open body {overflow:hidden;}
   .version-block {scroll-margin-top:5rem;}
   .changelog-list h2, .gens h2 {scroll-margin-top:5.5rem;}
   .changelog-list {margin-top:2.5rem;}
@@ -313,6 +339,10 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   @media(max-width:1024px) {
     .changelog-layout {grid-template-columns:minmax(0,1fr);gap:0;}
     .version-toc {display:none;}
+    .version-toc.is-sheet {display:flex;}
+  }
+  @media(min-width:1025px) {
+    .cl-toc-btn {display:none;}
   }
   @media(max-width:640px) {
     .changelog-page {margin-top:1rem;}
@@ -499,22 +529,57 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     })
   })
 
-  const fab = document.querySelector<HTMLElement>('.collapse-fab')
   const feedbackSection = document.getElementById('changelog-comments')
-  const syncFab = () => {
-    if (!fab) return
-    // 滑到反馈区就收起，别挡住“展开评论”的按钮。
-    const nearFeedback = feedbackSection ? feedbackSection.getBoundingClientRect().top < window.innerHeight - 60 : false
-    fab.hidden = window.scrollY < 420 || nearFeedback
-  }
-  window.addEventListener('scroll', syncFab, { passive: true })
-  window.addEventListener('resize', syncFab)
-  syncFab()
 
-  fab?.addEventListener('click', () => {
+  // —— 浮动操作条：反馈与评论 / 版本目录 / 进度与回顶（同时收起全部版本）——
+  const actions = document.getElementById('changelog-actions')
+  const actionComment = actions?.querySelector<HTMLButtonElement>('[data-cl-comment]')
+  const actionToc = actions?.querySelector<HTMLButtonElement>('[data-cl-toc]')
+  const actionTop = actions?.querySelector<HTMLButtonElement>('[data-cl-top]')
+  const actionPct = actions?.querySelector<HTMLElement>('[data-cl-pct]')
+  const tocPanel = document.querySelector<HTMLElement>('.version-toc')
+  const tocShade = document.querySelector<HTMLElement>('[data-cl-shade]')
+
+  const setTocPanel = (open: boolean) => {
+    if (!tocPanel) return
+    tocPanel.classList.toggle('is-sheet', open)
+    if (tocShade) tocShade.hidden = !open
+    actionToc?.setAttribute('aria-expanded', String(open))
+    document.documentElement.classList.toggle('cl-toc-open', open)
+  }
+
+  actionComment?.addEventListener('click', () => {
+    feedbackSection?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+  actionToc?.addEventListener('click', () => {
+    setTocPanel(!tocPanel?.classList.contains('is-sheet'))
+  })
+  tocShade?.addEventListener('click', () => setTocPanel(false))
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setTocPanel(false)
+  })
+  document.addEventListener('click', (event) => {
+    if (!tocPanel?.classList.contains('is-sheet')) return
+    const target = event.target as HTMLElement | null
+    if (target?.closest('a.toc-link')) setTocPanel(false)
+  })
+
+  const updateProgress = () => {
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
+    const percent = Math.min(100, Math.max(0, Math.round((window.scrollY / max) * 100)))
+    if (actionPct) actionPct.textContent = `${percent}%`
+    actions?.classList.toggle('at-end', percent >= 99)
+    actions?.classList.toggle('is-visible', window.scrollY > 220)
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true })
+  window.addEventListener('resize', updateProgress)
+  updateProgress()
+
+  actionTop?.addEventListener('click', () => {
     document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
-    document.getElementById('changelog-list-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     syncToc()
+    setTocPanel(false)
   })
 
   // —— 版本级轻反馈：只记在本机，不假造汇总数字 ——
