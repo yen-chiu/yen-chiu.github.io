@@ -11,7 +11,8 @@ type Props = SiteMeta
 
 const { articleDate, description, ogImage, title } = Astro.props
 
-const siteTitle = `${title} ${config.titleDelimiter} ${config.title}`
+// 首页等把站点名当作页面标题的场景不要再拼一次站点名，否则会出现「Wendell • Wendell」
+const siteTitle = !title || title === config.title ? config.title : `${title} ${config.titleDelimiter} ${config.title}`
 const original = manifest.find(entry => entry.originalMetadata.title === title)
 const canonicalURL = new URL(original?.originalUrl ?? (title === '关于' ? 'https://yenchiu.com/about/' : title === '念真' ? 'https://yenchiu.com/persona/' : Astro.url.pathname), Astro.site)
 const socialImageURL = new URL(sitePath(ogImage || config.socialCard), Astro.site ?? Astro.url).href
