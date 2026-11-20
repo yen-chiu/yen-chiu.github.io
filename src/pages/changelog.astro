@@ -168,7 +168,15 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       </div>
 
       <aside class='version-toc' aria-label='版本目录'>
-        <p class='toc-title'>版本目录<span class='toc-pos'><span data-toc-pos>0</span>/<span data-toc-total>{groups[0]?.versions.length ?? 0}</span></span></p>
+        <span class='toc-grip' aria-hidden='true'></span>
+        <div class='toc-head'>
+          <p class='toc-title'>版本目录<span class='toc-pos'><span data-toc-pos>0</span>/<span data-toc-total>{groups[0]?.versions.length ?? 0}</span></span></p>
+          <button type='button' class='toc-close' data-cl-toc-close aria-label='关闭目录'>
+            <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' aria-hidden='true'>
+              <path d='M6 6l12 12M18 6L6 18'></path>
+            </svg>
+          </button>
+        </div>
         <div class='toc-wrap'>
           <div class='toc-gauge' aria-hidden='true'></div>
           <nav class='toc-body'>
@@ -201,8 +209,14 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
           <path d='M4 6h16M4 12h11M4 18h7' />
         </svg>
       </button>
-      <button type='button' class='cl-btn cl-top-btn' data-cl-top aria-label='回到顶部并收起全部版本' title='回到顶部并收起全部版本'>
+      <button type='button' class='cl-btn cl-top-btn' data-cl-top aria-label='回到顶部并收起全部版本' aria-expanded='false' title='回到顶部并收起全部版本'>
+        <svg class='cl-chev' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+          <path d='M15 5l-7 7 7 7'></path>
+        </svg>
         <span class='cl-pct' data-cl-pct>0%</span>
+        <svg class='cl-up' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
+          <path d='M12 19V5M5 12l7-7 7 7'></path>
+        </svg>
       </button>
     </div>
   </main>
@@ -237,20 +251,54 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-body a {display:block;padding:.12rem .2rem .12rem .55rem;margin-left:-1px;border-left:1px solid transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.7;}
   .toc-body a:hover {color:hsl(var(--primary));}
   .toc-body a.is-current {color:hsl(var(--primary));border-left-color:hsl(var(--primary));}
-  .cl-actions {position:fixed;right:.9rem;bottom:1rem;z-index:62;display:flex;flex-direction:row;align-items:center;gap:.1rem;padding:.28rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background)/.95);backdrop-filter:blur(10px);box-shadow:0 1px 2px hsl(var(--foreground)/.05),0 10px 24px -16px hsl(var(--foreground)/.45);opacity:0;transform:translateY(.4rem);pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
+  .cl-actions {position:fixed;right:.9rem;bottom:1rem;z-index:62;display:flex;flex-direction:row;align-items:center;gap:0;padding:.28rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background)/.95);backdrop-filter:blur(10px);box-shadow:0 1px 2px hsl(var(--foreground)/.05),0 10px 24px -16px hsl(var(--foreground)/.45);opacity:0;transform:translateY(.4rem);pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
   .cl-actions.is-visible {opacity:1;transform:none;pointer-events:auto;}
-  .cl-btn {display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;border:0;border-radius:999px;background:transparent;color:hsl(var(--muted-foreground));cursor:pointer;transition:color .18s ease,background .18s ease;}
-  .cl-btn svg {width:1.05rem;height:1.05rem;}
+  .cl-btn {display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;border:0;border-radius:999px;background:transparent;color:hsl(var(--muted-foreground));cursor:pointer;transition:color .18s ease,background .18s ease,width .26s cubic-bezier(.32,.72,0,1),opacity .2s ease,margin .26s cubic-bezier(.32,.72,0,1),transform .26s cubic-bezier(.32,.72,0,1);}
+  .cl-btn svg {width:1.05rem;height:1.05rem;flex:0 0 auto;}
   .cl-btn:hover {color:hsl(var(--primary));background:hsl(var(--primary)/.08);}
-  .cl-top-btn {width:auto;padding:0 .55rem;gap:.1rem;}
-  .cl-pct {font-size:.72rem;font-variant-numeric:tabular-nums;}
-  .cl-actions.at-end .cl-pct::after {content:' ↑';}
+  .cl-actions:not(.is-collapsed) .cl-btn[data-cl-comment] {transition-delay:.06s;}
+  .cl-actions:not(.is-collapsed) .cl-btn[data-cl-toc] {transition-delay:.03s;}
+  .cl-actions.is-collapsed .cl-btn[data-cl-comment],
+  .cl-actions.is-collapsed .cl-btn[data-cl-toc] {width:0;opacity:0;margin:0;pointer-events:none;transform:translateX(.5rem);overflow:hidden;}
+  .cl-top-btn {position:relative;display:grid;place-items:center;min-width:2.2rem;width:auto;padding:0 .5rem;}
+  .cl-pct {grid-area:1/1;font-size:.72rem;font-variant-numeric:tabular-nums;transition:opacity .16s ease;}
+  .cl-up {grid-area:1/1;width:1.05rem;height:1.05rem;opacity:0;transition:opacity .16s ease;}
+  .cl-chev {grid-area:1/1;width:1rem;height:1rem;opacity:0;transform:rotate(90deg);transition:opacity .18s ease,transform .28s cubic-bezier(.32,.72,0,1);}
+  /* 收起态：显示进度；到页底进度换成向上箭头 */
+  .cl-actions.is-collapsed .cl-pct {opacity:1;}
+  .cl-actions.is-collapsed .cl-chev {opacity:0;}
+  .cl-actions.is-collapsed.at-end .cl-pct {opacity:0;}
+  .cl-actions.is-collapsed.at-end .cl-up {opacity:1;}
+  /* 展开态：进度让位给「收起」的向左箭头 */
+  .cl-actions:not(.is-collapsed) .cl-pct,
+  .cl-actions:not(.is-collapsed) .cl-up {opacity:0;}
+  .cl-actions:not(.is-collapsed) .cl-chev {opacity:1;transform:rotate(0deg);}
+  .cl-actions.hide-comment [data-cl-comment] {display:none;}
+  .cl-actions.is-collapsed .cl-top-btn {padding:0;min-width:2.6rem;}
   .cl-toc-btn[aria-expanded='true'] {color:hsl(var(--primary));background:hsl(var(--primary)/.1);}
   .cl-shade {position:fixed;inset:0;z-index:60;background:hsl(var(--foreground)/.28);backdrop-filter:blur(2px);}
   .cl-shade[hidden] {display:none;}
-  .version-toc.is-sheet {display:flex;position:fixed;inset:auto 0 0 0;z-index:61;top:auto;max-height:72vh;padding:1rem 1.1rem calc(1rem + env(safe-area-inset-bottom,0px));border-top:1px solid hsl(var(--border));border-radius:1.1rem 1.1rem 0 0;background:hsl(var(--background));box-shadow:0 -18px 48px -30px hsl(var(--foreground)/.5);}
-  .version-toc.is-sheet .toc-body {max-height:calc(72vh - 5rem);}
+  .toc-head {display:flex;align-items:center;gap:.5rem;}
+  .toc-close,.toc-grip {display:none;}
+  .version-toc.is-sheet {display:flex;position:fixed;inset:auto 0 0 0;z-index:61;top:auto;max-height:74vh;flex-direction:column;padding:0 1rem calc(1rem + env(safe-area-inset-bottom,0px));border-top:1px solid hsl(var(--border));border-radius:1.1rem 1.1rem 0 0;background:hsl(var(--background));box-shadow:0 -18px 48px -30px hsl(var(--foreground)/.5);}
+  .version-toc.is-sheet .toc-grip {display:block;width:2.4rem;height:.28rem;margin:.55rem auto .2rem;border-radius:999px;background:hsl(var(--border));flex:0 0 auto;}
+  .version-toc.is-sheet .toc-head {padding:.35rem 0 .55rem;border-bottom:1px solid hsl(var(--border)/.7);flex:0 0 auto;}
+  .version-toc.is-sheet .toc-title {margin:0;font-size:.95rem;font-weight:600;letter-spacing:0;color:hsl(var(--foreground));}
+  .version-toc.is-sheet .toc-pos {margin-left:.5rem;font-size:.72rem;letter-spacing:0;color:hsl(var(--primary));}
+  .version-toc.is-sheet .toc-close {display:inline-flex;align-items:center;justify-content:center;margin-left:auto;width:1.9rem;height:1.9rem;border-radius:999px;border:1px solid hsl(var(--border));background:transparent;color:hsl(var(--muted-foreground));cursor:pointer;}
+  .version-toc.is-sheet .toc-close svg {width:.9rem;height:.9rem;}
+  .version-toc.is-sheet .toc-close:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
+  .version-toc.is-sheet .toc-wrap {grid-template-columns:minmax(0,1fr);gap:0;flex:1 1 auto;min-height:0;}
+  .version-toc.is-sheet .toc-gauge {display:none;}
+  .version-toc.is-sheet .toc-body {max-height:none;min-height:0;padding:.2rem 0 0;font-size:.82rem;}
+  .version-toc.is-sheet .toc-group {margin-bottom:.35rem;}
+  .version-toc.is-sheet .toc-group > summary {position:sticky;top:0;z-index:1;gap:.4rem;padding:.5rem .2rem .35rem;background:hsl(var(--background));border-bottom:1px solid hsl(var(--border)/.6);font-size:.72rem;}
+  .version-toc.is-sheet .toc-gen {font-size:.66rem;}
+  .version-toc.is-sheet .toc-group ol {border-left:0;margin-top:.15rem;}
+  .version-toc.is-sheet .toc-body a {display:flex;align-items:center;min-height:2.4rem;padding:.45rem .7rem;margin:0 0 2px;border-left:0;border-radius:.6rem;font-size:.86rem;color:hsl(var(--muted-foreground));}
+  .version-toc.is-sheet .toc-body a.is-current {background:hsl(var(--primary)/.1);color:hsl(var(--primary));font-weight:600;}
   html.cl-toc-open,html.cl-toc-open body {overflow:hidden;}
+  html.cl-toc-open .cl-actions {display:none;}
   .version-block {scroll-margin-top:5rem;}
   .changelog-list h2, .gens h2 {scroll-margin-top:5.5rem;}
   .changelog-list {margin-top:2.5rem;}
@@ -546,6 +594,16 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     if (tocShade) tocShade.hidden = !open
     actionToc?.setAttribute('aria-expanded', String(open))
     document.documentElement.classList.toggle('cl-toc-open', open)
+    if (open) {
+      requestAnimationFrame(() => {
+        const body = tocPanel.querySelector<HTMLElement>('.toc-body')
+        const current = tocPanel.querySelector<HTMLElement>('a.toc-link.is-current')
+        if (!body || !current) return
+        const box = body.getBoundingClientRect()
+        const item = current.getBoundingClientRect()
+        body.scrollTop += item.top - box.top - box.height / 2 + item.height / 2
+      })
+    }
   }
 
   actionComment?.addEventListener('click', () => {
@@ -555,6 +613,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     setTocPanel(!tocPanel?.classList.contains('is-sheet'))
   })
   tocShade?.addEventListener('click', () => setTocPanel(false))
+  document.querySelector('[data-cl-toc-close]')?.addEventListener('click', () => setTocPanel(false))
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') setTocPanel(false)
   })
@@ -570,16 +629,55 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     if (actionPct) actionPct.textContent = `${percent}%`
     actions?.classList.toggle('at-end', percent >= 99)
     actions?.classList.toggle('is-visible', window.scrollY > 220)
+    // 到了反馈区/页脚，评论气泡就没必要留着了
+    if (feedbackSection) {
+      const near = feedbackSection.getBoundingClientRect().top < window.innerHeight - 60
+      actions?.classList.toggle('hide-comment', near)
+    }
   }
   window.addEventListener('scroll', updateProgress, { passive: true })
   window.addEventListener('resize', updateProgress)
   updateProgress()
 
+  // —— 胶囊会自己收起来：收起时只剩一个「←」，点开才向左展开另两颗 ——
+  const COLLAPSE_MS = 4200
+  let collapseTimer = 0
+  const expanded = () => !!actions && !actions.classList.contains('is-collapsed')
+  const collapse = () => {
+    window.clearTimeout(collapseTimer)
+    actions?.classList.add('is-collapsed')
+    actionTop?.setAttribute('aria-expanded', 'false')
+  }
+  const expand = () => {
+    actions?.classList.remove('is-collapsed')
+    actionTop?.setAttribute('aria-expanded', 'true')
+    window.clearTimeout(collapseTimer)
+    collapseTimer = window.setTimeout(collapse, COLLAPSE_MS)
+  }
+  collapse()
+  actions?.addEventListener('pointerenter', () => {
+    if (!expanded()) return
+    window.clearTimeout(collapseTimer)
+  })
+  actions?.addEventListener('pointerleave', () => {
+    if (!expanded()) return
+    window.clearTimeout(collapseTimer)
+    collapseTimer = window.setTimeout(collapse, COLLAPSE_MS)
+  })
+
   actionTop?.addEventListener('click', () => {
-    document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    syncToc()
-    setTocPanel(false)
+    if (!expanded()) {
+      // 收起态：到页底时这一下是回顶，否则是展开左侧两颗
+      if (actions?.classList.contains('at-end')) {
+        document.querySelectorAll<HTMLDetailsElement>('details.version-block').forEach((version) => { version.open = false })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        syncToc()
+        return
+      }
+      expand()
+      return
+    }
+    collapse()
   })
 
   // —— 版本级轻反馈：只记在本机，不假造汇总数字 ——

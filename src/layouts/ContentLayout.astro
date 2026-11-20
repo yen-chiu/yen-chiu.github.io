@@ -83,6 +83,16 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
             style='max-height:calc(100vh - 7rem); display: flex; flex-direction: column;'
             id='sidebar'
           >
+            <div class='drawer-head'>
+              <span class='drawer-title'>本文目录</span>
+              <span class='drawer-count' data-drawer-count></span>
+              <button type='button' class='drawer-close' data-drawer-close aria-label='关闭目录'>
+                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' aria-hidden='true'>
+                  <path d='M6 6l12 12M18 6L6 18'></path>
+                </svg>
+              </button>
+            </div>
+            <div class='drawer-progress' aria-hidden='true'><span data-drawer-progress></span></div>
             <slot name='sidebar' />
           </aside>
           <div
@@ -227,10 +237,30 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
 
     sidebarBtn.addEventListener('click', toggleSidebar)
     sidebarShade.addEventListener('click', toggleSidebar)
+
+    const closeButton = sidebar.querySelector<HTMLButtonElement>('[data-drawer-close]')
+    closeButton?.addEventListener('click', () => {
+      sidebar.classList.remove('show')
+      sidebarShade.classList.remove('show')
+    })
+
+    // 点目录项后立刻收起抽屉，否则跳转被面板挡住看不见
+    sidebar.addEventListener('click', (event) => {
+      if (!(event.target as HTMLElement | null)?.closest('.toc-item')) return
+      sidebar.classList.remove('show')
+      sidebarShade.classList.remove('show')
+    })
+
+    const counter = sidebar.querySelector<HTMLElement>('[data-drawer-count]')
+    if (counter) {
+      const total = sidebar.querySelectorAll('a.toc-item').length
+      counter.textContent = total > 0 ? `${total} 节` : ''
+    }
   }
 
   function setupReadingProgress() {
     const progressBar = document.getElementById('reading-progress-bar')
+    const drawerBar = document.querySelector<HTMLElement>('[data-drawer-progress]')
     const contentEl = document.getElementById('content')
     if (!progressBar || !contentEl || progressBar.dataset.ready === 'true') return
 
@@ -245,6 +275,7 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
       )
       const progress = maxScrollable === 0 ? 0 : Math.min(1, Math.max(0, scrollTop / maxScrollable))
       progressBar.style.transform = `scaleX(${progress})`
+      if (drawerBar) drawerBar.style.transform = `scaleX(${progress})`
       ticking = false
     }
 
@@ -260,7 +291,10 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
   }
 
   function setupCommentJump() {
-    document.querySelectorAll<HTMLButtonElement>('[data-comment-jump]').forEach((button) => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-comment-jump]')
+    if (!buttons.length) return
+
+    buttons.forEach((button) => {
       if (button.dataset.ready === 'true') return
       button.dataset.ready = 'true'
       button.addEventListener('click', () => {
@@ -268,6 +302,26 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
         target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     })
+
+    const actions = document.getElementById('action-buttons')
+    const target = document.querySelector(buttons[0].dataset.commentJump || '')
+    if (!actions || !target) return
+
+    // 评论已经出现在视野里，就不必再留一个「跳到评论」的按钮
+    let ticking = false
+    const update = () => {
+      ticking = false
+      const near = target.getBoundingClientRect().top < window.innerHeight - 80
+      actions.classList.toggle('comment-near', near)
+    }
+    const request = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(update)
+    }
+    document.addEventListener('scroll', request, { passive: true })
+    window.addEventListener('resize', request)
+    update()
   }
 
   function setupGraphJump() {
@@ -343,6 +397,15 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
     transition: transform 60ms ease-out;
   }
 
+  .drawer-head,
+  .drawer-progress {
+    display: none;
+  }
+
+  :global(#action-buttons.comment-near [data-comment-jump]) {
+    display: none;
+  }
+
   @media (min-width: 770px) {
     #sidebar-shade {
       display: none !important;
@@ -384,14 +447,138 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
       max-height: calc(100vh - 4.25rem) !important;
       min-width: 40vw !important;
       max-width: 75vw !important;
-      overflow-y: auto !important;
+      overflow: hidden !important;
       border-top-left-radius: 1rem !important;
       border-top-right-radius: 0 !important;
       border-bottom-right-radius: 0 !important;
       border-bottom-left-radius: 0 !important;
-      padding-top: 1rem !important;
-      padding-bottom: 1.5rem !important;
+      padding: 0 !important;
       background-color: hsl(var(--background)) !important;
+      box-shadow: -18px 0 48px -32px hsl(var(--foreground) / 0.55);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+      padding: 0.95rem 0.9rem 0.7rem 1.1rem;
+      border-bottom: 1px solid hsl(var(--border) / 0.7);
+    }
+
+    .drawer-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .drawer-count {
+      font-size: 0.72rem;
+      font-variant-numeric: tabular-nums;
+      color: hsl(var(--muted-foreground));
+    }
+
+    .drawer-close {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 999px;
+      border: 1px solid hsl(var(--border));
+      color: hsl(var(--muted-foreground));
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .drawer-close svg {
+      width: 0.9rem;
+      height: 0.9rem;
+    }
+
+    .drawer-close:hover {
+      color: hsl(var(--primary));
+      border-color: hsl(var(--primary) / 0.45);
+    }
+
+    .drawer-progress {
+      display: block;
+      flex: 0 0 auto;
+      height: 2px;
+      background: hsl(var(--border) / 0.6);
+    }
+
+    .drawer-progress span {
+      display: block;
+      height: 100%;
+      width: 100%;
+      transform: scaleX(0);
+      transform-origin: left;
+      background: hsl(var(--primary));
+      transition: transform 80ms linear;
+    }
+
+    #sidebar toc-heading {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 抽屉里用我们自己的头部，隐藏主题自带的英文标题 */
+    :global(#sidebar toc-heading > div:first-child) {
+      display: none !important;
+    }
+
+    :global(#sidebar toc-heading) {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    :global(#sidebar .toc-content-wrapper) {
+      padding: 0.4rem 0.55rem calc(1rem + env(safe-area-inset-bottom, 0px));
+      overflow-y: auto !important;
+      scrollbar-width: none;
+    }
+
+    :global(#sidebar .toc-content-wrapper::-webkit-scrollbar) {
+      display: none;
+    }
+
+    :global(#sidebar .toc-content-wrapper ul) {
+      margin-top: 0 !important;
+    }
+
+    :global(#sidebar .toc-item) {
+      display: flex;
+      align-items: center;
+      min-height: 2.5rem;
+      margin: 0 0 1px;
+      padding: 0.5rem 0.7rem !important;
+      border-radius: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: hsl(var(--muted-foreground)) !important;
+    }
+
+    :global(#sidebar .toc-item.ps-7) {
+      min-height: 2.2rem;
+      font-size: 0.82rem;
+      padding-inline-start: 1.9rem !important;
+    }
+
+    /* 抽屉里不需要那根浮动的小竖条，用胶囊底表达当前项 */
+    :global(#sidebar li > div > span) {
+      display: none !important;
+    }
+
+    :global(#sidebar .toc-item.highlight-bg-translucent) {
+      background: hsl(var(--primary) / 0.1) !important;
+      color: hsl(var(--primary)) !important;
+      font-weight: 600;
     }
 
     :global(#action-buttons button) {
