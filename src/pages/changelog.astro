@@ -213,7 +213,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
         </svg>
       </button>
       <button type='button' class='cl-btn cl-top-btn' data-cl-top aria-label='收起浮动按钮' aria-expanded='false' title='收起'>
-        <span class='cl-pct' data-cl-pct>0%</span>
+        <span class='cl-pct' data-cl-pct><span class='cl-num' data-cl-num>0</span><span class='cl-unit'>%</span></span>
         <svg class='cl-chev' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'>
           <path d='M15 5l-7 7 7 7'></path>
         </svg>
@@ -266,7 +266,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .cl-actions.is-collapsed .cl-btn[data-cl-comment],
   .cl-actions.is-collapsed .cl-btn[data-cl-toc] {width:0;opacity:0;margin:0;pointer-events:none;transform:translateX(.5rem);overflow:hidden;}
   .cl-top-btn {position:relative;display:grid;place-items:center;min-width:2.2rem;width:auto;padding:0 .5rem;}
-  .cl-pct {grid-area:1/1;font-size:.72rem;font-variant-numeric:tabular-nums;transition:opacity .16s ease;}
+  .cl-pct {grid-area:1/1;display:inline-flex;align-items:baseline;gap:.01em;font-size:1rem;line-height:1;font-variant-numeric:tabular-nums;transition:opacity .16s ease;}
+  .cl-unit {font-size:.75rem;}
   .cl-chev {grid-area:1/1;width:1rem;height:1rem;opacity:0;transition:opacity .16s ease,transform .2s ease;}
   .cl-up {grid-area:1/1;width:1.05rem;height:1.05rem;opacity:0;transition:opacity .16s ease;}
   /* 收起态：显示进度；桌面鼠标移上去才换成「‹」，示意可以往左展开（触屏不套 hover，否则会一直停在箭头） */
@@ -287,7 +288,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .cl-actions:not(.is-collapsed) .cl-chev {opacity:0;}
   .cl-actions:not(.is-collapsed) .cl-up {opacity:1;}
   .cl-actions.hide-comment [data-cl-comment] {display:none;}
-  .cl-actions.is-collapsed .cl-top-btn {padding:0;width:2.2rem;min-width:2.2rem;}
+  .cl-actions.is-collapsed .cl-top-btn {padding:0;width:2.5rem;min-width:2.5rem;height:2.5rem;}
   .cl-toc-btn[aria-expanded='true'] {color:hsl(var(--primary));background:hsl(var(--primary)/.1);}
   .cl-shade {position:fixed;inset:0;z-index:60;background:hsl(var(--foreground)/.28);backdrop-filter:blur(2px);}
   .cl-shade[hidden] {display:none;}
@@ -597,7 +598,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   const actionComment = actions?.querySelector<HTMLButtonElement>('[data-cl-comment]')
   const actionToc = actions?.querySelector<HTMLButtonElement>('[data-cl-toc]')
   const actionTop = actions?.querySelector<HTMLButtonElement>('[data-cl-top]')
-  const actionPct = actions?.querySelector<HTMLElement>('[data-cl-pct]')
+  const actionPct = actions?.querySelector<HTMLElement>('[data-cl-num]')
   const progressBar = document.getElementById('changelog-progress-bar')
   const tocPanel = document.querySelector<HTMLElement>('.version-toc')
   const tocShade = document.querySelector<HTMLElement>('[data-cl-shade]')
@@ -651,7 +652,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   const updateProgress = () => {
     const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
     const percent = Math.min(100, Math.max(0, Math.round((window.scrollY / max) * 100)))
-    if (actionPct) actionPct.textContent = `${percent}%`
+    if (actionPct) actionPct.textContent = `${percent}`
     actions?.classList.toggle('at-end', percent >= 99)
     actions?.classList.toggle('is-visible', window.scrollY > 220)
     if (progressBar) progressBar.style.transform = `scaleX(${percent / 100})`
