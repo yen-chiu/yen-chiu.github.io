@@ -13,7 +13,7 @@ image: /assets/img/posts/nianzhen-web/cover.png
 
 这篇把「念真上网」这件事拆开：为什么不能直连、Worker 在中间做什么、搜索和读页各自怎么降级、配置怎么迁移，以及上线前到底验证了什么。
 
-![念真联网架构]({{ '/assets/img/posts/nianzhen-web/architecture.png' | relative_url }})
+![念真联网架构](/assets/img/posts/nianzhen-web/architecture.png)
 
 ## 一、先承认约束：浏览器不是万能的
 
