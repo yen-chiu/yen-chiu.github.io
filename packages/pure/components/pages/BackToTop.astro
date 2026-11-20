@@ -133,13 +133,23 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
         opacity: 0;
       }
     }
-    &.ended #to-top-btn,
-    & #to-top-btn:hover {
+    &.ended #to-top-btn {
       & .top-text {
         opacity: 0;
       }
       & .top-icon {
         opacity: 1;
+      }
+    }
+    /* 只有真正的鼠标设备才在悬停时切成箭头；触屏点完不会留下粘住的 hover */
+    @media (hover: hover) and (pointer: fine) {
+      & #to-top-btn:hover {
+        & .top-text {
+          opacity: 0;
+        }
+        & .top-icon {
+          opacity: 1;
+        }
       }
     }
   }

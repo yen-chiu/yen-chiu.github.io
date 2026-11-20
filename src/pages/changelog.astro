@@ -49,6 +49,9 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 ---
 
 <PageLayout meta={{ title: '更新日志', description: '这个站的版本记录：按代次、站点与日期编号，每条标出改动方式，一天最多一个版本。' }}>
+  <div class='reading-progress' aria-hidden='true'>
+    <div id='changelog-progress-bar' class='reading-progress-bar'></div>
+  </div>
   <main class='changelog-page'>
     <KnowledgeIndexHero
       icon='list'
@@ -223,6 +226,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 </PageLayout>
 
 <style>
+  .reading-progress {position:fixed;top:0;right:0;left:0;z-index:50;height:3px;pointer-events:none;}
+  .reading-progress-bar {width:100%;height:100%;background:hsl(var(--primary));box-shadow:0 0 12px hsl(var(--primary)/.45);transform:scaleX(0);transform-origin:0 50%;transition:transform .1s linear;}
   .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;overflow-wrap:anywhere;padding-bottom:3.5rem;}
   .changelog-layout {display:grid;grid-template-columns:minmax(0,1fr) 10.5rem;gap:2.5rem;align-items:start;}
   .changelog-main {min-width:0;}
@@ -593,6 +598,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   const actionToc = actions?.querySelector<HTMLButtonElement>('[data-cl-toc]')
   const actionTop = actions?.querySelector<HTMLButtonElement>('[data-cl-top]')
   const actionPct = actions?.querySelector<HTMLElement>('[data-cl-pct]')
+  const progressBar = document.getElementById('changelog-progress-bar')
   const tocPanel = document.querySelector<HTMLElement>('.version-toc')
   const tocShade = document.querySelector<HTMLElement>('[data-cl-shade]')
 
@@ -648,6 +654,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     if (actionPct) actionPct.textContent = `${percent}%`
     actions?.classList.toggle('at-end', percent >= 99)
     actions?.classList.toggle('is-visible', window.scrollY > 220)
+    if (progressBar) progressBar.style.transform = `scaleX(${percent / 100})`
     // 反馈区滚到视口上沿（或已到页底）时，评论气泡就没必要留着了
     if (feedbackSection) {
       const top = feedbackSection.getBoundingClientRect().top
