@@ -686,6 +686,22 @@ const meta = {
   var index = (typeof nfIndex !== "undefined" ? JSON.parse(nfIndex) : []).map(function (it) {
     return { t: it.title || "", u: it.url || "", d: String(it.date || "").slice(0, 10), g: it.search || "" };
   });
+  /* 老站（chirpy）文章地址 /posts/<slug>/ → 新站 /blog/<slug>；新站没有就退回老博客存档 /blog-v2/posts/<slug>/ */
+  (function () {
+    var mm = location.pathname.match(/^\/posts\/([^\/]+)\/?$/);
+    if (!mm) return;
+    var raw = mm[1];
+    var slug;
+    try { slug = decodeURIComponent(raw); } catch (e) { slug = raw; }
+    for (var i = 0; i < index.length; i++) {
+      var u = index[i].u || "";
+      if (u === "/blog/" + slug || u === "/blog/" + slug + "/") {
+        location.replace(u);
+        return;
+      }
+    }
+    location.replace("/blog-v2/posts/" + raw + "/");
+  })();
   var loading = null;
   var failed = false;
   var active = -1;
