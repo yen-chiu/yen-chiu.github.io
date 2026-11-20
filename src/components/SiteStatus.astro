@@ -61,11 +61,14 @@ const since = '2023-05-20T13:14:00+08:00'
   site-status {display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.4rem 1.1rem;margin-top:1rem;color:hsl(var(--muted-foreground));font-size:.8rem;}
   p {display:flex;align-items:center;gap:.5rem;margin:0;line-height:1.8;}
   .status-dot {width:.4rem;height:.4rem;flex-shrink:0;border-radius:50%;background:#22a98d;}
-  button {min-height:44px;padding:.4rem .7rem;border:1px solid hsl(var(--border));border-radius:.7rem;cursor:pointer;color:inherit;background:transparent;}
+  button {min-height:1.95rem;padding:.16rem .6rem;border:1px solid hsl(var(--border));border-radius:999px;cursor:pointer;color:inherit;background:transparent;font-size:.72rem;line-height:1;letter-spacing:.01em;}
   button:hover {color:hsl(var(--primary));background:hsl(var(--muted)/.4);}
   button:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:3px;}
   .refresh-status:empty{display:none;}
   .refresh-status{flex-basis:100%;text-align:center;font-size:.72rem;}
   button:disabled {opacity:.65;cursor:wait;}
-  @media(max-width:639px) { site-status{font-size:.75rem;gap:.35rem;} }
+  @media(max-width:639px) {
+    site-status{font-size:.75rem;gap:.35rem;padding-bottom:3.1rem;}
+    button {min-height:2rem;padding:.18rem .62rem;font-size:.72rem;}
+  }
 </style>
