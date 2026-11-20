@@ -8,11 +8,11 @@ const imagePath = '/src/assets/projects/1.avif'
 if (!images[imagePath]) throw new Error(`"${imagePath}" does not exist in glob`)
 ---
 
-<BentoCard class="col-span-1 row-span-2 p-0 hover-invert" href="https://github.com/LemonAdorable/astro-theme-iris" color="#00d2d3">
+<BentoCard class="col-span-1 row-span-2 p-0 hover-invert" href="https://github.com/yen-chiu/yen-chiu.github.io" color="#00d2d3">
   <div class="absolute inset-0 z-0">
     <Image 
       src={images[imagePath]()} 
-      alt="Astro Theme Iris" 
+      alt="Astro Theme Vesper" 
       class="w-full h-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-20"
       width={400}
       height={600}
@@ -26,7 +26,7 @@ if (!images[imagePath]) throw new Error(`"${imagePath}" does not exist in glob`)
       <span class="size-1.5 rounded-full bg-green-400"></span>
       Featured
     </div>
-    <h3 class="text-xl font-bold tracking-tight mb-1 text-foreground">Astro Theme Iris</h3>
-    <p class="text-sm text-muted-foreground line-clamp-2">A clean, fast, and highly customizable personal blog theme built with Astro.</p>
+    <h3 class="text-xl font-bold tracking-tight mb-1 text-foreground">Astro Theme Vesper</h3>
+    <p class="text-sm text-muted-foreground line-clamp-2">以刊物体例组织的个人博客主题，派生自 astro-theme-iris。</p>
   </div>
 </BentoCard>

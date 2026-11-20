@@ -2,6 +2,12 @@
 
 基于 Astro Theme Iris 的公开临时迁移库。原站 https://yenchiu.com 仍是线上版本。
 
+## 主题
+
+- 名称：Vesper（暮星）
+- 派生自：Astro Theme Iris，遵循 Apache-2.0，保留上游 LICENSE 与署名
+- 版本：v0.1.0
+
 ## 本地运行
 
 Node.js 24：`npm ci`，然后 `npm run dev -- --host 127.0.0.1`。

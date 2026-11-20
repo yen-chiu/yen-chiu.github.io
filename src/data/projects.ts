@@ -55,7 +55,7 @@ export const projects = [
     kind: '网站与写作',
     status: '公开预览',
     description: '迁移文章、整理知识入口，也把移动端阅读与站点交互一点点打磨好。',
-    tags: ['Astro', 'Iris', 'GitHub Pages'],
+    tags: ['Astro', 'Vesper', 'GitHub Pages'],
     primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu-astro' },
     secondary: {
       label: '迁移记录',
