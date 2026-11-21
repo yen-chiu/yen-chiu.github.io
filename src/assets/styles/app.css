@@ -60,3 +60,19 @@ a {
   --vesper-section-space: clamp(2rem, 4vw, 3rem);
   --vesper-card-radius: 1rem;
 }
+/* Vesper phase 4: semantic surfaces and subtle interaction tokens. */
+:root {
+  --vesper-surface-soft: hsl(var(--primary) / .045);
+  --vesper-surface-hover: hsl(var(--primary) / .075);
+  --vesper-surface-border: hsl(var(--border) / .9);
+  --vesper-interaction-duration: 180ms;
+}
+.dark {
+  --vesper-surface-soft: hsl(var(--primary) / .065);
+  --vesper-surface-hover: hsl(var(--primary) / .11);
+  --vesper-surface-border: hsl(var(--border) / .95);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --vesper-interaction-duration: 0ms; }
+}
+html.motion-off { --vesper-interaction-duration: 0ms; }
