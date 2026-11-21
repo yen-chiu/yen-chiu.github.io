@@ -1,6 +1,9 @@
 # Vesper — Wendell's Website
 
-[English](./README.md) | [简体中文](./README-zh-CN.md)
+<p align="right">
+  <a href="./README.md"><img alt="English" src="https://img.shields.io/badge/EN-English-374151?style=flat-square&labelColor=111827"></a>
+  <a href="./README-zh-CN.md"><img alt="简体中文" src="https://img.shields.io/badge/%E4%B8%AD-%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-e5e7eb?style=flat-square&labelColor=111827"></a>
+</p>
 
 **Vesper (暮星)** is the Astro theme powering [Wendell's personal website](https://yenchiu.com), home to a blog, documentation, and the literary journal *余白*.
 
