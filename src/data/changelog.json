@@ -1,21 +1,6 @@
 [
   {
-    "status": "unreleased",
-    "gen": 3,
-    "site": "main",
-    "title": "准备切根站",
-    "summary": "预览验收通过后再切域名，切换当天记进正式版本。",
-    "items": [
-      {
-        "change": "planned",
-        "area": "infra",
-        "scope": "主站",
-        "title": "根站从 Jekyll 切到 Astro",
-        "note": "切换前先跑通三件事：路径与旧链接、搜索降级、讨论区标识；旧站留只读归档。"
-      }
-    ]
-  },
-  {
+    "status": "released",
     "gen": 3,
     "site": "main",
     "date": "2026-11-21",
@@ -46,6 +31,69 @@
     ]
   },
   {
+    "status": "released",
+    "gen": 3,
+    "site": "main",
+    "date": "2026-11-21",
+    "title": "主题定名 Vesper（暮星）",
+    "summary": "站点用的主题有了名字和出处：Vesper 取自黄昏的金星，中文叫暮星；页脚、关于页、版权页与仓库说明一起换掉。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "docs",
+        "scope": "主站",
+        "title": "主题定名 Vesper（暮星）",
+        "note": "包名改为 astro-theme-vesper，README、关于页、版权页与控制台签名同步；上游 Iris / Pure 的署名与 Apache-2.0 许可保留。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "页脚出处行改成新名字",
+        "note": "「基于 Astro · Iris / Pure」改成「基于 Astro · Vesper 暮星 · 派生自 Iris / Pure」，代码许可链接也指向当前仓库。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "主站",
+        "title": "文档里记下名字的来处",
+        "note": "新增「暮星」的来处一篇，写清词义、版本号意象与三个名字的分工，并把建站日定在 2023-03-12 植树节。"
+      },
+      {
+        "change": "improved",
+        "area": "feature",
+        "scope": "主站",
+        "title": "验证页图片改用 WebP",
+        "note": "单轮 9 张由 197KB 降到 82KB，观感不变；浏览器不支持 WebP 时自动回退 JPEG。"
+      }
+    ]
+  },
+  {
+    "status": "released",
+    "gen": 3,
+    "site": "main",
+    "date": "2026-11-20",
+    "title": "主站切到根域 yenchiu.com",
+    "summary": "旧 Jekyll 站退到只读归档，根域交给 Astro 站；老链接由 404 页接住，外链与收藏夹不会落空。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "主站",
+        "title": "根站从 Jekyll 切到 Astro",
+        "note": "路径与旧链接、搜索降级、讨论区标识三件事跑通后切换；旧站留只读，不再更新。"
+      },
+      {
+        "change": "added",
+        "area": "infra",
+        "scope": "主站",
+        "title": "旧子路径链接自动跳转",
+        "note": "404 页认出 /yen-chiu-astro/ 开头的旧地址，按同名路径跳到根域下的新地址。"
+      }
+    ]
+  },
+  {
+    "status": "released",
     "gen": 3,
     "site": "main",
     "date": "2026-11-20",
@@ -139,6 +187,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 3,
     "site": "main",
     "date": "2026-11-19",
@@ -246,6 +295,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 3,
     "site": "manual",
     "date": "2026-11-19",
@@ -276,6 +326,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 3,
     "site": "main",
     "date": "2026-11-18",
@@ -306,6 +357,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 3,
     "site": "main",
     "date": "2026-11-17",
@@ -336,6 +388,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-19",
@@ -359,6 +412,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-17",
@@ -382,6 +436,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-16",
@@ -412,6 +467,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-11",
@@ -435,6 +491,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-10",
@@ -465,6 +522,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-09",
@@ -495,6 +553,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-08",
@@ -525,6 +584,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-07",
@@ -555,6 +615,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-06",
@@ -585,6 +646,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-05",
@@ -615,6 +677,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-04",
@@ -638,6 +701,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "chat",
     "date": "2026-11-04",
@@ -661,6 +725,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-11-03",
@@ -754,6 +819,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "chat",
     "date": "2026-11-03",
@@ -770,6 +836,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-04-09",
@@ -786,6 +853,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2026-03-30",
@@ -802,6 +870,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2025-06-06",
@@ -818,6 +887,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-25",
@@ -841,6 +911,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-24",
@@ -864,6 +935,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-22",
@@ -887,6 +959,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-21",
@@ -917,6 +990,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-17",
@@ -933,6 +1007,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-16",
@@ -963,6 +1038,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-15",
@@ -986,6 +1062,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-14",
@@ -1009,6 +1086,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-13",
@@ -1039,6 +1117,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2024-11-12",
@@ -1055,6 +1134,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2023-11-01",
@@ -1078,6 +1158,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2023-10-23",
@@ -1094,6 +1175,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2023-10-21",
@@ -1110,6 +1192,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2023-10-19",
@@ -1133,6 +1216,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2023-10-18",
@@ -1156,6 +1240,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 2,
     "site": "main",
     "date": "2023-10-17",
@@ -1179,6 +1264,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2026-11-19",
@@ -1209,6 +1295,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2026-11-18",
@@ -1232,6 +1319,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2024-11-22",
@@ -1255,6 +1343,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2024-11-17",
@@ -1278,6 +1367,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2024-11-15",
@@ -1301,6 +1391,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-10-17",
@@ -1317,6 +1408,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-09-19",
@@ -1333,6 +1425,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-08-10",
@@ -1349,6 +1442,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-05-21",
@@ -1365,6 +1459,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-05-09",
@@ -1381,6 +1476,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-05-01",
@@ -1404,6 +1500,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-04-23",
@@ -1420,6 +1517,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-04-09",
@@ -1436,6 +1534,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-04-06",
@@ -1459,6 +1558,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-04-05",
@@ -1482,6 +1582,7 @@
     ]
   },
   {
+    "status": "released",
     "gen": 1,
     "site": "main",
     "date": "2023-03-12",

@@ -19,11 +19,11 @@
   },
   {
     "gen": 3,
-    "name": "新站",
-    "engine": "Astro · Iris",
+    "name": "新站 · Vesper",
+    "engine": "Astro · Vesper（暮星）",
     "span": "2026-11 – 现在",
-    "commits": 56,
-    "note": "第三代，2026-11-17 把内容迁进自己的 Astro 站；2026-11-20 起直接挂在根域 https://yenchiu.com。",
+    "commits": 98,
+    "note": "第三代。2026-11-17 内容迁入自己的 Astro 站（主题当时仍叫 Iris），2026-11-20 起直接挂在根域 https://yenchiu.com，2026-11-21 主题定名 Vesper（暮星）。提交数截至 2026-11-21。",
     "repo": "yen-chiu/yen-chiu.github.io"
   }
 ]

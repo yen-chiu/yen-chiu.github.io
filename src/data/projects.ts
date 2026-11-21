@@ -56,7 +56,7 @@ export const projects = [
     status: '公开预览',
     description: '迁移文章、整理知识入口，也把移动端阅读与站点交互一点点打磨好。',
     tags: ['Astro', 'Vesper', 'GitHub Pages'],
-    primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu-astro' },
+    primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu.github.io' },
     secondary: {
       label: '迁移记录',
       href: 'https://yenchiu.com/folio/building/astro-migration/'

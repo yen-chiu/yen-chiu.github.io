@@ -45,7 +45,7 @@ const { post, backlinks, outgoingLinks } = Astro.props
 const { Content, headings } = await render(post)
 const { description, title } = post.data
 
-const editPath = `https://github.com/yen-chiu/yen-chiu-astro/edit/main/${post.filePath}`
+const editPath = `https://github.com/yen-chiu/yen-chiu.github.io/edit/main/${post.filePath}`
 
 const words = (post.body ?? '').replace(/```[\s\S]*?```/g, '').length
 const minutes = Math.max(2, Math.round(words / 500))
