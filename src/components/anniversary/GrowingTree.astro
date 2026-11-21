@@ -1,0 +1,113 @@
+---
+import { sitePath } from '@/utils/site-path'
+interface Props { variant?: 'card' | 'anniversary' }
+const { variant = 'card' } = Astro.props
+const leaves = Array.from({ length: 32 }, (_, i) => {
+  const branch = i % 4
+  const angle = (i * 137.508) * Math.PI / 180
+  const radius = 21 + Math.sqrt(i / 32) * 75
+  return { x: 160 + Math.cos(angle) * radius, y: 102 + Math.sin(angle) * radius * .66 - (branch % 2) * 7, rotation: (i * 43) % 90 - 45, stage: Math.floor(i / 6) }
+})
+---
+<growing-tree data-variant={variant} data-planted='2023-03-12'>
+  {variant === 'anniversary' ? (
+    <dialog class='tree-dialog' aria-labelledby='tree-anniversary-title'>
+      <button class='tree-close' type='button' data-tree-close aria-label='关闭周年纪念'>×</button>
+      <p class='tree-kicker'>VESPER · ANNUAL RINGS</p>
+      <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
+        <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
+        <path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
+        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} />)}
+        <circle cx='160' cy='203' r='9' class='tree-core'/>
+      </svg></div>
+      <h2 id='tree-anniversary-title'>又添一道年轮。</h2>
+      <p class='tree-years'><span data-tree-years>建站周年</span> · 03.12</p>
+      <p class='tree-message'>于 2023 年植树节，在互联网种下一棵树。<br/>以文字为叶，以岁月为年轮。</p>
+      <div class='tree-actions'><a href={sitePath('/about#vesper-tree')}>看看这棵树 →</a><button type='button' data-tree-close>收下这份春意</button></div>
+    </dialog>
+  ) : (
+    <section class='tree-card' id='vesper-tree' aria-labelledby='tree-card-title'>
+      <div class='tree-card-top'><span>VESPER / ANNUAL RINGS</span><time datetime='2023-03-12'>2023.03.12 · 植树节</time></div>
+      <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
+        <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
+        <path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
+        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} />)}
+        <circle cx='160' cy='203' r='9' class='tree-core'/>
+      </svg></div>
+      <h3 id='tree-card-title'>在互联网种下一棵树</h3>
+      <p class='tree-age' data-tree-age>自 2023 年 3 月 12 日起生长</p>
+      <p class='tree-message'>以文字为叶，以岁月为年轮。<br/>不必急着参天，年年生长就好。</p>
+      <div class='tree-rings' aria-label='建站年轮'><span data-tree-rings>◎</span><span data-tree-years>2023 — 至今</span></div>
+    </section>
+  )}
+</growing-tree>
+<script>
+  class GrowingTree extends HTMLElement {
+    connectedCallback() {
+      const now = new Date()
+      // Use the site's calendar date consistently, regardless of visitor timezone.
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now)
+      const number = (type: string) => Number(parts.find(part => part.type === type)?.value ?? 0)
+      const year = number('year'), month = number('month'), day = number('day')
+      const anniversary = month === 3 && day === 12 && year >= 2024
+      const age = Math.max(0, year - 2023 - (month < 3 || (month === 3 && day < 12) ? 1 : 0))
+      // The tree has an initial sapling and gains foliage as years pass.
+      const stage = Math.min(5, age)
+      this.querySelectorAll<SVGElement>('.tree-leaf').forEach(leaf => {
+        leaf.style.opacity = Number(leaf.dataset.stage) <= stage ? '1' : '0'
+      })
+      const ageLabel = this.querySelector('[data-tree-age]')
+      if (ageLabel) ageLabel.textContent = `已生长 ${age} 年 · ${year} 年的春天`
+      const yearsLabel = this.querySelector('[data-tree-years]')
+      if (yearsLabel) yearsLabel.textContent = `建站 ${age} 周年`
+      const rings = this.querySelector('[data-tree-rings]')
+      if (rings) rings.textContent = age ? '◎'.repeat(Math.min(age, 12)) : '○'
+      if (this.dataset.variant !== 'anniversary' || !anniversary) return
+      const dialog = this.querySelector<HTMLDialogElement>('dialog')
+      if (!dialog) return
+      const key = `vesper-tree-anniversary-${year}`
+      let seen = false
+      try { seen = localStorage.getItem(key) === 'seen' } catch { /* storage may be blocked */ }
+      if (seen || dialog.open) return
+      // Defer until the current navigation is painted.
+      requestAnimationFrame(() => {
+        if (!this.isConnected || dialog.open) return
+        dialog.showModal()
+        try { localStorage.setItem(key, 'seen') } catch { /* storage may be blocked */ }
+      })
+      this.querySelectorAll<HTMLButtonElement>('[data-tree-close]').forEach(button => {
+        button.addEventListener('click', () => dialog.close(), { once: true })
+      })
+    }
+  }
+  if (!customElements.get('growing-tree')) customElements.define('growing-tree', GrowingTree)
+</script>
+<style>
+  growing-tree{display:block;--tree-leaf:#92aa88;--tree-wood:#94765e;--tree-gold:#d5b77d}
+  .tree-card{border:1px solid hsl(var(--border));border-radius:1.4rem;padding:1.5rem;background:linear-gradient(145deg,hsl(var(--primary)/.09),hsl(var(--background)/.9));text-align:center;overflow:hidden}
+  .tree-card-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.67rem;letter-spacing:.08em;color:hsl(var(--muted-foreground))}
+  .tree-art{max-width:340px;margin:0 auto}
+  .tree-art svg{width:100%;height:auto;display:block}
+  .tree-ground{fill:none;stroke:var(--tree-leaf);stroke-width:1.5;opacity:.55}
+  .tree-wood{fill:none;stroke:var(--tree-wood);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+  .tree-leaf{fill:var(--tree-leaf);transition:opacity .7s ease;opacity:0}
+  .tree-leaf:nth-of-type(3n){fill:#b6bc83}
+  .tree-core{fill:var(--tree-gold);opacity:.75}
+  .tree-card h3{font-size:1.2rem;font-weight:650;margin:.1rem 0 .5rem}
+  .tree-age,.tree-years{color:hsl(var(--primary));font-size:.85rem}
+  .tree-message{font-size:.85rem;line-height:1.95;color:hsl(var(--muted-foreground));margin:1rem 0}
+  .tree-rings{display:flex;justify-content:center;align-items:center;gap:1rem;border-top:1px solid hsl(var(--border));padding-top:1rem;font-size:.8rem;color:hsl(var(--muted-foreground))}
+  .tree-rings span:first-child{font-size:1.25rem;letter-spacing:-.3em;padding-right:.3em;color:var(--tree-gold)}
+  .tree-dialog{position:fixed;inset:0;margin:auto;width:min(92vw,470px);max-height:min(90dvh,800px);overflow:auto;border:1px solid hsl(var(--border));border-radius:1.5rem;background:hsl(var(--background));color:hsl(var(--foreground));padding:1.7rem;text-align:center;box-shadow:0 25px 90px #0006}
+  .tree-dialog::backdrop{background:#0a1228a8;backdrop-filter:blur(5px)}
+  .tree-dialog .tree-art{max-width:270px}
+  .tree-kicker{font-size:.7rem;letter-spacing:.18em;color:hsl(var(--muted-foreground))}
+  .tree-dialog h2{font-size:clamp(1.5rem,5vw,2rem);font-weight:650}
+  .tree-close{position:absolute;right:.8rem;top:.7rem;width:44px;height:44px;font-size:1.6rem;border-radius:.7rem}
+  .tree-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+  .tree-actions a,.tree-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.6rem 1rem;border:1px solid hsl(var(--border));border-radius:.75rem;font-size:.85rem}
+  .tree-actions a{background:hsl(var(--primary));color:hsl(var(--primary-foreground))}
+  .tree-actions button:hover,.tree-close:hover{background:hsl(var(--primary)/.1)}
+  .tree-actions :is(a,button):focus-visible,.tree-close:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){.tree-leaf{transition:none}.tree-dialog::backdrop{backdrop-filter:none}}
+</style>
