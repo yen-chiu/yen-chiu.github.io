@@ -89,9 +89,8 @@ const meta = {
                     href={sitePath(`/tags/${encodeURIComponent(tag)}`)}
                     data-astro-prefetch
                     style={`--tag-strength:${Math.max(count / maxTagCount, 0.08)}`}
-                    aria-label={`${tag}, ${count} ${count === 1 ? 'post' : 'posts'}`}
                   >
-                    <span class='tag-card__index'>{String(index + 1).padStart(2, '0')}</span>
+                    <span class='tag-card__index' aria-hidden='true'>{String(index + 1).padStart(2, '0')}</span>
                     <span class='tag-card__main'>
                       <span class='tag-card__name'>
                         <span aria-hidden='true'>#</span>
