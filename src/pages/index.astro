@@ -43,6 +43,7 @@ const entries = [
           fetchpriority='high'
         />
         <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
+        <div class='opening-motto' aria-hidden='true'><p>未写尽，亦未定论。</p></div>
         <div class='hero-intro'>
           <InteractiveAvatar
             ><Image
@@ -186,6 +187,23 @@ const entries = [
           scale: 0.06
         }
       ]
+      const motto = this.querySelector<HTMLElement>('.opening-motto')
+      if (motto) {
+        // Session-scoped introduction: never replay when navigating back to the home page.
+        let shouldPlay = true
+        try {
+          shouldPlay = sessionStorage.getItem('vesper-opening-motto-seen') !== '1'
+          if (shouldPlay) sessionStorage.setItem('vesper-opening-motto-seen', '1')
+        } catch {
+          // Storage can be disabled; the introduction remains harmless.
+        }
+        if (shouldPlay) {
+          motto.classList.add('is-playing')
+          motto.addEventListener('animationend', (event) => {
+            if (event.target === motto) motto.classList.remove('is-playing')
+          }, { once: true, signal })
+        }
+      }
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
       const measure = () => {
         const height = this.offsetHeight,
@@ -373,6 +391,46 @@ const entries = [
       radial-gradient(1px 1px at 60% 55%, #fff, transparent);
     background-size: 370px 310px;
     pointer-events: none;
+  }
+  .opening-motto {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    padding: 5rem 1.5rem;
+    background: #10172fdd;
+    color: #f1f5ff;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .opening-motto p {
+    margin: 0;
+    font-size: clamp(1.3rem, 4vw, 2.1rem);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1.8;
+    text-align: center;
+    text-wrap: balance;
+    text-shadow: 0 2px 24px #0b102a;
+  }
+  .opening-motto.is-playing {
+    visibility: visible;
+    animation: opening-motto-once 6s linear both;
+  }
+  @keyframes opening-motto-once {
+    0% { opacity: 0; visibility: visible; }
+    13.333% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; visibility: hidden; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .opening-motto.is-playing { animation: opening-motto-reduced 4s step-end both; }
+    @keyframes opening-motto-reduced {
+      0% { opacity: 1; visibility: visible; }
+      100% { opacity: 0; visibility: hidden; }
+    }
   }
   .hero-intro {
     display: flex;
