@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { sitePath } from '@/utils/site-path'
+import { anniversaryYear, currentAnniversaryYear, getFolioWorks, getPublicArticles, period, readGitArchive, statusForYear, visibleLetter } from '@/utils/herbarium'
+import { records } from '@/data/herbarium/records'
+
+export function getStaticPaths() {
+  return Array.from({ length: currentAnniversaryYear() - 2023 + 1 }, (_, i) => ({ params: { year: String(2023 + i) } }))
+}
+const year = Number(Astro.params.year)
+const all = [...getPublicArticles(await getCollection('blog')), ...getFolioWorks()]
+const works = all.filter(work => work.publishedAt && anniversaryYear(work.publishedAt) === year).sort((a,b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''))
+const articles = works.filter(work => work.type === 'article')
+const folio = works.filter(work => work.type === 'folio')
+const git = readGitArchive()
+const commitCount = git.limitation ? null : (git.counts.get(year) ?? 0)
+const record = records[year] ?? { year, title: null, milestones: [], letter: null }
+const letter = visibleLetter(record)
+const periodLabel = period(year)
+const status = statusForYear(year)
+const returnDate = periodLabel.start
+const statusLabel = status === 'open' ? '生长中' : '待整理'
+---
+<BaseLayout meta={{ title: `${year} · 岁月标本馆`, description: `Vesper ${year} 生长年度的真实文章、Folio 文档、Git 提交与历史事件。` }}>
+  <main class='herbarium-year'>
+    <nav class='breadcrumb' aria-label='面包屑'><a href={sitePath('/herbarium')}>岁月标本馆</a> <span aria-hidden='true'>/</span> <span>{year}</span></nav>
+    <header class='hero'>
+      <p class='eyebrow'>SPECIMEN / {String(year - 2022).padStart(3,'0')}</p>
+      <h1>{record.title ?? `${year} · 一年光阴`}</h1>
+      <p>{periodLabel.start} — {periodLabel.endExclusive}（不含终点） · {statusLabel}</p>
+      <p class='quote'>把一年的风，夹进时间的书页。</p>
+      <a href={sitePath(`/about?treeDate=${returnDate}#vesper-tree`)}>回到那年的树下 ↗</a>
+    </header>
+    <nav class='years' aria-label='切换生长年度'>
+      {Array.from({length:currentAnniversaryYear()-2023+1},(_,i)=>2023+i).map(y=><a href={sitePath(`/herbarium/${y}`)} aria-current={y===year?'page':undefined}>{y}</a>)}
+    </nav>
+    <section aria-labelledby='metrics'><h2 id='metrics'>年度概览</h2><div class='metrics'>
+      <div><strong>{articles.length}</strong><span>公开文章</span></div>
+      <div><strong>{folio.length ? folio.length : '—'}</strong><span>Folio 文档{folio.length ? '' : '（未接入完整快照）'}</span></div>
+      <div><strong>{commitCount ?? '—'}</strong><span>Git 提交{commitCount === null ? '（待核验）' : ''}</span></div>
+    </div></section>
+    <section aria-labelledby='works'><h2 id='works'>作品档案</h2>
+      {works.length ? <ul class='entries'>{works.map(work=><li><time datetime={work.publishedAt ?? undefined}>{work.publishedAt ?? '日期未知'}</time><a href={work.url}>{work.title}</a><small>{work.type === 'article' ? '文章' : 'Folio'} · {work.dateSource}</small></li>)}</ul> : <p class='empty'>当前没有可确认属于这一生长年度的公开作品。</p>}
+      <p class='note'>Folio 为独立仓库；尚未取得经过日期核验的完整公开作品清单，暂不将主站 docs 冒充为 Folio。</p>
+    </section>
+    <section aria-labelledby='events'><h2 id='events'>重要事件</h2>
+      {record.milestones.length ? <ol class='entries'>{record.milestones.filter(m=>m.verification!=='unverified').map(m=><li><time datetime={m.date}>{m.date}</time><strong>{m.title}</strong><p>{m.description}</p><small>{m.verification==='manual'?'站长确认':'有来源记录'}</small>{m.sourceUrls.length>0&&<p>{m.sourceUrls.map(url=><a href={url} rel='noopener noreferrer'>查看来源 ↗</a>)}</p>}</li>)}</ol> : <p class='empty'>这一年尚未整理可核验的重要事件。</p>}
+    </section>
+    <section aria-labelledby='letter'><h2 id='letter'>年度手记</h2>
+      {letter ? <article><h3>{letter.title}</h3><p>{letter.content}</p><small>写于 {letter.writtenAt}</small></article> : <p class='empty'>这一年的手记尚未公开；空白不代表没有故事。</p>}
+    </section>
+    <details class='sources'><summary>数据来源与完整性说明</summary>
+      <ul>
+        <li>周年时间：2023-03-12 起，Asia/Shanghai 时区，左闭右开。</li>
+        <li>文章：主站 Astro blog collection 的公开作品，按 publishDate 归档；数量为当前内容库可见的记录，并非历史快照。</li>
+        <li>Folio：独立仓库，未接入经核验的历史日期快照，数量未知。</li>
+        <li>Git：当前检出的 HEAD 可达提交，包含合并提交，按 committer 时间统计；不等同于 GitHub Contributions。{git.limitation ?? '完整历史可用。'}</li>
+        <li>Git HEAD：{git.head ?? '不可用'}；生成时间：{git.generatedAt ?? '不可用'}。</li>
+        <li>事件：只展示有来源或站长确认的条目；年度状态为「{statusLabel}」，尚未封存。</li>
+      </ul>
+    </details>
+  </main>
+</BaseLayout>
+<style>
+  .herbarium-year{max-width:860px;margin:0 auto;padding:clamp(5rem,10vw,8rem) 1.2rem 6rem;line-height:1.85}.breadcrumb,.eyebrow{font-size:.8rem;opacity:.7}.breadcrumb{display:flex;gap:.6rem}.hero{padding:2rem 0 2.5rem;border-bottom:1px solid rgba(128,128,128,.3)}.hero h1{font-size:clamp(2rem,6vw,3rem);margin:.4rem 0}.quote{font-style:italic;opacity:.75}.years{display:flex;flex-wrap:wrap;gap:.65rem;margin:1.5rem 0}.years a{padding:.3rem .75rem;border:1px solid rgba(128,128,128,.35);border-radius:2rem;text-decoration:none}.years a[aria-current=page]{border-color:currentColor;font-weight:700}section{margin:2.5rem 0}h2{font-size:1.35rem;margin-bottom:1rem}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.metrics>div{border:1px solid rgba(128,128,128,.3);border-radius:.7rem;padding:1rem;display:flex;flex-direction:column;gap:.3rem}.metrics strong{font-size:1.6rem}.metrics span,.note,.empty,.entries small{font-size:.8rem;opacity:.7}.entries{list-style:none;padding:0}.entries li{padding:1rem 0;border-bottom:1px solid rgba(128,128,128,.25);display:flex;flex-direction:column;gap:.1rem}.entries time{font-size:.8rem;opacity:.7}.entries a{font-weight:600}.entries p{margin:.2rem 0}.sources{border:1px solid rgba(128,128,128,.3);padding:1rem;border-radius:.8rem}.sources summary{cursor:pointer;font-weight:600}.sources li{margin:.5rem 0;overflow-wrap:anywhere}@media(max-width:420px){.metrics{grid-template-columns:1fr}.metrics>div{flex-direction:row;align-items:center;justify-content:space-between}}
+</style>
