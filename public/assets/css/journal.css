@@ -656,6 +656,9 @@ body.yb-paper-body {
 
 /* ---------- 评论区（正文之外，不参与纸面排版） ---------- */
 .yb-comments {
+  /* 宽度用 min(100% - 2rem, 720px) 时若按 content-box 计算，内边距会把卡片撑出
+     窄屏视口（390px 下溢出 18px），与正文的 .yb-sheet 一致改为 border-box。 */
+  box-sizing: border-box;
   width: min(100% - 2rem, 720px);
   margin: 2.5rem auto 4rem;
   padding: 1.4rem 1.5rem 1.6rem;
