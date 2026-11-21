@@ -1,6 +1,9 @@
 # Vesper（暮星）｜Wendell 的站点
 
-[English](./README.md) | [简体中文](./README-zh-CN.md)
+<p align="right">
+  <a href="./README.md"><img alt="English" src="https://img.shields.io/badge/EN-English-e5e7eb?style=flat-square&labelColor=111827"></a>
+  <a href="./README-zh-CN.md"><img alt="简体中文" src="https://img.shields.io/badge/%E4%B8%AD-%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-374151?style=flat-square&labelColor=111827"></a>
+</p>
 
 **Vesper（暮星）** 是 [Wendell 的个人站点](https://yenchiu.com) 所使用的 Astro 主题，承载博客、文档与期刊《余白》。
 
