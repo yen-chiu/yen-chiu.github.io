@@ -7,9 +7,9 @@ import { sitePath } from '@/utils/site-path'
 import { prod } from 'astro-pure/server'
 import type { SiteMeta } from 'astro-pure/types'
 
-type Props = SiteMeta
+type Props = SiteMeta & { robots?: 'index, follow' | 'noindex, follow' }
 
-const { articleDate, description, ogImage, title } = Astro.props
+const { articleDate, description, ogImage, title, robots = 'index, follow' } = Astro.props
 
 // 首页等把站点名当作页面标题的场景不要再拼一次站点名，否则会出现「Wendell • Wendell」
 const siteTitle = !title || title === config.title ? config.title : `${title} ${config.titleDelimiter} ${config.title}`
@@ -19,7 +19,7 @@ const socialImageURL = new URL(sitePath(ogImage || config.socialCard), Astro.sit
 ---
 
 <meta charset='utf-8' />
-<meta name='robots' content='noindex, follow' />
+<meta name='robots' content={robots} />
 <meta
   content='width=device-width, initial-scale=1.0, shrink-to-fit=no, viewport-fit=cover'
   name='viewport'
