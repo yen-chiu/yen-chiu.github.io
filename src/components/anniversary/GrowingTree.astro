@@ -2,11 +2,11 @@
 import { sitePath } from '@/utils/site-path'
 interface Props { variant?: 'card' | 'anniversary' }
 const { variant = 'card' } = Astro.props
-const leaves = Array.from({ length: 32 }, (_, i) => {
+const leaves = Array.from({ length: 64 }, (_, i) => {
   const branch = i % 4
   const angle = (i * 137.508) * Math.PI / 180
-  const radius = 21 + Math.sqrt(i / 32) * 75
-  return { x: 160 + Math.cos(angle) * radius, y: 102 + Math.sin(angle) * radius * .66 - (branch % 2) * 7, rotation: (i * 43) % 90 - 45, stage: Math.floor(i / 6) }
+  const radius = 21 + Math.sqrt(i / 64) * 75
+  return { x: 160 + Math.cos(angle) * radius, y: 102 + Math.sin(angle) * radius * .66 - (branch % 2) * 7, rotation: (i * 43) % 90 - 45, stage: Math.floor(i / 12) }
 })
 ---
 <growing-tree data-variant={variant} data-planted='2023-03-12'>
@@ -16,9 +16,9 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
       <p class='tree-kicker'>VESPER · ANNUAL RINGS</p>
       <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
         <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
-        <path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
+        <g class='tree-growth' data-tree-growth><path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
         {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} data-leaf-index={i} />)}
-        <circle cx='160' cy='203' r='9' class='tree-core'/>
+        </g><circle cx='160' cy='203' r='9' class='tree-core'/>
       </svg></div>
       <h2 id='tree-anniversary-title'>又添一道年轮。</h2>
       <p class='tree-years'><span data-tree-years>建站周年</span> · 03.12</p>
@@ -30,12 +30,13 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
       <div class='tree-card-top'><span>VESPER / ANNUAL RINGS</span><time datetime='2023-03-12'>2023.03.12 · 植树节</time></div>
       <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
         <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
-        <path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
+        <g class='tree-growth' data-tree-growth><path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
         {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} />)}
-        <circle cx='160' cy='203' r='9' class='tree-core'/>
+        </g><circle cx='160' cy='203' r='9' class='tree-core'/>
       </svg></div>
       <div class='tree-time-machine' aria-label='时光回溯'><label for='tree-history-date'>时光标签</label><input id='tree-history-date' data-tree-date type='date' min='2023-03-12' value='2023-03-12' /><button type='button' data-tree-today>回到今天</button></div>
       <p class='tree-season' data-tree-season aria-live='polite'>春 · 初芽</p>
+      <p class='tree-growth-label' data-tree-growth-label>正在生长</p>
       <h3 id='tree-card-title'>在互联网种下一棵树</h3>
       <p class='tree-age' data-tree-age>自 2023 年 3 月 12 日起生长</p>
       <p class='tree-message'>以文字为叶，以岁月为年轮。<br/>不必急着参天，年年生长就好。</p>
@@ -75,15 +76,28 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
         const [y, m, d] = date.split('-').map(Number)
         if (!y || !m || !d) return
         const age = Math.max(0, y - 2023 - (m < 3 || (m === 3 && d < 12) ? 1 : 0))
-        const stage = Math.min(5, age)
+        const planted = Date.UTC(2023, 2, 12)
+        const elapsedDays = Math.max(0, (Date.UTC(y, m - 1, d) - planted) / 86400000)
+        const years = elapsedDays / 365.2425
+        // Smooth growth on a daily basis; slow down as the tree approaches maturity.
+        const maturity = 1 - Math.exp(-years / 3.2)
+        const scale = 0.27 + 0.73 * maturity
+        const trunkWidth = 2.3 + 3.5 * maturity
+        const leafBudget = Math.min(64, Math.max(4, Math.round(4 + 60 * maturity)))
         const season = m >= 3 && m <= 5 ? 'spring' : m >= 6 && m <= 8 ? 'summer' : m >= 9 && m <= 11 ? 'autumn' : 'winter'
         this.dataset.season = season
+        this.querySelectorAll<SVGGElement>('[data-tree-growth]').forEach(group => {
+          group.setAttribute('transform', `translate(${160 * (1 - scale)} ${202 * (1 - scale)}) scale(${scale.toFixed(4)})`)
+          group.style.setProperty('--trunk-width', `${trunkWidth.toFixed(2)}px`)
+        })
+        const growthLabel = this.querySelector('[data-tree-growth-label]')
+        if (growthLabel) growthLabel.textContent = `生长第 ${Math.floor(elapsedDays) + 1} 天 · 树冠成长 ${Math.round(maturity * 100)}%`
         const labels: Record<string, string> = { spring: '春 · 抽芽', summer: '夏 · 浓荫', autumn: '秋 · 金叶', winter: '冬 · 蓄势' }
         const seasonLabel = this.querySelector('[data-tree-season]')
         if (seasonLabel) seasonLabel.textContent = `${date.replaceAll('-', '.')} · ${labels[season]}`
         this.querySelectorAll<SVGElement>('.tree-leaf').forEach(leaf => {
           const index = Number(leaf.dataset.leafIndex ?? 0)
-          const grown = Number(leaf.dataset.stage) <= stage
+          const grown = index < leafBudget
           // In winter the tree sheds its foliage; autumn thins it gradually.
           const seasonal = season === 'winter' ? false : season === 'autumn' ? index % 5 !== 0 : true
           leaf.style.opacity = grown && seasonal ? '1' : '0'
@@ -123,7 +137,8 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
   .tree-art{max-width:340px;margin:0 auto}
   .tree-art svg{width:100%;height:auto;display:block}
   .tree-ground{fill:none;stroke:var(--tree-leaf);stroke-width:1.5;opacity:.55}
-  .tree-wood{fill:none;stroke:var(--tree-wood);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+  .tree-growth{transform-box:view-box;transition:transform .6s ease}
+  .tree-wood{fill:none;stroke:var(--tree-wood);stroke-width:var(--trunk-width,5px);stroke-linecap:round;stroke-linejoin:round}
   .tree-leaf{fill:var(--tree-leaf);transition:opacity .7s ease;opacity:0}
   .tree-leaf:nth-of-type(3n){fill:#b6bc83}
   .tree-core{fill:var(--tree-gold);opacity:.75}
@@ -138,6 +153,7 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
   .tree-time-machine button{min-height:44px;padding:.5rem .8rem;border:1px solid hsl(var(--border));border-radius:.6rem}
   .tree-time-machine button:hover{background:hsl(var(--primary)/.1)}
   .tree-season{font-size:.75rem;letter-spacing:.07em;color:hsl(var(--muted-foreground));margin-bottom:.4rem}
+  .tree-growth-label{font-size:.72rem;color:hsl(var(--muted-foreground));margin-bottom:.7rem}
   .tree-card h3{font-size:1.2rem;font-weight:650;margin:.1rem 0 .5rem}
   .tree-age,.tree-years{color:hsl(var(--primary));font-size:.85rem}
   .tree-message{font-size:.85rem;line-height:1.95;color:hsl(var(--muted-foreground));margin:1rem 0}
@@ -154,5 +170,5 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
   .tree-actions a{background:hsl(var(--primary));color:hsl(var(--primary-foreground))}
   .tree-actions button:hover,.tree-close:hover{background:hsl(var(--primary)/.1)}
   .tree-actions :is(a,button):focus-visible,.tree-close:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px}
-  @media(prefers-reduced-motion:reduce){.tree-leaf{transition:none}.tree-dialog::backdrop{backdrop-filter:none}}
+  @media(prefers-reduced-motion:reduce){.tree-growth{transition:none}.tree-leaf{transition:none}.tree-dialog::backdrop{backdrop-filter:none}}
 </style>
