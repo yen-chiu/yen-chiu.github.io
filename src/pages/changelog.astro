@@ -330,8 +330,9 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .list-head h2 {font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:650;letter-spacing:-.02em;}
   .list-head span {font-size:.75rem;color:hsl(var(--muted-foreground));}
   .list-tools {display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end;}
-  .bulk-toggle {font-size:.7rem;color:hsl(var(--muted-foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.2rem .5rem;background:none;cursor:pointer;line-height:1.6;}
-  .bulk-toggle:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.45);}
+  .bulk-toggle {font-size:.7rem;color:hsl(var(--primary));border:1px solid hsl(var(--primary)/.24);border-radius:.35rem;padding:.35rem .65rem;background:hsl(var(--primary)/.09);cursor:pointer;line-height:1.6;transition:background .18s ease,border-color .18s ease,color .18s ease;}
+  .bulk-toggle:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.5);background:hsl(var(--primary)/.15);}
+  .bulk-toggle:focus-visible,.gen-group > summary:focus-visible,.version-head:focus-visible {outline:2px solid hsl(var(--primary)/.65);outline-offset:3px;}
   .groups {margin-top:.5rem;}
   .gen-group {border-bottom:1px solid hsl(var(--border));}
   .gen-group:last-of-type {border-bottom:0;}
@@ -340,16 +341,16 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .group-toggle {margin-left:auto;}
   .group-name {font-size:.92rem;font-weight:600;}
   .group-meta {font-size:.7rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
-  .group-plus {font-size:.8rem;color:hsl(var(--muted-foreground));transition:transform .2s ease;}
+  .group-plus {display:inline-grid;place-items:center;flex:0 0 2rem;width:2rem;height:2rem;border-radius:.4rem;background:hsl(var(--primary)/.09);color:hsl(var(--primary));font-size:.9rem;transition:transform .2s ease,background .2s ease;}
   .gen-group[open] .group-plus {transform:rotate(45deg);}
   .version-block {border-bottom:1px solid hsl(var(--border)/.6);}
   .version-block:last-child {border-bottom:0;}
-  .version-head {display:flex;align-items:baseline;gap:.6rem;padding:.75rem 0;font-size:.7rem;color:hsl(var(--muted-foreground));cursor:pointer;list-style:none;}
+  .version-head {display:flex;align-items:center;gap:.6rem;padding:.75rem 0;font-size:.7rem;color:hsl(var(--muted-foreground));cursor:pointer;list-style:none;}
   .version-head::-webkit-details-marker {display:none;}
   .version-block[open] > .version-head {padding-bottom:.35rem;}
-  .version-plus {font-size:.72rem;color:hsl(var(--muted-foreground)/.8);transition:transform .2s ease;}
+  .version-plus {display:inline-grid;place-items:center;flex:0 0 2.25rem;width:2.25rem;height:2.25rem;border-radius:.4rem;background:hsl(var(--primary)/.09);color:hsl(var(--primary));font-size:1rem;line-height:1;transition:transform .2s ease,background .2s ease;}
   .version-block[open] .version-plus {transform:rotate(45deg);}
-  .version-chip {font-variant-numeric:tabular-nums;font-size:.7rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--border));border-radius:.3rem;padding:.15rem .4rem;}
+  .version-chip {font-variant-numeric:tabular-nums;font-size:.7rem;letter-spacing:.02em;color:hsl(var(--foreground));border:1px solid hsl(var(--primary)/.15);border-radius:.3rem;padding:.2rem .45rem;background:hsl(var(--primary)/.045);}
   .version-count {margin-left:auto;font-variant-numeric:tabular-nums;}
   .version-block > .updates {padding-left:0;}
   .version-feedback {display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;padding:.7rem 0 1rem;margin-top:.35rem;border-top:1px dashed hsl(var(--border)/.8);font-size:.72rem;color:hsl(var(--muted-foreground));}
@@ -407,7 +408,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   @media(max-width:640px) {
     .changelog-page {margin-top:1rem;}
     .group-meta {display:none;}
-    .group-toggle {font-size:.66rem;padding:.15rem .4rem;}
+    .group-toggle {font-size:.66rem;padding:.3rem .5rem;}
     .list-head {flex-wrap:wrap;row-gap:.5rem;}
     .gen-list li {grid-template-columns:2rem minmax(0,1fr);row-gap:.35rem;}
     .gen-meta {grid-column:2;flex-direction:row;gap:.6rem;justify-content:flex-start;align-items:baseline;white-space:normal;}
