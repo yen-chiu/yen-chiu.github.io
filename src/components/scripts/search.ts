@@ -572,6 +572,21 @@ async function setupSearch(searchElement: Element, _currentSlug: string, data: C
     if (container.querySelector('.filter-multiselect.open')) closeDropdowns()
     else hideSearch()
   })
+  // Chrome's <input type="search"> clears itself on the first Escape and swallows the
+  // dialog's cancel event, so one press used to only empty the keyword. Intercepting at
+  // the capture phase makes a single Escape dismiss the search dialog; an in-flight IME
+  // composition still keeps its own Escape handling.
+  container.addEventListener(
+    'keydown',
+    (event) => {
+      if (event.key !== 'Escape' || event.isComposing) return
+      event.preventDefault()
+      event.stopPropagation()
+      if (container.querySelector('.filter-multiselect.open')) closeDropdowns()
+      else hideSearch()
+    },
+    { capture: true, signal }
+  )
   container.addEventListener('close', () => {
     if (container.classList.contains('active')) hideSearch()
   })
