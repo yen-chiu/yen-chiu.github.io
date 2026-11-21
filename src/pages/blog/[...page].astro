@@ -591,15 +591,17 @@ const meta = {
       display: flex;
       min-width: 0;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.5rem;
       margin: 0;
       padding: 0;
       list-style: none;
     }
 
     .post-card__tags a {
-      display: block;
-      padding: 0.22rem 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      min-height: 1.5rem;
+      padding: 0 0.5rem;
       border-radius: 999px;
       color: hsl(var(--muted-foreground));
       background: hsl(var(--muted) / 0.65);
