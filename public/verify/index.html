@@ -95,6 +95,15 @@
         ]
     };
 
+    // 有 WebP 就用 WebP（同样像素约为 JPEG 的八成大），否则退回 progressive JPEG。
+    const IMAGE_EXT = (() => {
+        const canvas = document.createElement('canvas');
+        return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0 ? '.webp' : '.jpg';
+    })();
+    Object.keys(IMAGE_MAP).forEach(name => {
+        IMAGE_MAP[name] = IMAGE_MAP[name].map(url => url.slice(0, -4) + IMAGE_EXT);
+    });
+
     // 为 9 格分配图片，同物种尽量用不同照片
     function assignImages(items) {
         const used = {};
