@@ -1,3 +1,19 @@
+"""DEPRECATED —— 旧站点迁移期的静态审计脚本 / Legacy migration-era static audit.
+
+本脚本属于 /yen-chiu-astro 子路径时代的验收工具，硬编码了当时的站点布局：
+  - base = '/yen-chiu-astro'（旧子路径部署）
+  - 固定 17 篇文章
+  - 读取 migration/content-manifest.json（该文件已随迁移删除）
+  - 断言 originalUrl 作 canonical、全站 noindex、data-repo= 属性
+
+当前站点的 SEO 验收统一由 scripts/seo-audit.test.mjs 负责（CI 在 .github/workflows/deploy.yml 中调用）。
+本文件仅作历史参考保留：不要把它接入构建或 CI，也不要把它的失败当作站点构建失败。
+
+This script targets the old /yen-chiu-astro sub-path deployment and is kept for
+historical reference only. Current SEO acceptance lives in
+scripts/seo-audit.test.mjs, which CI runs.
+"""
+
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit,unquote
