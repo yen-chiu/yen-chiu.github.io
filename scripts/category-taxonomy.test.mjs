@@ -44,7 +44,19 @@ if (process.argv.includes('--built')) {
   const bare = (value) => value.replace(/\/+$/, '')
   const index = JSON.parse(readFileSync('dist/contentIndex.json', 'utf8'))
   const blogEntries = Object.values(index).filter(entry => entry.collection === 'blog')
-  assert.equal(blogEntries.length, 17)
+  // 迁移清单只记录从 Jekyll 搬过来的文章；之后新写的文章不会进清单，
+  // 所以这里校验"清单里的文章都还在索引里"，而不是把总数写死。
+  assert.ok(
+    blogEntries.length >= posts.length,
+    `built index has ${blogEntries.length} posts, manifest lists ${posts.length}`
+  )
+  for (const post of posts) {
+    const expected = getPostPath(post).replace(/^\//, '')
+    assert.ok(
+      blogEntries.some(entry => entry.slug === expected),
+      `${post.id}: missing from the built search index`
+    )
+  }
   assert.deepEqual([...new Set(blogEntries.flatMap(entry => entry.categories.filter(path => !path.includes('/'))))].sort(), ['建站笔记', '技术实践', '生活记录'].sort())
   for (const [oldPath, target] of Object.entries(categoryRedirects)) {
     const html = readFileSync(`dist${oldPath}/index.html`, 'utf8')
