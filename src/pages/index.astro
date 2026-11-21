@@ -72,15 +72,15 @@ const entries = [
             >
           </nav>
         </div>
-        <button type='button' class='scroll-hint' data-collapse aria-label='向下滚动，收起全屏封面'
+        <button type='button' class='scroll-hint' data-collapse aria-describedby='scroll-hint-hint'
           ><span>向下探索</span><b aria-hidden='true'>⌄</b></button
-        >
+        ><span class='sr-only' id='scroll-hint-hint'>收起全屏封面，进入正文</span>
         <a
           class='cover-credit'
           href='https://github.com/yen-chiu/yen-chiu.github.io/blob/main/public/images/moonlit-cover.svg'
           target='_blank'
           rel='noopener noreferrer'
-          aria-label='查看星夜封面的矢量源文件'>ⓘ 星夜 · 本站矢量封面 ↗</a
+          ><span aria-hidden='true'>ⓘ</span> 星夜 · 本站矢量封面 <span aria-hidden='true'>↗</span></a
         >
         <div class='cover-wave' aria-hidden='true'></div>
       </section>
@@ -101,7 +101,7 @@ const entries = [
               <span class='guide-label'><b aria-hidden='true'>0{index + 1}</b>{label}</span>
               <h4><a href={sitePath(getPostPath(post))}>{post.data.title}</a></h4>
               <p>{reason}</p>
-              <a class='guide-read' href={sitePath(getPostPath(post))} aria-label={`阅读：${post.data.title}`}>开始阅读 <span aria-hidden='true'>↗</span></a>
+              <a class='guide-read' href={sitePath(getPostPath(post))} aria-label={`开始阅读：${post.data.title}`}>开始阅读 <span aria-hidden='true'>↗</span></a>
             </article>
           ))}
         </div>
@@ -622,6 +622,9 @@ const entries = [
   }
   .home-note a {
     color: hsl(var(--primary));
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
   }
   :is(a, button):focus-visible {
     outline: 2px solid hsl(var(--primary));
