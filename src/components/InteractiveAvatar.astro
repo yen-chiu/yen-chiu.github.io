@@ -2,13 +2,12 @@
 const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.props
 ---
 
-<interactive-avatar data-variant={variant}><button type='button' aria-label={label}><slot /></button></interactive-avatar>
+<interactive-avatar data-variant={variant}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
 <script>
   import { createAvatarTapCounter, FOCUS_URL } from '@/utils/avatar-easter-egg'
   class InteractiveAvatar extends HTMLElement {
     private controller?: AbortController
-    private frame = 0
-    private bounce?: Animation
+    private ripple?: Animation
     private verificationTimer = 0
     private verificationOverlay?: HTMLDivElement
     private clearVerification() {
@@ -38,53 +37,31 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
       const motionReduced = () => (globalThis as any).wendellMotion?.reduce?.() ?? reduced.matches
       const tappedFiveTimes = createAvatarTapCounter()
-      const reset = () => {
-        cancelAnimationFrame(this.frame)
-        button.style.transform = ''
-      }
-      button.addEventListener(
-        'pointermove',
-        (e) => {
-          if (e.pointerType !== 'mouse' || motionReduced()) return
-          const r = button.getBoundingClientRect(),
-            x = (e.clientX - r.left) / r.width - 0.5,
-            y = (e.clientY - r.top) / r.height - 0.5
-          cancelAnimationFrame(this.frame)
-          this.frame = requestAnimationFrame(() => {
-            button.style.transform = `perspective(650px) rotateX(${-y * 12}deg) rotateY(${x * 12}deg)`
-          })
-        },
-        { signal }
-      )
-      button.addEventListener('pointerleave', reset, { signal })
-      button.addEventListener('blur', reset, { signal })
       button.addEventListener(
         'click',
         () => {
-          reset()
-          this.bounce?.cancel()
+          this.ripple?.cancel()
           if (tappedFiveTimes(performance.now())) {
             this.startVerification()
             return
           }
-          if (!motionReduced())
-            this.bounce = button.animate(
+          if (!motionReduced()) {
+            const ripple = this.querySelector<HTMLElement>('.avatar-ripple')
+            this.ripple = ripple?.animate(
               [
-                { transform: 'scale(1)' },
-                { transform: 'translateY(-7px) rotate(-4deg) scale(1.045)', offset: 0.35 },
-                { transform: 'scale(.98)', offset: 0.72 },
-                { transform: 'scale(1)' }
+                { transform: 'scale(.78)', opacity: 0.65 },
+                { transform: 'scale(1.45)', opacity: 0 }
               ],
-              { duration: 520, easing: 'cubic-bezier(.2,.7,.3,1)' }
+              { duration: 650, easing: 'cubic-bezier(.2,.7,.3,1)' }
             )
+          }
         },
         { signal }
       )
       document.addEventListener(
         'astro:before-swap',
         () => {
-          reset()
-          this.bounce?.cancel()
+          this.ripple?.cancel()
           this.clearVerification()
         },
         { signal }
@@ -93,8 +70,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     }
     disconnectedCallback() {
       this.controller?.abort()
-      cancelAnimationFrame(this.frame)
-      this.bounce?.cancel()
+      this.ripple?.cancel()
       this.clearVerification()
     }
   }
@@ -137,27 +113,75 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     :global(.verification-transition), :global(.verification-spinner) { animation: none; }
   }
   interactive-avatar {
-    display: inline-block;
-    perspective: 650px;
+    --avatar-gold: hsl(39 65% 73%);
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    isolation: isolate;
+    border-radius: 50%;
+  }
+  .avatar-aura,
+  .avatar-orbit,
+  .avatar-ripple {
+    position: absolute;
+    inset: -9px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .avatar-aura {
+    z-index: -1;
+    inset: -13px;
+    background: radial-gradient(circle, hsl(var(--primary) / .14) 44%, hsl(39 65% 73% / .12) 58%, transparent 73%);
+    animation: avatar-breathe 6s ease-in-out infinite;
+  }
+  .avatar-orbit {
+    z-index: 2;
+    border: 1px solid hsl(39 65% 73% / .18);
+    opacity: .35;
+    transition: opacity .4s ease, border-color .4s ease;
+  }
+  .avatar-star {
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--avatar-gold);
+    box-shadow: 0 0 8px 2px hsl(39 65% 73% / .3);
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+  .avatar-ripple {
+    z-index: 3;
+    inset: -5px;
+    border: 1px solid var(--avatar-gold);
+    opacity: 0;
   }
   button {
+    position: relative;
+    z-index: 1;
     display: block;
     border: 0;
     background: transparent;
     padding: 0;
     border-radius: 50%;
     cursor: pointer;
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease;
-    box-shadow: 0 0 0 6px hsl(var(--primary) / 0.08);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / .12);
   }
-  button:hover {
-    box-shadow: 0 0 0 9px hsl(var(--primary) / 0.13);
+  interactive-avatar:hover .avatar-orbit,
+  interactive-avatar:focus-within .avatar-orbit {
+    opacity: .85;
+    border-color: hsl(39 65% 73% / .5);
   }
-  interactive-avatar[data-variant='header'] button {
-    box-shadow: none;
+  interactive-avatar:hover .avatar-star,
+  interactive-avatar:focus-within .avatar-star {
+    opacity: 1;
+    animation: avatar-star-pass .8s ease-in-out both;
   }
+  interactive-avatar[data-variant='header'] .avatar-aura,
+  interactive-avatar[data-variant='header'] .avatar-orbit,
+  interactive-avatar[data-variant='header'] .avatar-ripple { display: none; }
   button:focus-visible {
     outline: 3px solid hsl(var(--primary));
     outline-offset: 6px;
@@ -167,9 +191,22 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     border-radius: 50%;
     object-fit: cover;
   }
+  @keyframes avatar-breathe {
+    0%, 100% { opacity: .32; }
+    50% { opacity: .65; }
+  }
+  @keyframes avatar-star-pass {
+    0% { transform: translateX(-50%) rotate(0deg) translateY(0); opacity: 0; }
+    25% { opacity: 1; }
+    100% { transform: translateX(-50%) translate(24px, 7px); opacity: 0; }
+  }
+  @media (hover: none) {
+    interactive-avatar:hover .avatar-star { animation: none; opacity: 0; }
+    interactive-avatar:hover .avatar-orbit { opacity: .35; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    button {
-      transition: none;
-    }
+    .avatar-aura, .avatar-star { animation: none !important; }
+    .avatar-aura { opacity: .32; }
+    .avatar-orbit { transition: none; }
   }
 </style>
