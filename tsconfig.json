@@ -21,6 +21,7 @@
       "@/assets/*": ["./src/assets/*"],
       "@/public/*": ["./public/*"],
       "@/components/*": ["./src/components/*"],
+      "@/data/*": ["./src/data/*"],
       "@/layouts/*": ["./src/layouts/*"],
       "@/utils": ["./src/utils/index.ts"],
       "@/utils/*": ["./src/utils/*"],
