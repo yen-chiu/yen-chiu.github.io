@@ -43,12 +43,14 @@ const entries = [
           fetchpriority='high'
         />
         <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
-        <div class='opening-motto' aria-hidden='true'>
-          <div class='opening-sky' style={`background-image: url('${sitePath('/images/moonlit-cover.svg')}')`}></div>
-          <div class='opening-atmosphere'></div>
-          <div class='opening-stars'></div>
-          <div class='opening-moon' aria-hidden='true'></div>
-          <div class='opening-copy'><span class='opening-mark'>✦</span><p>未写尽，亦未定论。</p><span class='opening-rule'></span></div>
+        <div class='opening-motto' aria-hidden='true' inert>
+          <canvas class='opening-ink' aria-hidden='true'></canvas>
+          <div class='opening-vignette' aria-hidden='true'></div>
+          <div class='opening-copy'>
+            <span class='opening-label'>VESPER · INK IN MOTION</span>
+            <p>未写尽，亦未定论。</p>
+            <span class='opening-rule'></span>
+          </div>
           <button class='opening-skip' type='button' aria-label='跳过开场动画'>跳过 <span aria-hidden='true'>↗</span></button>
         </div>
         <div class='hero-intro'>
@@ -142,6 +144,7 @@ const entries = [
 </BaseLayout>
 <script>
   import { fadeProgress, springStep } from '@/utils/hero-motion'
+  import { playSilverInk } from '@/utils/silver-ink-opening.js'
 
   class LandingHero extends HTMLElement {
     private controller?: AbortController
@@ -196,30 +199,36 @@ const entries = [
       ]
       const motto = this.querySelector<HTMLElement>('.opening-motto')
       if (motto) {
-        const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches
-        const motionSettingReduced = (globalThis as any).wendellMotion?.reduce?.() ?? prefersReduced
-        let shouldPlay = !motionSettingReduced
+        const canvas = motto.querySelector<HTMLCanvasElement>('.opening-ink')
+        let shouldPlay = !motionReduced()
         try {
           if (sessionStorage.getItem('vesper-opening-motto-seen') === '1') shouldPlay = false
-          if (shouldPlay) sessionStorage.setItem('vesper-opening-motto-seen', '1')
         } catch {
-          // Private browsing may disable storage; the opening remains optional.
+          // Storage may be unavailable.
         }
+        let stopInk: (() => void) | null = null
+        let timer = 0
         const finish = () => {
+          window.clearTimeout(timer)
+          stopInk?.()
+          stopInk = null
           motto.classList.remove('is-playing')
           motto.setAttribute('aria-hidden', 'true')
-          motto.querySelector<HTMLButtonElement>('.opening-skip')?.setAttribute('tabindex', '-1')
+          motto.inert = true
+          if (motto.contains(document.activeElement)) {
+            (this.querySelector<HTMLElement>('.primary-reading'))?.focus({ preventScroll: true })
+          }
         }
-        if (shouldPlay) {
+        if (shouldPlay && canvas) {
           motto.classList.add('is-playing')
           motto.setAttribute('aria-hidden', 'false')
+          motto.inert = false
+          stopInk = playSilverInk(canvas, signal)
+          try { sessionStorage.setItem('vesper-opening-motto-seen', '1') } catch {}
           motto.querySelector<HTMLButtonElement>('.opening-skip')?.addEventListener('click', finish, { signal })
-          motto.addEventListener('animationend', (event) => {
-            if (event.target === motto) finish()
-          }, { signal })
-          reduced.addEventListener('change', () => {
-            if (reduced.matches) finish()
-          }, { signal })
+          timer = window.setTimeout(finish, 7000)
+          reduced.addEventListener('change', () => { if (motionReduced()) finish() }, { signal })
+          signal.addEventListener('abort', () => { window.clearTimeout(timer); stopInk?.() }, { once: true })
         } else finish()
       }
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
@@ -410,124 +419,94 @@ const entries = [
     background-size: 370px 310px;
     pointer-events: none;
   }
-  /* A separate, non-blocking cinematic prologue: no overlapping home text. */
+  /* Independent silver-ink prologue; the homepage remains unchanged beneath it. */
   .opening-motto {
     position: absolute;
     inset: 0;
     z-index: 3;
     overflow: hidden;
-    color: #f1f5ff;
+    isolation: isolate;
+    background: #050609;
+    color: #e7e9ed;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    isolation: isolate;
   }
   .opening-motto.is-playing {
     visibility: visible;
-    animation: opening-curtain 7s ease-in-out both;
+    opacity: 1;
+    animation: silver-ink-curtain 7s ease-in-out both;
   }
-  .opening-sky, .opening-atmosphere, .opening-stars {
+  .opening-ink, .opening-vignette {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
   }
-  .opening-sky {
-    background-color: #121b36;
-    background-position: 65% center;
-    background-size: cover;
-    transform: scale(1.035);
-  }
-  .opening-atmosphere {
-    background: radial-gradient(ellipse at 52% 42%, #8da5da29 0%, #18264a33 42%, #09112a7d 100%);
-  }
-  .opening-stars {
-    background-image:
-      radial-gradient(1.5px 1.5px at 18% 22%, #fff, transparent),
-      radial-gradient(2px 2px at 72% 30%, #c7dcff, transparent),
-      radial-gradient(1px 1px at 44% 68%, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 84% 76%, #e6efff, transparent);
-    background-size: 290px 230px;
-    opacity: .65;
-  }
-  .opening-moon {
-    position: absolute;
-    width: min(40vw, 260px);
-    aspect-ratio: 1;
-    left: 50%;
-    top: 40%;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, #d9e5ff36 0%, #9cb7f125 27%, #849ee314 48%, transparent 72%);
-    filter: blur(7px);
-    pointer-events: none;
+  .opening-ink { display: block; }
+  .opening-vignette {
+    background: radial-gradient(ellipse at 50% 48%, transparent 8%, #01020542 66%, #020305 110%);
   }
   .opening-copy {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 1.15rem;
-    padding: 5rem 1.25rem;
+    align-items: center;
+    gap: 1.4rem;
+    padding: 2rem 1rem;
     text-align: center;
     pointer-events: none;
   }
+  .opening-label { font: 10px system-ui, sans-serif; letter-spacing: .36em; color: #9ba5b8; }
   .opening-copy p {
     margin: 0;
-    font-size: clamp(1.3rem, 4vw, 2.15rem);
+    font-family: Georgia, 'Noto Serif SC', serif;
+    font-size: clamp(18px, 4.2vw, 32px);
     font-weight: 400;
-    letter-spacing: .12em;
+    letter-spacing: .22em;
     line-height: 1.8;
-    text-wrap: balance;
-    text-shadow: 0 2px 25px #071127aa;
+    text-shadow: 0 0 25px #d4e0ff66;
   }
-  .opening-mark { font-size: 1rem; color: #b9cfff; }
-  .opening-rule { width: 42px; height: 1px; background: #c0d1f3a8; }
+  .opening-rule {
+    width: 85px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #b3c4d7, transparent);
+  }
   .opening-skip {
     position: absolute;
-    z-index: 1;
     right: max(1rem, env(safe-area-inset-right));
-    bottom: max(2rem, env(safe-area-inset-bottom));
-    border: 1px solid #e5edff77;
-    background: #0c183577;
-    color: #fff;
-    border-radius: 999px;
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    z-index: 1;
     min-width: 76px;
     min-height: 44px;
     padding: .6rem 1rem;
-    font-size: .78rem;
-    pointer-events: auto;
+    border: 1px solid #a7b1c366;
+    border-radius: 999px;
+    background: #101621cc;
+    color: #e7e9ed;
+    font: 12px system-ui, sans-serif;
     cursor: pointer;
+    pointer-events: auto;
   }
   .opening-skip:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-  .opening-motto.is-playing .opening-sky { animation: opening-drift 7s ease-out both; }
-  .opening-motto.is-playing .opening-atmosphere { animation: opening-glow 7s ease-in-out both; }
-  .opening-motto.is-playing .opening-stars { animation: opening-sparkle 7s ease-in-out both; }
-  .opening-motto.is-playing .opening-copy { animation: opening-words 7s ease-in-out both; }
-  @keyframes opening-curtain {
+  .opening-motto.is-playing .opening-copy { animation: silver-ink-words 7s ease-in-out both; }
+  @keyframes silver-ink-curtain {
     0%, 78% { opacity: 1; }
     100% { opacity: 0; visibility: hidden; }
   }
-  @keyframes opening-drift { from { transform: scale(1.035) translateY(5px); } to { transform: scale(1.085) translateY(-5px); } }
-  @keyframes opening-glow { 0% { opacity: .25; } 36%, 75% { opacity: 1; } 100% { opacity: .6; } }
-  @keyframes opening-sparkle { 0% { opacity: 0; } 30% { opacity: .65; } 70% { opacity: .8; } 100% { opacity: .3; } }
-  @keyframes opening-words {
-    0%, 28% { opacity: 0; transform: translateY(10px); }
-    42%, 76% { opacity: 1; transform: translateY(0); }
-    95%, 100% { opacity: 0; transform: translateY(-6px); }
+  @keyframes silver-ink-words {
+    0%, 28% { opacity: 0; transform: translateY(8px); }
+    43%, 77% { opacity: 1; transform: translateY(0); }
+    96%, 100% { opacity: 0; transform: translateY(-5px); }
   }
   @media (max-width: 640px) {
-    .opening-copy p { font-size: clamp(1.15rem, 5.5vw, 1.65rem); letter-spacing: .08em; }
-    .opening-moon { width: 58vw; }
+    .opening-copy p { font-size: clamp(17px, 5vw, 24px); letter-spacing: .1em; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .opening-motto, .opening-motto.is-playing,
-    .opening-motto.is-playing :is(.opening-sky, .opening-atmosphere, .opening-stars, .opening-copy) {
-      animation: none;
-      visibility: hidden;
-      pointer-events: none;
-    }
+    .opening-motto, .opening-motto.is-playing { animation: none; visibility: hidden; pointer-events: none; }
   }
   .hero-intro {
     display: flex;
