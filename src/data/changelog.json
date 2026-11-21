@@ -1,5 +1,43 @@
 [
   {
+    "status": "unreleased",
+    "gen": 3,
+    "site": "main",
+    "date": "2026-11-21",
+    "title": "计划：Vesper 夜航计划（Night Voyage）",
+    "summary": "下一步拟实现阅读书签、首页旧文来信与页脚月相日历；目前仅完成技术任务书归档，功能尚未开发或发布。",
+    "items": [
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "主站 · 计划",
+        "title": "阅读书签（待开发）",
+        "note": "访客阅读进度仅保存在浏览器本地；再次打开文章时主动选择继续阅读或从头开始，不自动跳转。"
+      },
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "首页 · 计划",
+        "title": "旧文来信（待开发）",
+        "note": "仅在首页展示真实公开旧文，优先往年今日、附近日期，再进行稳定的旧文漫游；不推荐草稿、不编造内容。"
+      },
+      {
+        "change": "added",
+        "area": "feature",
+        "scope": "页脚 · 计划",
+        "title": "月相日历（待开发）",
+        "note": "页脚展示轻量月相入口，点击展开日期、近似月相及建站天数；明确算法误差与时区口径。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "Folio · 已归档",
+        "title": "夜航计划技术任务书",
+        "note": "完整设计、数据结构、实施阶段与验收标准已归档至 /folio/building/night-voyage-phase1/；仅为开发计划，不代表功能上线。"
+      }
+    ]
+  },
+  {
     "status": "released",
     "gen": 3,
     "site": "main",
