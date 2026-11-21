@@ -18,6 +18,7 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
         <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
         <g class='tree-growth' data-tree-growth><path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
         {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} data-leaf-index={i} />)}
+        {Array.from({length:18},(_,i) => <circle class='tree-fruit' data-fruit-index={i} cx={105+(i*47)%113} cy={63+(i*31)%92} r='4' />)}
         </g><circle cx='160' cy='203' r='9' class='tree-core'/>
       </svg></div>
       <h2 id='tree-anniversary-title'>又添一道年轮。</h2>
@@ -31,7 +32,8 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
       <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
         <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
         <g class='tree-growth' data-tree-growth><path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
-        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} />)}
+        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} data-leaf-index={i} />)}
+        {Array.from({length:18},(_,i) => <circle class='tree-fruit' data-fruit-index={i} cx={105+(i*47)%113} cy={63+(i*31)%92} r='4' />)}
         </g><circle cx='160' cy='203' r='9' class='tree-core'/>
       </svg></div>
       <div class='tree-time-machine' aria-label='时光回溯'><label for='tree-history-date'>时光标签</label><input id='tree-history-date' data-tree-date type='date' min='2023-03-12' value='2023-03-12' /><button type='button' data-tree-today>回到今天</button></div>
@@ -40,6 +42,7 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
       <h3 id='tree-card-title'>在互联网种下一棵树</h3>
       <p class='tree-age' data-tree-age>自 2023 年 3 月 12 日起生长</p>
       <p class='tree-message'>以文字为叶，以岁月为年轮。<br/>不必急着参天，年年生长就好。</p>
+      <div class='tree-github' aria-label='GitHub 项目成长数据'><a href='https://github.com/yen-chiu/yen-chiu.github.io/commits/main' target='_blank' rel='noopener noreferrer'><strong data-tree-commits>—</strong><span>提交 · 果实</span></a><a href='https://github.com/yen-chiu/yen-chiu.github.io/stargazers' target='_blank' rel='noopener noreferrer'><strong data-tree-stars>—</strong><span>收藏 · 种子</span></a><a href='https://github.com/yen-chiu/yen-chiu.github.io/forks' target='_blank' rel='noopener noreferrer'><strong data-tree-forks>—</strong><span>分叉 · 传播</span></a></div><p class='tree-github-note' data-tree-github-note>正在读取 GitHub 当前统计；历史日期不代表历史提交量。</p>
       <div class='tree-rings' aria-label='建站年轮'><span data-tree-rings>◎</span><span data-tree-years>2023 — 至今</span></div>
     </section>
   )}
@@ -110,6 +113,60 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
         if (rings) rings.textContent = age ? '◎'.repeat(Math.min(age, 12)) : '○'
       }
       render(today)
+      if (this.dataset.variant === 'card') {
+        // Public GitHub REST API. These are current repo-wide totals, not historical snapshots.
+        const cacheKey = 'vesper-tree-github-stats-v1'
+        type Stats = { commits: number | null; stars: number; forks: number; fetchedAt: number }
+        const show = (stats: Stats) => {
+          const fields: [string, number | null][] = [
+            ['[data-tree-commits]', stats.commits], ['[data-tree-stars]', stats.stars], ['[data-tree-forks]', stats.forks]
+          ]
+          fields.forEach(([selector, count]) => {
+            const element = this.querySelector(selector)
+            if (element) element.textContent = count === null ? '—' : count.toLocaleString('zh-CN')
+          })
+          const fruitCount = stats.commits === null ? 0 : Math.min(18, Math.round(3 * Math.log2(stats.commits + 1)))
+          this.querySelectorAll<SVGCircleElement>('[data-fruit-index]').forEach(fruit => {
+            fruit.style.opacity = Number(fruit.dataset.fruitIndex) < fruitCount ? '1' : '0'
+          })
+          const note = this.querySelector('[data-tree-github-note]')
+          if (note) note.textContent = 'GitHub 当前公开统计 · 果实数量为象征性展示，历史回溯不改变统计'
+        }
+        let cached: Stats | null = null
+        try {
+          const value = sessionStorage.getItem(cacheKey)
+          if (value) cached = JSON.parse(value) as Stats
+        } catch { /* storage may be disabled */ }
+        if (cached) show(cached)
+        if (!cached || Date.now() - cached.fetchedAt > 30 * 60 * 1000) {
+          const api = 'https://api.github.com/repos/yen-chiu/yen-chiu.github.io'
+          Promise.all([
+            fetch(api, { signal, headers: { Accept: 'application/vnd.github+json' } }),
+            fetch(api + '/commits?sha=main&per_page=1', { signal, headers: { Accept: 'application/vnd.github+json' } })
+          ]).then(async ([repositoryResponse, commitsResponse]) => {
+            if (!repositoryResponse.ok) throw new Error('GitHub repository API unavailable')
+            const data = await repositoryResponse.json() as { stargazers_count: number; forks_count: number }
+            let commits: number | null = null
+            if (commitsResponse.ok) {
+              const link = commitsResponse.headers.get('link') ?? ''
+              const last = link.match(/<[^>]*[?&]page=(\\d+)[^>]*>;\\s*rel="last"/)
+              if (last) commits = Number(last[1])
+              else {
+                const first = await commitsResponse.json() as unknown[]
+                if (Array.isArray(first)) commits = first.length
+              }
+            }
+            const stats: Stats = { commits, stars: data.stargazers_count, forks: data.forks_count, fetchedAt: Date.now() }
+            if (signal.aborted) return
+            show(stats)
+            try { sessionStorage.setItem(cacheKey, JSON.stringify(stats)) } catch { /* storage may be disabled */ }
+          }).catch(() => {
+            if (signal.aborted || cached) return
+            const note = this.querySelector('[data-tree-github-note]')
+            if (note) note.textContent = 'GitHub 数据暂不可用，请稍后再试'
+          })
+        }
+      }
       if (this.dataset.variant !== 'anniversary' || !anniversary) return
       const dialog = this.querySelector<HTMLDialogElement>('dialog')
       if (!dialog) return
@@ -142,6 +199,7 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
   .tree-leaf{fill:var(--tree-leaf);transition:opacity .7s ease;opacity:0}
   .tree-leaf:nth-of-type(3n){fill:#b6bc83}
   .tree-core{fill:var(--tree-gold);opacity:.75}
+  .tree-fruit{fill:#d6a16e;opacity:0;transition:opacity .5s ease}
   growing-tree[data-season='spring']{--tree-leaf:#a4bf8b}
   growing-tree[data-season='summer']{--tree-leaf:#527f64}
   growing-tree[data-season='autumn']{--tree-leaf:#c58d52}
@@ -157,6 +215,12 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
   .tree-card h3{font-size:1.2rem;font-weight:650;margin:.1rem 0 .5rem}
   .tree-age,.tree-years{color:hsl(var(--primary));font-size:.85rem}
   .tree-message{font-size:.85rem;line-height:1.95;color:hsl(var(--muted-foreground));margin:1rem 0}
+  .tree-github{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin:1.2rem 0 .4rem}
+  .tree-github a{display:flex;flex-direction:column;gap:.25rem;align-items:center;padding:.8rem .25rem;border:1px solid hsl(var(--border));border-radius:.8rem;min-height:70px}
+  .tree-github a:hover{border-color:hsl(var(--primary)/.5)}
+  .tree-github strong{font-size:1.2rem;font-variant-numeric:tabular-nums}
+  .tree-github span,.tree-github-note{font-size:.72rem;color:hsl(var(--muted-foreground))}
+  .tree-github-note{line-height:1.6;margin:.3rem 0 1rem}
   .tree-rings{display:flex;justify-content:center;align-items:center;gap:1rem;border-top:1px solid hsl(var(--border));padding-top:1rem;font-size:.8rem;color:hsl(var(--muted-foreground))}
   .tree-rings span:first-child{font-size:1.25rem;letter-spacing:-.3em;padding-right:.3em;color:var(--tree-gold)}
   .tree-dialog{position:fixed;inset:0;margin:auto;width:min(92vw,470px);max-height:min(90dvh,800px);overflow:auto;border:1px solid hsl(var(--border));border-radius:1.5rem;background:hsl(var(--background));color:hsl(var(--foreground));padding:1.7rem;text-align:center;box-shadow:0 25px 90px #0006}
