@@ -43,7 +43,14 @@ const entries = [
           fetchpriority='high'
         />
         <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
-        <div class='opening-motto' aria-hidden='true'><p>未写尽，亦未定论。</p></div>
+        <div class='opening-motto' aria-hidden='true'>
+          <div class='opening-sky' style={`background-image: url('${sitePath('/images/moonlit-cover.svg')}')`}></div>
+          <div class='opening-atmosphere'></div>
+          <div class='opening-stars'></div>
+          <div class='opening-moon' aria-hidden='true'></div>
+          <div class='opening-copy'><span class='opening-mark'>✦</span><p>未写尽，亦未定论。</p><span class='opening-rule'></span></div>
+          <button class='opening-skip' type='button' aria-label='跳过开场动画'>跳过 <span aria-hidden='true'>↗</span></button>
+        </div>
         <div class='hero-intro'>
           <InteractiveAvatar
             ><Image
@@ -189,20 +196,31 @@ const entries = [
       ]
       const motto = this.querySelector<HTMLElement>('.opening-motto')
       if (motto) {
-        // Session-scoped introduction: never replay when navigating back to the home page.
-        let shouldPlay = true
+        const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+        const motionSettingReduced = (globalThis as any).wendellMotion?.reduce?.() ?? prefersReduced
+        let shouldPlay = !motionSettingReduced
         try {
-          shouldPlay = sessionStorage.getItem('vesper-opening-motto-seen') !== '1'
+          if (sessionStorage.getItem('vesper-opening-motto-seen') === '1') shouldPlay = false
           if (shouldPlay) sessionStorage.setItem('vesper-opening-motto-seen', '1')
         } catch {
-          // Storage can be disabled; the introduction remains harmless.
+          // Private browsing may disable storage; the opening remains optional.
+        }
+        const finish = () => {
+          motto.classList.remove('is-playing')
+          motto.setAttribute('aria-hidden', 'true')
+          motto.querySelector<HTMLButtonElement>('.opening-skip')?.setAttribute('tabindex', '-1')
         }
         if (shouldPlay) {
           motto.classList.add('is-playing')
+          motto.setAttribute('aria-hidden', 'false')
+          motto.querySelector<HTMLButtonElement>('.opening-skip')?.addEventListener('click', finish, { signal })
           motto.addEventListener('animationend', (event) => {
-            if (event.target === motto) motto.classList.remove('is-playing')
-          }, { once: true, signal })
-        }
+            if (event.target === motto) finish()
+          }, { signal })
+          reduced.addEventListener('change', () => {
+            if (reduced.matches) finish()
+          }, { signal })
+        } else finish()
       }
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
       const measure = () => {
@@ -392,44 +410,123 @@ const entries = [
     background-size: 370px 310px;
     pointer-events: none;
   }
+  /* A separate, non-blocking cinematic prologue: no overlapping home text. */
   .opening-motto {
     position: absolute;
     inset: 0;
     z-index: 3;
-    display: grid;
-    place-items: center;
-    padding: 5rem 1.5rem;
-    background: #10172fdd;
+    overflow: hidden;
     color: #f1f5ff;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-  }
-  .opening-motto p {
-    margin: 0;
-    font-size: clamp(1.3rem, 4vw, 2.1rem);
-    font-weight: 400;
-    letter-spacing: 0.12em;
-    line-height: 1.8;
-    text-align: center;
-    text-wrap: balance;
-    text-shadow: 0 2px 24px #0b102a;
+    isolation: isolate;
   }
   .opening-motto.is-playing {
     visibility: visible;
-    animation: opening-motto-once 6s linear both;
+    animation: opening-curtain 7s ease-in-out both;
   }
-  @keyframes opening-motto-once {
-    0% { opacity: 0; visibility: visible; }
-    13.333% { opacity: 1; }
-    80% { opacity: 1; }
+  .opening-sky, .opening-atmosphere, .opening-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .opening-sky {
+    background-color: #121b36;
+    background-position: 65% center;
+    background-size: cover;
+    transform: scale(1.035);
+  }
+  .opening-atmosphere {
+    background: radial-gradient(ellipse at 52% 42%, #8da5da29 0%, #18264a33 42%, #09112a7d 100%);
+  }
+  .opening-stars {
+    background-image:
+      radial-gradient(1.5px 1.5px at 18% 22%, #fff, transparent),
+      radial-gradient(2px 2px at 72% 30%, #c7dcff, transparent),
+      radial-gradient(1px 1px at 44% 68%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 84% 76%, #e6efff, transparent);
+    background-size: 290px 230px;
+    opacity: .65;
+  }
+  .opening-moon {
+    position: absolute;
+    width: min(40vw, 260px);
+    aspect-ratio: 1;
+    left: 50%;
+    top: 40%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, #d9e5ff36 0%, #9cb7f125 27%, #849ee314 48%, transparent 72%);
+    filter: blur(7px);
+    pointer-events: none;
+  }
+  .opening-copy {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.15rem;
+    padding: 5rem 1.25rem;
+    text-align: center;
+    pointer-events: none;
+  }
+  .opening-copy p {
+    margin: 0;
+    font-size: clamp(1.3rem, 4vw, 2.15rem);
+    font-weight: 400;
+    letter-spacing: .12em;
+    line-height: 1.8;
+    text-wrap: balance;
+    text-shadow: 0 2px 25px #071127aa;
+  }
+  .opening-mark { font-size: 1rem; color: #b9cfff; }
+  .opening-rule { width: 42px; height: 1px; background: #c0d1f3a8; }
+  .opening-skip {
+    position: absolute;
+    z-index: 1;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(2rem, env(safe-area-inset-bottom));
+    border: 1px solid #e5edff77;
+    background: #0c183577;
+    color: #fff;
+    border-radius: 999px;
+    min-width: 76px;
+    min-height: 44px;
+    padding: .6rem 1rem;
+    font-size: .78rem;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .opening-skip:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .opening-motto.is-playing .opening-sky { animation: opening-drift 7s ease-out both; }
+  .opening-motto.is-playing .opening-atmosphere { animation: opening-glow 7s ease-in-out both; }
+  .opening-motto.is-playing .opening-stars { animation: opening-sparkle 7s ease-in-out both; }
+  .opening-motto.is-playing .opening-copy { animation: opening-words 7s ease-in-out both; }
+  @keyframes opening-curtain {
+    0%, 78% { opacity: 1; }
     100% { opacity: 0; visibility: hidden; }
   }
+  @keyframes opening-drift { from { transform: scale(1.035) translateY(5px); } to { transform: scale(1.085) translateY(-5px); } }
+  @keyframes opening-glow { 0% { opacity: .25; } 36%, 75% { opacity: 1; } 100% { opacity: .6; } }
+  @keyframes opening-sparkle { 0% { opacity: 0; } 30% { opacity: .65; } 70% { opacity: .8; } 100% { opacity: .3; } }
+  @keyframes opening-words {
+    0%, 28% { opacity: 0; transform: translateY(10px); }
+    42%, 76% { opacity: 1; transform: translateY(0); }
+    95%, 100% { opacity: 0; transform: translateY(-6px); }
+  }
+  @media (max-width: 640px) {
+    .opening-copy p { font-size: clamp(1.15rem, 5.5vw, 1.65rem); letter-spacing: .08em; }
+    .opening-moon { width: 58vw; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .opening-motto.is-playing { animation: opening-motto-reduced 4s step-end both; }
-    @keyframes opening-motto-reduced {
-      0% { opacity: 1; visibility: visible; }
-      100% { opacity: 0; visibility: hidden; }
+    .opening-motto, .opening-motto.is-playing,
+    .opening-motto.is-playing :is(.opening-sky, .opening-atmosphere, .opening-stars, .opening-copy) {
+      animation: none;
+      visibility: hidden;
+      pointer-events: none;
     }
   }
   .hero-intro {
