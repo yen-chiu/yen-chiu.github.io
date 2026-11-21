@@ -17,7 +17,7 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
       <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
         <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
         <path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
-        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} />)}
+        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} data-leaf-index={i} />)}
         <circle cx='160' cy='203' r='9' class='tree-core'/>
       </svg></div>
       <h2 id='tree-anniversary-title'>又添一道年轮。</h2>
@@ -34,6 +34,8 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
         {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} />)}
         <circle cx='160' cy='203' r='9' class='tree-core'/>
       </svg></div>
+      <div class='tree-time-machine' aria-label='时光回溯'><label for='tree-history-date'>时光标签</label><input id='tree-history-date' data-tree-date type='date' min='2023-03-12' value='2023-03-12' /><button type='button' data-tree-today>回到今天</button></div>
+      <p class='tree-season' data-tree-season aria-live='polite'>春 · 初芽</p>
       <h3 id='tree-card-title'>在互联网种下一棵树</h3>
       <p class='tree-age' data-tree-age>自 2023 年 3 月 12 日起生长</p>
       <p class='tree-message'>以文字为叶，以岁月为年轮。<br/>不必急着参天，年年生长就好。</p>
@@ -43,42 +45,74 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
 </growing-tree>
 <script>
   class GrowingTree extends HTMLElement {
+    private controller?: AbortController
     connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const signal = this.controller.signal
       const now = new Date()
-      // Use the site's calendar date consistently, regardless of visitor timezone.
       const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now)
       const number = (type: string) => Number(parts.find(part => part.type === type)?.value ?? 0)
       const year = number('year'), month = number('month'), day = number('day')
+      const today = [year, month, day].map((n, i) => i ? String(n).padStart(2, '0') : String(n)).join('-')
       const anniversary = month === 3 && day === 12 && year >= 2024
-      const age = Math.max(0, year - 2023 - (month < 3 || (month === 3 && day < 12) ? 1 : 0))
-      // The tree has an initial sapling and gains foliage as years pass.
-      const stage = Math.min(5, age)
-      this.querySelectorAll<SVGElement>('.tree-leaf').forEach(leaf => {
-        leaf.style.opacity = Number(leaf.dataset.stage) <= stage ? '1' : '0'
-      })
-      const ageLabel = this.querySelector('[data-tree-age]')
-      if (ageLabel) ageLabel.textContent = `已生长 ${age} 年 · ${year} 年的春天`
-      const yearsLabel = this.querySelector('[data-tree-years]')
-      if (yearsLabel) yearsLabel.textContent = `建站 ${age} 周年`
-      const rings = this.querySelector('[data-tree-rings]')
-      if (rings) rings.textContent = age ? '◎'.repeat(Math.min(age, 12)) : '○'
+      const dateInput = this.querySelector<HTMLInputElement>('[data-tree-date]')
+      if (dateInput) {
+        dateInput.max = today
+        dateInput.value = today
+        dateInput.addEventListener('change', () => {
+          if (!dateInput.value || dateInput.value < '2023-03-12' || dateInput.value > today) {
+            dateInput.value = today
+          }
+          render(dateInput.value)
+        }, { signal })
+        this.querySelector('[data-tree-today]')?.addEventListener('click', () => {
+          dateInput.value = today
+          render(today)
+        }, { signal })
+      }
+      const render = (date: string) => {
+        const [y, m, d] = date.split('-').map(Number)
+        if (!y || !m || !d) return
+        const age = Math.max(0, y - 2023 - (m < 3 || (m === 3 && d < 12) ? 1 : 0))
+        const stage = Math.min(5, age)
+        const season = m >= 3 && m <= 5 ? 'spring' : m >= 6 && m <= 8 ? 'summer' : m >= 9 && m <= 11 ? 'autumn' : 'winter'
+        this.dataset.season = season
+        const labels: Record<string, string> = { spring: '春 · 抽芽', summer: '夏 · 浓荫', autumn: '秋 · 金叶', winter: '冬 · 蓄势' }
+        const seasonLabel = this.querySelector('[data-tree-season]')
+        if (seasonLabel) seasonLabel.textContent = `${date.replaceAll('-', '.')} · ${labels[season]}`
+        this.querySelectorAll<SVGElement>('.tree-leaf').forEach(leaf => {
+          const index = Number(leaf.dataset.leafIndex ?? 0)
+          const grown = Number(leaf.dataset.stage) <= stage
+          // In winter the tree sheds its foliage; autumn thins it gradually.
+          const seasonal = season === 'winter' ? false : season === 'autumn' ? index % 5 !== 0 : true
+          leaf.style.opacity = grown && seasonal ? '1' : '0'
+        })
+        const ageLabel = this.querySelector('[data-tree-age]')
+        if (ageLabel) ageLabel.textContent = age ? `已生长 ${age} 年 · ${labels[season]}` : `初植于 2023 年 · ${labels[season]}`
+        const yearsLabel = this.querySelector('[data-tree-years]')
+        if (yearsLabel) yearsLabel.textContent = `建站 ${age} 周年`
+        const rings = this.querySelector('[data-tree-rings]')
+        if (rings) rings.textContent = age ? '◎'.repeat(Math.min(age, 12)) : '○'
+      }
+      render(today)
       if (this.dataset.variant !== 'anniversary' || !anniversary) return
       const dialog = this.querySelector<HTMLDialogElement>('dialog')
       if (!dialog) return
+      this.querySelectorAll<HTMLButtonElement>('[data-tree-close]').forEach(button => {
+        button.addEventListener('click', () => dialog.close(), { signal })
+      })
       const key = `vesper-tree-anniversary-${year}`
       let seen = false
       try { seen = localStorage.getItem(key) === 'seen' } catch { /* storage may be blocked */ }
       if (seen || dialog.open) return
-      // Defer until the current navigation is painted.
       requestAnimationFrame(() => {
-        if (!this.isConnected || dialog.open) return
+        if (!this.isConnected || signal.aborted || dialog.open) return
         dialog.showModal()
         try { localStorage.setItem(key, 'seen') } catch { /* storage may be blocked */ }
       })
-      this.querySelectorAll<HTMLButtonElement>('[data-tree-close]').forEach(button => {
-        button.addEventListener('click', () => dialog.close(), { once: true })
-      })
     }
+    disconnectedCallback() { this.controller?.abort() }
   }
   if (!customElements.get('growing-tree')) customElements.define('growing-tree', GrowingTree)
 </script>
@@ -93,6 +127,17 @@ const leaves = Array.from({ length: 32 }, (_, i) => {
   .tree-leaf{fill:var(--tree-leaf);transition:opacity .7s ease;opacity:0}
   .tree-leaf:nth-of-type(3n){fill:#b6bc83}
   .tree-core{fill:var(--tree-gold);opacity:.75}
+  growing-tree[data-season='spring']{--tree-leaf:#a4bf8b}
+  growing-tree[data-season='summer']{--tree-leaf:#527f64}
+  growing-tree[data-season='autumn']{--tree-leaf:#c58d52}
+  growing-tree[data-season='winter']{--tree-leaf:#a6b4c2;--tree-wood:#87909a}
+  growing-tree[data-season='autumn'] .tree-leaf:nth-of-type(3n){fill:#e1b665}
+  growing-tree[data-season='winter'] .tree-ground{stroke:#a6b4c2;opacity:.8}
+  .tree-time-machine{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.6rem;margin:.1rem auto 1rem;font-size:.8rem}
+  .tree-time-machine input{color:inherit;color-scheme:light dark;border:1px solid hsl(var(--border));border-radius:.6rem;padding:.55rem;max-width:100%;min-height:44px;background:hsl(var(--background))}
+  .tree-time-machine button{min-height:44px;padding:.5rem .8rem;border:1px solid hsl(var(--border));border-radius:.6rem}
+  .tree-time-machine button:hover{background:hsl(var(--primary)/.1)}
+  .tree-season{font-size:.75rem;letter-spacing:.07em;color:hsl(var(--muted-foreground));margin-bottom:.4rem}
   .tree-card h3{font-size:1.2rem;font-weight:650;margin:.1rem 0 .5rem}
   .tree-age,.tree-years{color:hsl(var(--primary));font-size:.85rem}
   .tree-message{font-size:.85rem;line-height:1.95;color:hsl(var(--muted-foreground));margin:1rem 0}
