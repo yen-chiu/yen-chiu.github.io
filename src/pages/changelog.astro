@@ -332,6 +332,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .list-tools {display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end;}
   .bulk-toggle {font-size:.7rem;color:hsl(var(--primary));border:1px solid hsl(var(--primary)/.24);border-radius:.35rem;padding:.35rem .65rem;background:hsl(var(--primary)/.09);cursor:pointer;line-height:1.6;transition:background .18s ease,border-color .18s ease,color .18s ease;}
   .bulk-toggle:hover {color:hsl(var(--primary));border-color:hsl(var(--primary)/.5);background:hsl(var(--primary)/.15);}
+  .bulk-toggle {transition-duration:var(--vesper-interaction-duration,180ms);}
+  .version-plus,.group-plus {transition-duration:var(--vesper-interaction-duration,180ms);}
   .bulk-toggle:focus-visible,.gen-group > summary:focus-visible,.version-head:focus-visible {outline:2px solid hsl(var(--primary)/.65);outline-offset:3px;}
   .groups {margin-top:.5rem;}
   .gen-group {border-bottom:1px solid hsl(var(--border));}

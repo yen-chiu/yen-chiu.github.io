@@ -204,6 +204,10 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     interactive-avatar:hover .avatar-star { animation: none; opacity: 0; }
     interactive-avatar:hover .avatar-orbit { opacity: .35; }
   }
+  /* Site-level motion preference must also disable decorative CSS motion. */
+  :global(html.motion-off) .avatar-aura,
+  :global(html.motion-off) .avatar-star { animation: none !important; }
+  :global(html.motion-off) .avatar-orbit { transition: none; }
   @media (prefers-reduced-motion: reduce) {
     .avatar-aura, .avatar-star { animation: none !important; }
     .avatar-aura { opacity: .32; }
