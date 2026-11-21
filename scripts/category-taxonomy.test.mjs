@@ -39,6 +39,9 @@ console.log('Taxonomy: 17 unchanged article paths, 3 topics / 8 subtopics, 16 co
 
 if (process.argv.includes('--built')) {
   const base = ''
+  // trailingSlash 现在是 'always'，构建后的重定向目标与链接都带尾斜杠；
+  // 断言里统一去掉尾斜杠再比较，脚本对两种配置都成立。
+  const bare = (value) => value.replace(/\/+$/, '')
   const index = JSON.parse(readFileSync('dist/contentIndex.json', 'utf8'))
   const blogEntries = Object.values(index).filter(entry => entry.collection === 'blog')
   assert.equal(blogEntries.length, 17)
@@ -46,15 +49,20 @@ if (process.argv.includes('--built')) {
   for (const [oldPath, target] of Object.entries(categoryRedirects)) {
     const html = readFileSync(`dist${oldPath}/index.html`, 'utf8')
     const redirect = decodeURI(html.match(/http-equiv="refresh" content="0;url=([^"]+)"/)?.[1] ?? '')
-    assert.equal(redirect, base + target, `${oldPath}: redirect must stay in the preview base path`)
-    assert.ok(decodeURI(html).includes(`href="https://yenchiu.com${base}${target}"`), `${oldPath}: canonical must use the preview path`)
+    assert.equal(bare(redirect), bare(base + target), `${oldPath}: redirect must stay in the preview base path`)
+    const canonicalHref = decodeURI(html).match(/rel="canonical" href="([^"]+)"/)?.[1] ?? ''
+    assert.equal(
+      bare(canonicalHref),
+      bare(`https://yenchiu.com${base}${target}`),
+      `${oldPath}: canonical must use the preview path`
+    )
     readFileSync(`dist${target}/index.html`, 'utf8')
   }
   const home = readFileSync('dist/index.html', 'utf8')
   assert.equal((home.match(/<article\b[^>]*class="guide-card(?:\s|")/g) ?? []).length, 3)
   assert.ok(!/class="post-list(?:\s|")/.test(home), 'The full article feed belongs on the blog page')
   for (const slug of ['qq-bot-postmortem', 'xss-audit', 'miko-web']) {
-    assert.ok(home.includes(`href="${base}/blog/${slug}"`))
+    assert.ok(home.includes(`href="${base}/blog/${slug}/"`))
     readFileSync(`dist/blog/${slug}/index.html`, 'utf8')
   }
   console.log('Built pages: 16 legacy redirects / canonical URLs retain base; search index and curated destinations verified')

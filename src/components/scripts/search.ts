@@ -218,8 +218,14 @@ function getCurrentSlug(): string {
 }
 
 // Resolve relative URL
+// GitHub Pages 是目录式托管，页面地址带尾斜杠；搜索结果、分类与文档链接若少这一笔，
+// 每次点击都会被 301 跳一次，所以这里统一补上（带扩展名的资源保持原样）。
 function resolveUrl(slug: string): string {
-  return new URL(sitePath(slug), window.location.origin).href
+  const url = new URL(sitePath(slug), window.location.origin)
+  if (!url.pathname.endsWith('/') && !/\.[a-z0-9]+$/i.test(url.pathname)) {
+    url.pathname += '/'
+  }
+  return url.href
 }
 
 // Normalize relative URLs in HTML

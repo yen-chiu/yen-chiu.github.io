@@ -9,7 +9,7 @@
     "dev": "astro dev",
     "dev:check": "astro check --watch & astro dev",
     "build": "astro-pure check && astro check && astro build",
-    "postbuild": "node scripts/postbuild-report.mjs",
+    "postbuild": "node scripts/postbuild-trailing-slash.mjs && node scripts/postbuild-report.mjs",
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",

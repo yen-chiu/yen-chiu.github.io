@@ -37,7 +37,9 @@ export default defineConfig({
   // Deploy to a sub path
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
-  trailingSlash: 'never',
+  // GitHub Pages 是目录式托管：/blog/x 会被 301 到 /blog/x/，线上实际落点带尾斜杠。
+  // 用 'always' 让 canonical、站内链接、sitemap 与真实 URL 一致，避免多一跳。
+  trailingSlash: 'always',
   // 根域部署，静态跳转目标不再需要前缀
   redirects: Object.fromEntries(
     Object.entries(categoryRedirects).map(([from, to]) => [from, to])

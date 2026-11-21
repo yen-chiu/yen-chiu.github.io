@@ -58,10 +58,20 @@ const normalizePath = (value = '') =>
     .filter(Boolean)
     .join('/')
 
-const categoryUrl = (path: string) =>
-  path ? `/categories/${path.split('/').map(encodeURIComponent).join('/')}` : '/categories'
+// GitHub Pages 是目录式托管，页面地址带尾斜杠；这里生成的链接若不补齐，
+// 每次跳转都要多一次 301（资源路径带扩展名，保持原样）。
+const withTrailingSlash = (url: string) =>
+  url.endsWith('/') || /\.[a-z0-9]+$/i.test(url) ? url : `${url}/`
 
-const entryUrl = (entry: ContentEntry) => sitePath(entry.slug)
+const categoryUrl = (path: string) =>
+  withTrailingSlash(
+    path ? `/categories/${path.split('/').map(encodeURIComponent).join('/')}` : '/categories'
+  )
+
+const entryUrl = (entry: ContentEntry) => withTrailingSlash(sitePath(entry.slug))
+
+const linkUrl = (value: string) =>
+  /^(?:[a-z]+:|\/\/)/i.test(value) ? value : withTrailingSlash(sitePath(value))
 
 const basename = (path: string) => path.split('/').filter(Boolean).at(-1) || '/'
 
@@ -501,7 +511,9 @@ const initialize = () => {
       cloud.className = 'tag-cloud'
       for (const value of items.slice(0, 12)) {
         const chip = document.createElement('a')
-        chip.href = type === 'tag' ? `/tags/${encodeURIComponent(value)}` : value
+        chip.href = withTrailingSlash(
+          type === 'tag' ? `/tags/${encodeURIComponent(value)}` : value
+        )
         chip.textContent = type === 'tag' ? `#${value}` : value
         cloud.append(chip)
       }
@@ -540,7 +552,7 @@ const initialize = () => {
         return {
           title: targetEntry?.title || targetSlug,
           meta: targetEntry ? '站内文章' : '外部链接',
-          action: () => window.location.href = targetSlug
+          action: () => window.location.href = linkUrl(targetSlug)
         }
       })
     }

@@ -55,6 +55,13 @@ interface GraphState {
 type ContentIndex = Record<string, ContentDetails>
 
 const initialized = new WeakSet<HTMLElement>()
+
+// 页面地址补尾斜杠（带扩展名的资源保持原样）。
+const pageUrl = (href: string) => {
+  const path = sitePath(href)
+  return path.endsWith('/') || /\.[a-z0-9]+$/i.test(path) ? path : `${path}/`
+}
+
 const colors: Record<NodeKind, string> = {
   blog: '#8b5cf6',
   docs: '#0ea5e9',
@@ -144,7 +151,17 @@ function buildGraph(index: ContentIndex, state: GraphState) {
 
   const addNode = (id: string, label: string, href: string, kind: NodeKind) => {
     if (!state.nodeTypes.has(kind) || nodes.has(id)) return
-    nodes.set(id, { id, label, href: sitePath(href), kind, degree: 0, inDegree: 0, outDegree: 0, radius: 7 })
+    nodes.set(id, {
+      id,
+      label,
+      // GitHub Pages 目录式托管：页面地址带尾斜杠，避免节点跳转多一次 301。
+      href: pageUrl(href),
+      kind,
+      degree: 0,
+      inDegree: 0,
+      outDegree: 0,
+      radius: 7
+    })
   }
   const addEdge = (
     source: string,
