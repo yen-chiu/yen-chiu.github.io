@@ -46,7 +46,7 @@ export default defineConfig({
   server: { host: true },
   // https://docs.astro.build/en/guides/prefetch/
   prefetch: {
-    defaultStrategy: 'viewport'
+    defaultStrategy: 'hover'
   },
 
   // [Adapter]
