@@ -2,7 +2,7 @@
 const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.props
 ---
 
-<interactive-avatar data-variant={variant}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
+<interactive-avatar data-variant={variant}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><span class='avatar-prism' aria-hidden='true'></span><span class='avatar-beam' aria-hidden='true'></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
 <script>
   import { createAvatarTapCounter, FOCUS_URL } from '@/utils/avatar-easter-egg'
   class InteractiveAvatar extends HTMLElement {
@@ -111,13 +111,14 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   @keyframes verification-spin { to { transform: rotate(360deg); } }
   /* Site-level motion preference must also disable decorative CSS motion. */
   :global(html.motion-off) .avatar-aura,
-  :global(html.motion-off) .avatar-star { animation: none !important; }
+  :global(html.motion-off) .avatar-star,
+  :global(html.motion-off) .avatar-beam { animation: none !important; }
   :global(html.motion-off) .avatar-orbit { transition: none; }
   @media (prefers-reduced-motion: reduce) {
     :global(.verification-transition), :global(.verification-spinner) { animation: none; }
   }
   interactive-avatar {
-    --avatar-gold: hsl(39 65% 73%);
+    --avatar-gold: #dbe7f2;
     position: relative;
     display: inline-grid;
     place-items: center;
@@ -126,6 +127,39 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   }
   .avatar-aura,
   .avatar-orbit,
+  .avatar-prism,
+  .avatar-beam,
+  /* Silver-prism frame: a static glass-metal ring with one moving highlight. */
+  .avatar-prism {
+    z-index: 2;
+    inset: -5px;
+    border: 3px solid transparent;
+    background:
+      linear-gradient(145deg, #f3f9ffcc, #8198b477 35%, #c8c1e866 62%, #d6efffe0) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    box-shadow: 0 0 14px #b9d8f322;
+  }
+  .avatar-beam {
+    z-index: 3;
+    inset: -9px;
+    border: 2px solid transparent;
+    background: conic-gradient(from 0deg, transparent 0deg 292deg, #dbe8f000 308deg, #f5fbff 331deg, #a4bedb99 346deg, transparent 360deg) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    filter: drop-shadow(0 0 3px #c5e0ff77);
+    animation: avatar-prism-orbit 12s linear infinite;
+  }
+  interactive-avatar:hover .avatar-beam,
+  interactive-avatar:focus-within .avatar-beam {
+    animation-duration: 5s;
+    filter: drop-shadow(0 0 5px #eff8ffcc);
+  }
+  @keyframes avatar-prism-orbit { to { transform: rotate(360deg); } }
   .avatar-ripple {
     position: absolute;
     inset: -9px;
@@ -135,12 +169,12 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   .avatar-aura {
     z-index: -1;
     inset: -13px;
-    background: radial-gradient(circle, hsl(var(--primary) / .14) 44%, hsl(39 65% 73% / .12) 58%, transparent 73%);
+    background: radial-gradient(circle, #d7e7ff22 44%, #a8c7df19 58%, transparent 73%);
     animation: avatar-breathe 6s ease-in-out infinite;
   }
   .avatar-orbit {
     z-index: 2;
-    border: 1px solid hsl(39 65% 73% / .18);
+    border: 1px solid #b9c8d94a;
     opacity: .35;
     transition: opacity .4s ease, border-color .4s ease;
   }
@@ -152,7 +186,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     height: 4px;
     border-radius: 50%;
     background: var(--avatar-gold);
-    box-shadow: 0 0 8px 2px hsl(39 65% 73% / .3);
+    box-shadow: 0 0 8px 2px #c8e0ff66;
     transform: translateX(-50%);
     opacity: 0;
   }
@@ -176,7 +210,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   interactive-avatar:hover .avatar-orbit,
   interactive-avatar:focus-within .avatar-orbit {
     opacity: .85;
-    border-color: hsl(39 65% 73% / .5);
+    border-color: #dce9fa99;
   }
   interactive-avatar:hover .avatar-star,
   interactive-avatar:focus-within .avatar-star {
@@ -185,7 +219,9 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   }
   interactive-avatar[data-variant='header'] .avatar-aura,
   interactive-avatar[data-variant='header'] .avatar-orbit,
-  interactive-avatar[data-variant='header'] .avatar-ripple { display: none; }
+  interactive-avatar[data-variant='header'] .avatar-ripple,
+  interactive-avatar[data-variant='header'] .avatar-prism,
+  interactive-avatar[data-variant='header'] .avatar-beam { display: none; }
   button:focus-visible {
     outline: 3px solid hsl(var(--primary));
     outline-offset: 6px;
@@ -205,11 +241,12 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     100% { transform: translateX(-50%) translate(24px, 7px); opacity: 0; }
   }
   @media (hover: none) {
+    .avatar-beam { animation-duration: 20s; }
     interactive-avatar:hover .avatar-star { animation: none; opacity: 0; }
     interactive-avatar:hover .avatar-orbit { opacity: .35; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .avatar-aura, .avatar-star { animation: none !important; }
+    .avatar-aura, .avatar-star, .avatar-beam { animation: none !important; }
     .avatar-aura { opacity: .32; }
     .avatar-orbit { transition: none; }
   }
