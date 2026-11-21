@@ -72,7 +72,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
         {unreleased.length > 0 && <section class='changelog-list unreleased' aria-labelledby='unreleased-title'>
           <header class='list-head'>
             <h2 id='unreleased-title'>在途改动</h2>
-            <span>已提交、尚未发布</span>
+            <span>规划中或已提交，尚未发布</span>
           </header>
           <UpdateList entries={unreleased} />
         </section>}
