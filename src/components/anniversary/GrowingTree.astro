@@ -62,6 +62,8 @@ const leaves = Array.from({ length: 64 }, (_, i) => {
       const year = number('year'), month = number('month'), day = number('day')
       const today = [year, month, day].map((n, i) => i ? String(n).padStart(2, '0') : String(n)).join('-')
       const anniversary = month === 3 && day === 12 && year >= 2024
+      const history = this.querySelector<HTMLDetailsElement>('#vesper-on-this-day')
+      if (history && location.hash === '#vesper-on-this-day') history.open = true
       const dateInput = this.querySelector<HTMLInputElement>('[data-tree-date]')
       if (dateInput) {
         dateInput.max = today
