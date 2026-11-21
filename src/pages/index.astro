@@ -535,8 +535,8 @@ const entries = [
     display: none;
   }
   .home-doorway {
-    padding: 3rem 0 1.5rem;
-    max-width: 64rem;
+    padding: var(--vesper-section-space, 3rem) 0 2rem;
+    max-width: var(--vesper-width-content, 60rem);
     margin: auto;
     scroll-margin-top: calc(min(42vh, 340px) + 1rem);
     scroll-margin-top: calc(min(42svh, 340px) + 1rem);
@@ -572,9 +572,9 @@ const entries = [
     display: flex;
     align-items: center;
   }
-  .reading-guide { margin: 0 0 2rem; }
+  .reading-guide { margin: 0 0 clamp(2rem, 4vw, 3rem); }
   .guide-heading { font-size: .85rem; font-weight: 600; margin-bottom: .85rem; color: hsl(var(--muted-foreground)); }
-  .guide-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1rem; }
+  .guide-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: clamp(.75rem, 2vw, 1rem); }
   .guide-card { display: flex; flex-direction: column; min-width: 0; padding: 1.3rem; border: 1px solid hsl(var(--border)); border-radius: 1.1rem; background: hsl(var(--background)/.92); }
   .guide-label { display:flex; align-items:center; gap:.6rem; color:hsl(var(--primary)); font-size:.7rem; }
   .guide-label b { font-size:.85rem; font-variant-numeric:tabular-nums; }
@@ -585,7 +585,7 @@ const entries = [
   .entry-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem;
+    gap: clamp(.75rem, 2vw, 1rem);
   }
   .entry-grid a {
     position: relative;
@@ -621,7 +621,7 @@ const entries = [
     background: hsl(var(--primary) / 0.04);
   }
   .home-note {
-    margin: 1.5rem 0 0;
+    margin: 2rem 0 0;
     font-size: 0.72rem;
     line-height: 1.8;
     color: hsl(var(--muted-foreground));
@@ -653,8 +653,12 @@ const entries = [
       gap: 0.7rem;
     }
     .home-doorway {
-      padding-top: 1.7rem;
+      padding-top: 2.25rem;
     }
+    .home-doorway header { gap: .75rem; }
+    .home-doorway header > div { min-width: 0; }
+    .expand-cover { flex-shrink: 0; }
+    .guide-heading { margin-bottom: 1rem; }
     h2 {
       font-size: 1.25rem;
     }
