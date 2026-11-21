@@ -80,7 +80,7 @@ const entries = [
           href='https://github.com/yen-chiu/yen-chiu.github.io/blob/main/public/images/moonlit-cover.svg'
           target='_blank'
           rel='noopener noreferrer'
-          ><span aria-hidden='true'>ⓘ</span> 星夜 · 本站矢量封面 <span aria-hidden='true'>↗</span></a
+          ><span class='cover-credit-icon' aria-hidden='true'>ⓘ</span><span class='cover-credit-label'>星夜 · 本站矢量封面</span><span class='cover-credit-arrow' aria-hidden='true'>↗</span></a
         >
         <div class='cover-wave' aria-hidden='true'></div>
       </section>
@@ -493,8 +493,9 @@ const entries = [
     border: 1px solid #ffffff22;
     border-radius: 2rem;
     min-height: 38px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
     padding: 0.45rem 0.9rem;
     font-size: 0.68rem;
     color: #ffffffe0;
@@ -502,6 +503,11 @@ const entries = [
     visibility: hidden;
     transition: opacity 0.25s;
   }
+  .cover-credit-icon, .cover-credit-arrow {
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .cover-credit-arrow { margin-left: -0.125rem; }
   .cover-credit.is-visible {
     opacity: 1;
     visibility: visible;
