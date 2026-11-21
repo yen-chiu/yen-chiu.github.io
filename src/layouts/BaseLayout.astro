@@ -7,6 +7,7 @@ import CustomHeader from '@/components/CustomHeader.astro'
 import TagCloudOverlay from '@/components/tags/TagCloudOverlay.astro'
 import KnowledgeGraph from '@/components/graph/KnowledgeGraph.astro'
 import PageTransition from '@/components/PageTransition.astro'
+import GrowingTree from '@/components/anniversary/GrowingTree.astro'
 import config from '@/site-config'
 import AppearanceBootstrap from '@/components/appearance/AppearanceBootstrap.astro'
 import { sitePath } from '@/utils/site-path'
@@ -73,6 +74,7 @@ const {
     <CategoryBrowserOverlay />
     <KnowledgeGraph />
     <TagCloudOverlay />
+    <GrowingTree variant='anniversary' />
 
     {/* Set highlight color */}
     <style is:global>

@@ -1,0 +1,253 @@
+---
+import { sitePath } from '@/utils/site-path'
+interface Props { variant?: 'card' | 'anniversary' }
+const { variant = 'card' } = Astro.props
+const leaves = Array.from({ length: 64 }, (_, i) => {
+  const branch = i % 4
+  const angle = (i * 137.508) * Math.PI / 180
+  const radius = 21 + Math.sqrt(i / 64) * 75
+  return { x: 160 + Math.cos(angle) * radius, y: 102 + Math.sin(angle) * radius * .66 - (branch % 2) * 7, rotation: (i * 43) % 90 - 45, stage: Math.floor(i / 12) }
+})
+---
+<growing-tree data-variant={variant} data-planted='2023-03-12'>
+  {variant === 'anniversary' ? (
+    <dialog class='tree-dialog' aria-labelledby='tree-anniversary-title'>
+      <button class='tree-close' type='button' data-tree-close aria-label='关闭周年纪念'>×</button>
+      <p class='tree-kicker'>VESPER · ANNUAL RINGS</p>
+      <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
+        <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
+        <g class='tree-growth' data-tree-growth><path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
+        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} data-leaf-index={i} />)}
+        {Array.from({length:18},(_,i) => <circle class='tree-fruit' data-fruit-index={i} cx={105+(i*47)%113} cy={63+(i*31)%92} r='4' />)}
+        </g><circle cx='160' cy='203' r='9' class='tree-core'/>
+      </svg></div>
+      <h2 id='tree-anniversary-title'>又添一道年轮。</h2>
+      <p class='tree-years'><span data-tree-years>建站周年</span> · 03.12</p>
+      <p class='tree-message'>叶子替时间落下，年轮替时间留下。<br/>又是一年春，感谢你偶然经过这片树荫。</p>
+      <div class='tree-history-brief'><span>那年今日 · 03.12</span><p>1925 年，孙中山先生逝世；1979 年，中国决定将每年 3 月 12 日定为植树节；2023 年，Vesper 在这一天诞生。</p><a href={sitePath('/about#vesper-on-this-day')}>读一读这一天的故事 →</a></div>
+      <div class='tree-actions'><a href={sitePath('/about#vesper-tree')}>看看这棵树 →</a><button type='button' data-tree-close>收下这份春意</button></div>
+    </dialog>
+  ) : (
+    <section class='tree-card' id='vesper-tree' aria-labelledby='tree-card-title'>
+      <div class='tree-card-top'><span>VESPER / ANNUAL RINGS</span><time datetime='2023-03-12'>2023.03.12 · 植树节</time></div>
+      <div class='tree-art'><svg viewBox='0 0 320 230' role='img' aria-label='随建站时间成长的树'>
+        <path d='M24 204 Q160 187 296 204' class='tree-ground'/>
+        <g class='tree-growth' data-tree-growth><path d='M160 202 C157 172 162 144 159 99 M160 158 Q125 135 111 105 M159 141 Q192 118 208 88 M159 123 Q142 102 139 79' class='tree-wood'/>
+        {leaves.map((leaf, i) => <ellipse class='tree-leaf' data-stage={leaf.stage} cx={leaf.x} cy={leaf.y} rx='8' ry='14' transform={`rotate(${leaf.rotation} ${leaf.x} ${leaf.y})`} style={`--leaf-index:${i}`} data-leaf-index={i} />)}
+        {Array.from({length:18},(_,i) => <circle class='tree-fruit' data-fruit-index={i} cx={105+(i*47)%113} cy={63+(i*31)%92} r='4' />)}
+        </g><circle cx='160' cy='203' r='9' class='tree-core'/>
+      </svg></div>
+      <div class='tree-time-machine' aria-label='时光回溯'><label for='tree-history-date'>时光标签</label><input id='tree-history-date' data-tree-date type='date' min='2023-03-12' value='2023-03-12' /><button type='button' data-tree-today>回到今天</button></div>
+      <p class='tree-season' data-tree-season aria-live='polite'>春 · 初芽</p>
+      <p class='tree-growth-label' data-tree-growth-label>正在生长</p>
+      <h3 id='tree-card-title'>一树春秋</h3>
+      <p class='tree-age' data-tree-age>自 2023 年 3 月 12 日起生长</p>
+      <p class='tree-message'>把写过的日子留在枝头，把未写的故事交给来年。</p>
+      <div class='tree-github' aria-label='GitHub 项目成长数据'><a href='https://github.com/yen-chiu/yen-chiu.github.io/commits/main' target='_blank' rel='noopener noreferrer'><strong data-tree-commits>—</strong><span>果实 · 写下的痕迹</span></a><a href='https://github.com/yen-chiu/yen-chiu.github.io/stargazers' target='_blank' rel='noopener noreferrer'><strong data-tree-stars>—</strong><span>种子 · 被人珍藏</span></a><a href='https://github.com/yen-chiu/yen-chiu.github.io/forks' target='_blank' rel='noopener noreferrer'><strong data-tree-forks>—</strong><span>远行 · 在别处生根</span></a></div><p class='tree-github-note' data-tree-github-note>正在读取 GitHub 当前统计；历史日期不代表历史提交量。</p>
+      <details class='tree-history' id='vesper-on-this-day'><summary>那年今日 · 三月十二日 <span>读一读这一天的故事</span></summary><div class='tree-history-body'><h4>那年今日，春天有了一棵树</h4><p>1925 年 3 月 12 日，孙中山先生在北京逝世。他生前重视林业建设，倡导植树造林。</p><p>中国近代的植树节并非一开始就设在 3 月 12 日。1915 年，植树节设在清明节；此后，植树活动逐渐与孙中山的逝世纪念日联系起来。1979 年 2 月 23 日，第五届全国人大常委会第六次会议决定，将每年 3 月 12 日定为植树节。</p><p>于是，这一天有了双重意义：纪念一位先行者，也提醒后来的人，为尚未到来的岁月种下一点什么。</p><p>种树是一件奇妙的事。种下它的人，未必能在树荫下乘凉；但他仍愿意相信，未来会有一个夏天，有人在这里停留。</p><p>2023 年 3 月 12 日，我在互联网的一隅，种下了属于自己的一棵树。它不生长在泥土里，而生长在文字与代码之间。</p><p>每一次写作，都是一片新叶；每一次修改，都是一次修枝。偶尔有人经过，拾起一粒种子，带往远方。</p><p>历史在这一天留下纪念，而我在这一天，留下一个开始。</p><p>愿后来者有树可乘凉，愿种树的人仍有春天。</p><p class='tree-history-sources'>史实参考：全国人大常委会 1979 年关于植树节的决定及中国植树节沿革资料。此处为简述，非历史事件完整年表。</p></div></details>
+      <div class='tree-rings' aria-label='建站年轮'><span data-tree-rings>◎</span><span data-tree-years>2023 — 至今</span></div>
+    </section>
+  )}
+</growing-tree>
+<script>
+  class GrowingTree extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const signal = this.controller.signal
+      const now = new Date()
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(now)
+      const number = (type: string) => Number(parts.find(part => part.type === type)?.value ?? 0)
+      const year = number('year'), month = number('month'), day = number('day')
+      const today = [year, month, day].map((n, i) => i ? String(n).padStart(2, '0') : String(n)).join('-')
+      const anniversary = month === 3 && day === 12 && year >= 2024
+      const history = this.querySelector<HTMLDetailsElement>('#vesper-on-this-day')
+      if (history && location.hash === '#vesper-on-this-day') history.open = true
+      const dateInput = this.querySelector<HTMLInputElement>('[data-tree-date]')
+      if (dateInput) {
+        dateInput.max = today
+        dateInput.value = today
+        dateInput.addEventListener('change', () => {
+          if (!dateInput.value || dateInput.value < '2023-03-12' || dateInput.value > today) {
+            dateInput.value = today
+          }
+          render(dateInput.value)
+        }, { signal })
+        this.querySelector('[data-tree-today]')?.addEventListener('click', () => {
+          dateInput.value = today
+          render(today)
+        }, { signal })
+      }
+      const render = (date: string) => {
+        const [y, m, d] = date.split('-').map(Number)
+        if (!y || !m || !d) return
+        const age = Math.max(0, y - 2023 - (m < 3 || (m === 3 && d < 12) ? 1 : 0))
+        const planted = Date.UTC(2023, 2, 12)
+        const elapsedDays = Math.max(0, (Date.UTC(y, m - 1, d) - planted) / 86400000)
+        const years = elapsedDays / 365.2425
+        // Smooth growth on a daily basis; slow down as the tree approaches maturity.
+        const maturity = 1 - Math.exp(-years / 3.2)
+        const scale = 0.27 + 0.73 * maturity
+        const trunkWidth = 2.3 + 3.5 * maturity
+        const leafBudget = Math.min(64, Math.max(4, Math.round(4 + 60 * maturity)))
+        const season = m >= 3 && m <= 5 ? 'spring' : m >= 6 && m <= 8 ? 'summer' : m >= 9 && m <= 11 ? 'autumn' : 'winter'
+        this.dataset.season = season
+        this.querySelectorAll<SVGGElement>('[data-tree-growth]').forEach(group => {
+          group.setAttribute('transform', `translate(${160 * (1 - scale)} ${202 * (1 - scale)}) scale(${scale.toFixed(4)})`)
+          group.style.setProperty('--trunk-width', `${trunkWidth.toFixed(2)}px`)
+        })
+        const growthLabel = this.querySelector('[data-tree-growth-label]')
+        if (growthLabel) growthLabel.textContent = `生长第 ${Math.floor(elapsedDays) + 1} 天 · 树冠成长 ${Math.round(maturity * 100)}%`
+        const labels: Record<string, string> = { spring: '春生 · 去年的枝头，长出了今年的春天。', summer: '夏长 · 树荫渐浓，许多故事正在发生。', autumn: '秋藏 · 叶子替时间落下，年轮替时间留下。', winter: '冬眠 · 枝头空了，根却仍向深处生长。' }
+        const seasonLabel = this.querySelector('[data-tree-season]')
+        if (seasonLabel) seasonLabel.textContent = `${date.replaceAll('-', '.')} · ${labels[season]}`
+        this.querySelectorAll<SVGElement>('.tree-leaf').forEach(leaf => {
+          const index = Number(leaf.dataset.leafIndex ?? 0)
+          const grown = index < leafBudget
+          // In winter the tree sheds its foliage; autumn thins it gradually.
+          const seasonal = season === 'winter' ? false : season === 'autumn' ? index % 5 !== 0 : true
+          leaf.style.opacity = grown && seasonal ? '1' : '0'
+        })
+        const ageLabel = this.querySelector('[data-tree-age]')
+        if (ageLabel) ageLabel.textContent = age ? `已生长 ${age} 年 · ${labels[season]}` : `初植于 2023 年 · ${labels[season]}`
+        const yearsLabel = this.querySelector('[data-tree-years]')
+        if (yearsLabel) yearsLabel.textContent = `建站 ${age} 周年`
+        const rings = this.querySelector('[data-tree-rings]')
+        if (rings) rings.textContent = age ? '◎'.repeat(Math.min(age, 12)) : '○'
+      }
+      render(today)
+      if (this.dataset.variant === 'card') {
+        // Public GitHub REST API. These are current repo-wide totals, not historical snapshots.
+        const cacheKey = 'vesper-tree-github-stats-v1'
+        type Stats = { commits: number | null; stars: number; forks: number; fetchedAt: number }
+        const show = (stats: Stats) => {
+          const fields: [string, number | null][] = [
+            ['[data-tree-commits]', stats.commits], ['[data-tree-stars]', stats.stars], ['[data-tree-forks]', stats.forks]
+          ]
+          fields.forEach(([selector, count]) => {
+            const element = this.querySelector(selector)
+            if (element) element.textContent = count === null ? '—' : count.toLocaleString('zh-CN')
+          })
+          const fruitCount = stats.commits === null ? 0 : Math.min(18, Math.round(3 * Math.log2(stats.commits + 1)))
+          this.querySelectorAll<SVGCircleElement>('[data-fruit-index]').forEach(fruit => {
+            fruit.style.opacity = Number(fruit.dataset.fruitIndex) < fruitCount ? '1' : '0'
+          })
+          const note = this.querySelector('[data-tree-github-note]')
+          if (note) note.textContent = 'GitHub 当前公开统计 · 果实数量为象征性展示，历史回溯不改变统计'
+        }
+        let cached: Stats | null = null
+        try {
+          const value = sessionStorage.getItem(cacheKey)
+          if (value) cached = JSON.parse(value) as Stats
+        } catch { /* storage may be disabled */ }
+        if (cached) show(cached)
+        if (!cached || Date.now() - cached.fetchedAt > 30 * 60 * 1000) {
+          const api = 'https://api.github.com/repos/yen-chiu/yen-chiu.github.io'
+          Promise.all([
+            fetch(api, { signal, headers: { Accept: 'application/vnd.github+json' } }),
+            fetch(api + '/commits?sha=main&per_page=1', { signal, headers: { Accept: 'application/vnd.github+json' } })
+          ]).then(async ([repositoryResponse, commitsResponse]) => {
+            if (!repositoryResponse.ok) throw new Error('GitHub repository API unavailable')
+            const data = await repositoryResponse.json() as { stargazers_count: number; forks_count: number }
+            let commits: number | null = null
+            if (commitsResponse.ok) {
+              const link = commitsResponse.headers.get('link') ?? ''
+              const last = link.match(/<[^>]*[?&]page=(\\d+)[^>]*>;\\s*rel="last"/)
+              if (last) commits = Number(last[1])
+              else {
+                const first = await commitsResponse.json() as unknown[]
+                if (Array.isArray(first)) commits = first.length
+              }
+            }
+            const stats: Stats = { commits, stars: data.stargazers_count, forks: data.forks_count, fetchedAt: Date.now() }
+            if (signal.aborted) return
+            show(stats)
+            try { sessionStorage.setItem(cacheKey, JSON.stringify(stats)) } catch { /* storage may be disabled */ }
+          }).catch(() => {
+            if (signal.aborted || cached) return
+            const note = this.querySelector('[data-tree-github-note]')
+            if (note) note.textContent = 'GitHub 数据暂不可用，请稍后再试'
+          })
+        }
+      }
+      if (this.dataset.variant !== 'anniversary' || !anniversary) return
+      const dialog = this.querySelector<HTMLDialogElement>('dialog')
+      if (!dialog) return
+      this.querySelectorAll<HTMLButtonElement>('[data-tree-close]').forEach(button => {
+        button.addEventListener('click', () => dialog.close(), { signal })
+      })
+      const key = `vesper-tree-anniversary-${year}`
+      let seen = false
+      try { seen = localStorage.getItem(key) === 'seen' } catch { /* storage may be blocked */ }
+      if (seen || dialog.open) return
+      requestAnimationFrame(() => {
+        if (!this.isConnected || signal.aborted || dialog.open) return
+        dialog.showModal()
+        try { localStorage.setItem(key, 'seen') } catch { /* storage may be blocked */ }
+      })
+    }
+    disconnectedCallback() { this.controller?.abort() }
+  }
+  if (!customElements.get('growing-tree')) customElements.define('growing-tree', GrowingTree)
+</script>
+<style>
+  growing-tree{display:block;--tree-leaf:#92aa88;--tree-wood:#94765e;--tree-gold:#d5b77d}
+  .tree-card{border:1px solid hsl(var(--border));border-radius:1.4rem;padding:1.5rem;background:linear-gradient(145deg,hsl(var(--primary)/.09),hsl(var(--background)/.9));text-align:center;overflow:hidden}
+  .tree-card-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-size:.67rem;letter-spacing:.08em;color:hsl(var(--muted-foreground))}
+  .tree-art{max-width:340px;margin:0 auto}
+  .tree-art svg{width:100%;height:auto;display:block}
+  .tree-ground{fill:none;stroke:var(--tree-leaf);stroke-width:1.5;opacity:.55}
+  .tree-growth{transform-box:view-box;transition:transform .6s ease}
+  .tree-wood{fill:none;stroke:var(--tree-wood);stroke-width:var(--trunk-width,5px);stroke-linecap:round;stroke-linejoin:round}
+  .tree-leaf{fill:var(--tree-leaf);transition:opacity .7s ease;opacity:0}
+  .tree-leaf:nth-of-type(3n){fill:#b6bc83}
+  .tree-core{fill:var(--tree-gold);opacity:.75}
+  .tree-fruit{fill:#d6a16e;opacity:0;transition:opacity .5s ease}
+  growing-tree[data-season='spring']{--tree-leaf:#a4bf8b}
+  growing-tree[data-season='summer']{--tree-leaf:#527f64}
+  growing-tree[data-season='autumn']{--tree-leaf:#c58d52}
+  growing-tree[data-season='winter']{--tree-leaf:#a6b4c2;--tree-wood:#87909a}
+  growing-tree[data-season='autumn'] .tree-leaf:nth-of-type(3n){fill:#e1b665}
+  growing-tree[data-season='winter'] .tree-ground{stroke:#a6b4c2;opacity:.8}
+  .tree-time-machine{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.6rem;margin:.1rem auto 1rem;font-size:.8rem}
+  .tree-time-machine input{color:inherit;color-scheme:light dark;border:1px solid hsl(var(--border));border-radius:.6rem;padding:.55rem;max-width:100%;min-height:44px;background:hsl(var(--background))}
+  .tree-time-machine button{min-height:44px;padding:.5rem .8rem;border:1px solid hsl(var(--border));border-radius:.6rem}
+  .tree-time-machine button:hover{background:hsl(var(--primary)/.1)}
+  .tree-season{font-size:.75rem;letter-spacing:.07em;color:hsl(var(--muted-foreground));margin-bottom:.4rem}
+  .tree-growth-label{font-size:.72rem;color:hsl(var(--muted-foreground));margin-bottom:.7rem}
+  .tree-card h3{font-size:1.2rem;font-weight:650;margin:.1rem 0 .5rem}
+  .tree-age,.tree-years{color:hsl(var(--primary));font-size:.85rem}
+  .tree-message{font-size:.85rem;line-height:1.95;color:hsl(var(--muted-foreground));margin:1rem 0}
+  .tree-history-brief{border-top:1px solid hsl(var(--border));padding-top:.8rem;text-align:left;font-size:.78rem;line-height:1.8}
+  .tree-history-brief span{font-weight:650;color:hsl(var(--foreground))}
+  .tree-history-brief p{margin:.3rem 0;color:hsl(var(--muted-foreground))}
+  .tree-history-brief a{color:hsl(var(--primary));text-decoration:underline;text-underline-offset:3px}
+  .tree-history{margin:1rem 0;text-align:left;border:1px solid hsl(var(--border));border-radius:.9rem;padding:.8rem 1rem}
+  .tree-history summary{cursor:pointer;font-weight:650;line-height:1.7}
+  .tree-history summary span{display:block;font-weight:400;font-size:.75rem;color:hsl(var(--muted-foreground))}
+  .tree-history-body{font-size:.85rem;line-height:2;color:hsl(var(--muted-foreground));padding-top:.8rem}
+  .tree-history-body h4{font-size:1rem;color:hsl(var(--foreground));font-weight:650;margin-bottom:.8rem}
+  .tree-history-body p{margin:.8rem 0}
+  .tree-history-sources{font-size:.72rem;opacity:.85}
+  .tree-github{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin:1.2rem 0 .4rem}
+  .tree-github a{display:flex;flex-direction:column;gap:.25rem;align-items:center;padding:.8rem .25rem;border:1px solid hsl(var(--border));border-radius:.8rem;min-height:70px}
+  .tree-github a:hover{border-color:hsl(var(--primary)/.5)}
+  .tree-github strong{font-size:1.2rem;font-variant-numeric:tabular-nums}
+  .tree-github span,.tree-github-note{font-size:.72rem;color:hsl(var(--muted-foreground))}
+  .tree-github-note{line-height:1.6;margin:.3rem 0 1rem}
+  .tree-rings{display:flex;justify-content:center;align-items:center;gap:1rem;border-top:1px solid hsl(var(--border));padding-top:1rem;font-size:.8rem;color:hsl(var(--muted-foreground))}
+  .tree-rings span:first-child{font-size:1.25rem;letter-spacing:-.3em;padding-right:.3em;color:var(--tree-gold)}
+  .tree-dialog{position:fixed;inset:0;margin:auto;width:min(92vw,470px);max-height:min(90dvh,800px);overflow:auto;border:1px solid hsl(var(--border));border-radius:1.5rem;background:hsl(var(--background));color:hsl(var(--foreground));padding:1.7rem;text-align:center;box-shadow:0 25px 90px #0006}
+  .tree-dialog::backdrop{background:#0a1228a8;backdrop-filter:blur(5px)}
+  .tree-dialog .tree-art{max-width:270px}
+  .tree-kicker{font-size:.7rem;letter-spacing:.18em;color:hsl(var(--muted-foreground))}
+  .tree-dialog h2{font-size:clamp(1.5rem,5vw,2rem);font-weight:650}
+  .tree-close{position:absolute;right:.8rem;top:.7rem;width:44px;height:44px;font-size:1.6rem;border-radius:.7rem}
+  .tree-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+  .tree-actions a,.tree-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.6rem 1rem;border:1px solid hsl(var(--border));border-radius:.75rem;font-size:.85rem}
+  .tree-actions a{background:hsl(var(--primary));color:hsl(var(--primary-foreground))}
+  .tree-actions button:hover,.tree-close:hover{background:hsl(var(--primary)/.1)}
+  .tree-actions :is(a,button):focus-visible,.tree-close:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){.tree-growth{transition:none}.tree-leaf{transition:none}.tree-dialog::backdrop{backdrop-filter:none}}
+</style>

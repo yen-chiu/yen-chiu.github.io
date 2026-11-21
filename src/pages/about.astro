@@ -5,6 +5,7 @@ import { BackToTop } from 'astro-pure/components/pages'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { Giscus } from '@/components/giscus'
 import UpdateList from '@/components/about/UpdateList.astro'
+import GrowingTree from '@/components/anniversary/GrowingTree.astro'
 import avatar from '@/assets/avatar.png'
 import InteractiveAvatar from '@/components/InteractiveAvatar.astro'
 import profile from '../data/about.json'
@@ -91,6 +92,8 @@ const sections = [
           <a class='text-link' href='https://yenchiu.com/echora/play.html?a=miko' target='_blank' rel='noopener noreferrer'>去玩《异次元通讯》 <span aria-hidden='true'>↗</span></a>
         </article>
       </section>
+
+      <GrowingTree />
 
       <div class='writing-journey'>
         <section id='writing' aria-labelledby='writing-title'>
