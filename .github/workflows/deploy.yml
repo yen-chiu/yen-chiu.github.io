@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: node --test scripts/avatar-easter-egg.test.mjs scripts/avatar-transition.test.mjs && npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built
+        run: node --test scripts/avatar-easter-egg.test.mjs scripts/avatar-transition.test.mjs && npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built && node scripts/seo-audit.test.mjs
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
