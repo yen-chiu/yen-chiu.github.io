@@ -227,8 +227,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 <style>
   .reading-progress {position:fixed;top:0;right:0;left:0;z-index:50;height:3px;pointer-events:none;}
   .reading-progress-bar {width:100%;height:100%;background:hsl(var(--primary));box-shadow:0 0 12px hsl(var(--primary)/.45);transform:scaleX(0);transform-origin:0 50%;transition:transform .1s linear;}
-  .changelog-page {max-width:64rem;margin:1.5rem auto 3rem;overflow-wrap:anywhere;padding-bottom:3.5rem;}
-  .changelog-layout {display:grid;grid-template-columns:minmax(0,1fr) 10.5rem;gap:2.5rem;align-items:start;}
+   .changelog-page {max-width:var(--vesper-width-content,60rem);margin:var(--vesper-section-space,2.5rem) auto 3rem;overflow-wrap:anywhere;padding-bottom:3.5rem;}
+   .changelog-layout {display:grid;grid-template-columns:minmax(0,1fr) 10.5rem;gap:clamp(1.5rem,3vw,2.5rem);align-items:start;}
   .changelog-main {min-width:0;}
   .version-toc {position:sticky;top:5rem;max-height:min(56vh,30rem);overflow:hidden;font-size:.7rem;padding-top:2.4rem;}
   .toc-title {display:flex;align-items:baseline;justify-content:space-between;gap:.4rem;font-size:.66rem;letter-spacing:.08em;color:hsl(var(--muted-foreground));margin:0 0 .6rem;}
@@ -326,7 +326,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .gen-engine {font-size:.66rem;font-weight:400;color:hsl(var(--muted-foreground));margin-left:.5rem;}
   .gen-note {font-size:.74rem;color:hsl(var(--muted-foreground));line-height:1.7;margin:.15rem 0 0;}
   .gen-meta {display:flex;flex-direction:column;align-items:flex-end;gap:.15rem;font-size:.68rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;white-space:nowrap;}
-  .list-head {display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid hsl(var(--border));}
+   .list-head {display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:1rem;border-bottom:1px solid hsl(var(--border));}
   .list-head h2 {font-size:clamp(1.2rem,2.4vw,1.5rem);font-weight:650;letter-spacing:-.02em;}
   .list-head span {font-size:.75rem;color:hsl(var(--muted-foreground));}
   .list-tools {display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end;}
@@ -409,7 +409,16 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     .changelog-page {margin-top:1rem;}
     .group-meta {display:none;}
     .group-toggle {font-size:.66rem;padding:.3rem .5rem;}
-    .list-head {flex-wrap:wrap;row-gap:.5rem;}
+    .list-head {flex-direction:column;align-items:flex-start;row-gap:.65rem;}
+    .list-tools {width:100%;justify-content:space-between;gap:.5rem;}
+    .list-tools > span {font-size:.72rem;}
+    .gen-group > summary {flex-wrap:wrap;row-gap:.65rem;}
+    .group-name {min-width:0;overflow-wrap:anywhere;}
+    .group-toggle {margin-left:auto;}
+    .version-head {min-height:3.25rem;gap:.5rem;}
+    .version-chip {font-size:.72rem;}
+    .version-plus {flex-basis:2.5rem;width:2.5rem;height:2.5rem;}
+    .changelog-page {margin-top:1.5rem;}
     .gen-list li {grid-template-columns:2rem minmax(0,1fr);row-gap:.35rem;}
     .gen-meta {grid-column:2;flex-direction:row;gap:.6rem;justify-content:flex-start;align-items:baseline;white-space:normal;}
   }
