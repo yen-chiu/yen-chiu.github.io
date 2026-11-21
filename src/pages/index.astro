@@ -187,20 +187,17 @@ const entries = [
         }
       ]
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
-      const measure = () => {
-        const height = this.offsetHeight,
-          compact = Math.min(340, innerHeight * 0.42)
-        /* 封面被 margin-top:-90px 拉到页面顶上方，rect.top 一开局就是负数；
-           直接拿 -top 当进度会让首屏就先收起十几像素。以文档内起点（不小于 0）为基准，
-           保证 scrollY=0 时进度正好是 0，封面完整铺满。 */
-        const docTop = this.getBoundingClientRect().top + window.scrollY
-        const start = Math.max(0, docTop)
-        const target = Math.max(
-          0,
-          Math.min(1, (window.scrollY - start) / Math.max(1, height - compact))
-        )
-        cover.style.height = `${height - (height - compact) * target}px`
-        return target
+      // Cache geometry: scroll frames should not force layout reads or write height.
+      let heroHeight = this.offsetHeight
+      let compactHeight = Math.min(340, innerHeight * 0.42)
+      let start = Math.max(0, this.getBoundingClientRect().top + window.scrollY)
+      const measure = () => Math.max(0, Math.min(1,
+        (window.scrollY - start) / Math.max(1, heroHeight - compactHeight)
+      ))
+      const refreshGeometry = () => {
+        heroHeight = this.offsetHeight
+        compactHeight = Math.min(340, innerHeight * 0.42)
+        start = Math.max(0, this.getBoundingClientRect().top + window.scrollY)
       }
       let target = measure(),
         spring = { position: target, velocity: 0 },
