@@ -7,7 +7,7 @@ export const projects = [
     status: '原站体验',
     description: '浏览器里的个人 AI 对话空间，把日常交流与搜索、读页能力连接起来。',
     tags: ['AI 对话', '静态站', '联网检索'],
-    primary: { label: '进入聊天', href: 'https://yenchiu.com/chat/' },
+    primary: { label: '进入聊天', href: 'https://yenchiu.com/echora/' },
     secondary: { label: '认识念真', href: '/persona' }
   },
   {
@@ -20,7 +20,7 @@ export const projects = [
     tags: ['互动剧情', '纯静态', '怀旧复现'],
     cover: '/images/projects/miko-cover.webp',
     coverWidth:1280,coverHeight:720,
-    primary: { label: '开始体验', href: 'https://yenchiu.com/chat/play.html?a=miko' },
+    primary: { label: '开始体验', href: 'https://yenchiu.com/echora/play.html?a=miko' },
     secondary: { label: '制作记录', href: '/blog/miko-web' }
   },
   {
@@ -31,7 +31,7 @@ export const projects = [
     status: '原站体验',
     description: '跟随泰勒的消息推进故事，在等待与选择之间决定接下来发生什么；支持多语言与存档。',
     tags: ['消息叙事', '分支选择', '多语言存档'],
-    primary: { label: '开始体验', href: 'https://yenchiu.com/chat/play.html?a=lifeline' },
+    primary: { label: '开始体验', href: 'https://yenchiu.com/echora/play.html?a=lifeline' },
     secondary: null
   },
   {

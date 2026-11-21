@@ -52,7 +52,7 @@ order: 3
 | `site` | 中文 | 仓库 |
 | --- | --- | --- |
 | `main` | 主站 | `yen-chiu/yen-chiu-astro` / `yen-chiu.github.io`（含写作台） |
-| `chat` | 聊天子站 | `yen-chiu/Chat`，挂在 `/chat/` |
+| `chat` | 聊天子站 | `yen-chiu/echora`，挂在 `/echora/` |
 | `manual` | 文档库 | `yen-chiu/WendellManual` → `yen-chiu/folio`（同一座站的两套架构） |
 
 **子站换代际不算新代次**：文档库从 WendellManual 的 Jekyll 换成 Folio 的 Astro Starlight，站点还是那座站、`site` 还是 `manual`，只是条目里写清「从什么换到什么」。主站换架构才是 `gen +1`——因为那换的是博客本身，子站换架构只是它自己的一次大改。

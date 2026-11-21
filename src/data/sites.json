@@ -8,7 +8,7 @@
   {
     "id": "chat",
     "label": "聊天子站",
-    "note": "挂在 /chat/ 的对话页与 AI 模块",
+    "note": "已迁出为独立仓库 yen-chiu/echora，挂在 /echora/",
     "repos": ["yen-chiu/Chat"]
   },
   {

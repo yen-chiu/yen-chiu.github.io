@@ -18,6 +18,36 @@
   {
     "gen": 3,
     "site": "main",
+    "date": "2026-11-21",
+    "title": "聊天子站独立成 Echora",
+    "summary": "chat 从博客里搬出去，变成独立仓库与独立地址；博客里的入口全部改指新站。",
+    "items": [
+      {
+        "change": "changed",
+        "area": "infra",
+        "scope": "子站",
+        "title": "chat 迁出为独立仓库 echora",
+        "note": "内容整体搬到 yen-chiu/echora，线上 https://yenchiu.com/echora/；后端仍是 Cloudflare Worker 上的 api.yenchiu.com。"
+      },
+      {
+        "change": "changed",
+        "area": "style",
+        "scope": "主站",
+        "title": "博客入口改指 Echora",
+        "note": "顶栏「进入聊天」、项目卡片与关于页的链接，从 /chat/ 换成 /echora/。"
+      },
+      {
+        "change": "removed",
+        "area": "infra",
+        "scope": "子站",
+        "title": "旧 chat 只留存档",
+        "note": "/blog-v2/chat/ 保留旧版并加了「旧版存档」提示条，不再跟随更新；根域 /chat/ 自迁移后一直是 404。"
+      }
+    ]
+  },
+  {
+    "gen": 3,
+    "site": "main",
     "date": "2026-11-20",
     "title": "阅读页的胶囊、目录与动效整理",
     "summary": "手机右下角的胶囊统一成一套，两个目录都跟手，动效交给访客自己开关。",
