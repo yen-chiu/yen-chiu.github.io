@@ -1071,8 +1071,8 @@ const initialize = () => {
             }
           })
         } else {
-          // At root level, keep focus on dialog
-          dialog.focus()
+          // At root level there is no parent left, so Escape dismisses the browser.
+          dialog.close()
         }
       }
     },
