@@ -46,11 +46,11 @@ const { icon, eyebrow, title, description, stats, statsLabel, symbol } = Astro.p
   .index-hero {
     position: relative;
     display: grid;
-    gap: 2rem;
+    gap: clamp(1rem, 3vw, 2rem);
     overflow: hidden;
     padding: clamp(1.5rem, 4vw, 2.75rem);
     border: 1px solid hsl(var(--border));
-    border-radius: 1.75rem;
+    border-radius: clamp(1rem, 2vw, 1.5rem);
     background:
       radial-gradient(circle at 88% 0%, hsl(var(--primary) / 0.18), transparent 34%),
       linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted) / 0.55));
@@ -98,6 +98,7 @@ const { icon, eyebrow, title, description, stats, statsLabel, symbol } = Astro.p
     margin: 0;
     color: hsl(var(--muted-foreground));
     font-size: 0.9rem;
+    line-height: 1.75;
   }
 
   .index-hero__stats {

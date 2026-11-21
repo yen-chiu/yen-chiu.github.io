@@ -347,10 +347,10 @@ const sections = [
   .profile-stats dd {font-size:1.65rem;line-height:1.5;font-weight:650;font-variant-numeric:tabular-nums;}
   .profile-stats a {display:inline-block;min-width:44px;min-height:44px;}
   .profile-note {font-size:.75rem;color:hsl(var(--muted-foreground));padding-top:1rem;}
-  .section-nav {display:flex;flex-wrap:wrap;gap:.3rem 1.5rem;border-block:1px solid hsl(var(--border));padding:.65rem 0;margin-bottom:3.5rem;}
+  .section-nav {display:flex;flex-wrap:wrap;gap:.3rem 1.5rem;border-block:1px solid hsl(var(--border));padding:.65rem 0;margin-bottom:var(--vesper-section-space,3rem);}
   .section-nav a {display:flex;align-items:center;min-height:44px;font-size:.85rem;color:hsl(var(--muted-foreground));}
   .section-nav a:hover,.text-link:hover {color:hsl(var(--primary));text-decoration:underline;}
-  .section-heading {margin-bottom:1.6rem;}
+  .section-heading {margin-bottom:1.5rem;}
   h2 {font-size:clamp(1.4rem,3vw,1.8rem);font-weight:650;letter-spacing:-.03em;line-height:1.5;padding-top:.35rem;}
   h3 {font-size:1.05rem;line-height:1.65;font-weight:650;}
   .intro-grid {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:2.5rem;align-items:stretch;margin-bottom:2rem;}
@@ -378,7 +378,7 @@ const sections = [
   .play-note h3 {padding:.4rem 0;}
   .play-note p:not(.eyebrow) {font-size:.85rem;line-height:1.9;color:hsl(var(--muted-foreground));max-width:40rem;}
   .play-note > a {flex-shrink:0;min-height:44px;display:flex;align-items:center;}
-  .writing-journey {display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:3rem;margin:4rem 0;}
+  .writing-journey {display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(1.5rem,3vw,3rem);margin:var(--vesper-section-space,3rem) 0;}
   .heading-row {display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5rem;}
   .recent-posts li + li {border-top:1px solid hsl(var(--border));}
   .recent-posts a {display:flex;gap:.85rem;align-items:baseline;padding:1.25rem 0;}
@@ -449,7 +449,7 @@ const sections = [
     .quote figcaption {margin-top:.8rem;}
     .now-list {display:block;}
     .note-card {padding:1.2rem;}
-    .writing-journey {margin:3rem 0;gap:2.5rem;}
+    .writing-journey {margin:2.5rem 0;gap:2rem;}
     .recent-posts a {gap:.65rem;}
     #comments {margin-top:3rem;}
   }
