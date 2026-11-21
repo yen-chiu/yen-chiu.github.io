@@ -38,6 +38,19 @@ const socialImageURL = new URL(sitePath(ogImage || config.socialCard), Astro.sit
 <link rel='apple-touch-icon' sizes='180x180' href={sitePath('/favicon/wendell-avatar-180.png')} />
 <link rel='manifest' href={sitePath('/favicon/wendell-avatar.webmanifest')} />
 
+{/* Service worker: network-passthrough, only there so the site is installable */}
+{
+  prod && (
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {})
+        })
+      }
+    </script>
+  )
+}
+
 {/* Font preloads */}
 <style>
   body {
