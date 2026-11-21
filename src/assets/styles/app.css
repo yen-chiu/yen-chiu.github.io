@@ -51,3 +51,12 @@ a {
     color: hsl(var(--primary) / var(--un-text-opacity, 1));
   }
 }
+
+/* Vesper layout system · shared widths and rhythm, no changes to the full-bleed cover. */
+:root {
+  --vesper-width-wide: 70rem;
+  --vesper-width-content: 60rem;
+  --vesper-width-reading: 45rem;
+  --vesper-section-space: clamp(2rem, 4vw, 3rem);
+  --vesper-card-radius: 1rem;
+}
