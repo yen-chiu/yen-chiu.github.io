@@ -1,7 +1,6 @@
 ---
 
 import config from 'virtual:config'
-import manifest from '../../migration/content-manifest.json'
 import { sitePath } from '@/utils/site-path'
 
 import { prod } from 'astro-pure/server'
@@ -13,8 +12,8 @@ const { articleDate, description, ogImage, title, robots = 'index, follow' } = A
 
 // 首页等把站点名当作页面标题的场景不要再拼一次站点名，否则会出现「Wendell • Wendell」
 const siteTitle = !title || title === config.title ? config.title : `${title} ${config.titleDelimiter} ${config.title}`
-const original = manifest.find(entry => entry.originalMetadata.title === title)
-const canonicalURL = new URL(original?.originalUrl ?? (title === '关于' ? 'https://yenchiu.com/about/' : title === '念真' ? 'https://yenchiu.com/persona/' : Astro.url.pathname), Astro.site)
+// Canonical should reflect the published route, not historical migration URLs or page titles.
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url)
 const socialImageURL = new URL(sitePath(ogImage || config.socialCard), Astro.site ?? Astro.url).href
 ---
 
