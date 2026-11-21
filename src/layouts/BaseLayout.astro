@@ -17,13 +17,13 @@ import '@/assets/styles/global.css'
 import '@/assets/styles/app.css'
 
 interface Props {
-  meta: SiteMeta
+  meta: SiteMeta & { robots?: 'index, follow' | 'noindex, follow' }
   highlightColor?: string
   pageKind?: 'home' | 'content'
 }
 
 const {
-  meta: { articleDate, description = config.description, ogImage, title },
+  meta: { articleDate, description = config.description, ogImage, title, robots },
   highlightColor = '#B19CD9',
   pageKind = 'content',
   ...props
@@ -32,7 +32,7 @@ const {
 
 <html lang={config.locale.lang} class='overflow-y-scroll' transition:animate='none'>
   <head>
-    <BaseHead {articleDate} {description} {ogImage} {title} />
+    <BaseHead {articleDate} {description} {ogImage} {title} {robots} />
     <ThemeProvider />
     <AppearanceBootstrap />
     <script is:inline>
