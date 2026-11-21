@@ -1,189 +1,67 @@
-# Astro Theme Iris
+# Vesper（暮星）｜Wendell 的站点
 
-[English](./README.md) | 简体中文
+[简体中文](./README-zh-CN.md) · [项目主页 / Project README](./README.md)
 
-<div align="center">
-  <img src="./logo.png" alt="Astro Theme Iris Logo" width="200">
-</div>
+**Vesper（暮星）** 是 [Wendell 的个人站点](https://yenchiu.com) 所使用的 Astro 主题，承载博客、文档与期刊《余白》。
 
----
+> 这是个人网站仓库，并非 Astro Theme Iris 的官方模板仓库。主题基于 Iris 演化；上游历史说明保存在 [migration/upstream-README.md](./migration/upstream-README.md)。
 
-## 📸 展示图
+## 主题信息
 
-**示例博客**: [https://lemonadorable.github.io/](https://lemonadorable.github.io/)
+- **名称**：Vesper（暮星）
+- **包名**：`astro-theme-vesper`
+- **主题版本**：v0.1.0（`theme-v0.1.0`）
+- **技术基础**：Astro，衍生自 [Astro Theme Iris](https://github.com/LemonAdorable/astro-theme-iris)
+- **设计方向**：以刊物式排版统一博客、文档和期刊封面
 
-> [!NOTE]
-> 已知问题：Head 标签和自定义选项仍在开发中（已暴露模板用于修改）
+## 网站与仓库
 
-<div align="center">
-  <img src="./index.png" alt="首页展示" width="100%">
-  <p><em>首页全屏展示与动画效果</em></p>
-</div>
+- **网站**：[yenchiu.com](https://yenchiu.com)
+- **源代码**：[yen-chiu/yen-chiu.github.io](https://github.com/yen-chiu/yen-chiu.github.io)
+- **部署**：推送至 `main` 后由 GitHub Actions 构建并发布到 GitHub Pages
+- **网站沿革**：Jekyll · huxpro（2023-03—2023-10）→ Jekyll · Chirpy（2023-10—2026-11）→ Astro · Vesper（2026-11 起），详见[更新日志](https://yenchiu.com/changelog/)
 
-<div align="center">
-  <img src="./search.png" alt="搜索功能展示" width="100%">
-  <p><em>强大的搜索预览系统 - 支持分类筛选、实时预览、滚动标记</em></p>
-</div>
+## 本地开发
 
-<div align="center">
-  <img src="./function.png" alt="功能展示" width="100%">
-  <p><em>双链预览、Graph View 与知识图谱</em></p>
-</div>
+使用 Node.js 24：
 
----
-
-## 🎨 Iris 紫鸢模板说明
-
-本项目基于 [astro-theme-pure](https://github.com/cworld1/astro-theme-pure) 进行了定制，旨在将**博客**、**简介**与**知识库**结合，打造一个功能强大的个人知识管理系统。
-
-### ✨ 核心特性
-
-#### 🔍 强大的搜索系统
-
-- **FlexSearch 全文搜索**：支持中文、英文等多种语言的高性能搜索
-- **三栏预览布局**：搜索结果、内容预览、滚动标记一体化
-- **多维度筛选**：支持按时间范围、标签、类型（文章/文档）筛选
-- **实时高亮**：搜索结果实时高亮，支持滚动定位
-
-#### 🔗 双链系统（Wikilinks）
-
-- **多级预览**：使用 Tippy.js 实现类似 Quartz 的多层预览功能
-- **智能定位**：支持反向链接与反向定位引用
-- **流畅交互**：支持嵌套预览
-
-#### 🗺️ 知识图谱（Graph View）
-
-- **D3.js 有向图**：可视化页面之间的关联关系
-- **本地/全局视图**：支持查看当前页面的局部图谱或全站全局图谱
-- **节点类型**：区分文章、文档、标签、目录等不同类型
-- **交互式操作**：支持拖拽、缩放、点击跳转
-
-#### 🎨 界面优化
-
-- **全屏主页**：沉浸式首页设计，支持动画效果
-- **渐变背景**：文章卡片采用淡紫色渐变背景
-- **交互动画**：头像与友链的交互动画效果
-- **响应式设计**：适配桌面端和移动端
-
-#### 💬 评论系统
-
-- **Giscus 集成**：基于 GitHub Discussions 的评论系统
-
-#### 📊 Mermaid Integration
-
-- **Mermaid Integration**: Mermaid integration for diagramming
-
-#### 🖋️ Typst 排版系统
-
-- **Typst 支持**：支持在 MDX 中原生渲染高质量的数学公式、矢量图表与学术排版
-
-### 🚀 快速开始
-
-#### 选项 1: 作为模板使用 (推荐)
-
-1. 点击本仓库顶部的 **"Use this template"** 按钮。
-2. 将新仓库克隆到本地。
-3. 安装依赖并开始开发：
-   ```shell
-   bun install # 或 npm install
-   bun dev     # 或 npm run dev
-   ```
-
-#### 选项 2: 手动安装
-
-```shell
-# 克隆仓库
-git clone https://github.com/LemonAdorable/astro-theme-iris.git
-cd astro-theme-iris
-
-# 安装依赖
-bun install # 或 npm install
+```bash
+npm ci
+npm run dev -- --host 127.0.0.1
 ```
 
-### 🔄 更新主题
+生产构建：
 
-要获取 Iris 主题的最新功能和修复：
-
-```shell
-# 添加上游仓库 (只需执行一次)
-git remote add upstream https://github.com/LemonAdorable/astro-theme-iris.git
-
-# 获取并合并 main 分支的更新
-git fetch upstream main
-git merge upstream/main --allow-unrelated-histories
-```
-> [!TIP]
-> `--allow-unrelated-histories` 参数仅在第一次合并（当历史记录不相关时）需要。后续更新只需执行普通的 `git pull upstream main` 即可。
-
-### 📝 待办事项
-
-- [ ] 英文或多语言支持
-- [ ] 首页简历功能
-- [ ] 打包主题以及新增的各种组件
-- [ ] 更多文档和示例
-
-### 📚 仓库结构
-
-```
-Iris 主题 (LemonAdorable/astro-theme-iris)
-  └── main 分支 (上游)
-      ↓ (fetch & merge)
-你的博客仓库
-  └── main 分支 (你的内容 + Iris 组件)
+```bash
+npm run build
 ```
 
-### 🙏 致谢
+项目的 `.npmrc` 设置了 `legacy-peer-deps`。如果 Windows 环境下 esbuild 遇到临时目录权限问题，可将 `TEMP`、`TMP` 指向工作区内可写目录后重新构建。
 
-本项目基于以下优秀的开源项目：
+## 内容结构
 
-- **[astro-theme-pure](https://github.com/cworld1/astro-theme-pure)** - 基础主题框架
-- **[FlexSearch](https://github.com/nextapps-de/flexsearch)** - 高性能全文搜索引擎
-- **[Tippy.js](https://atomiks.github.io/tippyjs/)** - 强大的工具提示库
-- **[D3.js](https://d3js.org/)** - 数据可视化库
-- **[Quartz](https://quartz.jzhao.xyz/)** - 知识库主题设计理念参考
-- **[Obsidian](https://obsidian.md/)** - 双链笔记理念参考
+| 路径 | 用途 |
+| --- | --- |
+| `src/content/blog` | 博客文章与分类内容 |
+| `src/content/docs` | 文档与主题说明 |
+| `src/pages/journal.astro` | 期刊《余白》封面 |
+| `src/pages/persona.astro` | 念真页面 |
+| `migration/content-manifest.json` | 文章迁移记录与旧地址 |
+| `migration/upstream-README.md` | Iris 上游 README 存档 |
+| `migration/upstream-examples` | 不参与内容生成的上游示例 |
+| `scripts/` | 迁移、构建辅助与校验脚本 |
 
-### 📞 联系方式
+## 来源与许可
 
-如有问题或建议，欢迎发邮件联系
+Vesper 由 Astro Theme Iris 演化而来。上游代码的许可和署名应予保留，参见 [LICENSE](./LICENSE) 和 [上游 README 存档](./migration/upstream-README.md)。
 
-### 📋 使用说明
+- **主题及相关代码**：Apache-2.0，保留上游作者归属及第三方许可。
+- **原创博客文章与展示文档**：除另有说明外，采用 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)。
+- **《余白》原创文章**：以各期声明为准，当前为 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。
+- **摄影、插画及第三方素材**：以各自授权声明为准，不自动纳入上述许可。
 
-#### 搜索功能
+详情参见[版权与使用说明](https://yenchiu.com/terms/copyright/)。
 
-- 按 `Ctrl+K` 或 `Cmd+K` 打开搜索框
-- 支持中文、英文全文搜索
-- 可通过时间范围、标签、类型进行筛选
-- 点击搜索结果可跳转到对应页面
-- 右侧预览区域支持滚动标记定位
+## Star History
 
-#### 双链预览
-
-- 在文章中使用 `[[链接文本]]` 或 `[[链接|显示文本]]` 创建双链
-- 鼠标悬停在双链上可预览链接内容
-- 支持多层嵌套预览
-- 预览框支持交互，可点击链接跳转
-
-#### 知识图谱
-
-- 文章和文档页面侧边栏显示 Graph View
-- 点击节点可跳转到对应页面
-- 支持拖拽节点调整布局
-- 点击右上角按钮可查看全站全局图谱
-
-### ⚙️ 配置说明
-
-主要配置文件位于 `src/site.config.ts`，可以配置：
-
-- 站点基本信息（标题、描述、作者等）
-- 社交链接
-- 评论系统（Giscus/Waline）
-- 其他主题选项
-
-### 📄 许可证
-
-本项目基于 [Apache 2.0 许可证](https://github.com/LemonAdorable/astro-theme-iris/main/LICENSE) 开源。
-
-### ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=LemonAdorable/astro-theme-iris&type=Date)](https://star-history.com/#LemonAdorable/astro-theme-iris&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=yen-chiu/yen-chiu.github.io&type=Date)](https://star-history.com/#yen-chiu/yen-chiu.github.io&Date)
