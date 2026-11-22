@@ -8,6 +8,7 @@ import mermaid from 'astro-mermaid'
 
 // Local integrations
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
+import rehypeTaskListA11y from './src/plugins/rehype-task-list-a11y.ts'
 import remarkWikilinks from './src/plugins/remark-wikilinks.ts'
 // Shiki
 import {
@@ -79,6 +80,7 @@ export default defineConfig({
     rehypePlugins: [
       [rehypeKatex, {}],
       rehypeHeadingIds,
+      rehypeTaskListA11y,
       [
         rehypeAutolinkHeadings,
         {
