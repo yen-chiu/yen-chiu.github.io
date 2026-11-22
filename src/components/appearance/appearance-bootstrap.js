@@ -3,7 +3,7 @@
 (() => {
   if (window.wendellAppearance) { window.wendellAppearance.apply(); return }
   const key = 'wendell-appearance-v1'
-  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:true, motion:'system' }
+  const defaults = { hue:267, theme:'system', wallpaper:'banner', cover:true, layout:'list', title:true, waves:true, motion:'system', silverInk:false }
   const normalize = value => {
     const v = value && typeof value === 'object' ? value : {}
     return {
@@ -14,7 +14,8 @@
       layout:['list','grid'].includes(v.layout) ? v.layout : defaults.layout,
       title:typeof v.title === 'boolean' ? v.title : defaults.title,
       waves:typeof v.waves === 'boolean' ? v.waves : defaults.waves,
-      motion:['system','always','reduced'].includes(v.motion) ? v.motion : defaults.motion
+      motion:['system','always','reduced'].includes(v.motion) ? v.motion : defaults.motion,
+      silverInk:typeof v.silverInk === 'boolean' ? v.silverInk : defaults.silverInk
     }
   }
   let settings = {...defaults}
