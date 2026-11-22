@@ -1,0 +1,56 @@
+---
+title: Pure 内容组件
+description: Vesper 内置的链接预览、GitHub 卡片、二维码与图片放大使用说明。
+order: 980
+tags: [Astro, Pure, 组件]
+---
+
+import { GithubCard, LinkPreview, QRCode } from 'astro-pure/advanced'
+
+本页使用 **Astro Pure 已有组件**，不需要重复安装插件。对于普通 Markdown（`.md`），若要嵌入这些组件，请将该篇文章改为 MDX（`.mdx`）。
+
+## GitHub Card
+
+<GithubCard repo="yen-chiu/yen-chiu.github.io" />
+
+```mdx
+import { GithubCard } from 'astro-pure/advanced'
+
+<GithubCard repo="yen-chiu/yen-chiu.github.io" />
+```
+
+GitHub 数据由浏览器请求公开 API。遇到 API 限流或访问失败时，卡片仍可作为仓库链接使用。
+
+## Link Preview
+
+<LinkPreview href="https://astro.build/" hideMedia zoomable={false} />
+
+```mdx
+import { LinkPreview } from 'astro-pure/advanced'
+
+<LinkPreview href="https://astro.build/" hideMedia zoomable={false} />
+```
+
+链接预览在**网站构建时**抓取页面元数据。对请求失败的网站会退化为普通链接；尽量只预览可信、公开且稳定的网址，不要把用户填写的任意 URL 直接交给构建时抓取。
+
+## QRCode
+
+<QRCode content="https://yenchiu.com/" class="inline-flex rounded-lg border bg-muted p-3" />
+
+```mdx
+import { QRCode } from 'astro-pure/advanced'
+
+<QRCode content="https://yenchiu.com/" />
+```
+
+Pure 的 QRCode 依赖二维码脚本，因此不建议在每篇文章的首屏都放一个。博客文章页的「扫码分享」入口已改为点击展开后才加载脚本。
+
+## Medium Zoom
+
+文章与文档页已经启用 Pure 的 Medium Zoom。普通 Markdown 图片由主题自动加上 `zoomable` 类，点击图片即可放大；不需要再安装另一个灯箱库。
+
+## 邻站动态
+
+<LinkPreview href="https://yenchiu.com/links/" hideMedia zoomable={false} />
+
+友链页面已有 RSS / Atom 聚合与定时更新。只有订阅地址有效且确实包含文章时才会显示动态；不会伪造内容。
