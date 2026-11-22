@@ -33,6 +33,17 @@ const entries = [
 >
   <main class='home-page'>
     <landing-hero class='landing-track'>
+      <div class='opening-motto' aria-hidden='true' inert>
+        <canvas class='opening-ink' aria-hidden='true'></canvas>
+        <div class='opening-vignette' aria-hidden='true'></div>
+        <div class='opening-copy'>
+          <span class='opening-label'>VESPER · INK IN MOTION</span>
+          <p>未写尽，亦未定论。</p>
+          <span class='opening-rule'></span>
+        </div>
+        <button class='opening-skip' type='button' aria-label='跳过开场动画'>跳过 <span aria-hidden='true'>↗</span></button>
+      </div>
+
       <section class='home-cover' aria-label='首页封面'>
         <img
           class='cover-image'
@@ -43,16 +54,6 @@ const entries = [
           fetchpriority='high'
         />
         <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
-        <div class='opening-motto' aria-hidden='true' inert>
-          <canvas class='opening-ink' aria-hidden='true'></canvas>
-          <div class='opening-vignette' aria-hidden='true'></div>
-          <div class='opening-copy'>
-            <span class='opening-label'>VESPER · INK IN MOTION</span>
-            <p>未写尽，亦未定论。</p>
-            <span class='opening-rule'></span>
-          </div>
-          <button class='opening-skip' type='button' aria-label='跳过开场动画'>跳过 <span aria-hidden='true'>↗</span></button>
-        </div>
         <div class='hero-intro'>
           <InteractiveAvatar
             ><Image
@@ -208,11 +209,22 @@ const entries = [
         }
         let stopInk: (() => void) | null = null
         let timer = 0
+        let finishing = false
+        const unlock = () => {
+          document.documentElement.classList.remove('vesper-opening-active')
+          document.body.style.removeProperty('overflow')
+        }
         const finish = () => {
+          if (finishing) return
+          finishing = true
           window.clearTimeout(timer)
           stopInk?.()
           stopInk = null
-          motto.classList.remove('is-playing')
+          motto.classList.add('is-exiting')
+          unlock()
+          window.setTimeout(() => {
+            motto.classList.remove('is-playing', 'is-exiting')
+          }, 750)
           motto.setAttribute('aria-hidden', 'true')
           motto.inert = true
           if (motto.contains(document.activeElement)) {
@@ -220,6 +232,9 @@ const entries = [
           }
         }
         if (shouldPlay && canvas) {
+          document.documentElement.classList.add('vesper-opening-active')
+          document.body.style.overflow = 'hidden'
+          motto.classList.remove('is-exiting')
           motto.classList.add('is-playing')
           motto.setAttribute('aria-hidden', 'false')
           motto.inert = false
@@ -228,7 +243,7 @@ const entries = [
           motto.querySelector<HTMLButtonElement>('.opening-skip')?.addEventListener('click', finish, { signal })
           timer = window.setTimeout(finish, 7000)
           reduced.addEventListener('change', () => { if (motionReduced()) finish() }, { signal })
-          signal.addEventListener('abort', () => { window.clearTimeout(timer); stopInk?.() }, { once: true })
+          signal.addEventListener('abort', () => { window.clearTimeout(timer); stopInk?.(); unlock() }, { once: true })
         } else finish()
       }
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
@@ -421,9 +436,12 @@ const entries = [
   }
   /* Independent silver-ink prologue; the homepage remains unchanged beneath it. */
   .opening-motto {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    z-index: 3;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 2147483000;
     overflow: hidden;
     isolation: isolate;
     background: #050609;
@@ -435,7 +453,19 @@ const entries = [
   .opening-motto.is-playing {
     visibility: visible;
     opacity: 1;
-    animation: silver-ink-curtain 7s ease-in-out both;
+    pointer-events: auto;
+    transition: opacity 700ms ease, visibility 700ms ease;
+  }
+  .opening-motto.is-playing.is-exiting {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  :global(html.vesper-opening-active) :global(header) {
+    visibility: hidden !important;
+  }
+  :global(html.vesper-opening-active) :global(body) {
+    overflow: hidden !important;
   }
   .opening-ink, .opening-vignette {
     position: absolute;
@@ -493,10 +523,6 @@ const entries = [
   }
   .opening-skip:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   .opening-motto.is-playing .opening-copy { animation: silver-ink-words 7s ease-in-out both; }
-  @keyframes silver-ink-curtain {
-    0%, 78% { opacity: 1; }
-    100% { opacity: 0; visibility: hidden; }
-  }
   @keyframes silver-ink-words {
     0%, 28% { opacity: 0; transform: translateY(8px); }
     43%, 77% { opacity: 1; transform: translateY(0); }
@@ -506,7 +532,8 @@ const entries = [
     .opening-copy p { font-size: clamp(17px, 5vw, 24px); letter-spacing: .1em; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .opening-motto, .opening-motto.is-playing { animation: none; visibility: hidden; pointer-events: none; }
+    .opening-motto, .opening-motto.is-playing { transition: none; }
+    .opening-motto.is-playing.is-exiting { visibility: hidden; }
   }
   .hero-intro {
     display: flex;
