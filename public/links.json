@@ -6,7 +6,7 @@
       "desc": "可以找到我的地方。",
       "link_list": [
         {
-          "name": "Wendell · 原博客",
+          "name": "我的博客",
           "intro": "从 2023 年开始记录技术与生活",
           "link": "https://yenchiu.com/",
           "avatar": "/favicon/wendell-avatar-192.png"
@@ -19,9 +19,9 @@
           "mark": "⌘"
         },
         {
-          "name": "WendellManual",
+          "name": "Folio",
           "intro": "建站笔记、工具与持续整理的文档",
-          "link": "https://github.com/yen-chiu/WendellManual",
+          "link": "https://github.com/yen-chiu/folio",
           "avatar": "",
           "mark": "▤"
         }
