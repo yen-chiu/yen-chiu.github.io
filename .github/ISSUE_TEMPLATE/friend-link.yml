@@ -1,5 +1,5 @@
 name: 申请友链 / Friend link request
-description: 自动校验回链，人工审核后加入 Vesper 友链 / Validate the backlink and apply to join Iris
+description: 自动校验回链，人工审核后加入 Vesper 友链 / Validate the backlink and apply to join Vesper
 title: '[友链申请 / Friend link] '
 labels:
   - friend-link
