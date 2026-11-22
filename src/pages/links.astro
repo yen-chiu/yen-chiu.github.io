@@ -22,6 +22,10 @@ const healthSnapshot = health as { checkedAt: string | null; summary: { healthy:
 const healthByUrl = new Map(healthSnapshot.links.map(item => [item.url, item]))
 const history = historyData as HistoryEntry[]
 const posts = feedData.items as FeedEntry[]
+const friendGroup = groups.find(group => group.id_name === 'friends')
+const friendDownCount = (friendGroup?.link_list ?? []).filter(link => healthByUrl.get(link.link)?.state === 'down').length
+const friendActiveCount = (friendGroup?.link_list.length ?? 0) - friendDownCount
+const pendingCount = (friendGroup?.link_list ?? []).filter(link => !healthByUrl.has(link.link)).length
 const friendInfo = [
   { name: '名称', val: 'Wendell · Vesper' },
   { name: '简介', val: '读书，买花，长大。' },
@@ -47,97 +51,118 @@ const friendInfo = [
     />
     <link-directory>
       <div class='directory-tools'>
-        <div role='tablist' aria-label='链接分组'>
-          {
-            groups.map((g, i) => (
-              <button
-                type='button'
-                role='tab'
-                id={`link-tab-${g.id_name}`}
-                aria-controls={`link-panel-${g.id_name}`}
-                aria-selected={i === 0 ? 'true' : 'false'}
-                tabindex={i === 0 ? 0 : -1}
-                data-link-tab={g.id_name}
-              >
-                {g.title}
-                <small>{g.link_list.length}</small>
-              </button>
-            ))
-          }
-        </div><label class='link-search'
-          ><span aria-hidden='true'>⌕</span><input
-            type='search'
-            aria-label='搜索链接'
-            placeholder='搜索名称或简介'
-          /></label>
+        <div class='group-tabs' role='tablist' aria-label='链接分类'>
+          {groups.map((group, index) => (
+            <button type='button' role='tab'
+              id={'link-tab-' + group.id_name}
+              aria-controls={'link-panel-' + group.id_name}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
+              data-link-tab={group.id_name}>
+              {group.title}<span class='tab-count'>{group.link_list.length}</span>
+            </button>
+          ))}
+        </div>
+        <label class='link-search'>
+          <span aria-hidden='true'>⌕</span>
+          <input type='search' aria-label='搜索链接' placeholder='搜索名称或简介' autocomplete='off' />
+        </label>
       </div>
-      {
-        groups.map((g, i) => (
-          <section
-            role='tabpanel'
-            id={`link-panel-${g.id_name}`}
-            aria-labelledby={`link-tab-${g.id_name}`}
-            hidden={i !== 0}
-            data-link-panel={g.id_name}
-          >
+
+      {groups.map((group, index) => (
+        <section class='link-panel' role='tabpanel'
+          id={'link-panel-' + group.id_name}
+          aria-labelledby={'link-tab-' + group.id_name}
+          data-link-panel={group.id_name}
+          hidden={index !== 0}>
+          <header class='group-heading'>
+            <span class='group-icon' aria-hidden='true'>
+              {group.id_name === 'friends' ? '∞' : group.id_name === 'own' ? '⌂' : '✦'}
+            </span>
+            <div class='group-title'>
+              <h2>{group.title}</h2>
+              <p>{group.desc}</p>
+            </div>
+            <strong class='group-total'>{group.link_list.length}</strong>
+          </header>
+          {group.id_name === 'friends' && (
             <>
-              <header class='group-heading'>
-                <>
-                  <h2>{g.title}</h2>
-                  <p>{g.desc}</p>
-                </>
-              </header>
-              <div class='link-cards'>
-                {g.link_list.map((link) => (
-                  <a
-                    href={link.link}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    class='link-card'
-                    data-link-card
-                    data-search={`${link.name} ${link.intro}`.toLowerCase()}
-                  >
-                    <span class='link-mark' aria-hidden='true'>
-                      {link.avatar ? (
-                        <img
-                          src={sitePath(link.avatar)}
-                          width='44'
-                          height='44'
-                          alt=''
-                          loading='lazy'
-                          data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')}
-                        />
-                      ) : 'mark' in link ? (
-                        link.mark
-                      ) : (
-                        '↗'
-                      )}
-                    </span>
-                    <span class='link-copy'>
-                      <strong>{link.name}</strong>
-                      <small>{link.intro}</small>
-                      <span>{new URL(link.link).hostname}</span>
-                      {healthByUrl.get(link.link) && (
-                        <span class='link-health' data-health={healthByUrl.get(link.link)?.state}>
-                          {healthByUrl.get(link.link)?.state === 'healthy' ? '正常' : healthByUrl.get(link.link)?.state === 'down' ? '访问异常' : '待复核'}
-                        </span>
-                      )}
-                    </span>
-                    <span class='link-arrow' aria-hidden='true'>
-                      ↗
-                    </span>
-                  </a>
-                ))}
+              <div class='friend-tabs' role='tablist' aria-label='友好邻居内容'>
+                <button type='button' role='tab' data-friend-tab='active' id='friend-tab-active'
+                  aria-controls='friend-links-grid' aria-selected='true' tabindex='0'>
+                  收录链接 <span>{friendActiveCount}</span>
+                </button>
+                <button type='button' role='tab' data-friend-tab='down' id='friend-tab-down'
+                  aria-controls='friend-links-grid' aria-selected='false' tabindex='-1'>
+                  异常链接 <span>{friendDownCount}</span>
+                </button>
+                <button type='button' role='tab' data-friend-tab='history' id='friend-tab-history'
+                  aria-controls='friend-history-panel' aria-selected='false' tabindex='-1'>
+                  变更记录 <span>{history.length}</span>
+                </button>
               </div>
-              <p class='directory-empty' data-link-empty hidden={g.link_list.length > 0}>
-                {g.id_name === 'friends'
-                  ? '这里为新朋友留个位置，欢迎通过下面的方式认识。'
-                  : '没有找到匹配的链接，试试其他关键词。'}
+              <p class='health-meta'>
+                {healthSnapshot.checkedAt
+                  ? '最近检查：' + new Date(healthSnapshot.checkedAt).toLocaleDateString('zh-CN') + ' · 连续三次失败才标记异常'
+                  : '尚无健康检测结果，收录链接不代表可访问性已经验证。'}
+                {pendingCount > 0 && ' · ' + pendingCount + ' 个站点待检查'}
               </p>
             </>
-          </section>
-        ))
-      }
+          )}
+          <div class='link-cards' id={group.id_name === 'friends' ? 'friend-links-grid' : undefined} data-card-grid>
+            {group.link_list.map(link => (
+              <a class='link-card' href={link.link} target='_blank' rel='noopener noreferrer'
+                data-link-card data-link-state={healthByUrl.get(link.link)?.state ?? 'unknown'}
+                data-search={[link.name, link.intro, new URL(link.link).hostname].join(' ').toLowerCase()}>
+                {link.avatar && (
+                  <img class='card-backdrop' src={sitePath(link.avatar)} alt='' aria-hidden='true'
+                    loading='lazy' data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')} />
+                )}
+                <span class='card-shade' aria-hidden='true'></span>
+                <span class='link-mark' aria-hidden='true'>
+                  {link.avatar ? (
+                    <img src={sitePath(link.avatar)} width='56' height='56' alt=''
+                      loading='lazy' data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')} />
+                  ) : 'mark' in link ? link.mark : '↗'}
+                </span>
+                <span class='link-copy'>
+                  <strong>{link.name}</strong>
+                  <small>{link.intro}</small>
+                  {healthByUrl.get(link.link)?.state === 'down' && (
+                    <span class='link-health' data-health='down'>连续检测异常 · 待复核</span>
+                  )}
+                  {healthByUrl.get(link.link)?.state === 'suspect' && (
+                    <span class='link-health' data-health='suspect'>暂时无法访问 · 待复核</span>
+                  )}
+                </span>
+                <span class='link-arrow' aria-hidden='true'>↗</span>
+              </a>
+            ))}
+          </div>
+          <p class='directory-empty' data-link-empty hidden>
+            {group.id_name === 'friends' ? '这里为新朋友留了位置，也可以试试其他分类。' : '没有找到匹配的链接，试试其他关键词。'}
+          </p>
+          {group.id_name === 'friends' && (
+            <section class='friend-history' id='friend-history-panel' role='tabpanel'
+              aria-labelledby='friend-tab-history' data-history-pane hidden>
+              {history.length > 0 ? (
+                <ul class='history-list'>
+                  {history.slice(0, 30).map(entry => (
+                    <li class='history-row' data-history-row data-search={[entry.name, entry.action].join(' ').toLowerCase()}>
+                      <span class='history-action' data-action={entry.action}>
+                        {entry.action === 'added' ? '新增' : entry.action === 'removed' ? '移除' : '更新'}
+                      </span>
+                      <a href={entry.url} rel='noopener noreferrer' target='_blank'>{entry.name}</a>
+                      <time datetime={entry.date}>{entry.date.slice(0, 10)}</time>
+                    </li>
+                  ))}
+                </ul>
+              ) : <p class='directory-empty'>还没有生成变更记录，后续构建会根据 Git 历史更新。</p>}
+              <p class='directory-empty' data-history-empty hidden>没有找到匹配的变更记录。</p>
+            </section>
+          )}
+        </section>
+      ))}
       <p class='directory-count' data-link-status aria-live='polite'></p>
     </link-directory>
     <section class='link-about' aria-labelledby='exchange-title'>
@@ -157,57 +182,22 @@ const friendInfo = [
       </details>
     </section>
 
-    <section class='link-monitor' aria-labelledby='link-monitor-heading'>
-      <header>
-        <p class='kicker'>LINK HEALTH</p>
-        <h2 id='link-monitor-heading'>链接健康</h2>
-        <p>每日自动检查，连续三次失败才标记为异常；一次网络波动不会直接移除友链。</p>
-      </header>
-      {healthSnapshot.checkedAt ? (
-        <div class='monitor-numbers'>
-          <div><strong>{healthSnapshot.summary.healthy}</strong><span>正常</span></div>
-          <div><strong>{healthSnapshot.summary.suspect}</strong><span>待复核</span></div>
-          <div><strong>{healthSnapshot.summary.down}</strong><span>异常</span></div>
-          <div><strong>{new Date(healthSnapshot.checkedAt).toLocaleDateString('zh-CN')}</strong><span>最近检查</span></div>
-        </div>
-      ) : (
-        <p class='empty-note'>等待首次定时检查。当前没有可用于判断链接状态的检测记录。</p>
-      )}
+    <section class='link-extra rss-panel' aria-labelledby='friend-feed-heading'>
+      <span class='kicker'>NEIGHBORHOOD FEED</span>
+      <h2 id='friend-feed-heading'>邻站动态</h2>
+      <p>通过 RSS / Atom 收集友好邻居最近发表的文章。</p>
+      {posts.length ? (
+        <ul>
+          {posts.slice(0, 8).map(post => (
+            <li>
+              <a href={post.url} rel='noopener noreferrer' target='_blank'>{post.title}</a>
+              <span>{post.site}</span>
+              {post.publishedAt && <time datetime={post.publishedAt}>{post.publishedAt.slice(0, 10)}</time>}
+            </li>
+          ))}
+        </ul>
+      ) : <p class='empty-note'>还没有邻站动态。友链添加 RSS 地址并完成聚合后会出现在这里。</p>}
     </section>
-    <div class='links-extras'>
-      <section class='link-extra' aria-labelledby='link-history-heading'>
-        <p class='kicker'>CHANGELOG</p>
-        <h2 id='link-history-heading'>变更记录</h2>
-        <p>根据 links.json 的 Git 提交差异自动生成。</p>
-        {history.length ? (
-          <ul>
-            {history.slice(0, 8).map(entry => (
-              <li>
-                <span>{entry.action === 'added' ? '新增' : entry.action === 'removed' ? '移除' : '更新'}</span>
-                <a href={entry.url} rel='noopener noreferrer' target='_blank'>{entry.name}</a>
-                <time datetime={entry.date}>{entry.date.slice(0, 10)}</time>
-              </li>
-            ))}
-          </ul>
-        ) : <p class='empty-note'>暂无已生成的链接变更记录。</p>}
-      </section>
-      <section class='link-extra' aria-labelledby='friend-feed-heading'>
-        <p class='kicker'>NEIGHBORHOOD FEED</p>
-        <h2 id='friend-feed-heading'>邻站动态</h2>
-        <p>定期汇总已配置 RSS / Atom 的友好邻居更新。</p>
-        {posts.length ? (
-          <ul>
-            {posts.slice(0, 8).map(post => (
-              <li>
-                <a href={post.url} rel='noopener noreferrer' target='_blank'>{post.title}</a>
-                <span>{post.site}</span>
-                {post.publishedAt && <time datetime={post.publishedAt}>{post.publishedAt.slice(0, 10)}</time>}
-              </li>
-            ))}
-          </ul>
-        ) : <p class='empty-note'>暂无邻站订阅文章。收录支持 RSS 的友链后会自动更新。</p>}
-      </section>
-    </div>
     <FriendApplyGuide
       info={friendInfo}
       applyUrl='https://github.com/yen-chiu/yen-chiu.github.io/issues/new?template=friend-link.yml'
@@ -222,14 +212,20 @@ const friendInfo = [
       this.controller?.abort()
       this.controller = new AbortController()
       const { signal } = this.controller
-      const friendCards = this.querySelector<HTMLElement>('[data-link-panel="friends"] .link-cards')
-      if (friendCards) {
-        const cards = [...friendCards.children]
+      const groupTabs = [...this.querySelectorAll<HTMLButtonElement>('[data-link-tab]')]
+      const friendTabs = [...this.querySelectorAll<HTMLButtonElement>('[data-friend-tab]')]
+      const panels = [...this.querySelectorAll<HTMLElement>('[data-link-panel]')]
+      const input = this.querySelector<HTMLInputElement>('.link-search input')
+      const status = this.querySelector<HTMLElement>('[data-link-status]')
+      if (!groupTabs.length || !input || !status) return
+      const friendGrid = this.querySelector<HTMLElement>('[data-link-panel="friends"] [data-card-grid]')
+      if (friendGrid) {
+        const cards = [...friendGrid.children]
         for (let i = cards.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1))
           ;[cards[i], cards[j]] = [cards[j], cards[i]]
         }
-        friendCards.replaceChildren(...cards)
+        friendGrid.replaceChildren(...cards)
       }
       this.querySelectorAll<HTMLImageElement>('[data-avatar-fallback]').forEach(img => {
         img.addEventListener('error', () => {
@@ -237,43 +233,71 @@ const friendInfo = [
           if (fallback && img.src !== new URL(fallback, location.href).href) img.src = fallback
         }, { signal })
       })
-      const tabs = [...this.querySelectorAll<HTMLButtonElement>('[data-link-tab]')],
-        input = this.querySelector<HTMLInputElement>('input')!,
-        panels = [...this.querySelectorAll<HTMLElement>('[data-link-panel]')]
-      let active = tabs[0].dataset.linkTab
+      let currentGroup = groupTabs[0].dataset.linkTab
+      let currentFriendView = 'active'
       const update = () => {
-        const query = input.value.trim().toLowerCase()
+        const query = input.value.trim().toLocaleLowerCase()
+        groupTabs.forEach(tab => {
+          const active = tab.dataset.linkTab === currentGroup
+          tab.setAttribute('aria-selected', String(active))
+          tab.tabIndex = active ? 0 : -1
+        })
+        friendTabs.forEach(tab => {
+          const active = tab.dataset.friendTab === currentFriendView
+          tab.setAttribute('aria-selected', String(active))
+          tab.tabIndex = active ? 0 : -1
+        })
         let count = 0
-        tabs.forEach((t) => {
-          const selected = t.dataset.linkTab === active
-          t.setAttribute('aria-selected', String(selected))
-          t.tabIndex = selected ? 0 : -1
-        })
-        panels.forEach((panel) => {
-          panel.hidden = panel.dataset.linkPanel !== active
+        panels.forEach(panel => {
+          const active = panel.dataset.linkPanel === currentGroup
+          panel.hidden = !active
+          const friends = panel.dataset.linkPanel === 'friends'
+          const showingHistory = friends && currentFriendView === 'history'
+          const grid = panel.querySelector<HTMLElement>('[data-card-grid]')
+          const historyPanel = panel.querySelector<HTMLElement>('[data-history-pane]')
+          if (grid) grid.hidden = showingHistory
+          if (historyPanel) historyPanel.hidden = !showingHistory
           let visible = 0
-          panel.querySelectorAll<HTMLElement>('[data-link-card]').forEach((card) => {
-            card.hidden = !card.dataset.search?.includes(query)
-            if (!card.hidden) visible++
+          panel.querySelectorAll<HTMLElement>('[data-link-card]').forEach(card => {
+            const allowed = !friends || (currentFriendView === 'down'
+              ? card.dataset.linkState === 'down'
+              : card.dataset.linkState !== 'down')
+            const matched = (card.dataset.search ?? '').includes(query)
+            card.hidden = !allowed || !matched
+            if (!card.hidden && !showingHistory) visible++
           })
-          panel.querySelector<HTMLElement>('[data-link-empty]')!.hidden = visible > 0
-          if (!panel.hidden) count = visible
+          const empty = panel.querySelector<HTMLElement>('[data-link-empty]')
+          if (empty) {
+            empty.hidden = showingHistory || visible > 0
+            if (!showingHistory && friends) {
+              empty.textContent = currentFriendView === 'down'
+                ? '没有连续检测异常的友情链接。'
+                : '还没有符合条件的友链，欢迎来认识。'
+              if (query) empty.textContent = '没有找到匹配的链接，试试其他关键词。'
+            }
+          }
+          if (showingHistory) {
+            visible = 0
+            panel.querySelectorAll<HTMLElement>('[data-history-row]').forEach(row => {
+              row.hidden = !(row.dataset.search ?? '').includes(query)
+              if (!row.hidden) visible++
+            })
+            const historyEmpty = panel.querySelector<HTMLElement>('[data-history-empty]')
+            if (historyEmpty) historyEmpty.hidden = visible > 0 || !query
+          }
+          if (active) count = visible
         })
-        this.querySelector<HTMLElement>('[data-link-status]')!.textContent =
-          `当前分组显示 ${count} 个站点`
+        status.textContent = currentGroup === 'friends' && currentFriendView === 'history'
+          ? '当前显示 ' + count + ' 条变更记录'
+          : '当前分组显示 ' + count + ' 个站点'
       }
-      tabs.forEach((tab, index) => {
-        tab.addEventListener(
-          'click',
-          () => {
-            active = tab.dataset.linkTab
-            update()
-          },
-          { signal }
-        )
-        tab.addEventListener(
-          'keydown',
-          (e) => {
+      const bindTabs = (
+        tabs: HTMLButtonElement[],
+        pick: (tab: HTMLButtonElement) => void
+      ) => {
+        tabs.forEach((tab, index) => {
+          tab.addEventListener('click', () => { pick(tab); update() }, { signal })
+          tab.addEventListener('keydown', e => {
             let next = index
             if (e.key === 'ArrowRight') next = (index + 1) % tabs.length
             else if (e.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length
@@ -281,25 +305,24 @@ const friendInfo = [
             else if (e.key === 'End') next = tabs.length - 1
             else return
             e.preventDefault()
-            active = tabs[next].dataset.linkTab
+            pick(tabs[next])
             update()
             tabs[next].focus()
-          },
-          { signal }
-        )
-      })
+          }, { signal })
+        })
+      }
+      bindTabs(groupTabs, tab => { currentGroup = tab.dataset.linkTab })
+      bindTabs(friendTabs, tab => { currentFriendView = tab.dataset.friendTab ?? 'active' })
       input.addEventListener('input', update, { signal })
       update()
     }
-    disconnectedCallback() {
-      this.controller?.abort()
-    }
+    disconnectedCallback() { this.controller?.abort() }
   }
   if (!customElements.get('link-directory')) customElements.define('link-directory', LinkDirectory)
   const setupCopy = () => {
-    const button = document.querySelector<HTMLButtonElement>('[data-copy-link-info]'),
-      info = document.querySelector<HTMLElement>('#site-link-info'),
-      result = document.querySelector<HTMLElement>('[data-copy-result]')
+    const button = document.querySelector<HTMLButtonElement>('[data-copy-link-info]')
+    const info = document.querySelector<HTMLElement>('#site-link-info')
+    const result = document.querySelector<HTMLElement>('[data-copy-result]')
     if (!button || !info || !result) return
     button.onclick = async () => {
       try {
@@ -314,324 +337,195 @@ const friendInfo = [
   document.addEventListener('astro:page-load', setupCopy)
 </script>
 <style>
-  .links-page {
-    max-width: 64rem;
-    margin: 1.5rem auto 3rem;
-  }
-  link-directory {
-    display: block;
-    margin-top: 1.5rem;
-    border: 1px solid hsl(var(--border));
-    border-radius: 1.3rem;
-    padding: 1.5rem;
-    background: hsl(var(--background) / 0.92);
-  }
+  .links-page { max-width: 68rem; margin: 1.5rem auto 3rem; }
+  link-directory { display: block; margin-top: 1.6rem; }
   .directory-tools {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding-bottom: 1.2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; margin-bottom: 1.2rem;
     border-bottom: 1px solid hsl(var(--border));
   }
-  [role='tablist'] {
-    display: flex;
-    gap: 0.3rem;
-    flex-wrap: wrap;
+  .group-tabs, .friend-tabs { display: flex; align-items: center; flex-wrap: wrap; }
+  .group-tabs { gap: 1.25rem; }
+  .group-tabs [role='tab'] {
+    display: inline-flex; align-items: center; gap: .5rem;
+    position: relative; cursor: pointer; padding: .85rem .2rem;
+    min-height: 44px; background: transparent; border: 0;
+    color: hsl(var(--muted-foreground)); font-size: .85rem;
+    transition: color 160ms ease;
   }
-  [role='tab'] {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 44px;
-    border: 1px solid transparent;
-    border-radius: 0.7rem;
-    padding: 0.45rem 0.75rem;
-    font-size: 0.78rem;
-    color: hsl(var(--muted-foreground));
-    background: transparent;
-    cursor: pointer;
+  .group-tabs [role='tab']::after {
+    position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 2px; border-radius: 4px; background: hsl(var(--primary));
+    content: ''; transform: scaleX(0); transition: transform 180ms ease;
   }
-  [role='tab'][aria-selected='true'] {
-    color: hsl(var(--primary));
-    border-color: hsl(var(--primary) / 0.16);
-    background: hsl(var(--primary) / 0.09);
-  }
-  [role='tab'] small {
-    font-size: 0.6rem;
-    padding: 0.05rem 0.3rem;
-    border-radius: 0.3rem;
-    background: hsl(var(--primary) / 0.08);
+  .group-tabs [role='tab'][aria-selected='true'] { color: hsl(var(--primary)); font-weight: 650; }
+  .group-tabs [role='tab'][aria-selected='true']::after { transform: scaleX(1); }
+  .tab-count {
+    border-radius: .5rem; padding: .15rem .42rem;
+    background: hsl(var(--primary) / .08); color: hsl(var(--muted-foreground));
+    font-size: .68rem; font-weight: 500;
   }
   .link-search {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    max-width: 15rem;
-    padding: 0.35rem 0.6rem;
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.65rem;
+    display: flex; align-items: center; flex: 0 1 15rem; gap: .5rem;
+    min-width: 10rem; border: 1px solid hsl(var(--border));
+    border-radius: .8rem; padding: .3rem .75rem; margin-bottom: .45rem;
+    background: hsl(var(--background) / .65);
   }
-  .link-search span {
-    font-size: 1.4rem;
-    color: hsl(var(--primary));
-  }
+  .link-search span { font-size: 1.4rem; color: hsl(var(--primary)); }
   .link-search input {
-    font-size: 0.75rem;
-    min-width: 0;
-    width: 100%;
-    min-height: 32px;
-    background: transparent;
-    border: 0;
-    color: inherit;
+    min-width: 0; width: 100%; min-height: 32px; border: 0; outline: 0;
+    background: transparent; color: hsl(var(--foreground)); font-size: .75rem;
   }
-  .group-heading {
-    margin: 1.4rem 0 1rem;
-  }
-  .group-heading h2 {
-    font-size: 1.15rem;
-    font-weight: 600;
-  }
-  .group-heading p {
-    font-size: 0.75rem;
-    color: hsl(var(--muted-foreground));
-    margin: 0.4rem 0 0;
-  }
-  .link-cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem;
-  }
-  .link-card {
-    display: flex;
-    gap: 0.9rem;
-    align-items: center;
-    padding: 1rem;
+  .link-panel {
+    padding: clamp(1rem, 3vw, 2rem);
     border: 1px solid hsl(var(--border));
-    border-radius: 1rem;
-    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--muted) / 0.5));
+    border-radius: 1.5rem;
+    background: radial-gradient(ellipse at 95% 0, hsl(var(--primary) / .07), transparent 45%),
+      hsl(var(--background) / .85);
+    box-shadow: inset 0 1px 0 hsl(var(--foreground) / .025);
   }
-  .link-card[hidden] {
-    display: none;
+  .link-panel[hidden], .link-card[hidden], [data-card-grid][hidden],
+  .friend-history[hidden], .history-row[hidden], .directory-empty[hidden] { display: none !important; }
+  .group-heading { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .group-icon {
+    display: grid; place-items: center; width: 3.45rem; height: 3.45rem;
+    flex-shrink: 0; border: 1px solid hsl(var(--primary) / .18);
+    border-radius: 1rem; background: hsl(var(--primary) / .09);
+    color: hsl(var(--primary)); font-size: 1.8rem; line-height: 1;
   }
-  .link-mark {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    display: grid;
-    place-items: center;
-    border-radius: 0.8rem;
-    background: hsl(var(--primary) / 0.09);
-    color: hsl(var(--primary));
-    font-size: 1.3rem;
+  .group-title { flex: 1; min-width: 0; }
+  .group-heading h2 { margin: 0; font-size: clamp(1.1rem, 2.5vw, 1.45rem); font-weight: 650; }
+  .group-heading p { margin: .35rem 0 0; color: hsl(var(--muted-foreground)); font-size: .78rem; }
+  .group-total { font-size: 1.65rem; font-weight: 450; color: hsl(var(--primary) / .62); }
+  .friend-tabs {
+    gap: .25rem; margin: -.15rem 0 0; padding: .35rem;
+    border-radius: .9rem; background: hsl(var(--muted) / .42);
+    width: fit-content; max-width: 100%;
   }
-  .link-mark img {
-    max-width: 100%;
-    height: auto;
+  .friend-tabs [role='tab'] {
+    cursor: pointer; border: 1px solid transparent; border-radius: .7rem;
+    background: transparent; padding: .55rem .78rem; min-height: 42px;
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .78rem; color: hsl(var(--muted-foreground));
   }
-  .link-copy {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    gap: 0.25rem;
-    flex: 1;
+  .friend-tabs [role='tab'] span { font-size: .7rem; color: hsl(var(--primary)); }
+  .friend-tabs [role='tab'][aria-selected='true'] {
+    border-color: hsl(var(--primary) / .3);
+    background: hsl(var(--background)); color: hsl(var(--foreground)); font-weight: 650;
+    box-shadow: 0 2px 9px hsl(var(--foreground) / .04);
   }
-  .link-copy strong {
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-  .link-copy small {
-    font-size: 0.72rem;
-    line-height: 1.6;
-    color: hsl(var(--muted-foreground));
-  }
-  .link-copy > span {
-    font-size: 0.6rem;
-    color: hsl(var(--muted-foreground));
-    word-break: break-all;
-  }
-  .link-arrow {
-    color: hsl(var(--primary));
+  .health-meta { margin: .65rem 0 1.15rem; font-size: .67rem; color: hsl(var(--muted-foreground)); line-height: 1.6; }
+  .link-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem; }
+  .link-card {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: flex; align-items: center; gap: .85rem;
+    min-width: 0; min-height: 104px; padding: 1.05rem;
+    border: 1px solid rgb(170 161 196 / .24); border-radius: 1.15rem;
+    background: radial-gradient(circle at 8% 0, rgb(126 102 155 / .28), transparent 55%), #111018;
+    color: #f5f1f9; text-decoration: none;
+    transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
   }
   .link-card:hover {
-    border-color: hsl(var(--primary) / 0.4);
-    background: hsl(var(--primary) / 0.05);
+    transform: translateY(-2px); border-color: hsl(var(--primary) / .65);
+    box-shadow: 0 10px 28px rgb(18 13 34 / .16);
   }
-  .directory-empty {
-    font-size: 0.8rem;
-    line-height: 1.9;
-    padding: 2rem 1rem;
-    text-align: center;
-    color: hsl(var(--muted-foreground));
+  .card-backdrop {
+    position: absolute; inset: -15%; width: 130%; height: 130%; z-index: -2;
+    object-fit: cover; object-position: left center;
+    filter: blur(9px) saturate(.7); opacity: .24; pointer-events: none;
+    transform: scale(1.06);
   }
-  .directory-count {
-    font-size: 0.65rem;
-    color: hsl(var(--muted-foreground));
-    margin: 1.2rem 0 0;
+  .card-shade {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(90deg, rgb(12 11 18 / .54), rgb(12 11 18 / .82) 70%),
+      radial-gradient(circle at 100% 100%, rgb(155 122 191 / .12), transparent 45%);
   }
-  .link-about {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 2rem;
-    margin: 1.5rem 0;
-    padding: 1.5rem;
-    border: 1px solid hsl(var(--border));
-    border-radius: 1.3rem;
-    background: hsl(var(--background) / 0.8);
+  .link-mark {
+    flex: 0 0 52px; width: 52px; height: 52px;
+    display: grid; place-items: center; overflow: hidden;
+    border-radius: 50%; border: 1px solid rgb(241 232 255 / .2);
+    background: rgb(154 118 194 / .22);
+    color: #e2c6ff; font-size: 1.4rem; font-weight: 650;
+    box-shadow: 0 0 0 3px rgb(255 255 255 / .045);
   }
-  .kicker {
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-    color: hsl(var(--primary));
-    margin: 0 0 0.5rem;
+  .link-mark img { width: 100%; height: 100%; object-fit: cover; }
+  .link-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: .3rem; }
+  .link-copy strong { font-size: .91rem; line-height: 1.35; font-weight: 650; overflow-wrap: anywhere; }
+  .link-copy small {
+    font-size: .73rem; color: rgb(223 216 236 / .81);
+    line-height: 1.55; display: -webkit-box; -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; overflow: hidden;
   }
-  .link-about h2 {
-    font-size: 1.2rem;
-    font-weight: 600;
+  .link-health { font-size: .62rem; font-weight: 550; }
+  .link-health[data-health='down'] { color: #ffb6ad; }
+  .link-health[data-health='suspect'] { color: #ffe1a6; }
+  .link-arrow { flex-shrink: 0; font-size: 1rem; color: rgb(198 163 238 / .84); opacity: .8; }
+  .directory-empty { padding: 2rem .5rem; text-align: center; font-size: .8rem; color: hsl(var(--muted-foreground)); line-height: 1.7; }
+  .directory-count { margin: .7rem 0 0; font-size: .69rem; color: hsl(var(--muted-foreground)); text-align: right; }
+  .friend-history { padding: .5rem .2rem; }
+  .history-list { list-style: none; padding: 0; margin: 0; }
+  .history-row {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .85rem .4rem; border-bottom: 1px solid hsl(var(--border));
+    font-size: .77rem;
   }
-  .link-about p:not(.kicker) {
-    font-size: 0.78rem;
-    line-height: 1.9;
-    color: hsl(var(--muted-foreground));
-    margin: 0.7rem 0;
+  .history-row a { color: hsl(var(--foreground)); flex: 1; overflow-wrap: anywhere; }
+  .history-row time { color: hsl(var(--muted-foreground)); font-size: .68rem; }
+  .history-action {
+    padding: .2rem .55rem; border-radius: 1rem;
+    background: hsl(var(--primary) / .1); color: hsl(var(--primary)); font-size: .68rem;
   }
-  .link-about a {
-    font-size: 0.78rem;
-    color: hsl(var(--primary));
-    display: inline-flex;
-    min-height: 44px;
-    align-items: center;
+  .history-action[data-action='removed'] { color: #b97575; background: rgb(185 117 117 / .1); }
+  .link-about, .link-extra {
+    border: 1px solid hsl(var(--border)); border-radius: 1.3rem;
+    background: hsl(var(--background) / .84); padding: 1.5rem;
   }
+  .link-about { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2rem; margin: 1.5rem 0; }
+  .kicker { display: block; margin: 0 0 .5rem; font-size: .65rem; letter-spacing: .12em; color: hsl(var(--primary)); }
+  .link-about h2, .link-extra h2 { font-size: 1.16rem; font-weight: 650; margin: 0; }
+  .link-about p:not(.kicker), .link-extra > p:not(.kicker) {
+    font-size: .78rem; line-height: 1.8; color: hsl(var(--muted-foreground)); margin: .6rem 0 1rem;
+  }
+  .link-about a { font-size: .78rem; color: hsl(var(--primary)); display: inline-flex; min-height: 44px; align-items: center; }
   .link-about summary {
-    cursor: pointer;
-    font-size: 0.83rem;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    list-style: none;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    min-height: 44px; list-style: none; font-size: .83rem;
   }
   .link-about pre {
-    white-space: pre-wrap;
-    word-break: break-all;
-    font-size: 0.7rem;
-    line-height: 1.9;
-    padding: 0.8rem;
-    background: hsl(var(--muted));
-    border-radius: 0.7rem;
+    white-space: pre-wrap; word-break: break-all; line-height: 1.85;
+    font-size: .72rem; padding: .8rem; border-radius: .7rem; background: hsl(var(--muted));
   }
   .link-about button {
-    min-height: 44px;
-    font-size: 0.73rem;
-    padding: 0.5rem 0.7rem;
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.6rem;
-    color: hsl(var(--primary));
-    background: transparent;
-    cursor: pointer;
+    cursor: pointer; min-height: 44px; border-radius: .65rem;
+    padding: .5rem .8rem; border: 1px solid hsl(var(--border));
+    background: transparent; color: hsl(var(--primary)); font-size: .74rem;
   }
-  .link-about ul {
-    padding-left: 1rem;
-    font-size: 0.7rem;
-    line-height: 1.9;
-    color: hsl(var(--muted-foreground));
-    margin: 0.75rem 0;
-  }
-  .copy-result {
-    font-size: 0.7rem;
-    color: hsl(var(--primary));
-    margin-left: 0.5rem;
-  }
-  :is(a, button, input, summary):focus-visible {
-    outline: 2px solid hsl(var(--primary));
-    outline-offset: 3px;
-  }
-  @media (max-width: 700px) {
-    link-directory {
-      padding: 1rem;
-    }
-    .directory-tools {
-      align-items: stretch;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-    .link-search {
-      max-width: none;
-    }
-    .link-cards,
-    .link-about {
-      grid-template-columns: 1fr;
-    }
-    .link-about {
-      padding: 1.1rem;
-      gap: 1rem;
-    }
-    .links-page {
-      margin-top: 1rem;
-    }
-    .link-card {
-      padding: 0.9rem;
-    }
-  }
-
-  .link-health {
-    align-self: flex-start;
-    font-size: 0.63rem;
-    font-weight: 600;
-    color: hsl(var(--muted-foreground));
-  }
-  .link-health[data-health='healthy'] { color: hsl(142 50% 40%); }
-  .link-health[data-health='down'] { color: hsl(0 70% 54%); }
-  .link-monitor, .link-extra {
-    border: 1px solid hsl(var(--border));
-    border-radius: 1.3rem;
-    background: hsl(var(--background) / 0.88);
-    padding: 1.5rem;
-  }
-  .link-monitor { margin-top: 1.5rem; }
-  .link-monitor h2, .link-extra h2 { font-size: 1.15rem; font-weight: 600; }
-  .link-monitor header > p:not(.kicker), .link-extra > p:not(.kicker) {
-    font-size: 0.75rem;
-    line-height: 1.8;
-    color: hsl(var(--muted-foreground));
-    margin: 0.5rem 0 1rem;
-  }
-  .monitor-numbers {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-  .monitor-numbers > div {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.85rem;
-    border-radius: 0.8rem;
-    background: hsl(var(--muted) / 0.6);
-  }
-  .monitor-numbers strong { font-size: 1rem; font-weight: 650; }
-  .monitor-numbers span, .empty-note { font-size: 0.73rem; color: hsl(var(--muted-foreground)); }
-  .links-extras {
-    margin-top: 1.5rem;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-  .link-extra ul { padding: 0; margin: 0.6rem 0 0; list-style: none; }
-  .link-extra li {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    font-size: 0.73rem;
-    padding: 0.65rem 0;
-    border-bottom: 1px solid hsl(var(--border) / 0.6);
-  }
+  .link-about ul { padding-left: 1.1rem; margin: .7rem 0; color: hsl(var(--muted-foreground)); font-size: .72rem; line-height: 1.8; }
+  .copy-result { margin-left: .5rem; color: hsl(var(--primary)); font-size: .7rem; }
+  .rss-panel { margin-top: 1.5rem; }
+  .link-extra ul { padding: 0; margin: .7rem 0 0; list-style: none; }
+  .link-extra li { display: flex; align-items: baseline; flex-wrap: wrap; gap: .55rem; padding: .7rem 0; font-size: .76rem; border-bottom: 1px solid hsl(var(--border) / .7); }
   .link-extra li a { color: hsl(var(--foreground)); text-decoration: underline; text-decoration-color: hsl(var(--border)); }
-  .link-extra li > span, .link-extra time { font-size: 0.65rem; color: hsl(var(--muted-foreground)); }
-  .link-extra time { margin-left: auto; white-space: nowrap; }
+  .link-extra li span, .link-extra li time, .empty-note { font-size: .7rem; color: hsl(var(--muted-foreground)); }
+  .link-extra li time { margin-left: auto; }
+  :is(a, button, input, summary):focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; }
+  @media (max-width: 930px) { .link-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 700px) {
-    .links-extras { grid-template-columns: 1fr; }
-    .monitor-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .links-page { margin-top: 1rem; }
+    .directory-tools { flex-direction: column-reverse; align-items: stretch; gap: .35rem; }
+    .group-tabs { gap: 1rem; overflow-x: auto; flex-wrap: nowrap; }
+    .group-tabs [role='tab'] { white-space: nowrap; }
+    .link-search { flex: 0 0 auto; max-width: none; min-width: 0; width: 100%; margin-bottom: .4rem; }
+    .link-cards, .link-about { grid-template-columns: 1fr; }
+    .link-panel { padding: 1rem; border-radius: 1.1rem; }
+    .group-icon { width: 2.9rem; height: 2.9rem; }
+    .friend-tabs { width: 100%; gap: .1rem; justify-content: space-between; }
+    .friend-tabs [role='tab'] { padding: .5rem .4rem; font-size: .73rem; }
+    .link-about { gap: 1rem; padding: 1.15rem; }
+    .link-card { min-height: 94px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .link-card, .group-tabs [role='tab']::after { transition: none; }
+    .link-card:hover { transform: none; }
   }
 </style>
