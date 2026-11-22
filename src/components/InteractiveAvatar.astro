@@ -110,10 +110,9 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   @keyframes verification-enter { from { opacity: 0; } to { opacity: 1; } }
   @keyframes verification-spin { to { transform: rotate(360deg); } }
   /* Site-level motion preference must also disable decorative CSS motion. */
-  :global(html.motion-off) .avatar-aura,
-  :global(html.motion-off) .avatar-star,
-  
-  :global(html.motion-off) .avatar-orbit { transition: none; }
+  :global(html.motion-off) .avatar-star { animation: none !important; }
+  :global(html.motion-off) .avatar-orbit,
+  :global(html.motion-off) .avatar-prism { transition: none; }
   @media (prefers-reduced-motion: reduce) {
     :global(.verification-transition), :global(.verification-spinner) { animation: none; }
   }
