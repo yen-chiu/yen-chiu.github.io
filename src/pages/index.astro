@@ -221,9 +221,9 @@ const entries = [
           stopInk?.()
           stopInk = null
           motto.classList.add('is-exiting')
-          unlock()
           window.setTimeout(() => {
             motto.classList.remove('is-playing', 'is-exiting')
+            unlock()
           }, 750)
           motto.setAttribute('aria-hidden', 'true')
           motto.inert = true
@@ -244,7 +244,11 @@ const entries = [
           timer = window.setTimeout(finish, 7000)
           reduced.addEventListener('change', () => { if (motionReduced()) finish() }, { signal })
           signal.addEventListener('abort', () => { window.clearTimeout(timer); stopInk?.(); unlock() }, { once: true })
-        } else finish()
+        } else {
+          motto.classList.remove('is-playing', 'is-exiting')
+          motto.setAttribute('aria-hidden', 'true')
+          motto.inert = true
+        }
       }
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
       const measure = () => {
