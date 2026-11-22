@@ -135,34 +135,47 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     pointer-events: none;
     box-sizing: border-box;
   }
-  /* Fine silver-lilac prism: quiet at rest, no continuously moving beam. */
+  /* Frosted-glass avatar frame: translucent, cool and deliberately restrained. */
   .avatar-prism {
     z-index: 2;
-    inset: -3px;
-    border: 1px solid transparent;
-    background: linear-gradient(135deg, #ffffffd9, #b7a8d7aa 38%, #e8e2f2 68%, #a9b8d0d9) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    box-shadow: 0 0 0 1px #a995c51c;
-    transition: filter .3s ease, box-shadow .3s ease;
+    inset: -5px;
+    border: 1px solid rgba(255,255,255,.78);
+    background: linear-gradient(145deg,
+      rgba(255,255,255,.62) 0%,
+      rgba(220,226,239,.20) 28%,
+      rgba(194,180,222,.24) 58%,
+      rgba(255,255,255,.52) 100%);
+    -webkit-backdrop-filter: blur(8px) saturate(115%);
+    backdrop-filter: blur(8px) saturate(115%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.28),
+      0 2px 12px rgba(92,79,121,.09),
+      0 0 0 1px rgba(150,139,173,.16);
+    transition: background .25s ease, box-shadow .25s ease;
   }
   interactive-avatar:hover .avatar-prism,
   interactive-avatar:focus-within .avatar-prism {
-    filter: brightness(1.08);
-    box-shadow: 0 0 7px #c9b9e733;
+    background: linear-gradient(145deg,
+      rgba(255,255,255,.76),
+      rgba(218,225,239,.28) 42%,
+      rgba(194,180,222,.30) 70%,
+      rgba(255,255,255,.64));
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.42),
+      0 3px 15px rgba(92,79,121,.13),
+      0 0 0 1px rgba(150,139,173,.22);
   }
   .avatar-aura {
     z-index: -1;
-    inset: -13px;
-    background: radial-gradient(circle, #d7e7ff22 44%, #a8c7df19 58%, transparent 73%);
-    animation: avatar-breathe 6s ease-in-out infinite;
+    inset: -8px;
+    background: radial-gradient(circle, rgba(226,232,244,.18) 48%, transparent 74%);
+    opacity: .55;
   }
   .avatar-orbit {
     z-index: 2;
-    border: 1px solid #b9c8d94a;
-    opacity: .35;
+    inset: -7px;
+    border: 1px solid rgba(218,224,236,.42);
+    opacity: .5;
     transition: opacity .4s ease, border-color .4s ease;
   }
   .avatar-star {
@@ -228,13 +241,11 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     100% { transform: translateX(-50%) translate(24px, 7px); opacity: 0; }
   }
   @media (hover: none) {
-    .avatar-beam { animation-duration: 20s; }
     interactive-avatar:hover .avatar-star { animation: none; opacity: 0; }
     interactive-avatar:hover .avatar-orbit { opacity: .35; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .avatar-aura, .avatar-star, .avatar-beam { animation: none !important; }
-    .avatar-aura { opacity: .32; }
-    .avatar-orbit { transition: none; }
+    .avatar-star { animation: none !important; }
+    .avatar-aura, .avatar-orbit, .avatar-prism { transition: none; }
   }
 </style>
