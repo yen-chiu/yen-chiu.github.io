@@ -190,7 +190,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
               </summary>
               <ol>
                 {group.versions.map(version => <li>
-                  <a class='toc-link' href={`#ver-${group.gen}-${version.date}`} data-target={`ver-${group.gen}-${version.date}`}>{version.version}</a>
+                  <a class='toc-link' href={`#ver-${group.gen}-${version.date}`} data-target={`ver-${group.gen}-${version.date}`}><i class='toc-bar' aria-hidden='true'></i><span class='toc-label'>{version.version}</span></a>
                 </li>)}
               </ol>
             </details>)}
@@ -233,28 +233,29 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .version-toc {position:sticky;top:5rem;max-height:min(56vh,30rem);overflow:hidden;font-size:.7rem;padding-top:2.4rem;}
   .toc-title {display:flex;align-items:baseline;justify-content:space-between;gap:.4rem;font-size:.66rem;letter-spacing:.08em;color:hsl(var(--muted-foreground));margin:0 0 .6rem;}
   .toc-pos {font-size:.6rem;letter-spacing:0;font-variant-numeric:tabular-nums;color:hsl(var(--primary));}
-  .toc-wrap {display:grid;grid-template-columns:.22rem minmax(0,1fr);gap:.55rem;}
-  .toc-gauge {display:flex;flex-direction:column;gap:2px;height:calc(min(56vh,30rem) - 2.6rem);min-height:4rem;}
-  .toc-gauge .tick {flex:1 1 0;min-height:2px;border-radius:1px;background:hsl(var(--border));transition:background .2s ease;}
-  .toc-gauge .tick.done {background:hsl(var(--muted-foreground)/.5);}
-  .toc-gauge .tick.current {background:hsl(var(--primary));}
+  .toc-wrap {display:block;}
+  /* 左侧那列公共刻度已由「每条自带的进度条」取代，保留节点避免脚本报错 */
+  .toc-gauge {display:none;}
   .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;padding-bottom:.9rem;}
   /* 只在还有内容被卷起来的那一侧做渐隐，顶部一进来就别蒙住第一条 */
   .toc-body.can-up {mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem);}
   .toc-body.can-down {mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);}
   .toc-body.can-up.can-down {mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem,#000 calc(100% - .9rem),transparent 100%);}
-  .toc-group {margin-bottom:.55rem;}
-  .toc-group > summary {display:flex;align-items:baseline;gap:.3rem;padding:.15rem 0;cursor:pointer;list-style:none;color:hsl(var(--muted-foreground));}
+  .toc-group {margin-bottom:.5rem;}
+  .toc-group > summary {display:flex;align-items:baseline;gap:.3rem;padding:.15rem .4rem;cursor:pointer;list-style:none;color:hsl(var(--muted-foreground));}
   .toc-group > summary::-webkit-details-marker {display:none;}
   .toc-group > summary:hover {color:hsl(var(--primary));}
   .toc-group[open] > summary {color:hsl(var(--foreground));}
   .toc-gen {font-size:.62rem;border:1px solid hsl(var(--primary)/.3);border-radius:.25rem;padding:0 .22rem;color:hsl(var(--primary));}
   .toc-name {font-size:.64rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .toc-n {margin-left:auto;font-size:.6rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
-  .toc-group ol {list-style:none;margin:.25rem 0 0;padding:0;border-left:1px solid hsl(var(--border));}
-  .toc-body a {display:block;padding:.12rem .2rem .12rem .55rem;margin-left:-1px;border-left:1px solid transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.7;}
-  .toc-body a:hover {color:hsl(var(--primary));}
-  .toc-body a.is-current {color:hsl(var(--primary));border-left-color:hsl(var(--primary));}
+  .toc-group ol {list-style:none;margin:.25rem 0 0;padding:0;}
+  /* 每条版本自带一根竖向进度条，当前那条整块淡底高亮——对齐文章目录的样子 */
+  .toc-body a {display:flex;align-items:stretch;gap:.45rem;padding:.4rem .5rem;margin:0 0 2px;border-radius:.55rem;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.5;transition:background .18s ease,color .18s ease;}
+  .toc-body a:hover {color:hsl(var(--primary));background:hsl(var(--muted)/.45);}
+  .toc-bar {flex:0 0 3px;width:3px;border-radius:3px;background:linear-gradient(to bottom,hsl(var(--primary)) var(--toc-progress,0%),hsl(var(--border)) 0);transition:background .2s ease;}
+  .toc-body a.is-current {color:hsl(var(--primary));font-weight:600;background:hsl(var(--primary)/.09);}
+  .toc-body a.is-current .toc-bar {background:hsl(var(--primary));}
   .cl-actions {position:fixed;right:.9rem;bottom:1rem;z-index:62;display:flex;flex-direction:row;align-items:center;gap:0;padding:.28rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background)/.95);backdrop-filter:blur(10px);box-shadow:0 1px 2px hsl(var(--foreground)/.05),0 10px 24px -16px hsl(var(--foreground)/.45);opacity:0;transform:translateY(.4rem);pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
   .cl-actions.is-visible {opacity:1;transform:none;pointer-events:auto;}
   .cl-btn {display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;border:0;border-radius:999px;background:transparent;color:hsl(var(--muted-foreground));cursor:pointer;transition:color .18s ease,background .18s ease,width .26s cubic-bezier(.32,.72,0,1),opacity .2s ease,margin .26s cubic-bezier(.32,.72,0,1),transform .26s cubic-bezier(.32,.72,0,1);}
@@ -566,6 +567,16 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       if (firstLink) revealToc(firstLink, lastLink)
     }
     paintToc(visibleIds, firstLink)
+
+    // 每条目录自带进度条：已读到底的填满，正在读的按视口位置填一部分
+    const progressLine = vh * 0.55
+    blocks.forEach((block) => {
+      const rect = block.getBoundingClientRect()
+      const span = Math.max(1, rect.height)
+      const read = Math.min(span, Math.max(0, progressLine - rect.top))
+      const link = links.find((item) => item.dataset.target === block.id)
+      if (link) link.style.setProperty('--toc-progress', `${Math.round((read / span) * 100)}%`)
+    })
   }
 
   window.addEventListener('scroll', () => {
