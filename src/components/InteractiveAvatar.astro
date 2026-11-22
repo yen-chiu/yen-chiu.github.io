@@ -2,7 +2,7 @@
 const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.props
 ---
 
-<interactive-avatar data-variant={variant}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><span class='avatar-prism' aria-hidden='true'></span><span class='avatar-beam' aria-hidden='true'></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
+<interactive-avatar data-variant={variant}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><span class='avatar-prism' aria-hidden='true'></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
 <script>
   import { createAvatarTapCounter, FOCUS_URL } from '@/utils/avatar-easter-egg'
   class InteractiveAvatar extends HTMLElement {
@@ -112,7 +112,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   /* Site-level motion preference must also disable decorative CSS motion. */
   :global(html.motion-off) .avatar-aura,
   :global(html.motion-off) .avatar-star,
-  :global(html.motion-off) .avatar-beam { animation: none !important; }
+  
   :global(html.motion-off) .avatar-orbit { transition: none; }
   @media (prefers-reduced-motion: reduce) {
     :global(.verification-transition), :global(.verification-spinner) { animation: none; }
@@ -136,35 +136,24 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     pointer-events: none;
     box-sizing: border-box;
   }
-  /* The frame follows the circular avatar, never the outer profile card. */
+  /* Fine silver-lilac prism: quiet at rest, no continuously moving beam. */
   .avatar-prism {
     z-index: 2;
-    inset: -5px;
-    border: 3px solid transparent;
-    background: linear-gradient(145deg, #f3f9ffcc, #8198b477 35%, #c8c1e866 62%, #d6efffe0) border-box;
+    inset: -3px;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, #ffffffd9, #b7a8d7aa 38%, #e8e2f2 68%, #a9b8d0d9) border-box;
     -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
+    box-shadow: 0 0 0 1px #a995c51c;
+    transition: filter .3s ease, box-shadow .3s ease;
   }
-  .avatar-beam {
-    z-index: 3;
-    inset: -9px;
-    border: 2px solid transparent;
-    background: conic-gradient(from 0deg, transparent 0deg 292deg, #dbe8f000 308deg, #f5fbff 331deg, #a4bedb99 346deg, transparent 360deg) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    filter: drop-shadow(0 0 3px #c5e0ff77);
-    animation: avatar-prism-orbit 12s linear infinite;
+  interactive-avatar:hover .avatar-prism,
+  interactive-avatar:focus-within .avatar-prism {
+    filter: brightness(1.08);
+    box-shadow: 0 0 7px #c9b9e733;
   }
-  interactive-avatar:hover .avatar-beam,
-  interactive-avatar:focus-within .avatar-beam {
-    animation-duration: 5s;
-    filter: drop-shadow(0 0 5px #eff8ffcc);
-  }
-  @keyframes avatar-prism-orbit { to { transform: rotate(360deg); } }
   .avatar-aura {
     z-index: -1;
     inset: -13px;
