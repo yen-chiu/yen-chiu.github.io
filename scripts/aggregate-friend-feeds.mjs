@@ -47,18 +47,18 @@ function parseFeed(xml, friend) {
 }
 function alternateFeedUrls(html, base) {
   const urls = []
-  for (const match of html.matchAll(/<link\\b[^>]*>/gi)) {
-    const attrs = Object.fromEntries([...match[0].matchAll(/([\\w:-]+)\\s*=\\s*["']([^"']*)["']/g)]
+  for (const match of html.matchAll(/<link\b[^>]*>/gi)) {
+    const attrs = Object.fromEntries([...match[0].matchAll(/([\w:-]+)\s*=\s*["']([^"']*)["']/g)]
       .map(([, name, value]) => [name.toLowerCase(), value]))
-    if (!/\\balternate\\b/i.test(attrs.rel ?? '') ||
-      !/(application\\/(?:rss|atom)\\+xml|text\\/xml)/i.test(attrs.type ?? '')) continue
+    if (!/\balternate\b/i.test(attrs.rel ?? '') ||
+      !/(application\/(?:rss|atom)\+xml|text\/xml)/i.test(attrs.type ?? '')) continue
     const candidate = safeUrl(attrs.href, base)
     if (candidate) urls.push(candidate)
   }
   return [...new Set(urls)]
 }
 async function discoverFeedUrls(friend) {
-  if (typeof friend.rss === 'string' && /^https?:\\/\\//i.test(friend.rss)) return [friend.rss]
+  if (typeof friend.rss === 'string' && /^https?:\/\//i.test(friend.rss)) return [friend.rss]
   try {
     const response = await fetch(friend.link, {
       redirect: 'follow',
@@ -88,7 +88,7 @@ async function collect(friend) {
         if (Number(response.headers.get('content-length') ?? '0') > 1024 * 1024) throw new Error('Feed too large')
         const body = await response.text()
         if (body.length > 1024 * 1024) throw new Error('Feed too large')
-        if (!/<(?:rss|feed|rdf:RDF)\\b/i.test(body.slice(0, 2000))) throw new Error('Not RSS/Atom XML')
+        if (!/<(?:rss|feed|rdf:RDF)\b/i.test(body.slice(0, 2000))) throw new Error('Not RSS/Atom XML')
         const parsed = parseFeed(body, { ...friend, rss: feedUrl })
         if (!parsed.length) throw new Error('No valid RSS/Atom items')
         items.push(...parsed.slice(0, 4))
