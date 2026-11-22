@@ -36,14 +36,14 @@ jobs:
 
       - name: Install Playwright
         run: |
-          mkdir -p /tmp/iris-friend-link
-          bun add --cwd /tmp/iris-friend-link playwright@1.55.0
-          /tmp/iris-friend-link/node_modules/.bin/playwright install --with-deps chromium
+          mkdir -p /tmp/vesper-friend-link
+          bun add --cwd /tmp/vesper-friend-link playwright@1.55.0
+          /tmp/vesper-friend-link/node_modules/.bin/playwright install --with-deps chromium
 
       - name: Process friend request
         uses: actions/github-script@v7
         env:
-          NODE_PATH: /tmp/iris-friend-link/node_modules
+          NODE_PATH: /tmp/vesper-friend-link/node_modules
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
