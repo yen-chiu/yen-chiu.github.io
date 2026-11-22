@@ -1,0 +1,78 @@
+<share-qr-code class="share-qr">
+  <details>
+    <summary>扫码分享这篇文章 <span aria-hidden="true">⌄</span></summary>
+    <div class="share-qr-panel">
+      <div class="share-qr-canvas" role="img" aria-label="当前文章链接的二维码"></div>
+      <p class="share-qr-status" aria-live="polite">展开后生成当前文章的二维码。</p>
+      <a class="share-qr-link" href="" hidden>无法生成二维码，点击打开当前文章</a>
+    </div>
+  </details>
+</share-qr-code>
+<script>
+  class ShareQRCode extends HTMLElement {
+    connectedCallback() {
+      const details = this.querySelector('details')
+      const canvas = this.querySelector<HTMLElement>('.share-qr-canvas')
+      const status = this.querySelector<HTMLElement>('.share-qr-status')
+      const link = this.querySelector<HTMLAnchorElement>('.share-qr-link')
+      if (!details || !canvas || !status || !link) return
+      let pending = false
+      const onToggle = async () => {
+        if (!details.open || pending || canvas.childElementCount) return
+        pending = true
+        status.textContent = '正在生成二维码…'
+        try {
+          const qr = await loadQrScript()
+          if (!this.isConnected) return
+          new qr(canvas, { text: window.location.href.split('#')[0], width: 168, height: 168, correctLevel: qr.CorrectLevel.M })
+          status.textContent = '使用手机扫码即可打开本文。'
+        } catch {
+          status.textContent = '二维码暂时无法加载，可直接打开文章链接。'
+          link.href = window.location.href
+          link.hidden = false
+        } finally {
+          pending = false
+        }
+      }
+      details.addEventListener('toggle', onToggle)
+      this.addEventListener('astro:before-swap', () => details.removeEventListener('toggle', onToggle), { once: true })
+    }
+  }
+  type QRConstructor = (new (element: HTMLElement, options: Record<string, unknown>) => unknown) & { CorrectLevel: { M: number } }
+  let loading: Promise<QRConstructor> | undefined
+  const loadQrScript = (): Promise<QRConstructor> => {
+    const existing = (window as typeof window & { QRCode?: QRConstructor }).QRCode
+    if (existing) return Promise.resolve(existing)
+    if (loading) return loading
+    loading = new Promise<QRConstructor>((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js'
+      script.async = true
+      script.onload = () => {
+        const ctor = (window as typeof window & { QRCode?: QRConstructor }).QRCode
+        if (ctor) resolve(ctor)
+        else reject(new Error('QRCode script did not expose its constructor'))
+      }
+      script.onerror = () => reject(new Error('QRCode script unavailable'))
+      document.head.appendChild(script)
+    }).catch(error => {
+      loading = undefined
+      throw error
+    })
+    return loading
+  }
+  if (!customElements.get('share-qr-code')) customElements.define('share-qr-code', ShareQRCode)
+</script>
+<style>
+  .share-qr {display:block;}
+  details {display:block;width:fit-content;max-width:100%;border:1px solid hsl(var(--border));border-radius:.8rem;background:hsl(var(--background)/.75);}
+  summary {display:flex;align-items:center;gap:.65rem;min-height:44px;padding:.55rem .85rem;cursor:pointer;list-style:none;font-size:.79rem;color:hsl(var(--muted-foreground));}
+  summary::-webkit-details-marker {display:none;}
+  summary:hover,summary:focus-visible {color:hsl(var(--primary));}
+  summary:focus-visible {outline:2px solid hsl(var(--primary));outline-offset:3px;border-radius:.8rem;}
+  .share-qr-panel {display:grid;justify-items:center;gap:.65rem;padding:.75rem 1rem 1rem;border-top:1px solid hsl(var(--border));}
+  .share-qr-canvas {display:grid;place-items:center;min-height:168px;min-width:168px;background:#fff;border-radius:.4rem;}
+  .share-qr-canvas :global(img),.share-qr-canvas :global(canvas) {max-width:100%;height:auto;}
+  .share-qr-status,.share-qr-link {margin:0;font-size:.7rem;color:hsl(var(--muted-foreground));text-align:center;}
+  .share-qr-link {color:hsl(var(--primary));}
+</style>
