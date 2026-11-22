@@ -1,14 +1,14 @@
 {
   "site": {
-    "name": "灵的梦境",
-    "url": "https://lemonadorable.github.io/",
-    "friendPage": "https://lemonadorable.github.io/links/",
-    "avatar": "https://lemonadorable.github.io/favicon/favicon.gif",
-    "description": "愿美梦成真"
+    "name": "Wendell · Vesper",
+    "url": "https://yenchiu.com/",
+    "friendPage": "https://yenchiu.com/links/",
+    "avatar": "https://yenchiu.com/favicon/wendell-avatar-192.png",
+    "description": "读书，买花，长大。"
   },
   "deployWorkflow": "deploy.yml",
   "linksFile": "public/links.json",
-  "targetGroup": "cf-links",
+  "targetGroup": "friends",
   "labels": {
     "request": "friend-link",
     "checking": "friend-link: checking",
