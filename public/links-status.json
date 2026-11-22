@@ -1,9 +1,100 @@
 {
-  "checkedAt": null,
+  "checkedAt": "2026-11-22T19:33:26.424Z",
   "summary": {
-    "healthy": 0,
+    "healthy": 9,
     "suspect": 0,
     "down": 0
   },
-  "links": []
+  "links": [
+    {
+      "url": "https://yenchiu.com/",
+      "name": "我的博客",
+      "group": "own",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://github.com/yen-chiu",
+      "name": "GitHub · yen-chiu",
+      "group": "own",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://github.com/yen-chiu/folio",
+      "name": "Folio",
+      "group": "own",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://fuwari.vercel.app/",
+      "name": "Fuwari",
+      "group": "references",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://mizuki.mysqil.com/",
+      "name": "Mizuki",
+      "group": "references",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://astro.build/",
+      "name": "Astro",
+      "group": "references",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://996.icu/",
+      "name": "996.icu",
+      "group": "references",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://996.ninja/",
+      "name": "996忍者",
+      "group": "references",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    },
+    {
+      "url": "https://lemonadorable.github.io/",
+      "name": "灵的梦境",
+      "group": "friends",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-22T19:33:26.424Z"
+    }
+  ]
 }
