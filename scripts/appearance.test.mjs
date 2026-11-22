@@ -31,6 +31,13 @@ assert.equal(two.saved.get('chat-unrelated'),'preserve')
 two.dataset.wallpaper='wrong';two.document.dispatchEvent(new Event('astro:page-load'))
 assert.equal(two.dataset.wallpaper,'banner')
 two.again();assert.equal(two.api.get().hue,267)
+// 银墨开场是 WebGL 效果，默认关闭，只有访客自己打开才会加载着色器。
+assert.equal(one.api.get().silverInk,false)
+one.api.set({silverInk:true})
+const ink=boot(one.saved)
+assert.equal(ink.api.get().silverInk,true)
+ink.api.reset()
+assert.equal(ink.api.get().silverInk,false)
 for(const value of ['{broken','null','42','{"hue":"invalid","layout":"unknown"}']){
  const safe=boot(new Map([['wendell-appearance-v1',value]]))
  assert.equal(safe.api.get().hue,267);assert.equal(safe.dataset.postLayout,'list')
