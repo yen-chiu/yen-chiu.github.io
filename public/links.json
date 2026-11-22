@@ -33,13 +33,6 @@
       "desc": "开源主题、常读内容和有趣的网站。",
       "link_list": [
         {
-          "name": "Iris · 灵的梦境",
-          "intro": "本站使用的 Astro 主题与设计来源",
-          "link": "https://lemonadorable.github.io/",
-          "avatar": "",
-          "mark": "I"
-        },
-        {
           "name": "Fuwari",
           "intro": "横幅与主题颜色交互的参考",
           "link": "https://fuwari.vercel.app/",
@@ -80,7 +73,14 @@
       "id_name": "friends",
       "title": "友好邻居",
       "desc": "慢慢认识，认真收录。",
-      "link_list": []
+      "link_list": [
+        {
+          "name": "灵的梦境",
+          "intro": "愿美梦成真",
+          "link": "https://lemonadorable.github.io/",
+          "avatar": "https://lemonadorable.github.io/favicon/favicon.gif"
+        }
+      ]
     }
   ]
 }
