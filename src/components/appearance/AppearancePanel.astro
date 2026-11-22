@@ -11,6 +11,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
   <fieldset><legend>内页背景</legend><div class='options wallpaper'>{['banner','fullscreen','overlay'].map((value,i) => <button type='button' data-wallpaper-choice={value} aria-pressed={i===0?'true':'false'}>{['纯色','壁纸','柔化'][i]}</button>)}</div><p class='setting-hint'>用于博客、文章、归档等内页，不改变首页封面。</p></fieldset>
   <fieldset><legend>文章布局</legend><div class='options'><button type='button' data-layout-choice='list' aria-pressed='true'>列表</button><button type='button' data-layout-choice='grid' aria-pressed='false'>网格</button></div></fieldset>
   <fieldset><legend>动画效果</legend><div class='options'>{['system','always','reduced'].map((value,i) => <button type='button' data-motion-choice={value} aria-pressed={i===0?'true':'false'}>{['跟随系统','总是开启','减少动画'][i]}</button>)}</div><p class='setting-hint'>跟随系统会尊重操作系统的「减少动态效果」；总是开启则保留打字机、卡片浮现与点击烟花等动效。</p></fieldset>
+  <fieldset><legend>首页开场</legend><label class='switch'>银墨开场动画<input type='checkbox' data-silver-ink-choice /></label><p class='setting-hint'>默认关闭。开启后，进入首页时播放一次银墨动画；关闭时不会加载或初始化 WebGL。</p></fieldset>
   <fieldset><legend>首页封面</legend><label class='switch'>显示封面插画<input type='checkbox' data-cover-choice checked /></label><label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label><label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label><p class='setting-hint'>首页保留全屏入口，下滑后收起。</p></fieldset>
   <button class='reset' type='button' data-appearance-reset>恢复默认外观</button>
 </appearance-panel>
@@ -33,6 +34,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
         this.querySelector<HTMLInputElement>('[data-cover-choice]')!.checked=s.cover
         this.querySelector<HTMLInputElement>('[data-title-choice]')!.checked=s.title
         this.querySelector<HTMLInputElement>('[data-waves-choice]')!.checked=s.waves
+        this.querySelector<HTMLInputElement>('[data-silver-ink-choice]')!.checked=s.silverInk
       }
       this.addEventListener('click',e=>{
         const b=(e.target as Element).closest<HTMLButtonElement>('button');if(!b)return
@@ -50,6 +52,7 @@ const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},
         if(input.hasAttribute('data-cover-choice'))window.wendellAppearance?.set({cover:input.checked})
         if(input.hasAttribute('data-title-choice'))window.wendellAppearance?.set({title:input.checked})
         if(input.hasAttribute('data-waves-choice'))window.wendellAppearance?.set({waves:input.checked})
+        if(input.hasAttribute('data-silver-ink-choice'))window.wendellAppearance?.set({silverInk:input.checked})
       },{signal})
       window.addEventListener('wendell:appearance',sync,{signal});sync()
     }

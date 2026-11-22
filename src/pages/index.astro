@@ -145,7 +145,6 @@ const entries = [
 </BaseLayout>
 <script>
   import { fadeProgress, springStep } from '@/utils/hero-motion'
-  import { playSilverInk } from '@/utils/silver-ink-opening.js'
 
   class LandingHero extends HTMLElement {
     private controller?: AbortController
@@ -201,7 +200,7 @@ const entries = [
       const motto = this.querySelector<HTMLElement>('.opening-motto')
       if (motto) {
         const canvas = motto.querySelector<HTMLCanvasElement>('.opening-ink')
-        let shouldPlay = !motionReduced()
+        let shouldPlay = window.wendellAppearance?.get().silverInk === true && !motionReduced()
         try {
           if (sessionStorage.getItem('vesper-opening-motto-seen') === '1') shouldPlay = false
         } catch {
@@ -238,10 +237,18 @@ const entries = [
           motto.classList.add('is-playing')
           motto.setAttribute('aria-hidden', 'false')
           motto.inert = false
-          stopInk = playSilverInk(canvas, signal)
-          try { sessionStorage.setItem('vesper-opening-motto-seen', '1') } catch {}
+          // Load the shader module only after the visitor explicitly enables this effect.
+          void import('@/utils/silver-ink-opening.js').then(({ playSilverInk }) => {
+            if (signal.aborted || finishing) return
+            stopInk = playSilverInk(canvas, signal)
+            if (!stopInk) { finish(); return }
+            try { sessionStorage.setItem('vesper-opening-motto-seen', '1') } catch {}
+            timer = window.setTimeout(finish, 7000)
+          }).catch(error => {
+            console.warn('Silver ink opening could not be loaded:', error)
+            finish()
+          })
           motto.querySelector<HTMLButtonElement>('.opening-skip')?.addEventListener('click', finish, { signal })
-          timer = window.setTimeout(finish, 7000)
           reduced.addEventListener('change', () => { if (motionReduced()) finish() }, { signal })
           signal.addEventListener('abort', () => { window.clearTimeout(timer); stopInk?.(); unlock() }, { once: true })
         } else {
