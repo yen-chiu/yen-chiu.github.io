@@ -18,7 +18,8 @@ const info = `名称：Wendell
 interface HealthEntry { url: string; state: 'healthy' | 'suspect' | 'down'; code: number | null }
 interface HistoryEntry { action: string; name: string; url: string; date: string; commit: string }
 interface FeedEntry { title: string; url: string; site: string; publishedAt: string | null }
-const healthByUrl = new Map((health.links as HealthEntry[]).map(item => [item.url, item]))
+const healthSnapshot = health as { checkedAt: string | null; summary: { healthy: number; suspect: number; down: number }; links: HealthEntry[] }
+const healthByUrl = new Map(healthSnapshot.links.map(item => [item.url, item]))
 const history = historyData as HistoryEntry[]
 const posts = feedData.items as FeedEntry[]
 const friendInfo = [
@@ -162,12 +163,12 @@ const friendInfo = [
         <h2 id='link-monitor-heading'>链接健康</h2>
         <p>每日自动检查，连续三次失败才标记为异常；一次网络波动不会直接移除友链。</p>
       </header>
-      {health.checkedAt ? (
+      {healthSnapshot.checkedAt ? (
         <div class='monitor-numbers'>
-          <div><strong>{health.summary.healthy}</strong><span>正常</span></div>
-          <div><strong>{health.summary.suspect}</strong><span>待复核</span></div>
-          <div><strong>{health.summary.down}</strong><span>异常</span></div>
-          <div><strong>{new Date(health.checkedAt).toLocaleDateString('zh-CN')}</strong><span>最近检查</span></div>
+          <div><strong>{healthSnapshot.summary.healthy}</strong><span>正常</span></div>
+          <div><strong>{healthSnapshot.summary.suspect}</strong><span>待复核</span></div>
+          <div><strong>{healthSnapshot.summary.down}</strong><span>异常</span></div>
+          <div><strong>{new Date(healthSnapshot.checkedAt).toLocaleDateString('zh-CN')}</strong><span>最近检查</span></div>
         </div>
       ) : (
         <p class='empty-note'>等待首次定时检查。当前没有可用于判断链接状态的检测记录。</p>
