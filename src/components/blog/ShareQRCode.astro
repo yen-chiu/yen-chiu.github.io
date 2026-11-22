@@ -35,7 +35,6 @@
         }
       }
       details.addEventListener('toggle', onToggle)
-      this.addEventListener('astro:before-swap', () => details.removeEventListener('toggle', onToggle), { once: true })
     }
   }
   type QRConstructor = (new (element: HTMLElement, options: Record<string, unknown>) => unknown) & { CorrectLevel: { M: number } }
