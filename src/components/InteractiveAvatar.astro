@@ -140,6 +140,10 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     z-index: 2;
     inset: -5px;
     border: 1px solid rgba(255,255,255,.78);
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
     background: linear-gradient(145deg,
       rgba(255,255,255,.62) 0%,
       rgba(220,226,239,.20) 28%,
