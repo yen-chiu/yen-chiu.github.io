@@ -568,14 +568,21 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     }
     paintToc(visibleIds, firstLink)
 
-    // 每条目录自带进度条：已读到底的填满，正在读的按视口位置填一部分
+    // 每条目录自带进度条：按版本顺序单调推进——当前那条之前的填满、之后的留空，
+    // 当前那条按它自己滚过视口中线的比例填。收起的版本块没有布局，不能靠 rect 判断。
+    const currentIndex = firstBlock ? blocks.indexOf(firstBlock) : 0
     const progressLine = vh * 0.55
-    blocks.forEach((block) => {
-      const rect = block.getBoundingClientRect()
-      const span = Math.max(1, rect.height)
-      const read = Math.min(span, Math.max(0, progressLine - rect.top))
+    blocks.forEach((block, index) => {
       const link = links.find((item) => item.dataset.target === block.id)
-      if (link) link.style.setProperty('--toc-progress', `${Math.round((read / span) * 100)}%`)
+      if (!link) return
+      let percent = 0
+      if (index < currentIndex) percent = 100
+      else if (index === currentIndex) {
+        const rect = block.getBoundingClientRect()
+        const span = Math.max(1, rect.height)
+        percent = Math.round(Math.min(1, Math.max(0, (progressLine - rect.top) / span)) * 100)
+      }
+      link.style.setProperty('--toc-progress', `${percent}%`)
     })
   }
 
