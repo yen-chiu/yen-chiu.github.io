@@ -135,53 +135,21 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     pointer-events: none;
     box-sizing: border-box;
   }
-  /* Frosted-glass avatar frame: translucent, cool and deliberately restrained. */
+  /* Thin cool-silver edge: no purple glow, thick ring or frosted fill. */
   .avatar-prism {
     z-index: 2;
-    inset: -5px;
-    border: 1px solid rgba(255,255,255,.78);
+    inset: -2px;
+    border: 1px solid rgba(208,219,232,.88);
+    background: linear-gradient(135deg, rgba(255,255,255,.94), rgba(178,193,211,.75) 52%, rgba(233,238,245,.94)) border-box;
     -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
-    background: linear-gradient(145deg,
-      rgba(255,255,255,.62) 0%,
-      rgba(220,226,239,.20) 28%,
-      rgba(194,180,222,.24) 58%,
-      rgba(255,255,255,.52) 100%);
-    -webkit-backdrop-filter: blur(8px) saturate(115%);
-    backdrop-filter: blur(8px) saturate(115%);
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.28),
-      0 2px 12px rgba(92,79,121,.09),
-      0 0 0 1px rgba(150,139,173,.16);
-    transition: background .25s ease, box-shadow .25s ease;
+    transition: filter .22s ease;
   }
   interactive-avatar:hover .avatar-prism,
-  interactive-avatar:focus-within .avatar-prism {
-    background: linear-gradient(145deg,
-      rgba(255,255,255,.76),
-      rgba(218,225,239,.28) 42%,
-      rgba(194,180,222,.30) 70%,
-      rgba(255,255,255,.64));
-    box-shadow:
-      inset 0 0 0 1px rgba(255,255,255,.42),
-      0 3px 15px rgba(92,79,121,.13),
-      0 0 0 1px rgba(150,139,173,.22);
-  }
-  .avatar-aura {
-    z-index: -1;
-    inset: -8px;
-    background: radial-gradient(circle, rgba(226,232,244,.18) 48%, transparent 74%);
-    opacity: .55;
-  }
-  .avatar-orbit {
-    z-index: 2;
-    inset: -7px;
-    border: 1px solid rgba(218,224,236,.42);
-    opacity: .5;
-    transition: opacity .4s ease, border-color .4s ease;
-  }
+  interactive-avatar:focus-within .avatar-prism { filter: brightness(1.07); }
+  .avatar-aura,.avatar-orbit { display:none; }
   .avatar-star {
     position: absolute;
     top: -2px;
@@ -209,7 +177,7 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     padding: 0;
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 0 0 1px hsl(var(--primary) / .12);
+    box-shadow: none;
   }
   interactive-avatar:hover .avatar-orbit,
   interactive-avatar:focus-within .avatar-orbit {
