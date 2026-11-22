@@ -7,6 +7,7 @@ export interface AppearanceSettings {
   title: boolean
   waves: boolean
   motion: 'system' | 'always' | 'reduced'
+  silverInk: boolean
 }
 declare global {
   interface Window {
