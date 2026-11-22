@@ -36,7 +36,7 @@
 }
 ```
 
-RSS 地址是由维护者审核后手动添加的；不自动抓取或猜测。`scripts/aggregate-friend-feeds.mjs` 每次最多采集各源 4 篇，合并后展示最多 18 篇，网站未收录 RSS 时显示空态。网络读取失败不影响其他站点。
+RSS 地址可以由维护者审核后显式填写（优先使用）；未填写时，`scripts/aggregate-friend-feeds.mjs` 会读取友链首页公开的 `<link rel="alternate" type="application/rss+xml">` / Atom 声明，并试探站点根路径下的常见订阅地址。**候选地址必须返回可解析的 RSS/Atom 文章才会收录**，不会将猜测链接当作订阅结果，也不会改写 `links.json`。每个站点最多采集 4 篇，汇总最多展示 18 篇；无法找到有效订阅源时保持空态。网络读取失败不影响其他站点。每日定时任务负责刷新 `public/links-feed.json`；仅提交代码不会立即填充旧快照。
 
 ## 变更记录
 
