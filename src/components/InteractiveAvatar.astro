@@ -129,18 +129,23 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
   .avatar-orbit,
   .avatar-prism,
   .avatar-beam,
-  /* Silver-prism frame: a static glass-metal ring with one moving highlight. */
+  .avatar-ripple {
+    position: absolute;
+    inset: -9px;
+    border-radius: 50%;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+  /* The frame follows the circular avatar, never the outer profile card. */
   .avatar-prism {
     z-index: 2;
     inset: -5px;
     border: 3px solid transparent;
-    background:
-      linear-gradient(145deg, #f3f9ffcc, #8198b477 35%, #c8c1e866 62%, #d6efffe0) border-box;
+    background: linear-gradient(145deg, #f3f9ffcc, #8198b477 35%, #c8c1e866 62%, #d6efffe0) border-box;
     -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
-    box-shadow: 0 0 14px #b9d8f322;
   }
   .avatar-beam {
     z-index: 3;
@@ -160,12 +165,6 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
     filter: drop-shadow(0 0 5px #eff8ffcc);
   }
   @keyframes avatar-prism-orbit { to { transform: rotate(360deg); } }
-  .avatar-ripple {
-    position: absolute;
-    inset: -9px;
-    border-radius: 50%;
-    pointer-events: none;
-  }
   .avatar-aura {
     z-index: -1;
     inset: -13px;
