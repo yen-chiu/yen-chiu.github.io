@@ -518,30 +518,40 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     updateTocFade()
   }
 
-  const revealToc = (firstLink: HTMLElement, _lastLink: HTMLElement | null) => {
+  const revealToc = (firstLink: HTMLElement) => {
     const group = firstLink.closest<HTMLDetailsElement>('details.toc-group')
     document.querySelectorAll<HTMLDetailsElement>('.toc-group').forEach((item) => {
       item.open = item === group
-    })
-    if (!tocBody) return
-    // 让「正在读的那一条」尽量停在目录框的中间；只有到了开头/结尾才贴边。
-    const target = firstLink ?? _lastLink
-    if (!target) return
-    requestAnimationFrame(() => {
-      const max = tocBody.scrollHeight - tocBody.clientHeight
-      if (max <= 2) return
-      const linkRect = target.getBoundingClientRect()
-      const bodyRect = tocBody.getBoundingClientRect()
-      const delta = linkRect.top - bodyRect.top - (bodyRect.height - linkRect.height) / 2
-      const next = Math.max(0, Math.min(max, tocBody.scrollTop + delta))
-      if (Math.abs(next - tocBody.scrollTop) < 1) return
-      tocBody.scrollTo({ top: next, behavior: 'auto' })
-      updateTocFade()
     })
   }
 
   let tocRaf = 0
   let tocKey = ''
+  let tocUserScrolledAt = 0
+  let tocUnlockTimer = 0
+
+  // Match the article TOC: keep the current visible version centered in the
+  // directory viewport, but never fight the user's own directory scrolling.
+  const centerCurrentTocItem = (target: HTMLElement | null) => {
+    if (!tocBody || !target || Date.now() - tocUserScrolledAt < 1200) return
+    const max = tocBody.scrollHeight - tocBody.clientHeight
+    if (max <= 2) return
+    const itemRect = target.getBoundingClientRect()
+    const bodyRect = tocBody.getBoundingClientRect()
+    const offset = itemRect.top - bodyRect.top + tocBody.scrollTop
+    const next = Math.max(0, Math.min(max, offset - (tocBody.clientHeight - itemRect.height) / 2))
+    if (Math.abs(tocBody.scrollTop - next) < 4) return
+    tocBody.scrollTop = next
+    updateTocFade()
+  }
+
+  const markTocUserScroll = () => {
+    tocUserScrolledAt = Date.now()
+    window.clearTimeout(tocUnlockTimer)
+    tocUnlockTimer = window.setTimeout(() => {
+      syncToc()
+    }, 1250)
+  }
   const syncToc = () => {
     tocRaf = 0
     const vh = window.innerHeight
@@ -581,11 +591,15 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     const key = visible.map((block) => block.id).join('|')
     if (key !== tocKey) {
       tocKey = key
-      if (firstLink) revealToc(firstLink, lastLink)
+      if (firstLink) revealToc(firstLink)
     }
     paintToc(links, visibleIds, firstLink)
+    centerCurrentTocItem(firstLink)
   }
 
+  tocBody?.addEventListener('wheel', markTocUserScroll, { passive: true })
+  tocBody?.addEventListener('touchmove', markTocUserScroll, { passive: true })
+  tocBody?.addEventListener('pointerdown', markTocUserScroll)
   window.addEventListener('scroll', () => {
     if (!tocRaf) tocRaf = requestAnimationFrame(syncToc)
   }, { passive: true })
