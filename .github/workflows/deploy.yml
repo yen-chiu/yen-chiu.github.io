@@ -35,7 +35,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: node --test scripts/links-feature.test.mjs && node --test scripts/avatar-easter-egg.test.mjs scripts/avatar-transition.test.mjs && node --import ./scripts/ts-register.mjs --test scripts/herbarium.test.mjs && npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built && node scripts/seo-audit.test.mjs
+        run: node --check scripts/check-friend-links.mjs && node --check scripts/aggregate-friend-feeds.mjs && node --check scripts/build-links-history.mjs && node --check .github/scripts/process-friend-request.cjs && node --test scripts/links-feature.test.mjs && node --test scripts/avatar-easter-egg.test.mjs scripts/avatar-transition.test.mjs && node --import ./scripts/ts-register.mjs --test scripts/herbarium.test.mjs && npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built && node scripts/seo-audit.test.mjs
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
