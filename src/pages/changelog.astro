@@ -509,21 +509,27 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     updateTocFade()
   }
 
-  const revealToc = (firstLink: HTMLElement, _lastLink: HTMLElement | null) => {
+  const revealToc = (firstLink: HTMLElement, lastLink: HTMLElement | null) => {
     const group = firstLink.closest<HTMLDetailsElement>('details.toc-group')
     document.querySelectorAll<HTMLDetailsElement>('.toc-group').forEach((item) => {
       item.open = item === group
     })
     if (!tocBody) return
-    // 让「正在读的那一条」尽量停在目录框的中间；只有到了开头/结尾才贴边。
-    const target = firstLink ?? _lastLink
-    if (!target) return
     requestAnimationFrame(() => {
       const max = tocBody.scrollHeight - tocBody.clientHeight
       if (max <= 2) return
-      const linkRect = target.getBoundingClientRect()
       const bodyRect = tocBody.getBoundingClientRect()
-      const delta = linkRect.top - bodyRect.top - (bodyRect.height - linkRect.height) / 2
+      const firstRect = firstLink.getBoundingClientRect()
+      if (!firstRect.height) return
+      const lastRect = lastLink && lastLink.isConnected ? lastLink.getBoundingClientRect() : null
+      // 亮起的那一段高度；同一组里可见的多条会连成一段，跨组或收起时为 0。
+      const spanHeight = lastRect && lastRect.height && lastRect.top >= firstRect.top
+        ? Math.min(lastRect.bottom - firstRect.top, bodyRect.height)
+        : firstRect.height
+      // 亮起的太多（超过目录框）就置顶，否则把这一段居中，滚动时一条一条往上推。
+      const delta = spanHeight > bodyRect.height - 24
+        ? firstRect.top - bodyRect.top - 8
+        : firstRect.top - bodyRect.top - (bodyRect.height - spanHeight) / 2
       const next = Math.max(0, Math.min(max, tocBody.scrollTop + delta))
       if (Math.abs(next - tocBody.scrollTop) < 1) return
       tocBody.scrollTo({ top: next, behavior: 'auto' })
@@ -537,23 +543,14 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     tocRaf = 0
     const vh = window.innerHeight
     const blocks = [...document.querySelectorAll<HTMLElement>('details.version-block')]
-    // 只有展开的版本才谈得上「正在读」；收起时每行只是目录条目，
-    // 全高亮会把半个目录点亮，所以这种情况下退回单条跟随。
+    // 只点亮「已经进到视口、内容还没滚出去」的那些版本：
+    // 标题从下面冒头 → 第一条亮；最后一条的标题顶到屏幕最上面 → 最后一条亮；
+    // 最后一条整体滚出视口 → 全部熄灭（不再退回到"刚翻过去的那条"）。
+    // 注意：版本块是 details，收起时高度就是标题那一行，仍然有布局，不能按 open 过滤。
     let visible = blocks.filter((block) => {
-      if (!(block instanceof HTMLDetailsElement) || !block.open) return false
       const rect = block.getBoundingClientRect()
-      return rect.top < vh - 60 && rect.bottom > 60
+      return rect.top < vh && rect.bottom > 0
     })
-    // 滑到底时页脚占满视口，没有版本块在框里——退回到「最后一条已经翻过去的版本」，
-    // 这样目录不会在页尾突然空掉。
-    if (!visible.length) {
-      const passed = blocks.filter((block) => block.getBoundingClientRect().top <= vh - 60)
-      if (passed.length) visible = [passed[passed.length - 1]]
-      else {
-        const upcoming = blocks.find((block) => block.getBoundingClientRect().top < vh)
-        if (upcoming) visible = [upcoming]
-      }
-    }
     const visibleIds = new Set(visible.map((block) => block.id))
     const links = [...document.querySelectorAll<HTMLElement>('a.toc-link')]
     links.forEach((link) => link.classList.toggle('is-current', visibleIds.has(link.dataset.target ?? '')))
@@ -568,16 +565,17 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     }
     paintToc(visibleIds, firstLink)
 
-    // 每条目录自带进度条：按版本顺序单调推进——当前那条之前的填满、之后的留空，
-    // 当前那条按它自己滚过视口中线的比例填。收起的版本块没有布局，不能靠 rect 判断。
-    const currentIndex = firstBlock ? blocks.indexOf(firstBlock) : 0
+    // 每条目录自带进度条：按版本顺序单调推进——已经读完的填满、还没读到的留空，
+    // 正在读的这一段按各自位置填。收起的版本块没有布局，不能靠 rect 判断，所以用下标。
     const progressLine = vh * 0.55
+    const startIndex = firstBlock ? blocks.indexOf(firstBlock) : 0
+    const endIndex = lastBlock ? blocks.indexOf(lastBlock) : -1
     blocks.forEach((block, index) => {
       const link = links.find((item) => item.dataset.target === block.id)
       if (!link) return
       let percent = 0
-      if (index < currentIndex) percent = 100
-      else if (index === currentIndex) {
+      if (index < startIndex) percent = 100
+      else if (index <= endIndex) {
         const rect = block.getBoundingClientRect()
         const span = Math.max(1, rect.height)
         percent = Math.round(Math.min(1, Math.max(0, (progressLine - rect.top) / span)) * 100)
