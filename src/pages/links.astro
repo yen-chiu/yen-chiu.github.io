@@ -4,13 +4,30 @@ import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
 import { sitePath } from '@/utils/site-path'
 
 import links from '../../public/links.json'
+import health from '../../public/links-status.json'
+import feedData from '../../public/links-feed.json'
+import historyData from '../../public/links-history.json'
+import FriendApplyGuide from '@/components/links/FriendApplyGuide.astro'
 
 const groups = links.friends,
   total = groups.reduce((n, g) => n + g.link_list.length, 0)
-const info = `名称：Wendell
+const info = `名称：Wendell · Vesper
 简介：读书，买花，长大。
 博客：https://yenchiu.com/
 头像：https://yenchiu.com/favicon/wendell-avatar-192.png`
+interface HealthEntry { url: string; state: 'healthy' | 'suspect' | 'down'; code: number | null }
+interface HistoryEntry { action: string; name: string; url: string; date: string; commit: string }
+interface FeedEntry { title: string; url: string; site: string; publishedAt: string | null }
+const healthSnapshot = health as { checkedAt: string | null; summary: { healthy: number; suspect: number; down: number }; links: HealthEntry[] }
+const healthByUrl = new Map(healthSnapshot.links.map(item => [item.url, item]))
+const history = historyData as HistoryEntry[]
+const posts = feedData.items as FeedEntry[]
+const friendInfo = [
+  { name: '名称', val: 'Wendell · Vesper' },
+  { name: '简介', val: '读书，买花，长大。' },
+  { name: '博客', val: 'https://yenchiu.com/' },
+  { name: '头像', val: 'https://yenchiu.com/favicon/wendell-avatar-192.png' }
+]
 ---
 
 <BaseLayout meta={{ title: '链接', description: '我的网络角落、开源主题和友好邻居。' }}>
@@ -88,6 +105,7 @@ const info = `名称：Wendell
                           height='44'
                           alt=''
                           loading='lazy'
+                          data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')}
                         />
                       ) : 'mark' in link ? (
                         link.mark
@@ -99,6 +117,11 @@ const info = `名称：Wendell
                       <strong>{link.name}</strong>
                       <small>{link.intro}</small>
                       <span>{new URL(link.link).hostname}</span>
+                      {healthByUrl.get(link.link) && (
+                        <span class='link-health' data-health={healthByUrl.get(link.link)?.state}>
+                          {healthByUrl.get(link.link)?.state === 'healthy' ? '正常' : healthByUrl.get(link.link)?.state === 'down' ? '访问异常' : '待复核'}
+                        </span>
+                      )}
                     </span>
                     <span class='link-arrow' aria-hidden='true'>
                       ↗
@@ -127,12 +150,69 @@ const info = `名称：Wendell
           id='site-link-info'>{info}</pre><button type='button' data-copy-link-info
           >复制本站信息</button
         ><span class='copy-result' data-copy-result aria-live='polite'></span><ul>
-          <li>博客地址使用正式域名；头像暂用公开预览站的透明人物图标。</li><li>
+          <li>博客地址使用正式域名；头像由本站公开静态资源提供。</li><li>
             友链由维护者人工确认，开源参考站单独分类。
           </li><li>请提供可公开访问的个人站点和简短介绍。</li>
         </ul>
       </details>
     </section>
+
+    <section class='link-monitor' aria-labelledby='link-monitor-heading'>
+      <header>
+        <p class='kicker'>LINK HEALTH</p>
+        <h2 id='link-monitor-heading'>链接健康</h2>
+        <p>每日自动检查，连续三次失败才标记为异常；一次网络波动不会直接移除友链。</p>
+      </header>
+      {healthSnapshot.checkedAt ? (
+        <div class='monitor-numbers'>
+          <div><strong>{healthSnapshot.summary.healthy}</strong><span>正常</span></div>
+          <div><strong>{healthSnapshot.summary.suspect}</strong><span>待复核</span></div>
+          <div><strong>{healthSnapshot.summary.down}</strong><span>异常</span></div>
+          <div><strong>{new Date(healthSnapshot.checkedAt).toLocaleDateString('zh-CN')}</strong><span>最近检查</span></div>
+        </div>
+      ) : (
+        <p class='empty-note'>等待首次定时检查。当前没有可用于判断链接状态的检测记录。</p>
+      )}
+    </section>
+    <div class='links-extras'>
+      <section class='link-extra' aria-labelledby='link-history-heading'>
+        <p class='kicker'>CHANGELOG</p>
+        <h2 id='link-history-heading'>变更记录</h2>
+        <p>根据 links.json 的 Git 提交差异自动生成。</p>
+        {history.length ? (
+          <ul>
+            {history.slice(0, 8).map(entry => (
+              <li>
+                <span>{entry.action === 'added' ? '新增' : entry.action === 'removed' ? '移除' : '更新'}</span>
+                <a href={entry.url} rel='noopener noreferrer' target='_blank'>{entry.name}</a>
+                <time datetime={entry.date}>{entry.date.slice(0, 10)}</time>
+              </li>
+            ))}
+          </ul>
+        ) : <p class='empty-note'>暂无已生成的链接变更记录。</p>}
+      </section>
+      <section class='link-extra' aria-labelledby='friend-feed-heading'>
+        <p class='kicker'>NEIGHBORHOOD FEED</p>
+        <h2 id='friend-feed-heading'>邻站动态</h2>
+        <p>定期汇总已配置 RSS / Atom 的友好邻居更新。</p>
+        {posts.length ? (
+          <ul>
+            {posts.slice(0, 8).map(post => (
+              <li>
+                <a href={post.url} rel='noopener noreferrer' target='_blank'>{post.title}</a>
+                <span>{post.site}</span>
+                {post.publishedAt && <time datetime={post.publishedAt}>{post.publishedAt.slice(0, 10)}</time>}
+              </li>
+            ))}
+          </ul>
+        ) : <p class='empty-note'>暂无邻站订阅文章。收录支持 RSS 的友链后会自动更新。</p>}
+      </section>
+    </div>
+    <FriendApplyGuide
+      info={friendInfo}
+      applyUrl='https://github.com/yen-chiu/yen-chiu.github.io/issues/new?template=friend-link.yml'
+      editUrl='https://github.com/yen-chiu/yen-chiu.github.io/edit/main/public/links.json'
+    />
   </main>
 </BaseLayout>
 <script>
@@ -142,6 +222,21 @@ const info = `名称：Wendell
       this.controller?.abort()
       this.controller = new AbortController()
       const { signal } = this.controller
+      const friendCards = this.querySelector<HTMLElement>('[data-link-panel="friends"] .link-cards')
+      if (friendCards) {
+        const cards = [...friendCards.children]
+        for (let i = cards.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          ;[cards[i], cards[j]] = [cards[j], cards[i]]
+        }
+        friendCards.replaceChildren(...cards)
+      }
+      this.querySelectorAll<HTMLImageElement>('[data-avatar-fallback]').forEach(img => {
+        img.addEventListener('error', () => {
+          const fallback = img.dataset.avatarFallback
+          if (fallback && img.src !== new URL(fallback, location.href).href) img.src = fallback
+        }, { signal })
+      })
       const tabs = [...this.querySelectorAll<HTMLButtonElement>('[data-link-tab]')],
         input = this.querySelector<HTMLInputElement>('input')!,
         panels = [...this.querySelectorAll<HTMLElement>('[data-link-panel]')]
@@ -477,5 +572,66 @@ const info = `名称：Wendell
     .link-card {
       padding: 0.9rem;
     }
+  }
+
+  .link-health {
+    align-self: flex-start;
+    font-size: 0.63rem;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+  }
+  .link-health[data-health='healthy'] { color: hsl(142 50% 40%); }
+  .link-health[data-health='down'] { color: hsl(0 70% 54%); }
+  .link-monitor, .link-extra {
+    border: 1px solid hsl(var(--border));
+    border-radius: 1.3rem;
+    background: hsl(var(--background) / 0.88);
+    padding: 1.5rem;
+  }
+  .link-monitor { margin-top: 1.5rem; }
+  .link-monitor h2, .link-extra h2 { font-size: 1.15rem; font-weight: 600; }
+  .link-monitor header > p:not(.kicker), .link-extra > p:not(.kicker) {
+    font-size: 0.75rem;
+    line-height: 1.8;
+    color: hsl(var(--muted-foreground));
+    margin: 0.5rem 0 1rem;
+  }
+  .monitor-numbers {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .monitor-numbers > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.85rem;
+    border-radius: 0.8rem;
+    background: hsl(var(--muted) / 0.6);
+  }
+  .monitor-numbers strong { font-size: 1rem; font-weight: 650; }
+  .monitor-numbers span, .empty-note { font-size: 0.73rem; color: hsl(var(--muted-foreground)); }
+  .links-extras {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .link-extra ul { padding: 0; margin: 0.6rem 0 0; list-style: none; }
+  .link-extra li {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-size: 0.73rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid hsl(var(--border) / 0.6);
+  }
+  .link-extra li a { color: hsl(var(--foreground)); text-decoration: underline; text-decoration-color: hsl(var(--border)); }
+  .link-extra li > span, .link-extra time { font-size: 0.65rem; color: hsl(var(--muted-foreground)); }
+  .link-extra time { margin-left: auto; white-space: nowrap; }
+  @media (max-width: 700px) {
+    .links-extras { grid-template-columns: 1fr; }
+    .monitor-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

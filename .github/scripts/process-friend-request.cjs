@@ -184,7 +184,7 @@ async function validateFriendPage(pageUrl, site) {
 
   const browser = await chromium.launch({ headless: true })
   const context = await browser.newContext({
-    userAgent: 'IrisFriendLinkChecker/1.0',
+    userAgent: 'VesperFriendLinkChecker/1.0',
     ignoreHTTPSErrors: false
   })
   const page = await context.newPage()
@@ -295,7 +295,7 @@ async function validateAvatarUrl(avatarUrl, site) {
   const checkUrl = new URL('/__friend-link-avatar-check__', siteOrigin)
   const browser = await chromium.launch({ headless: true })
   const context = await browser.newContext({
-    userAgent: 'IrisFriendLinkChecker/1.0',
+    userAgent: 'VesperFriendLinkChecker/1.0',
     ignoreHTTPSErrors: false
   })
   const page = await context.newPage()
@@ -656,7 +656,7 @@ module.exports = async ({ github, context, core }) => {
           `该站点已存在于友链列表中：${duplicate.name} (${duplicate.link})。`,
           `This site is already in the friend-links list: ${duplicate.name} (${duplicate.link}).`,
           '',
-          `本站友链页面 / Iris friend-links page: ${config.site.friendPage}`
+          `本站友链页面 / Vesper friend-links page: ${config.site.friendPage}`
         ].join('\n')
       )
       await github.rest.issues.update({ owner, repo, issue_number: issueNumber, state: 'closed' })
@@ -693,7 +693,7 @@ module.exports = async ({ github, context, core }) => {
           : `Automated validation passed and **${request.name}** has been added.`,
         '',
         `申请者友链页面 / Applicant friend-links page: ${finalFriendPage}`,
-        `本站友链页面 / Iris friend-links page: ${config.site.friendPage}`,
+        `本站友链页面 / Vesper friend-links page: ${config.site.friendPage}`,
         '',
         deployTriggered
           ? '已触发 GitHub Pages 构建。/ The GitHub Pages build has been triggered.'
@@ -724,7 +724,7 @@ module.exports = async ({ github, context, core }) => {
         '请修正后由 Issue 作者回复任意内容，机器人会重新校验。',
         'After fixing the issue, the Issue author can reply to trigger validation again.',
         '',
-        '本站友链信息 / Iris friend-link information:',
+        '本站友链信息 / Vesper friend-link information:',
         `- 名称 / Name: ${config.site.name}`,
         `- 链接 / URL: ${config.site.url}`,
         `- 友链页面 / Friend-links page: ${config.site.friendPage}`,

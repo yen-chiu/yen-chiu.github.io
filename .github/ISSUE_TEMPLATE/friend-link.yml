@@ -1,5 +1,5 @@
 name: 申请友链 / Friend link request
-description: 自动校验回链并申请加入 Iris 友链 / Validate the backlink and apply to join Iris
+description: 自动校验回链，人工审核后加入 Vesper 友链 / Validate the backlink and apply to join Vesper
 title: '[友链申请 / Friend link] '
 labels:
   - friend-link
@@ -7,14 +7,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        提交前请先在你的友链页面添加本站。提交后机器人会检查页面和回链，通过后自动写入友链列表。
+        提交前请先在你的友链页面添加本站。提交后机器人会检查页面和回链，通过人工审核后写入友链列表。
         Please add this site to your friend-links page before submitting. The bot will validate the page and backlink before adding your site.
 
   - type: input
     id: site-name
     attributes:
       label: 网站名称 / Site name
-      placeholder: 灵的梦境
+      placeholder: Wendell · Vesper
     validations:
       required: true
 
