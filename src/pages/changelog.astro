@@ -251,10 +251,13 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-gen {font-size:.62rem;border:1px solid hsl(var(--primary)/.3);border-radius:.25rem;padding:0 .22rem;color:hsl(var(--primary));}
   .toc-name {font-size:.64rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .toc-n {margin-left:auto;font-size:.6rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
-  .toc-group ol {list-style:none;margin:.25rem 0 0;padding:0;border-left:1px solid hsl(var(--border));}
-  .toc-body a {display:block;padding:.12rem .2rem .12rem .55rem;margin-left:-1px;border-left:1px solid transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.7;}
-  .toc-body a:hover {color:hsl(var(--primary));}
-  .toc-body a.is-current {color:hsl(var(--primary));border-left-color:hsl(var(--primary));}
+  /* Match article TOC: each version is its own rounded, clickable row. */
+  .toc-group ol {list-style:none;display:flex;flex-direction:column;gap:.22rem;margin:.35rem 0 .2rem;padding:0 0 0 .35rem;border-left:1px solid hsl(var(--border));}
+  .toc-group li {min-width:0;}
+  .toc-body a {display:block;margin:0;padding:.32rem .48rem;border:1px solid transparent;border-radius:.65rem;background:transparent;color:hsl(var(--muted-foreground));text-decoration:none;font-variant-numeric:tabular-nums;line-height:1.55;overflow-wrap:anywhere;transition:background .18s ease,color .18s ease,border-color .18s ease;}
+  .toc-body a:hover,.toc-body a:focus-visible {color:hsl(var(--primary));background:hsl(var(--primary)/.07);}
+  .toc-body a.is-current {color:hsl(var(--primary));background:hsl(var(--primary)/.11);border-color:hsl(var(--primary)/.15);font-weight:600;}
+  @media (prefers-reduced-motion:reduce) {.toc-body a {transition:none;}}
   .cl-actions {position:fixed;right:.9rem;bottom:1rem;z-index:62;display:flex;flex-direction:row;align-items:center;gap:0;padding:.28rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background)/.95);backdrop-filter:blur(10px);box-shadow:0 1px 2px hsl(var(--foreground)/.05),0 10px 24px -16px hsl(var(--foreground)/.45);opacity:0;transform:translateY(.4rem);pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
   .cl-actions.is-visible {opacity:1;transform:none;pointer-events:auto;}
   .cl-btn {display:inline-flex;align-items:center;justify-content:center;width:2.2rem;height:2.2rem;border:0;border-radius:999px;background:transparent;color:hsl(var(--muted-foreground));cursor:pointer;transition:color .18s ease,background .18s ease,width .26s cubic-bezier(.32,.72,0,1),opacity .2s ease,margin .26s cubic-bezier(.32,.72,0,1),transform .26s cubic-bezier(.32,.72,0,1);}
