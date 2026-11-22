@@ -12,6 +12,7 @@ import { ArticleBottom, Copyright, GraphView, Hero, TOC } from 'astro-pure/compo
 import PageLayout from '@/layouts/ContentLayout.astro'
 import ArticleRail from '@/components/blog/ArticleRail.astro'
 import Backlinks from '@/components/blog/Backlinks.astro'
+import ShareQRCode from '@/components/blog/ShareQRCode.astro'
 import CategoryBreadcrumbs from '@/components/blog/CategoryBreadcrumbs.astro'
 import OutgoingLinks from '@/components/blog/OutgoingLinks.astro'
 import { Giscus } from '@/components/giscus'
@@ -104,6 +105,8 @@ const currentPostSlug = getPostSlug(Astro.props.post)
     />
     {/* Copyright */}
     <Copyright {data} />
+    {/* Optional on-demand QR share, no script fetched before opening. */}
+    <ShareQRCode />
     {/* Article recommend */}
     <ArticleBottom collections={posts} {id} />
   </div>
