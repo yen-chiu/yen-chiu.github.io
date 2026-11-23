@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { load } from 'cheerio'
+import sharp from 'sharp'
 
 const root = 'public/avatars/sites'
 const data = JSON.parse(await readFile('public/links.json', 'utf8'))
@@ -98,11 +99,18 @@ async function save(link) {
   for (const url of options.slice(0, 9)) {
     try {
       const { bytes, type } = await bounded(url, 512000, 'image/*')
-      const ext = detect(type, bytes)
+      let output = bytes
+      let ext = detect(type, bytes)
+      // Rasterise remote SVG icons rather than serving executable SVG from strangers.
+      if (type === 'image/svg+xml' || /^\s*(?:<\?xml[^>]*>\s*)?<svg[\s>]/i.test(bytes.toString('utf8', 0, 350))) {
+        output = await sharp(bytes, { limitInputPixels: 4000000 })
+          .resize(128, 128, { fit: 'contain' }).png().toBuffer()
+        ext = 'png'
+      }
       if (!ext) continue
-      const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 16)
+      const hash = createHash('sha256').update(output).digest('hex').slice(0, 16)
       const file = root + '/' + hash + '.' + ext
-      await writeFile(file, bytes)
+      await writeFile(file, output)
       avatars[link.link] = '/' + file
       return
     } catch { /* Try next candidate. */ }
