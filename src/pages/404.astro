@@ -16,7 +16,7 @@ const nfIndex = JSON.stringify(nfItems)
 
 const meta = {
   title: '404 · 这一页没有被印出来',
-  description: '地址可能改过，也可能它只是草稿里的一句话。',
+  description: '找不到这一页？试试站内搜索，或返回首页。',
   robots: 'noindex, follow' as const
 }
 ---
@@ -745,9 +745,9 @@ const meta = {
         meta.textContent = "搜索出了点问题，先试试下面的链接";
         return;
       }
-      meta.textContent = "正在翻书…";
+      meta.textContent = "正在搜索…";
       loadIndex().then(function () { render(q.value); }, function () {
-        meta.textContent = "检索暂时没翻动，先用下面的链接吧";
+        meta.textContent = "搜索出了点问题，先试试下面的链接";
       });
       return;
     }
