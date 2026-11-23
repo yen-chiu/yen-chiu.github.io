@@ -68,3 +68,14 @@ test('cover and lyrics fallback and mobile controls exist', () => {
   assert.match(player, /track\.lyrics\?\.trim\(\)/)
   assert.match(player, /min-width:44px/)
 })
+
+
+test('waveform seek keeps native keyboard and touch controls', () => {
+  assert.match(player, /data-wave-seek/)
+  assert.match(player, /music-wave-bars/)
+  assert.match(player, /music-wave-played/)
+  assert.match(player, /data-seek type='range'/)
+  assert.match(player, /musicEngine\.seek\(Number\(seek\.value\)\/1000\)/)
+  assert.match(player, /touch-action:pan-y/)
+  assert.match(player, /aria-hidden='true'/)
+})
