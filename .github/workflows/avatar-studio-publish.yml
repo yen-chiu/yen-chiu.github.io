@@ -34,63 +34,79 @@ jobs:
           test -f src/assets/avatar.png
           test -f scripts/generate-avatar-gif.py
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Generate standalone image assets
         run: |
-          python3 -m pip install --disable-pip-version-check Pillow==11.3.0
-          python3 scripts/generate-avatar-gif.py
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          python scripts/generate-avatar-gif.py
 
       - name: Verify source and both encoded outputs
-        run: |
-          python3 - <<'PY'
-          from PIL import Image
-          from pathlib import Path
-          paths = [
-              Path('src/assets/avatar.png'),
-              Path('public/favicon/wendell-avatar-animated.webp'),
-              Path('public/favicon/wendell-avatar-animated.gif'),
-          ]
-          for path in paths:
-              assert path.is_file() and path.stat().st_size > 0, str(path)
-              with Image.open(path) as image:
-                  image.verify()
-          for path in paths[1:]:
-              with Image.open(path) as image:
-                  assert image.size == (320, 320), str(path)
-                  assert getattr(image, 'n_frames', 1) >= 2, str(path)
-          print('Verified all three image assets')
-          PY
+        run: python3 scripts/verify-avatar-assets.py
 
       - name: Publish all three resources as one atomic Git commit
         id: publish
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/avatar-assets"
-          cp src/assets/avatar.png "$RUNNER_TEMP/avatar-assets/avatar.png"
-          cp public/favicon/wendell-avatar-animated.webp "$RUNNER_TEMP/avatar-assets/avatar.webp"
-          cp public/favicon/wendell-avatar-animated.gif "$RUNNER_TEMP/avatar-assets/avatar.gif"
+          staged_dir="$RUNNER_TEMP/avatar-assets"
+          mkdir -p "$staged_dir"
+          cp src/assets/avatar.png "$staged_dir/avatar.png"
+          cp public/favicon/wendell-avatar-animated.webp "$staged_dir/avatar.webp"
+          cp public/favicon/wendell-avatar-animated.gif "$staged_dir/avatar.gif"
+
+          # The generated files dirty the worktree; a later checkout of main can
+          # differ from this branch, and Git refuses to switch over them.
+          git checkout -- src/assets/avatar.png public/favicon/wendell-avatar-animated.webp public/favicon/wendell-avatar-animated.gif
+
           git fetch origin main
           git switch -C avatar-publish origin/main
-          cp "$RUNNER_TEMP/avatar-assets/avatar.png" src/assets/avatar.png
-          cp "$RUNNER_TEMP/avatar-assets/avatar.webp" public/favicon/wendell-avatar-animated.webp
-          cp "$RUNNER_TEMP/avatar-assets/avatar.gif" public/favicon/wendell-avatar-animated.gif
+          cp "$staged_dir/avatar.png" src/assets/avatar.png
+          cp "$staged_dir/avatar.webp" public/favicon/wendell-avatar-animated.webp
+          cp "$staged_dir/avatar.gif" public/favicon/wendell-avatar-animated.gif
+
           git add -- src/assets/avatar.png public/favicon/wendell-avatar-animated.webp public/favicon/wendell-avatar-animated.gif
           if git diff --cached --quiet; then
             echo "No changes to publish"
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
+          staged_paths="$(git diff --cached --name-only | sort)"
+          expected_paths="$(printf '%s\n' src/assets/avatar.png public/favicon/wendell-avatar-animated.gif public/favicon/wendell-avatar-animated.webp | sort)"
+          if [ "$staged_paths" != "$expected_paths" ]; then
+            echo "Unexpected paths in the avatar commit:"
+            printf '%s\n' "$staged_paths"
+            exit 1
+          fi
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m "chore(avatar): publish synchronized PNG WebP and GIF"
-          # A normal push from GITHUB_TOKEN does not launch the Pages workflow;
-          # explicitly dispatch it after the atomic commit is accepted.
-          git push origin HEAD:main
+
+          pushed=false
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then pushed=true; break; fi
+            echo "Push rejected (attempt $attempt); rebasing onto the latest main"
+            git fetch origin main
+            git rebase origin/main
+          done
+          if [ "$pushed" != true ]; then
+            echo "Could not publish the avatar commit"
+            exit 1
+          fi
           echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Deploy the already generated site assets
         if: steps.publish.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # A push made with GITHUB_TOKEN does not start other workflows, so the
+          # Pages build is dispatched explicitly against the new main commit.
           gh workflow run deploy.yml --repo "${{ github.repository }}" --ref main
+          echo "Dispatched deploy.yml for ${{ steps.publish.outputs.commit }}"

@@ -78,3 +78,37 @@ uploads go to `feature/avatar-studio`. Code changes do not automatically merge.
 - Cloudflare Access setup and secret creation are external account actions
   and are **not** performed by merging this code. Until configured and
   deployed, the Studio is not an accessible, functioning live service.
+
+## Operating notes
+
+**Manual runs.** GitHub only offers a workflow's *Run workflow* button when the
+workflow file exists on the **default** branch. `avatar-studio-publish.yml` and
+`avatar-studio-ci.yml` live on `feature/avatar-studio` only, so until they are
+merged you cannot dispatch them by hand from the Actions UI. To retry a publish,
+open the existing run and use **Re-run jobs** — that keeps the same commit and
+the same inputs. The asset job is idempotent: an unchanged PNG produces the same
+bytes and the job exits with `No changes to publish`.
+
+**Verification matrix.** `scripts/verify-avatar-assets.py` regenerates nothing;
+it only reads the three files and fails the job when any of these break:
+
+| Check | Why it matters |
+| --- | --- |
+| All three files exist, are non-empty and decode | a truncated upload must not reach main |
+| WebP and GIF are 320×320, animated, `loop = 0` | matches the avatar widget's size and seamless loop |
+| Frame counts equal, total durations equal (2880 ms) | the two encoders must describe the same motion |
+| WebP keeps an alpha channel, GIF keeps a transparent index, both have `alpha = 0` pixels | the avatar must sit on any page background without a halo |
+| WebP duration is read from `ANMF` chunks | Pillow does not expose per-frame duration for animated WebP, so a Pillow-only check silently compares zero to zero |
+
+**Rollback.** Every publish is one commit touching exactly
+`src/assets/avatar.png`, `public/favicon/wendell-avatar-animated.webp` and
+`public/favicon/wendell-avatar-animated.gif`. To undo it:
+
+```
+git revert --no-edit <commit>
+git push origin main
+gh workflow run deploy.yml --ref main
+```
+
+Because the assets are committed rather than rebuilt by the site workflow, a
+revert restores the previous avatar set exactly, with no regeneration step.

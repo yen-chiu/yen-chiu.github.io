@@ -7,6 +7,9 @@ const REPOSITORY = 'yen-chiu/yen-chiu.github.io'
 const TARGET_PATH = 'src/assets/avatar.png'
 const TARGET_BRANCH = 'feature/avatar-studio'
 const MAX_BYTES = 4 * 1024 * 1024
+// Best-effort guard against a double-click queueing two publishes in a row.
+const PUBLISH_COOLDOWN_MS = 5 * 1000
+let lastPublishAt = 0
 const encoder = new TextEncoder()
 const noStore = { 'Cache-Control': 'no-store, private', 'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'no-referrer', 'X-Frame-Options': 'DENY',
@@ -15,6 +18,20 @@ const noStore = { 'Cache-Control': 'no-store, private', 'X-Content-Type-Options'
 const json = (value, status = 200) => new Response(JSON.stringify(value), {
   status, headers: { ...noStore, 'Content-Type': 'application/json; charset=utf-8' }
 })
+// Access signing keys rotate slowly; cache them per isolate instead of calling
+// the certificate endpoint on every single request.
+const certCache = new Map()
+const CERT_TTL_MS = 5 * 60 * 1000
+async function accessKeys(teamDomain) {
+  const cached = certCache.get(teamDomain)
+  if (cached && cached.expires > Date.now()) return cached.keys
+  const response = await fetch('https://' + teamDomain + '/cdn-cgi/access/certs')
+  if (!response.ok) throw new Error('Access certificate fetch failed')
+  const certs = await response.json()
+  const keys = Array.isArray(certs.keys) ? certs.keys : []
+  certCache.set(teamDomain, { keys, expires: Date.now() + CERT_TTL_MS })
+  return keys
+}
 function decode(part) {
   const binary = atob(part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length / 4) * 4, '='))
   return Uint8Array.from(binary, ch => ch.charCodeAt(0))
@@ -43,10 +60,8 @@ async function authorize(request, env) {
       typeof payload.nbf === 'number' && payload.nbf > Date.now()/1000 ||
       typeof payload.iat === 'number' && payload.iat > Date.now()/1000 + 60) return null
   if (String(payload.email || '').toLowerCase() !== String(env.OWNER_EMAIL).toLowerCase()) return null
-  const keysResponse = await fetch('https://' + teamDomain + '/cdn-cgi/access/certs')
-  if (!keysResponse.ok) throw new Error('Access certificate fetch failed')
-  const certs = await keysResponse.json()
-  const jwk = (certs.keys || []).find(key => key.kid === header.kid && key.kty === 'RSA')
+  const keys = await accessKeys(teamDomain)
+  const jwk = keys.find(key => key.kid === header.kid && key.kty === 'RSA')
   if (!jwk) return null
   const key = await crypto.subtle.importKey('jwk', jwk, {name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256'}, false, ['verify'])
   const signature = decode(parts[2])
@@ -58,7 +73,7 @@ function validatePng(buffer) {
   if (bytes.length < 33 || bytes.length > MAX_BYTES) throw new Error('PNG must be 4 MB or smaller')
   const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10]
   if (!pngSignature.every((value, index) => bytes[index] === value)) throw new Error('Not a PNG image')
-  const view = new DataView(buffer)
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   if (view.getUint32(8) !== 13 || String.fromCharCode(...bytes.slice(12,16)) !== 'IHDR') throw new Error('Malformed PNG header')
   const width = view.getUint32(16), height = view.getUint32(20)
   if (width < 128 || height < 128 || width > 2048 || height > 2048 || width !== height) {
@@ -91,6 +106,37 @@ async function github(env, method, body) {
   })
   if (!response.ok) throw new Error('GitHub request failed: HTTP ' + response.status)
   return response.json()
+}
+// Git names blobs by SHA-1 over "blob <size>\0<body>", so the staged file can be
+// compared with the remote one without downloading it.
+async function blobSha(bytes) {
+  const header = encoder.encode('blob ' + bytes.length + '\0')
+  const payload = new Uint8Array(header.length + bytes.length)
+  payload.set(header)
+  payload.set(bytes, header.length)
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-1', payload))
+  return Array.from(digest, byte => byte.toString(16).padStart(2, '0')).join('')
+}
+async function stagePng(env, bytes) {
+  const sha = await blobSha(bytes)
+  let lastError
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const current = await github(env, 'GET')
+    if (current && current.sha === sha) return { unchanged: true, commit: current.sha }
+    try {
+      const updated = await github(env, 'PUT', {
+        message: 'chore(avatar): stage PNG for independent asset generation',
+        branch: TARGET_BRANCH, path: TARGET_PATH, sha: current?.sha,
+        content: base64(bytes)
+      })
+      return { unchanged: false, commit: updated.commit?.sha }
+    } catch (error) {
+      // Another publish moved the branch between GET and PUT; refresh and retry.
+      lastError = error
+      if (!/HTTP (409|422)/.test(String(error && error.message))) throw error
+    }
+  }
+  throw lastError || new Error('Could not stage the PNG')
 }
 const HTML = String.raw`<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -155,6 +201,7 @@ publish.addEventListener('click',async()=> {
   }catch(error){report(error.message||'请求失败',true);publish.disabled=false}
 })
 </script></body></html>`;
+export const __test = { blobSha, validatePng }
 export default {
   async fetch(request, env) {
     try {
@@ -169,16 +216,16 @@ export default {
         if (request.headers.get('x-avatar-confirm') !== 'publish') return json({ error: 'Explicit confirmation required' }, 400)
         if (request.headers.get('content-type') !== 'image/png') return json({ error: 'Only PNG allowed' }, 415)
         if (Number(request.headers.get('content-length') || 0) > MAX_BYTES) return json({ error: 'File too large' }, 413)
+        if (Date.now() - lastPublishAt < PUBLISH_COOLDOWN_MS) return json({ error: 'A publish was just queued; wait a moment' }, 429)
         const bytes = await request.arrayBuffer()
         let dimensions
         try { dimensions = validatePng(bytes) } catch(error) { return json({ error: error.message }, 400) }
-        const current = await github(env, 'GET')
-        const updated = await github(env, 'PUT', {
-          message: 'chore(avatar): stage PNG for independent asset generation',
-          branch: TARGET_BRANCH, path: TARGET_PATH, sha: current.sha,
-          content: base64(new Uint8Array(bytes))
-        })
-        return json({ ok: true, staged: true, commit: updated.commit?.sha, ...dimensions })
+        lastPublishAt = Date.now()
+        const result = await stagePng(env, new Uint8Array(bytes))
+        if (result.unchanged) {
+          return json({ ok: true, staged: false, unchanged: true, commit: result.commit, ...dimensions })
+        }
+        return json({ ok: true, staged: true, unchanged: false, commit: result.commit, ...dimensions })
       }
       return json({ error: 'Not found' }, 404)
     } catch (error) {

@@ -21,3 +21,19 @@ jobs:
         run: |
           node --check studio/worker.mjs
           node --test studio/worker.test.mjs
+
+  assets:
+    # Regenerating here keeps a broken generator from being discovered only
+    # during a publish. It never writes to main.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Pillow
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Regenerate the animated exports
+        run: python scripts/generate-avatar-gif.py
+      - name: Verify frames, durations and transparency
+        run: python scripts/verify-avatar-assets.py
