@@ -366,6 +366,290 @@ $$
 
 </Aside>
 
+#### 广义相对论：爱因斯坦场方程逐层展开
+
+如果说 Maxwell 方程考验的是多行对齐，那么 Einstein 场方程更像是在考验整个数学排版系统：**上下指标、度规逆矩阵、偏导数、张量缩并、曲率项、四阶矩阵**，还要把它们组合成一组非线性偏微分方程。
+
+参考：[David Tong（剑桥大学）《General Relativity》，第 4 章 Einstein Equations](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S4.html)、[Physics LibreTexts《Relativity》](https://phys.libretexts.org/Bookshelves/Mathematical_Physics_and_Pedagogy/Physics_Formulas_(Wevers)/01:_Subjects/1.03:_Relativity)。下面是依据标准公式重新组织的中文说明，**不是某篇论文的逐字转载，也不是一份从头到尾的严格推导**。
+
+##### 第一层：场方程本体
+
+采用度规号差 $(-,+,+,+)$，把宇宙学常数 $\Lambda$ 也写上，场方程为：
+
+$
+\boxed{
+R_{\mu\nu}
+-\frac{1}{2}g_{\mu\nu}R
++\Lambda g_{\mu\nu}
+=\frac{8\pi G}{c^{4}}\,T_{\mu\nu}
+}
+$
+
+公式左边是几何，右边是物质和能量。这里 $R_{\mu\nu}$ 是 Ricci 曲率张量，$R$ 是 Ricci 标量，$g_{\mu\nu}$ 是时空度规，$T_{\mu\nu}$ 是能量—动量张量。$G$ 指**牛顿引力常数**；下面的 $G_{\mu\nu}$ 则专指**Einstein 张量**，两个 $G$ 不要看串了。
+
+将前两项合并定义：
+
+$
+\begin{gathered}
+G_{\mu\nu}
+:=R_{\mu\nu}-\frac{1}{2}R\,g_{\mu\nu},
+\\[5pt]
+G_{\mu\nu}+\Lambda g_{\mu\nu}
+=\frac{8\pi G}{c^4}T_{\mu\nu},
+\qquad
+\nabla^\mu G_{\mu\nu}=0.
+\end{gathered}
+$
+
+最后一式是缩并 Bianchi 恒等式的结果，不是另加的一条经验方程。结合场方程及常数 $\Lambda$，它意味着 $\nabla^\mu T_{\mu\nu}=0$。
+
+##### 第二层：从度规求 Christoffel 符号
+
+场方程中的曲率不是凭空出现的。给定一个度规 $g_{\mu\nu}(x)$，先求它的逆矩阵 $g^{\mu\nu}$，满足
+
+$
+g^{\mu\alpha}g_{\alpha\nu}=\delta^\mu{}_\nu.
+$
+
+再由度规的一阶偏导构造 Levi-Civita 联络的 Christoffel 符号：
+
+$
+\boxed{
+\Gamma^\rho{}_{\mu\nu}
+=\frac{1}{2}g^{\rho\sigma}
+\left(
+\partial_\mu g_{\sigma\nu}
++\partial_\nu g_{\sigma\mu}
+-\partial_\sigma g_{\mu\nu}
+\right)
+}
+$
+
+希腊指标取 $0,1,2,3$，重复的上下指标按 Einstein 求和约定缩并。这里的 $\Gamma^\rho{}_{\mu\nu}$ 本身**不是张量**，而且它的具体分量依赖坐标选择。
+
+##### 第三层：Riemann → Ricci → Ricci 标量
+
+对 Christoffel 符号再求导并构造二次项，得到 Riemann 曲率张量。以下明确采用这一种常见的曲率符号约定；**有些教材定义相反，公式里的整体符号可能随之改变**：
+
+$
+\begin{aligned}
+R^\rho{}_{\sigma\mu\nu}
+={}&
+\partial_\mu\Gamma^\rho{}_{\nu\sigma}
+-\partial_\nu\Gamma^\rho{}_{\mu\sigma}\\
+&+\Gamma^\rho{}_{\mu\lambda}
+ \Gamma^\lambda{}_{\nu\sigma}\\
+&-\Gamma^\rho{}_{\nu\lambda}
+ \Gamma^\lambda{}_{\mu\sigma}.
+\end{aligned}
+$
+
+将第一、第三个指标缩并，得到 Ricci 张量；继续与逆度规缩并，得到 Ricci 标量：
+
+$
+\begin{aligned}
+R_{\mu\nu}
+&:=R^\rho{}_{\mu\rho\nu},\\[4pt]
+R&:=g^{\mu\nu}R_{\mu\nu}.
+\end{aligned}
+$
+
+而 Ricci 张量本身还能进一步展开成四项。这一行已经比较接近“真正把爱因斯坦方程展开”的样子：
+
+$
+\boxed{
+\begin{aligned}
+R_{\mu\nu}
+={}&\partial_\lambda\Gamma^\lambda{}_{\mu\nu}
+-\partial_\nu\Gamma^\lambda{}_{\mu\lambda}\\
+&+\Gamma^\lambda{}_{\mu\nu}
+ \Gamma^\rho{}_{\lambda\rho}\\
+&-\Gamma^\rho{}_{\mu\lambda}
+ \Gamma^\lambda{}_{\nu\rho}.
+\end{aligned}
+}
+$
+
+要继续将 $\Gamma$ 全部代换为 $g$ 的导数，可以先记一个缩写：
+
+$
+C_{\mu\nu\sigma}
+:=\partial_\mu g_{\nu\sigma}
++\partial_\nu g_{\mu\sigma}
+-\partial_\sigma g_{\mu\nu},
+\qquad
+\Gamma^\lambda{}_{\mu\nu}
+=\frac12 g^{\lambda\sigma}C_{\mu\nu\sigma}.
+$
+
+代入 Ricci 张量后得到
+
+$
+\begin{aligned}
+R_{\mu\nu}
+={}&\frac12\partial_\lambda
+  \!\left(g^{\lambda\sigma}C_{\mu\nu\sigma}\right)\\
+&-\frac12\partial_\nu
+  \!\left(g^{\lambda\sigma}C_{\mu\lambda\sigma}\right)\\
+&+\frac14g^{\lambda\sigma}g^{\rho\tau}
+  C_{\mu\nu\sigma}C_{\lambda\rho\tau}\\
+&-\frac14g^{\rho\sigma}g^{\lambda\tau}
+  C_{\mu\lambda\sigma}C_{\nu\rho\tau}.
+\end{aligned}
+$
+
+这一式已经把 Ricci 张量写成了**度规及其导数的组合**：前两行经乘积求导会产生二阶导数，后两行则是度规一阶导数的非线性乘积。再代入
+
+$
+\boxed{
+R_{\mu\nu}[g]
+-\frac12g_{\mu\nu}g^{\alpha\beta}R_{\alpha\beta}[g]
++\Lambda g_{\mu\nu}
+=\frac{8\pi G}{c^4}T_{\mu\nu}
+}
+$
+
+就得到以度规 $g_{\mu\nu}$ 为未知量的 Einstein 场方程系统。这里的 $R_{\mu\nu}[g]$ 正是上面展开的四项表达式，而不是一个新的物理量。
+
+<Aside type="caution" title="这是公式展开，不是完整求解">
+
+从场方程写到含有度规二阶导数的形式，只说明了**方程长什么样**。要得到某个实际时空，还需要物质模型、坐标或规范选择、边界或初始条件等。不能看到最后一行就说“已经解出了引力场”。
+
+</Aside>
+
+##### 第四层：四维张量为什么会变成十条方程？
+
+$G_{\mu\nu}$、$g_{\mu\nu}$ 和 $T_{\mu\nu}$ 都是对称的二阶张量。形式上把四维指标全部摆开，可以写成一个矩阵方程：
+
+$
+\begin{gathered}
+\underbrace{
+\begin{pmatrix}
+G_{00}+\Lambda g_{00}&G_{01}+\Lambda g_{01}&G_{02}+\Lambda g_{02}&G_{03}+\Lambda g_{03}\\
+G_{01}+\Lambda g_{01}&G_{11}+\Lambda g_{11}&G_{12}+\Lambda g_{12}&G_{13}+\Lambda g_{13}\\
+G_{02}+\Lambda g_{02}&G_{12}+\Lambda g_{12}&G_{22}+\Lambda g_{22}&G_{23}+\Lambda g_{23}\\
+G_{03}+\Lambda g_{03}&G_{13}+\Lambda g_{13}&G_{23}+\Lambda g_{23}&G_{33}+\Lambda g_{33}
+\end{pmatrix}
+}_{\text{时空几何}}
+\\[8pt]
+=\frac{8\pi G}{c^4}
+\underbrace{
+\begin{pmatrix}
+T_{00}&T_{01}&T_{02}&T_{03}\\
+T_{01}&T_{11}&T_{12}&T_{13}\\
+T_{02}&T_{12}&T_{22}&T_{23}\\
+T_{03}&T_{13}&T_{23}&T_{33}
+\end{pmatrix}
+}_{\text{能量与动量}}.
+\end{gathered}
+$
+
+每个对称 $4\times4$ 矩阵有 $4(4+1)/2=10$ 个不同的分量，因此通常称为 **10 个耦合的场方程**。这并不表示 10 个分量都可以任意指定；其中还包含坐标自由度与约束关系。
+
+上面这块矩阵故意比较宽，是用来检验 **KaTeX 超宽公式的局部横向滚动**。在手机上应只滚动公式区域，不让整篇网页左右晃动。
+
+##### 第五层：实际代入一个度规——Schwarzschild 真空解
+
+还要再往前走一步，才能看到从抽象张量到具体函数的过程。考虑**球对称、静态、无电荷、无自转的质量源外部真空区域**，并取 $\Lambda=0$。
+
+在一组常用球坐标 $(t,r,\theta,\phi)$ 下，先尝试这种形式的度规，其中 $f(r)$ 尚未知：
+
+$
+\begin{aligned}
+\mathrm{d}s^2={}&
+-f(r)c^2\,\mathrm{d}t^2
++\frac{\mathrm{d}r^2}{f(r)}\\
+&+r^2\,\mathrm{d}\theta^2
++r^2\sin^2\theta\,\mathrm{d}\phi^2.
+\end{aligned}
+$
+
+对这一特定形式计算 Christoffel 符号，会得到例如
+
+$
+\begin{aligned}
+\Gamma^r{}_{tt}
+&=\frac{c^2}{2}f(r)f'(r),\\[3pt]
+\Gamma^t{}_{tr}
+&=\frac{f'(r)}{2f(r)},\\[3pt]
+\Gamma^r{}_{rr}
+&=-\frac{f'(r)}{2f(r)}.
+\end{aligned}
+$
+
+在同样的曲率符号约定下，Ricci 张量中几项可以整理为：
+
+$
+\boxed{
+\begin{aligned}
+R_{tt}&=\frac{c^2 f}{2}
+\left(f''+\frac{2f'}{r}\right),\\[4pt]
+R_{rr}&=-\frac{1}{2f}
+\left(f''+\frac{2f'}{r}\right),\\[4pt]
+R_{\theta\theta}&=1-f-rf',\\[4pt]
+R_{\phi\phi}&=\sin^2\theta\,R_{\theta\theta}.
+\end{aligned}
+}
+$
+
+真空条件 $T_{\mu\nu}=0$ 且 $\Lambda=0$ 时，场方程取迹得到 $R=0$，因此化为 $R_{\mu\nu}=0$。例如角向分量给出
+
+$
+\begin{aligned}
+R_{\theta\theta}=0
+&\iff 1-f(r)-rf'(r)=0\\
+&\iff \frac{\mathrm{d}}{\mathrm{d}r}\bigl(rf(r)\bigr)=1\\
+&\Longrightarrow f(r)=1+\frac{C}{r}.
+\end{aligned}
+$
+
+再由渐近平坦条件与牛顿引力的弱场极限确定积分常数 $C=-2GM/c^2$。令 Schwarzschild 半径为 $r_{\mathrm s}=2GM/c^2$，就有
+
+$
+f(r)=1-\frac{r_{\mathrm s}}{r},
+\qquad
+r_{\mathrm s}=\frac{2GM}{c^2}.
+$
+
+所以这段外部真空时空的度规写成：
+
+$
+\boxed{
+\begin{aligned}
+\mathrm{d}s^2={}&-
+\left(1-\frac{2GM}{rc^2}\right)c^2\mathrm{d}t^2\\
+&+\left(1-\frac{2GM}{rc^2}\right)^{-1}\mathrm{d}r^2\\
+&+r^2\left(
+\mathrm{d}\theta^2
++\sin^2\theta\,\mathrm{d}\phi^2
+\right).
+\end{aligned}
+}
+$
+
+最后代回去验算（这是符号恒等式，不是假想实验数据）：
+
+$
+\begin{aligned}
+f'(r)&=\frac{r_{\mathrm s}}{r^2},&
+f''(r)&=-\frac{2r_{\mathrm s}}{r^3},\\[3pt]
+f''(r)+\frac{2f'(r)}{r}&=0,&
+1-f(r)-rf'(r)&=0.
+\end{aligned}
+$
+
+这就使上面列出的 Ricci 分量为零，其余分量在该度规下也为零。注意 **$R_{\mu\nu}=0$ 不等于整个 Riemann 曲率张量为零**：质量源外面虽然是真空，时空仍可能是弯曲的。
+
+<Aside type="note" title="适用范围与坐标">
+
+这里展示的是经典 Schwarzschild 外部真空解，并使用通常的 Schwarzschild 坐标描述 $r>r_{\mathrm s}$ 的区域；不能直接把同一个公式套进星体内部。$r=r_{\mathrm s}$ 处该坐标形式出现奇异，但那不是一般意义上的真实曲率发散。
+
+</Aside>
+
+**这一组用来测什么？** 公式里既有上下标和缩并、四阶对称矩阵、偏微分与多层分式，也有逐行相等、推导箭头、上下大括号和很长的度规表达式。它比把十张互不相关的公式图片贴在一起，更能测试排版引擎是否可靠。
+
+---
+
 #### 化学篇：反应自由能与 Nernst 方程
 
 资料来源：[OpenStax《Chemistry 2e》，第 17.4 节](https://openstax.org/books/chemistry-2e/pages/17-4-potential-free-energy-and-equilibrium)。教材在推导 Nernst 方程时写道：
