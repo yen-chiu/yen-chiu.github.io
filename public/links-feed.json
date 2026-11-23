@@ -7,29 +7,40 @@
       "url": "https://lemonadorable.github.io/blog/note/therustbooknote",
       "site": "灵的梦境",
       "siteUrl": "https://lemonadorable.github.io/",
-      "publishedAt": "2026-05-01T00:00:00.000Z"
+      "publishedAt": "2026-05-01T00:00:00.000Z",
+      "avatar": "https://lemonadorable.github.io/favicon/favicon.gif",
+      "stale": false
     },
     {
       "title": "🌌 最终测试：超弦虚空接口",
       "url": "https://lemonadorable.github.io/blog/test-mdx",
       "site": "灵的梦境",
       "siteUrl": "https://lemonadorable.github.io/",
-      "publishedAt": "2026-01-10T00:00:00.000Z"
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "avatar": "https://lemonadorable.github.io/favicon/favicon.gif",
+      "stale": false
     },
     {
       "title": "Astro Theme Iris：打造个人知识管理系统",
       "url": "https://lemonadorable.github.io/blog/astro-theme-iris",
       "site": "灵的梦境",
       "siteUrl": "https://lemonadorable.github.io/",
-      "publishedAt": "2026-01-02T00:00:00.000Z"
+      "publishedAt": "2026-01-02T00:00:00.000Z",
+      "avatar": "https://lemonadorable.github.io/favicon/favicon.gif",
+      "stale": false
     },
     {
       "title": "LaTeX使用中的一些坑",
       "url": "https://lemonadorable.github.io/blog/note/latex",
       "site": "灵的梦境",
       "siteUrl": "https://lemonadorable.github.io/",
-      "publishedAt": "2025-06-02T05:33:30.000Z"
+      "publishedAt": "2025-06-02T05:33:30.000Z",
+      "avatar": "https://lemonadorable.github.io/favicon/favicon.gif",
+      "stale": false
     }
   ],
-  "errors": []
+  "errors": [],
+  "totalFriends": 1,
+  "activeFeeds": 1,
+  "articleCount": 4
 }
