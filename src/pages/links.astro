@@ -4,10 +4,15 @@ import KnowledgeIndexHero from '@/components/KnowledgeIndexHero.astro'
 import { sitePath } from '@/utils/site-path'
 
 import links from '../../public/links.json'
+import iconCache from '../../public/links-avatars.json'
 import health from '../../public/links-status.json'
 import historyData from '../../public/links-history.json'
 import FriendApplyGuide from '@/components/links/FriendApplyGuide.astro'
 import FriendFeed from '@/components/links/FriendFeed.astro'
+
+const icons = iconCache.avatars as Record<string, string>
+const getIcon = (link: { link: string; avatar?: string }) =>
+  link.avatar?.startsWith('/') ? link.avatar : icons[link.link] ?? link.avatar ?? ''
 
 const groups = links.friends,
   total = groups.reduce((n, g) => n + g.link_list.length, 0)
@@ -115,14 +120,14 @@ const friendInfo = [
               <a class='link-card' href={link.link} target='_blank' rel='noopener noreferrer'
                 data-link-card data-link-state={healthByUrl.get(link.link)?.state ?? 'unknown'}
                 data-search={[link.name, link.intro, new URL(link.link).hostname].join(' ').toLowerCase()}>
-                {link.avatar && (
-                  <img class='card-backdrop' src={sitePath(link.avatar)} alt='' aria-hidden='true'
+                {getIcon(link) && (
+                  <img class='card-backdrop' src={sitePath(getIcon(link))} alt='' aria-hidden='true'
                     loading='lazy' data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')} />
                 )}
                 <span class='card-shade' aria-hidden='true'></span>
                 <span class='link-mark' aria-hidden='true'>
-                  {link.avatar ? (
-                    <img src={sitePath(link.avatar)} width='56' height='56' alt=''
+                  {getIcon(link) ? (
+                    <img src={sitePath(getIcon(link))} width='56' height='56' alt=''
                       loading='lazy' data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')} />
                   ) : 'mark' in link ? link.mark : '↗'}
                 </span>
