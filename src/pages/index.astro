@@ -20,16 +20,17 @@ const featuredPosts = selections.map(selection => {
   return { ...selection, post }
 })
 const entries = [
-  { title: '博客', desc: '技术实践与生活记录', path: '/blog', symbol: '✎' },
+  { title: 'Vesper · 博客', desc: '技术实践与生活记录', path: '/blog', symbol: '✎' },
+  { title: 'Folio · 文档库', desc: '笔记、工具与知识归档', path: 'https://yenchiu.com/folio/', symbol: '▤' },
+  { title: 'Echora · 聊天', desc: '念真与互动故事的独立空间', path: 'https://yenchiu.com/echora/', symbol: '☾' },
   { title: '时光机', desc: '在日历里回看写作', path: '/archives', symbol: '◷' },
-  { title: '念真', desc: '认识念真，也可以直接聊两句', path: '/persona', symbol: '☾' },
   { title: '链接', desc: '常去的地方与网络邻居', path: '/links', symbol: '↗' }
 ]
 ---
 
 <BaseLayout
   pageKind='home'
-  meta={{ title: 'YenChiu', description: '读书，买花，长大。Wendell 的个人博客。' }}
+  meta={{ title: 'YenChiu', description: 'YenChiu · Wendell 的个人网站，以 Vesper 写作，Folio 整理，Echora 交流。' }}
 >
   <main class='home-page'>
     <landing-hero class='landing-track'>
