@@ -77,11 +77,26 @@ jobs:
 
           staged_paths="$(git diff --cached --name-only | sort)"
           expected_paths="$(printf '%s\n' src/assets/avatar.png public/favicon/wendell-avatar-animated.gif public/favicon/wendell-avatar-animated.webp | sort)"
-          if [ "$staged_paths" != "$expected_paths" ]; then
+
+          # Nothing outside the three fixed asset paths may ride along, but a
+          # subset is legitimate: a re-encoded PNG can leave one of the exports
+          # byte-identical, and the file that must always be present is the
+          # source PNG this run is publishing.
+          unexpected="$(comm -23 <(printf '%s\n' "$staged_paths") <(printf '%s\n' "$expected_paths") || true)"
+          if [ -n "$unexpected" ]; then
             echo "Unexpected paths in the avatar commit:"
-            printf '%s\n' "$staged_paths"
+            printf '%s\n' "$unexpected"
             exit 1
           fi
+          if ! printf '%s\n' "$staged_paths" | grep -qx 'src/assets/avatar.png'; then
+            echo 'The avatar commit must contain the new PNG'
+            exit 1
+          fi
+          for path in $expected_paths; do
+            if ! printf '%s\n' "$staged_paths" | grep -qx "$path"; then
+              echo "Note: $path is byte-identical to main and stays unchanged"
+            fi
+          done
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -105,8 +120,19 @@ jobs:
         if: steps.publish.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          PUBLISHED_COMMIT: ${{ steps.publish.outputs.commit }}
         run: |
+          set -euo pipefail
           # A push made with GITHUB_TOKEN does not start other workflows, so the
-          # Pages build is dispatched explicitly against the new main commit.
+          # Pages build is dispatched explicitly. `--ref main` deploys whatever
+          # main points at when the run starts, so refuse to dispatch if main
+          # moved after our push: that would deploy a revision we did not verify.
+          current="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$current" != "$PUBLISHED_COMMIT" ]; then
+            echo "main is now $current but this run published $PUBLISHED_COMMIT."
+            echo "The avatar commit is already on main; deploy it with a manual dispatch once main is quiet:"
+            echo "  gh workflow run deploy.yml --ref main"
+            exit 1
+          fi
           gh workflow run deploy.yml --repo "${{ github.repository }}" --ref main
-          echo "Dispatched deploy.yml for ${{ steps.publish.outputs.commit }}"
+          echo "Dispatched deploy.yml for $PUBLISHED_COMMIT"

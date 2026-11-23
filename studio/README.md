@@ -100,6 +100,25 @@ it only reads the three files and fails the job when any of these break:
 | WebP keeps an alpha channel, GIF keeps a transparent index, both have `alpha = 0` pixels | the avatar must sit on any page background without a halo |
 | WebP duration is read from `ANMF` chunks | Pillow does not expose per-frame duration for animated WebP, so a Pillow-only check silently compares zero to zero |
 
+**What one publish commit may contain.** Only the three fixed asset paths are
+allowed, but not all three have to change: a re-encoded PNG can leave one export
+byte-identical. The one path that must always be in the commit is the new
+`src/assets/avatar.png`; the job prints a note for any export that stayed
+identical. Anything else appearing in the commit aborts the publish.
+
+**Deploy revision lock.** `gh workflow run deploy.yml --ref main` deploys whatever
+`main` points at when the run starts. The publish job therefore re-reads
+`refs/heads/main` right before dispatching and fails if `main` moved after its
+own push — the assets are already on `main` at that point, so the failure only
+means "dispatch it yourself once `main` is quiet", never "half-published".
+
+**Cooldown scope.** The Worker's 5-second publish cooldown lives in module state,
+so it is per-isolate and cannot act as a global rate limit. The durable
+guarantees are the content-hash check (an identical PNG produces no commit) and
+the workflow's `concurrency: avatar-studio-asset-publish` group (publishes never
+overlap). A global limiter would need Cloudflare KV or a Durable Object, which
+this iteration deliberately does not add.
+
 **Rollback.** Every publish is one commit touching exactly
 `src/assets/avatar.png`, `public/favicon/wendell-avatar-animated.webp` and
 `public/favicon/wendell-avatar-animated.gif`. To undo it:

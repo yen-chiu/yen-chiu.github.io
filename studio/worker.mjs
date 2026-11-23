@@ -8,6 +8,10 @@ const TARGET_PATH = 'src/assets/avatar.png'
 const TARGET_BRANCH = 'feature/avatar-studio'
 const MAX_BYTES = 4 * 1024 * 1024
 // Best-effort guard against a double-click queueing two publishes in a row.
+// Best-effort debounce only: a Worker runs on many isolates, so this counter is
+// per-isolate and cannot be a global rate limit. The durable guarantees are the
+// content hash check (an identical PNG creates no commit) and the publish
+// workflow's concurrency group (runs never overlap).
 const PUBLISH_COOLDOWN_MS = 5 * 1000
 let lastPublishAt = 0
 const encoder = new TextEncoder()
