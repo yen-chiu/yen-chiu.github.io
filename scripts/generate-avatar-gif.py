@@ -14,7 +14,7 @@ COUNT = 24
 DURATION_MS = 120
 
 base = Image.open(SOURCE).convert("RGBA")
-base.thumbnail((SIZE - 24, SIZE - 24), Image.Resampling.LANCZOS)
+base.thumbnail((SIZE - 8, SIZE - 8), Image.Resampling.LANCZOS)
 frames = []
 for index in range(COUNT):
     phase = 2 * math.pi * index / COUNT
