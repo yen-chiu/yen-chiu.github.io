@@ -1,0 +1,134 @@
+---
+/** A self-contained, responsive academic-layout stress test for the MDX showcase. */
+const wave = (baseline: number, phase = 0) =>
+  Array.from({ length: 101 }, (_, index) => {
+    const x = 35 + index * 5.3
+    const y = baseline - 25 * Math.sin(index * Math.PI / 20 + phase)
+    return (index === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1)
+  }).join(' ')
+---
+<section class='paper-demo not-prose' aria-labelledby='paper-demo-heading'>
+  <header class='paper-demo-head'>
+    <div class='paper-demo-kicker'>ACADEMIC LAYOUT · RESPONSIVE DEMO</div>
+    <h3 id='paper-demo-heading'>电磁波与电化学：一张混合排版的样张</h3>
+    <p class='paper-demo-subtitle'>非真实论文、非实验报告。只用来检查 Vesper 的长标题、图表、双栏、表格、图注与窄屏布局。</p>
+    <div class='paper-demo-meta'>
+      <span>示例资料 · 2026</span>
+      <span>物理 / 化学</span>
+      <span>静态排版测试</span>
+    </div>
+  </header>
+
+  <div class='paper-demo-columns'>
+    <section aria-labelledby='paper-demo-abstract'>
+      <h4 id='paper-demo-abstract'>摘要 / Abstract</h4>
+      <p>本节把两种不同学科的标准表达方式放在一页：一边是随空间振荡的电磁场，另一边是与反应活度有关的电池电势。内容参考开放教材，图形与示例由本站重新绘制。</p>
+      <p class='paper-demo-keywords'><strong>关键词：</strong> Maxwell equations · Electromagnetic waves · Nernst equation · Responsive layout</p>
+    </section>
+    <aside class='paper-demo-notes' aria-labelledby='paper-demo-notes'>
+      <h4 id='paper-demo-notes'>阅读说明</h4>
+      <p>下面的波形是同相曲线的示意，不是实验采样；颜色用于区分曲线。把窗口缩窄，检查图表是否能在容器内缩放，右侧说明是否顺序移到下方。</p>
+      <span class='paper-demo-tag'>示例图形 · 非测量数据</span>
+    </aside>
+  </div>
+
+  <figure class='paper-demo-figure'>
+    <svg viewBox='0 0 600 246' role='img' aria-labelledby='paper-graph-title paper-graph-desc'>
+      <title id='paper-graph-title'>平面电磁波的同相波形示意</title>
+      <desc id='paper-graph-desc'>两条沿空间坐标 x 振荡的正弦曲线，分别表示归一化的 E 和 cB，形状和相位相同。</desc>
+      <g class='graph-grid'>
+        {[40,80,120,160,200].map(y => <line x1='35' y1={y} x2='565' y2={y}/>)}
+        {[35,141,247,353,459,565].map(x => <line x1={x} y1='25' x2={x} y2='211'/>)}
+      </g>
+      <g class='graph-axis'>
+        <path d='M35 25V211H570'/>
+        <path d='M560 206L570 211L560 216'/>
+      </g>
+      <path class='graph-wave-a' d={wave(84)}/>
+      <path class='graph-wave-b' d={wave(170)}/>
+      <text class='graph-label' x='40' y='37'>E(x, t₀) / E₀</text>
+      <text class='graph-label' x='40' y='141'>cB(x, t₀) / E₀</text>
+      <text class='graph-label' x='573' y='227' text-anchor='end'>x →</text>
+    </svg>
+    <figcaption><strong>图 1.</strong> 同相的电场与磁场分量示意。两条曲线分开展示，纵轴分别按其振幅归一化；并非实际测量值或不同波的传播轨迹。</figcaption>
+  </figure>
+
+  <div class='paper-demo-columns'>
+    <section aria-labelledby='paper-demo-symbols'>
+      <h4 id='paper-demo-symbols'>符号速查</h4>
+      <div class='paper-table-wrap'>
+        <table>
+          <thead><tr><th scope='col'>符号</th><th scope='col'>含义</th><th scope='col'>单位</th></tr></thead>
+          <tbody>
+            <tr><td><code>E</code></td><td>电场强度</td><td>V/m</td></tr>
+            <tr><td><code>B</code></td><td>磁感应强度</td><td>T</td></tr>
+            <tr><td><code>T</code></td><td>热力学温度</td><td>K</td></tr>
+            <tr><td><code>F</code></td><td>法拉第常数</td><td>C/mol</td></tr>
+            <tr><td><code>Q</code></td><td>反应商（无量纲）</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section aria-labelledby='paper-demo-reference'>
+      <h4 id='paper-demo-reference'>参考资料</h4>
+      <ol class='paper-demo-references'>
+        <li><a href='https://openstax.org/books/university-physics-volume-2/pages/16-1-maxwells-equations-and-electromagnetic-waves' target='_blank' rel='noopener noreferrer'>OpenStax, University Physics Vol. 2, §16.1</a></li>
+        <li><a href='https://openstax.org/books/chemistry-2e/pages/17-4-potential-free-energy-and-equilibrium' target='_blank' rel='noopener noreferrer'>OpenStax, Chemistry 2e, §17.4</a></li>
+        <li><a href='https://www.nist.gov/pml/special-publication-330/sp-330-section-2' target='_blank' rel='noopener noreferrer'>NIST, SI defining constants</a></li>
+      </ol>
+      <p class='paper-demo-small'>文中的中文解说和本图为独立编写；引用教材只为展示真实科学排版，不代表复制教材章节。</p>
+    </section>
+  </div>
+
+  <footer class='paper-demo-foot'>YenChiu · 复杂排版测试页 <span>图文混排 / 语义结构 / 手机适配</span></footer>
+</section>
+
+<style>
+.paper-demo {
+  color:hsl(var(--foreground));
+  border:1px solid hsl(var(--border));
+  border-radius:1.1rem;
+  overflow:hidden;
+  background:hsl(var(--background)/.94);
+  font-size:.82rem;
+  line-height:1.75;
+  margin:1.5rem 0;
+}
+.paper-demo-head{padding:1.4rem 1.4rem 1.1rem;border-bottom:1px solid hsl(var(--border));}
+.paper-demo-kicker{color:hsl(var(--primary));font-size:.64rem;letter-spacing:.14em;font-weight:650;}
+.paper-demo-head h3{font-size:1.13rem;line-height:1.55;font-weight:700;margin:.45rem 0 .3rem;}
+.paper-demo-subtitle{color:hsl(var(--muted-foreground));font-size:.74rem;margin:0;}
+.paper-demo-meta{display:flex;gap:.55rem;flex-wrap:wrap;margin-top:1rem;color:hsl(var(--muted-foreground));font-size:.68rem;}
+.paper-demo-meta span{border:1px solid hsl(var(--border));border-radius:99rem;padding:.1rem .55rem;}
+.paper-demo-columns{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);gap:1.3rem;padding:1.15rem 1.4rem;}
+.paper-demo-columns>section,.paper-demo-columns>aside{min-width:0;}
+.paper-demo h4{font-size:.84rem;font-weight:700;color:hsl(var(--foreground));margin:0 0 .55rem;}
+.paper-demo p{margin:.45rem 0;color:hsl(var(--foreground));}
+.paper-demo-keywords,.paper-demo-small{font-size:.7rem!important;color:hsl(var(--muted-foreground))!important;}
+.paper-demo-notes{border-left:3px solid hsl(var(--primary)/.55);padding-left:.9rem;}
+.paper-demo-tag{display:inline-block;font-size:.65rem;padding:.16rem .5rem;margin-top:.4rem;border-radius:.4rem;background:hsl(var(--primary)/.1);color:hsl(var(--primary));}
+.paper-demo-figure{margin:.15rem 1.4rem;border:1px solid hsl(var(--border));border-radius:.8rem;overflow:hidden;background:hsl(var(--muted)/.16);}
+.paper-demo-figure svg{display:block;width:100%;height:auto;max-height:290px;}
+.paper-demo-figure figcaption{font-size:.69rem;line-height:1.7;color:hsl(var(--muted-foreground));padding:.5rem .8rem;border-top:1px solid hsl(var(--border));}
+.graph-grid{stroke:hsl(var(--border));stroke-width:1;opacity:.65;}
+.graph-axis{fill:none;stroke:hsl(var(--foreground));stroke-width:1.2;opacity:.58;}
+.graph-wave-a{fill:none;stroke:hsl(var(--primary));stroke-width:2.8;}
+.graph-wave-b{fill:none;stroke:#d78770;stroke-width:2.8;}
+.graph-label{fill:hsl(var(--foreground));font-size:13px;}
+.paper-table-wrap{width:100%;overflow-x:auto;}
+.paper-demo table{width:100%;min-width:235px;border-collapse:collapse;font-size:.7rem;}
+.paper-demo th,.paper-demo td{border-bottom:1px solid hsl(var(--border));padding:.35rem .4rem;text-align:left;white-space:nowrap;}
+.paper-demo th{color:hsl(var(--muted-foreground));font-weight:600;}
+.paper-demo code{font-family:ui-monospace,monospace;color:hsl(var(--primary));font-size:.72rem;}
+.paper-demo-references{padding-left:1.05rem;margin:.25rem 0;font-size:.73rem;}
+.paper-demo-references li{margin:.3rem 0;overflow-wrap:anywhere;}
+.paper-demo-references a{color:hsl(var(--primary));text-decoration:underline;text-underline-offset:2px;}
+.paper-demo-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.6rem 1.4rem;background:hsl(var(--muted)/.3);border-top:1px solid hsl(var(--border));font-size:.66rem;color:hsl(var(--muted-foreground));}
+@media(max-width:650px){
+  .paper-demo-head{padding:1rem;}
+  .paper-demo-columns{grid-template-columns:1fr;gap:.95rem;padding:1rem;}
+  .paper-demo-figure{margin:0 1rem;}
+  .paper-demo-meta{gap:.35rem;}
+  .paper-demo-notes{padding-left:.7rem;}
+}
+</style>
