@@ -46,3 +46,16 @@ test('mixed sources use official websites and sample rights are disclosed', () =
   // "查看原曲" link text was replaced by that sentence in the player refactor.
   assert.match(page, /官方播放入口/)
 })
+
+
+test('queue navigation and playback modes are wired to shared engine', () => {
+  assert.match(engine, /async next\(\)/)
+  assert.match(engine, /async previous\(\)/)
+  assert.match(engine, /private async onEnded\(\)/)
+  assert.match(engine, /cycleRepeat\(\)/)
+  assert.match(engine, /toggleShuffle\(\)/)
+  assert.match(player, /data-previous/)
+  assert.match(player, /data-next/)
+  assert.match(player, /data-repeat/)
+  assert.match(player, /data-shuffle/)
+})
