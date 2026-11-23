@@ -79,6 +79,13 @@
           "intro": "愿美梦成真",
           "link": "https://lemonadorable.github.io/",
           "avatar": "https://lemonadorable.github.io/favicon/favicon.gif"
+        },
+        {
+          "name": "Frud's Blog",
+          "intro": "强化学习、AI Agent 与日常记录",
+          "link": "https://www.aibrium.cn/",
+          "avatar": "",
+          "mark": "F"
         }
       ]
     }
