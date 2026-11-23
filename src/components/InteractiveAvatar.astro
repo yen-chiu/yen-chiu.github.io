@@ -1,8 +1,10 @@
 ---
+import { sitePath } from '@/utils/site-path'
 const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.props
+const animatedSource = sitePath('/favicon/wendell-avatar-animated.webp')
 ---
 
-<interactive-avatar data-variant={variant}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><span class='avatar-prism' aria-hidden='true'></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
+<interactive-avatar data-variant={variant} data-animated-src={animatedSource}><span class='avatar-aura' aria-hidden='true'></span><span class='avatar-orbit' aria-hidden='true'><span class='avatar-star'></span></span><span class='avatar-prism' aria-hidden='true'></span><button type='button' aria-label={label}><slot /></button><span class='avatar-ripple' aria-hidden='true'></span></interactive-avatar>
 <script>
   import { createAvatarTapCounter, FOCUS_URL } from '@/utils/avatar-easter-egg'
   class InteractiveAvatar extends HTMLElement {
@@ -36,6 +38,33 @@ const { label = '轻触头像，打个招呼', variant = 'default' } = Astro.pro
         button = this.querySelector('button')!
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
       const motionReduced = () => (globalThis as any).wendellMotion?.reduce?.() ?? reduced.matches
+      const image = button.querySelector<HTMLImageElement>('img')
+      const staticSource = image?.getAttribute('src') ?? ''
+      const staticSrcset = image?.getAttribute('srcset')
+      const staticSizes = image?.getAttribute('sizes')
+      const syncAvatarImage = () => {
+        if (!image) return
+        const enabled = document.documentElement.dataset.animatedAvatar === 'true'
+        if (enabled) {
+          if (image.dataset.avatarAnimated === 'true') return
+          image.removeAttribute('srcset')
+          image.removeAttribute('sizes')
+          image.src = this.dataset.animatedSrc || staticSource
+          image.dataset.avatarAnimated = 'true'
+        } else if (image.dataset.avatarAnimated === 'true') {
+          image.src = staticSource
+          if (staticSrcset !== null && staticSrcset !== undefined) image.setAttribute('srcset', staticSrcset)
+          if (staticSizes !== null && staticSizes !== undefined) image.setAttribute('sizes', staticSizes)
+          image.dataset.avatarAnimated = 'false'
+        }
+      }
+      window.addEventListener('wendell:appearance', syncAvatarImage, { signal })
+      reduced.addEventListener('change', () => {
+        // Bootstrap may not have applied the new system preference yet.
+        window.wendellAppearance?.apply()
+        syncAvatarImage()
+      }, { signal })
+      syncAvatarImage()
       const tappedFiveTimes = createAvatarTapCounter()
       button.addEventListener(
         'click',
