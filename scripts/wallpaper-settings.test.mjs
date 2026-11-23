@@ -97,3 +97,49 @@ test('all built-in wallpaper paths are real local assets', () => {
     assert.ok(svg.length < 10_000, path + ' is unexpectedly large')
   }
 })
+
+
+test('homepage follows the chosen wallpaper without forcing inner-page background mode', () => {
+  const { api, root, styles, settings } = mount()
+  assert.equal(api.get().homeWallpaperSource, 'inherit')
+  api.set({ wallpaperSource: '/images/wallpapers/rose-twilight.svg' })
+  assert.match(styles.get('--home-wallpaper-image'), /rose-twilight\.svg/)
+  assert.equal(root.dataset.homeWallpaperCustom, 'true')
+  assert.equal(root.dataset.wallpaper, 'banner', 'inner pages may remain plain')
+  const saved = JSON.parse(settings.get('wendell-appearance-v1'))
+  assert.equal(mount(saved).api.get().homeWallpaperSource, 'inherit')
+})
+
+test('a separate homepage wallpaper does not change the reader background', () => {
+  const { api, styles, settings, root } = mount()
+  api.set({
+    wallpaperSource: '/images/wallpapers/aurora-ridge.svg',
+    homeWallpaperSource: '/images/wallpapers/silver-mist.svg'
+  })
+  assert.match(styles.get('--site-wallpaper-image'), /aurora-ridge\.svg/)
+  assert.match(styles.get('--home-wallpaper-image'), /silver-mist\.svg/)
+  assert.equal(root.dataset.homeWallpaperCustom, 'true')
+  api.set({ wallpaperSource: '/images/moonlit-cover.svg' })
+  assert.match(styles.get('--home-wallpaper-image'), /silver-mist\.svg/)
+  assert.equal(mount(JSON.parse(settings.get('wendell-appearance-v1'))).api.get().homeWallpaperSource,
+    '/images/wallpapers/silver-mist.svg')
+  api.set({ homeWallpaperSource: 'inherit' })
+  assert.match(styles.get('--home-wallpaper-image'), /moonlit-cover\.svg/)
+  assert.equal(root.dataset.homeWallpaperCustom, 'false')
+})
+
+test('homepage remote URLs are validated and resetting preserves old defaults', () => {
+  const { api, styles } = mount({ wallpaperSource: '/images/wallpapers/aurora-ridge.svg' })
+  assert.equal(api.get().homeWallpaperSource, 'inherit', 'old user preferences still work')
+  api.set({ homeWallpaperSource: 'javascript:alert(1)' })
+  assert.equal(api.get().homeWallpaperSource, 'inherit')
+  api.set({ homeWallpaperSource: 'https://cdn.example.com/home.webp' })
+  assert.match(styles.get('--home-wallpaper-image'), /cdn\.example\.com/)
+  api.set({ homeWallpaperSource: 'home-uploaded' })
+  assert.equal(api.get().homeWallpaperSource, 'home-uploaded')
+  assert.match(styles.get('--home-wallpaper-image'), /moonlit-cover\.svg/,
+    'local image is shown only after IndexedDB supplies the blob')
+  api.reset()
+  assert.equal(api.get().homeWallpaperSource, 'inherit')
+  assert.equal(api.get().wallpaperSource, '/images/moonlit-cover.svg')
+})
