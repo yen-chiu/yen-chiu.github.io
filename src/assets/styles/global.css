@@ -72,10 +72,23 @@ html.motion-off *::after {
   animation-delay: 150ms;
 }
 
-/* [Katex] */
+/* [KaTeX] Keep long equations inside the reading column on narrow screens. */
 span.katex-display {
-  overflow-y: scroll;
-  padding: 0.5rem;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.7rem 0.5rem;
+  scrollbar-width: thin;
+}
+
+/* Article tables scroll within their own area instead of clipping the page. */
+#content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
 }
 
 .katex-html {
