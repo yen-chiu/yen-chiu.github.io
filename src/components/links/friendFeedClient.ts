@@ -101,7 +101,7 @@ export function initFriendFeed() {
     visibleCount = Math.min(PAGE_SIZE, rows.length)
     renderPagination()
     root.querySelector<HTMLElement>('[data-feed-list]')?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
       block: 'start'
     })
   })
