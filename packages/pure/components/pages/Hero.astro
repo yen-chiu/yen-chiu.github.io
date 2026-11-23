@@ -78,6 +78,18 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
         </span>
       )
     }
+
+  </div>
+
+  <h1 class='article-title mt-4 text-2xl font-medium sm:mb-2 sm:mt-6 sm:text-3xl'>
+    {title}
+  </h1>
+
+  <div class='article-intro mt-3'>
+    <p class='article-summary text-sm text-muted-foreground'>{description}</p>
+    <slot name='description' />
+  </div>
+  <div class='article-tags-row'>
     {
       // Tags
       !!tags?.length && (
@@ -93,19 +105,10 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
       )
     }
   </div>
-
-  <h1 class='article-title mt-4 text-2xl font-medium sm:mb-2 sm:mt-6 sm:text-3xl'>
-    {title}
-  </h1>
-
-  <div class='article-intro mt-3'>
-    <p class='article-summary text-sm text-muted-foreground'>{description}</p>
-    <slot name='description' />
-  </div>
 </div>
 
 {/* Dividing line */}
-<div class='article-divider mt-4 w-1/2 border-t max-md:mx-auto sm:mt-6 sm:w-1/3'></div>
+<div class='article-divider mt-6 border-t'></div>
 
 <script>
   const viewportHeight = window.innerHeight
@@ -131,10 +134,14 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 </script>
 
 <style>
-  .article-title { max-width: 28ch; line-height: 1.32; letter-spacing: -.025em; text-wrap: pretty; }
+  .article-info { display: flex; flex-direction: column; }
+  .article-title { order: 1; max-width: 28ch; line-height: 1.32; letter-spacing: -.025em; text-wrap: pretty; }
+  .article-intro { order: 2; }
+  .article-tags-row { order: 3; margin-top: 1rem; }
+  .article-meta { order: 0; }
+  .article-divider { width: 100%; margin-top: 2rem; margin-bottom: 2.5rem; border-color: hsl(var(--foreground) / .16); }
   .article-summary { max-width: 65ch; margin: 0; font-style: normal; line-height: 1.8; overflow-wrap: anywhere; }
   .article-intro { margin-top: .8rem; }
-  .article-divider { border-color: hsl(var(--border) / .6); }
   @media (max-width: 767px) {
     .article-meta { gap: .35rem .9rem; font-size: .76rem; }
     .article-meta :global(svg) { width: 1rem; height: 1rem; }
@@ -142,7 +149,10 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     .article-summary { font-size: .92rem; line-height: 1.75; }
     .article-tags { margin-top: .35rem; }
     .article-tags__list a { font-size: .72rem; padding: .08rem .5rem; border-radius: 999px; }
-    .article-divider { margin-top: 1.5rem; width: 22%; margin-inline: 0; }
+    .article-title { font-weight: 600; }
+    .article-intro { margin-top: 1rem; }
+    .article-tags-row { margin-top: .85rem; }
+    .article-divider { margin-top: 1.65rem; margin-bottom: 2.25rem; width: 100%; margin-inline: 0; }
   }
   .article-tags{display:flex;align-items:flex-start;gap:.4rem;min-width:0;max-width:100%;flex-basis:100%;}
   .article-tags :global(svg){flex-shrink:0;margin-top:.2rem;}
