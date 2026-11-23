@@ -18,7 +18,11 @@ const { compact = false } = Astro.props
       <div class='music-times'><span data-current>0:00</span><span data-duration>--:--</span></div>
     </div>
     <div class='music-actions'>
+      <button type='button' class='music-transport-button' data-previous aria-label='上一首' title='上一首'>⏮</button>
       <button type='button' class='music-main-button' data-play aria-label='播放' aria-pressed='false'><span data-play-symbol aria-hidden='true'>▶</span></button>
+      <button type='button' class='music-transport-button' data-next aria-label='下一首' title='下一首'>⏭</button>
+      <button type='button' class='music-transport-button' data-shuffle aria-label='随机播放' aria-pressed='false' title='随机播放'>⇄</button>
+      <button type='button' class='music-transport-button' data-repeat aria-label='循环模式：关闭' aria-pressed='false' title='循环模式'>↻</button>
       <label class='music-volume'><span aria-hidden='true'>♫</span><input data-volume type='range' min='0' max='1' value='0.7' step='0.05' aria-label='音量' /></label>
       {compact && <a class='music-more' href={sitePath('/music/')} aria-label='打开完整音乐页面'>完整音乐页 ↗</a>}
     </div>
@@ -61,6 +65,8 @@ const { compact = false } = Astro.props
       try { tracks=JSON.parse(this.dataset.tracks || '[]') } catch {}
       musicEngine.configure(tracks)
       const play=this.querySelector<HTMLButtonElement>('[data-play]')!
+      const repeat=this.querySelector<HTMLButtonElement>('[data-repeat]')!
+      const shuffle=this.querySelector<HTMLButtonElement>('[data-shuffle]')!
       const symbol=this.querySelector<HTMLElement>('[data-play-symbol]')!
       const seek=this.querySelector<HTMLInputElement>('[data-seek]')!
       const volume=this.querySelector<HTMLInputElement>('[data-volume]')!
@@ -81,9 +87,17 @@ const { compact = false } = Astro.props
         play.setAttribute('aria-pressed',String(snapshot.playing))
         symbol.textContent=snapshot.playing?'Ⅱ':'▶'
         this.classList.toggle('is-playing',snapshot.playing)
+        repeat.textContent=snapshot.repeat==='one'?'↻¹':'↻'
+        repeat.setAttribute('aria-label',snapshot.repeat==='off'?'循环模式：关闭':snapshot.repeat==='all'?'循环模式：列表循环':'循环模式：单曲循环')
+        repeat.setAttribute('aria-pressed',String(snapshot.repeat!=='off'))
+        shuffle.setAttribute('aria-pressed',String(snapshot.shuffle))
         this.querySelectorAll<HTMLElement>('[data-track-id]').forEach(el=>el.classList.toggle('is-active',el.dataset.trackId===snapshot.id))
       })
       play.addEventListener('click',()=>{void musicEngine.toggle()},{signal})
+      this.querySelector('[data-previous]')?.addEventListener('click',()=>{void musicEngine.previous()},{signal})
+      this.querySelector('[data-next]')?.addEventListener('click',()=>{void musicEngine.next()},{signal})
+      repeat.addEventListener('click',()=>musicEngine.cycleRepeat(),{signal})
+      shuffle.addEventListener('click',()=>musicEngine.toggleShuffle(),{signal})
       seek.addEventListener('input',()=>musicEngine.seek(Number(seek.value)/1000),{signal})
       volume.addEventListener('input',()=>musicEngine.setVolume(Number(volume.value)),{signal})
       this.querySelectorAll<HTMLButtonElement>('[data-select-song]').forEach(button=>button.addEventListener('click',()=>musicEngine.select(button.dataset.selectSong||''),{signal}))
@@ -108,6 +122,8 @@ const { compact = false } = Astro.props
   .music-info{min-height:5rem}.music-kicker{font-size:.63rem;letter-spacing:.17em;color:hsl(var(--muted-foreground))}.music-info h3{font-size:clamp(1.08rem,2.5vw,1.4rem);margin:.65rem 0 .2rem}.music-info p{font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.65}
   .music-timeline{width:100%;max-width:28rem;margin:1.35rem 0 .8rem}.music-timeline input{width:100%;accent-color:var(--music-accent);cursor:pointer}.music-times{display:flex;justify-content:space-between;color:hsl(var(--muted-foreground));font-size:.72rem;font-variant-numeric:tabular-nums}
   .music-actions{width:100%;display:flex;align-items:center;justify-content:center;gap:1.25rem;flex-wrap:wrap}.music-main-button{border:0;background:var(--music-accent);color:hsl(var(--primary-foreground));width:3.4rem;height:3.4rem;min-width:48px;min-height:48px;border-radius:50%;cursor:pointer;box-shadow:0 5px 18px hsl(var(--primary)/.25);font-size:1.2rem}.music-volume{display:flex;align-items:center;gap:.4rem;font-size:.9rem;color:hsl(var(--muted-foreground))}.music-volume input{width:5rem;accent-color:var(--music-accent)}
+  .music-transport-button{border:0;background:transparent;color:inherit;min-width:40px;min-height:40px;border-radius:50%;cursor:pointer;font-size:1.05rem}
+  .music-transport-button[aria-pressed='true']{color:var(--music-accent);background:hsl(var(--primary)/.12)}
   .music-status{min-height:1.4rem;margin:.9rem 0 0;font-size:.71rem;color:hsl(var(--muted-foreground));line-height:1.5}
   .music-side{display:flex;flex-direction:column}.music-tabs{align-self:center;background:hsl(var(--muted)/.55);border-radius:999px;padding:.25rem;display:flex;gap:.25rem}.music-tabs button{border:0;background:transparent;padding:.55rem 1.7rem;border-radius:999px;color:inherit;cursor:pointer;min-height:40px;font-size:.85rem}.music-tabs button[aria-selected='true']{background:var(--music-accent);color:hsl(var(--primary-foreground))}.music-pane{flex:1;min-height:0;overflow:auto;padding:1.5rem .2rem}.music-pane[hidden]{display:none}.music-empty{min-height:250px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.7rem;text-align:center}.music-empty>span{font-size:2.5rem;color:var(--music-accent)}.music-empty p{font-size:1.1rem}.music-empty small{font-size:.78rem;color:hsl(var(--muted-foreground))}.music-side-note{border-top:1px solid hsl(var(--border)/.7);padding-top:1rem;font-size:.7rem;line-height:1.6;color:hsl(var(--muted-foreground))}.music-side-note a{text-decoration:underline;text-underline-offset:3px}
   .music-search{width:100%;padding:.7rem 1rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background));color:inherit;font-size:.85rem}.music-playlist{list-style:none;margin:.75rem 0 0;padding:0}.music-playlist li[hidden]{display:none}.music-track{width:100%;display:flex;align-items:center;text-align:left;gap:.8rem;background:transparent;border:0;border-radius:.8rem;padding:.7rem;cursor:pointer;color:inherit}.music-track:hover,.is-active .music-track{background:hsl(var(--primary)/.08)}.music-track-symbol{display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:.65rem;background:hsl(var(--primary)/.15);color:var(--music-accent)}.music-track-name{display:grid;flex:1;min-width:0;gap:.2rem}.music-track-name b{font-size:.85rem}.music-track-name small,.music-track-provider{font-size:.68rem;color:hsl(var(--muted-foreground))}.music-track-provider{white-space:nowrap}
