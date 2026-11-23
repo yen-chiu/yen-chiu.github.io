@@ -125,6 +125,8 @@
     const nextUrl = URL.createObjectURL(blob)
     if (uploadedObjectUrl) URL.revokeObjectURL(uploadedObjectUrl)
     uploadedObjectUrl = nextUrl
+    document.documentElement.style.setProperty('--site-uploaded-wallpaper-image',
+      'url(' + JSON.stringify(nextUrl) + ')')
   }
   const validateImage = file => new Promise((resolve, reject) => {
     if (!(file instanceof Blob) || !['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(file.type))
@@ -153,11 +155,16 @@
     await writeUpload(null)
     if (uploadedObjectUrl) URL.revokeObjectURL(uploadedObjectUrl)
     uploadedObjectUrl = null
+    document.documentElement.style.removeProperty('--site-uploaded-wallpaper-image')
     if (settings.wallpaperSource === 'uploaded') set({ wallpaperSource: DEFAULT_SOURCE })
   }
   window.wendellAppearance = {
     get: () => ({ ...settings }), set, reset: () => set({ ...defaults }), apply,
-    upload, useUpload, clearUpload, hasUpload: async () => Boolean(await readUpload())
+    upload, useUpload, clearUpload, hasUpload: async () => {
+      const blob = await readUpload()
+      if (blob && !uploadedObjectUrl) useBlob(blob)
+      return Boolean(blob)
+    }
   }
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply)
   document.addEventListener('astro:page-load', apply)
