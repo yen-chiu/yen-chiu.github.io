@@ -188,8 +188,11 @@ const meta = {
                           <div class='post-card__cover'>
                             <Image
                               alt={post.data.heroImage.alt || post.data.title}
-                              loading={index === 0 ? 'eager' : 'lazy'}
                               {...post.data.heroImage}
+                              loading={index === 0 ? 'eager' : 'lazy'}
+                              decoding='async'
+                              widths={[320, 480, 640, 960]}
+                              sizes='(max-width: 767px) calc(100vw - 2rem), (max-width: 1200px) 50vw, 420px'
                             />
                           </div>
                         )}
