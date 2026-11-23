@@ -5,6 +5,7 @@ import { defineConfig } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 import mermaid from 'astro-mermaid'
+import { typst } from 'astro-typst'
 
 // Local integrations
 import rehypeTaskListA11y from './src/plugins/rehype-task-list-a11y.ts'
@@ -117,6 +118,14 @@ export default defineConfig({
     // sitemap(),
     // mdx(),
     mermaid(),
+
+    // MDX 文章里可以直接用 <Typst> 组件；这个集成负责在构建期编译 Typst。
+    // https://github.com/OverflowCat/astro-typst
+    typst({
+      options: {
+        remPx: 14
+      }
+    }),
 
     AstroPureIntegration(config)
   ],
