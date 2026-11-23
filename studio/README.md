@@ -13,15 +13,19 @@ session for one explicitly allowlisted email address.
 4. Explicitly confirm publishing in the browser.
 5. The Worker validates the Access JWT signature, application AUD, expiration,
    exact allowlisted email, request origin, content type, and image header.
-6. With its secret fine-grained GitHub token, the Worker **only** updates
-   `src/assets/avatar.png` on `main` via the GitHub Contents API.
-7. Existing `.github/workflows/deploy.yml` creates
-   `wendell-avatar-animated.webp` and `wendell-avatar-animated.gif` from the
-   updated PNG and deploys them. It also builds the normal Astro static avatar.
+6. With its secret fine-grained GitHub token, the Worker **only stages**
+   `src/assets/avatar.png` on branch `feature/avatar-studio` via the GitHub Contents API.
+7. The branch-only `.github/workflows/avatar-studio-publish.yml` builds and
+   validates both `wendell-avatar-animated.webp` and `.gif` from that staged PNG.
+8. The dedicated job commits all three resources to `main` in **one commit**
+   and explicitly dispatches `deploy.yml`. The normal Pages job no longer
+   installs Pillow or converts the avatar.
 
 The preview is a CSS motion preview, **not an encoder-generated WebP/GIF**.
-The files are only produced after the GitHub Actions build completes. No
-automatic publishing happens on file selection or preview.
+Files are generated in the separate Avatar Studio GitHub Actions job **after confirmation**.
+No publishing occurs on file selection or preview. If the image generator or
+verification fails, `main` remains untouched. A successful staged PNG commit
+means only that generation was queued, not that the site is deployed.
 
 ## Setup (required before use)
 
@@ -48,12 +52,14 @@ automatic publishing happens on file selection or preview.
 6. Visit the Studio while logged out and confirm that Access requires login.
    Verify a different account is denied, the correct account can preview a
    PNG, and the Publish action still requires a confirmation dialog. Confirm
-   that published builds produce both image formats.
+   that the Avatar Studio image job generates both formats, commits all three
+   files atomically to `main`, dispatches the normal Pages build and that the
+   public site serves the matching new resources.
 
 For more conservative operation, run the Worker in a staging environment
 before supplying any GitHub write credential. Publishing writes to
-**main by design**, but implementing and evaluating the Studio itself is done
-on branch `feature/avatar-studio`; there is no automatic merge.
+**main only after a successful isolated asset-generation job**; initial
+uploads go to `feature/avatar-studio`. Code changes do not automatically merge.
 
 ## Security boundaries
 
@@ -64,7 +70,9 @@ on branch `feature/avatar-studio`; there is no automatic merge.
   configuration is incomplete, it denies requests.
 - All writes require `POST /api/publish` with matching `Origin`, an
   explicit confirmation header, a PNG body, and valid PNG IHDR constraints.
-- The only permissible destination is one fixed repo/path/branch.
+- The Worker's only permissible destination is the fixed staging branch and
+  PNG source path. The trusted Actions job can update exactly three fixed
+  paths in `main` in one commit.
 - GitHub credentials remain server-side. No image upload goes to the server
   until the user explicitly confirms.
 - Cloudflare Access setup and secret creation are external account actions
