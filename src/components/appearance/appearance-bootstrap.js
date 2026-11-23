@@ -63,6 +63,21 @@
     return rgb[0] * .2126 + rgb[1] * .7152 + rgb[2] * .0722
   }
 
+  // Decorative effects use a conservative device tier. This is a hint, not a
+  // benchmark: viewport width and logical cores cannot measure actual GPU speed.
+  // The explicit reduced-motion setting and OS preference always win.
+  const effectQuality = () => {
+    if (settings.motion === 'reduced' || matchMedia('(prefers-reduced-motion: reduce)').matches)
+      return 'static'
+    const cores = navigator.hardwareConcurrency || 0
+    if (window.innerWidth <= 480 || (cores > 0 && cores <= 4)) return 'low'
+    return 'high'
+  }
+  const syncEffectQuality = () => {
+    const root = document.documentElement
+    root.dataset.effectQuality = effectQuality()
+    root.dataset.effectsPaused = String(document.hidden)
+  }
   const apply = () => {
     const root = document.documentElement, h = settings.hue
     let lightness = 46
@@ -92,6 +107,7 @@
     root.dataset.postLayout = settings.layout
     root.dataset.bannerTitle = String(settings.title)
     root.dataset.bannerWaves = String(settings.waves)
+    syncEffectQuality()
     root.dataset.motion = settings.motion
     root.dataset.animatedAvatar = String(settings.animatedAvatar && settings.motion !== 'reduced' && !matchMedia('(prefers-reduced-motion: reduce)').matches)
     root.classList.toggle('motion-always', settings.motion === 'always')
@@ -217,6 +233,9 @@
       return Boolean(blob)
     }
   }
+  matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', apply)
+  window.addEventListener('resize', syncEffectQuality, { passive: true })
+  document.addEventListener('visibilitychange', syncEffectQuality)
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply)
   document.addEventListener('astro:page-load', apply)
   apply()
