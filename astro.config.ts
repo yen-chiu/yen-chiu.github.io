@@ -7,7 +7,6 @@ import remarkMath from 'remark-math'
 import mermaid from 'astro-mermaid'
 
 // Local integrations
-import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
 import rehypeTaskListA11y from './src/plugins/rehype-task-list-a11y.ts'
 import remarkWikilinks from './src/plugins/remark-wikilinks.ts'
 // Shiki
@@ -77,19 +76,9 @@ export default defineConfig({
       remarkMath,
       [remarkWikilinks, { basePath: '/blog' }]
     ],
-    rehypePlugins: [
-      [rehypeKatex, {}],
-      rehypeHeadingIds,
-      rehypeTaskListA11y,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'append',
-          properties: { className: ['anchor'] },
-          content: { type: 'text', value: '#' }
-        }
-      ]
-    ],
+    // 标题不再追加 “#” 锚点链接：标题末尾的 # 读起来像正文的一部分。
+    // 标题 id 仍由 rehypeHeadingIds 生成，目录与深链照常工作。
+    rehypePlugins: [[rehypeKatex, {}], rehypeHeadingIds, rehypeTaskListA11y],
     // https://docs.astro.build/en/guides/syntax-highlighting/
     shikiConfig: {
       themes: {
