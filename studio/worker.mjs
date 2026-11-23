@@ -5,6 +5,7 @@
  */
 const REPOSITORY = 'yen-chiu/yen-chiu.github.io'
 const TARGET_PATH = 'src/assets/avatar.png'
+const TARGET_BRANCH = 'feature/avatar-studio'
 const MAX_BYTES = 4 * 1024 * 1024
 const encoder = new TextEncoder()
 const noStore = { 'Cache-Control': 'no-store, private', 'X-Content-Type-Options': 'nosniff',
@@ -81,7 +82,7 @@ function base64(bytes) {
 }
 async function github(env, method, body) {
   const endpoint = 'https://api.github.com/repos/' + REPOSITORY + '/contents/' + TARGET_PATH
-  const response = await fetch(endpoint + (method === 'GET' ? '?ref=main' : ''), {
+  const response = await fetch(endpoint + (method === 'GET' ? '?ref=' + encodeURIComponent(TARGET_BRANCH) : ''), {
     method,
     headers: { 'Authorization': 'Bearer ' + env.GITHUB_TOKEN,
       'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28',
@@ -116,9 +117,9 @@ small,p{line-height:1.7}#status{min-height:1.8em}#status.error{color:#b91c1c}
 <figure><img id="static" class="portrait" alt="新头像静态预览"><figcaption>静态 PNG · 原始图像</figcaption></figure>
 <figure><img id="animated" class="portrait animated" alt="微动态效果预览"><figcaption>微动态预览 · 与正式 WebP/GIF 使用相同的浮动节奏</figcaption></figure>
 </div><p class="sub">这是浏览器动画效果预览，不是尚未生成的 WebP/GIF 文件；正式文件由 GitHub Actions 在发布后基于 PNG 同源生成。</p></section>
-<section><h2>发布</h2><p class="sub">确认后只更新仓库 main 分支的头像源 PNG，部署脚本再生成 Animated WebP 和 GIF。提交前不会修改网站。</p>
+<section><h2>发布</h2><p class="sub">确认后先把 PNG 提交到 Avatar Studio 开发分支；独立生成任务验证 WebP/GIF 后，才把三个头像文件一次性发布至 main。若生成失败，主站头像保持不变。</p>
 <div class="actions"><button id="publish" class="primary" disabled>确认更新网站头像</button>
-<a href="https://github.com/yen-chiu/yen-chiu.github.io/actions/workflows/deploy.yml" target="_blank" rel="noopener noreferrer">查看部署记录</a></div>
+<a href="https://github.com/yen-chiu/yen-chiu.github.io/actions/workflows/avatar-studio-publish.yml" target="_blank" rel="noopener noreferrer">查看部署记录</a></div>
 <p id="status" role="status" aria-live="polite"></p>
 </section></main>
 <script>
@@ -143,14 +144,14 @@ file.addEventListener('change',async()=> {
   }catch(error){report(error.message||'无法读取图片',true)}
 })
 publish.addEventListener('click',async()=> {
-  if(!selected||!confirm('确认替换 YenChiu 网站的公开头像？此次操作将提交到 main 并触发部署。'))return
+  if(!selected||!confirm('确认提交新头像到 Avatar Studio 生成队列？验证通过后会自动将 PNG、WebP、GIF 一起发布到网站 main 分支。'))return
   publish.disabled=true
-  report('正在验证授权并提交 PNG…')
+  report('正在验证授权并提交 PNG 到 Avatar Studio 分支…')
   try{
     const response=await fetch('/api/publish',{method:'POST',body:selected,headers:{'Content-Type':'image/png','X-Avatar-Confirm':'publish'},credentials:'same-origin'})
     const data=await response.json()
     if(!response.ok)throw Error(data.error||'发布失败')
-    report('源 PNG 已提交。WebP/GIF 将随 GitHub Pages 构建生成。提交：'+data.commit)
+    report('已提交生成任务。三个文件通过验证后将一起发布，随后触发网站部署。任务提交：'+data.commit)
   }catch(error){report(error.message||'请求失败',true);publish.disabled=false}
 })
 </script></body></html>`;
@@ -173,11 +174,11 @@ export default {
         try { dimensions = validatePng(bytes) } catch(error) { return json({ error: error.message }, 400) }
         const current = await github(env, 'GET')
         const updated = await github(env, 'PUT', {
-          message: 'chore(avatar): publish PNG from protected Avatar Studio',
-          branch: 'main', path: TARGET_PATH, sha: current.sha,
+          message: 'chore(avatar): stage PNG for independent asset generation',
+          branch: TARGET_BRANCH, path: TARGET_PATH, sha: current.sha,
           content: base64(new Uint8Array(bytes))
         })
-        return json({ ok: true, commit: updated.commit?.sha, ...dimensions })
+        return json({ ok: true, staged: true, commit: updated.commit?.sha, ...dimensions })
       }
       return json({ error: 'Not found' }, 404)
     } catch (error) {
