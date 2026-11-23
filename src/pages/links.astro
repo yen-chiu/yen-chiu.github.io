@@ -5,9 +5,9 @@ import { sitePath } from '@/utils/site-path'
 
 import links from '../../public/links.json'
 import health from '../../public/links-status.json'
-import feedData from '../../public/links-feed.json'
 import historyData from '../../public/links-history.json'
 import FriendApplyGuide from '@/components/links/FriendApplyGuide.astro'
+import FriendFeed from '@/components/links/FriendFeed.astro'
 
 const groups = links.friends,
   total = groups.reduce((n, g) => n + g.link_list.length, 0)
@@ -17,11 +17,9 @@ const info = `名称：Wendell · Vesper
 头像：https://yenchiu.com/favicon/wendell-avatar-192.png`
 interface HealthEntry { url: string; state: 'healthy' | 'suspect' | 'down'; code: number | null }
 interface HistoryEntry { action: string; name: string; url: string; date: string; commit: string }
-interface FeedEntry { title: string; url: string; site: string; publishedAt: string | null }
 const healthSnapshot = health as { checkedAt: string | null; summary: { healthy: number; suspect: number; down: number }; links: HealthEntry[] }
 const healthByUrl = new Map(healthSnapshot.links.map(item => [item.url, item]))
 const history = historyData as HistoryEntry[]
-const posts = feedData.items as FeedEntry[]
 const friendGroup = groups.find(group => group.id_name === 'friends')
 const friendDownCount = (friendGroup?.link_list ?? []).filter(link => healthByUrl.get(link.link)?.state === 'down').length
 const friendActiveCount = (friendGroup?.link_list.length ?? 0) - friendDownCount
@@ -185,22 +183,7 @@ const friendInfo = [
       </details>
     </section>
 
-    <section class='link-extra rss-panel' aria-labelledby='friend-feed-heading'>
-      <span class='kicker'>NEIGHBORHOOD FEED</span>
-      <h2 id='friend-feed-heading'>邻站动态</h2>
-      <p>通过 RSS / Atom 收集友好邻居最近发表的文章。</p>
-      {posts.length ? (
-        <ul>
-          {posts.slice(0, 8).map(post => (
-            <li>
-              <a href={post.url} rel='noopener noreferrer' target='_blank'>{post.title}</a>
-              <span>{post.site}</span>
-              {post.publishedAt && <time datetime={post.publishedAt}>{post.publishedAt.slice(0, 10)}</time>}
-            </li>
-          ))}
-        </ul>
-      ) : <p class='empty-note'>还没有邻站动态。友链添加 RSS 地址并完成聚合后会出现在这里。</p>}
-    </section>
+    <FriendFeed />
     <FriendApplyGuide
       info={friendInfo}
       applyUrl='https://github.com/yen-chiu/yen-chiu.github.io/issues/new?template=friend-link.yml'
@@ -430,46 +413,70 @@ const friendInfo = [
     position: relative; isolation: isolate; overflow: hidden;
     display: flex; align-items: center; gap: .85rem;
     min-width: 0; min-height: 104px; padding: 1.05rem;
-    border: 1px solid rgb(170 161 196 / .24); border-radius: 1.15rem;
-    background: radial-gradient(circle at 8% 0, rgb(126 102 155 / .28), transparent 55%), #111018;
-    color: #f5f1f9; text-decoration: none;
+    border: 1px solid var(--link-card-border); border-radius: 1.15rem;
+    --link-card-border: hsl(var(--border) / .9);
+    --link-card-surface: hsl(var(--background) / .82);
+    --link-card-ink: hsl(var(--foreground));
+    --link-card-muted: hsl(var(--muted-foreground));
+    background: radial-gradient(circle at 8% 0, hsl(var(--primary) / .055), transparent 55%), var(--link-card-surface);
+    color: var(--link-card-ink); text-decoration: none;
     transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
   }
   .link-card:hover {
-    transform: translateY(-2px); border-color: hsl(var(--primary) / .65);
-    box-shadow: 0 10px 28px rgb(18 13 34 / .16);
+    transform: translateY(-2px); border-color: hsl(var(--primary) / .55);
+    color: var(--link-card-ink);
+    box-shadow: 0 10px 28px hsl(var(--foreground) / .09);
   }
   .card-backdrop {
     position: absolute; inset: -15%; width: 130%; height: 130%; z-index: -2;
     object-fit: cover; object-position: left center;
-    filter: blur(9px) saturate(.7); opacity: .24; pointer-events: none;
+    filter: blur(9px) saturate(.7); opacity: .1; pointer-events: none;
     transform: scale(1.06);
   }
   .card-shade {
     position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background: linear-gradient(90deg, rgb(12 11 18 / .54), rgb(12 11 18 / .82) 70%),
-      radial-gradient(circle at 100% 100%, rgb(155 122 191 / .12), transparent 45%);
+    background: linear-gradient(90deg, hsl(var(--background) / .66), hsl(var(--background) / .9) 70%),
+      radial-gradient(circle at 100% 100%, hsl(var(--primary) / .08), transparent 45%);
   }
   .link-mark {
     flex: 0 0 52px; width: 52px; height: 52px;
     display: grid; place-items: center; overflow: hidden;
-    border-radius: 50%; border: 1px solid rgb(241 232 255 / .2);
-    background: rgb(154 118 194 / .22);
-    color: #e2c6ff; font-size: 1.4rem; font-weight: 650;
-    box-shadow: 0 0 0 3px rgb(255 255 255 / .045);
+    border-radius: 50%; border: 1px solid hsl(var(--border));
+    background: hsl(var(--primary) / .1);
+    color: hsl(var(--primary)); font-size: 1.4rem; font-weight: 650;
+    box-shadow: 0 0 0 3px hsl(var(--foreground) / .025);
   }
   .link-mark img { width: 100%; height: 100%; object-fit: cover; }
   .link-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: .3rem; }
   .link-copy strong { font-size: .91rem; line-height: 1.35; font-weight: 650; overflow-wrap: anywhere; }
   .link-copy small {
-    font-size: .75rem; color: rgb(223 216 236 / .81);
+    font-size: .75rem; color: var(--link-card-muted);
     line-height: 1.55; display: -webkit-box; -webkit-box-orient: vertical;
     -webkit-line-clamp: 2; overflow: hidden;
   }
   .link-health { font-size: .75rem; font-weight: 550; }
-  .link-health[data-health='down'] { color: #ffb6ad; }
-  .link-health[data-health='suspect'] { color: #ffe1a6; }
-  .link-arrow { flex-shrink: 0; font-size: 1rem; color: rgb(198 163 238 / .84); opacity: .8; }
+  .link-health[data-health='down'] { color: hsl(var(--destructive)); }
+  .link-health[data-health='suspect'] { color: hsl(var(--primary)); }
+  .link-arrow { flex-shrink: 0; font-size: 1rem; color: hsl(var(--primary)); opacity: .8; }
+  /* Theme is controlled by Vesper's html.dark setting, not by the browser preference. */
+  :global(html.dark) .link-card {
+    --link-card-border: rgb(170 161 196 / .28);
+    --link-card-surface: #111018;
+    --link-card-ink: #f5f1f9;
+    --link-card-muted: rgb(223 216 236 / .81);
+  }
+  :global(html.dark) .card-backdrop { opacity: .25; }
+  :global(html.dark) .card-shade {
+    background: linear-gradient(90deg, rgb(12 11 18 / .54), rgb(12 11 18 / .84) 70%),
+      radial-gradient(circle at 100% 100%, rgb(155 122 191 / .12), transparent 45%);
+  }
+  :global(html.dark) .link-mark {
+    border-color: rgb(241 232 255 / .2);
+    background: rgb(154 118 194 / .22);
+    color: #e2c6ff;
+  }
+  :global(html.dark) .link-health[data-health='down'] { color: #ffb6ad; }
+  :global(html.dark) .link-health[data-health='suspect'] { color: #ffe1a6; }
   .directory-empty { padding: 2rem .5rem; text-align: center; font-size: .8rem; color: hsl(var(--muted-foreground)); line-height: 1.7; }
   .directory-count { margin: .7rem 0 0; font-size: .75rem; color: hsl(var(--muted-foreground)); text-align: right; }
   .friend-history { padding: .5rem .2rem; }
