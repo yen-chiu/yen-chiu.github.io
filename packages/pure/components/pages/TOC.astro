@@ -67,18 +67,22 @@ const toc = generateToc(headings)
 
     updatePositionAndStyle = () => {
       const windowHeight = window.innerHeight
-      const pageOffset =
-        window.scrollY - ((document.querySelector('#content') as HTMLElement)?.offsetTop || 0)
-      const postOffset =
-        ((document.querySelector('#content') as HTMLElement)?.offsetHeight || 0) + 127
+      const content = document.querySelector('#content') as HTMLElement | null
+      // Measure in viewport space: `offsetTop` is relative to the nearest
+      // positioned ancestor, so headings nested in cards / tabs reported bogus
+      // ranges and the in-view highlight broke into disconnected pills.
+      const contentBottom = content ? content.getBoundingClientRect().bottom : windowHeight * 3
 
       this.headings.forEach((el, index) => {
-        const nextHeadingTop = this.headings[index + 1]?.offsetTop || postOffset
-        const range = [el.offsetTop - pageOffset, nextHeadingTop - pageOffset - el.offsetHeight]
-        const progress = (windowHeight - range[0]) / (range[1] - range[0])
+        const rect = el.getBoundingClientRect()
+        const nextRect = this.headings[index + 1]?.getBoundingClientRect()
+        const nextTop = nextRect ? nextRect.top : contentBottom
+        const start = rect.top
+        const end = Math.max(start + rect.height, nextTop - rect.height)
+        const progress = (windowHeight - start) / Math.max(1, end - start)
 
         this.headingProgress[el.id] = {
-          inView: range[0] < windowHeight && range[1] > 0,
+          inView: start < windowHeight && end > 0,
           progress: Math.max(0, Math.min(1, progress))
         }
       })
