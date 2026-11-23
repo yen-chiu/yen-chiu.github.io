@@ -5,7 +5,7 @@ export const projects = [
     name: '念真',
     kind: '个人 AI 对话',
     status: '原站体验',
-    description: '浏览器里的个人 AI 对话空间，把日常交流与搜索、读页能力连接起来。',
+    description: '在浏览器里和念真聊天；需要时，也能让她查找公开网页。',
     tags: ['AI 对话', '静态站', '联网检索'],
     primary: { label: '进入聊天', href: 'https://yenchiu.com/echora/' },
     secondary: { label: '认识念真', href: '/persona' }
@@ -51,10 +51,10 @@ export const projects = [
   {
     id: 'astro',
     group: 'building',
-    name: 'Wendell · Astro 博客',
+    name: 'YenChiu · Vesper',
     kind: '网站与写作',
-    status: '公开预览',
-    description: '迁移文章、整理知识入口，也把移动端阅读与站点交互一点点打磨好。',
+    status: '持续维护',
+    description: '从 Jekyll 搬到 Astro 之后，继续折腾目录、阅读界面和那些看着不起眼的小细节。',
     tags: ['Astro', 'Vesper', 'GitHub Pages'],
     primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu.github.io' },
     secondary: {
@@ -68,7 +68,7 @@ export const projects = [
     name: 'Folio',
     kind: '文档与知识整理',
     status: '文档库',
-    description: '把建站过程、工具用法、踩坑记录与验证结果留下来，方便下一次查找和复用。',
+    description: '建站笔记、工具备忘和踩坑记录。下次忘了，来这里翻一翻。',
     tags: ['建站笔记', '工具备忘', '工作记录'],
     primary: { label: '阅读文档', href: 'https://yenchiu.com/folio/' },
     secondary: null
