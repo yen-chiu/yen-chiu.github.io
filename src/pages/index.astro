@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content'
 
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import InteractiveAvatar from '@/components/InteractiveAvatar.astro'
+import MusicPlayer from '@/components/music/MusicPlayer.astro'
 import { getPostPath, getPostSlug } from '@/utils/content-paths'
 import { sitePath } from '@/utils/site-path'
 import avatar from '@/assets/avatar.png'
@@ -111,6 +112,13 @@ const entries = [
             </article>
           ))}
         </div>
+      </section>
+      <section class='home-music-section' aria-labelledby='home-music-title'>
+        <div class='home-music-heading'>
+          <div><span>VESPER / MUSIC</span><h3 id='home-music-title'>夜间留声</h3><p>写累了，就听一会儿。</p></div>
+          <a href={sitePath('/music/')}>走进音乐页 ↗</a>
+        </div>
+        <MusicPlayer compact />
       </section>
       <nav class='entry-grid'  aria-label='探索本站'>
         {
@@ -904,6 +912,14 @@ const entries = [
     }
   }
   /* The frame remains fixed; 18% portrait bleed covers the 6px lift. */
+  .home-music-section{margin:2.5rem 0 2rem;max-width:100%;min-width:0}
+  .home-music-heading{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+  .home-music-heading span{display:block;letter-spacing:.17em;font-size:.63rem;color:hsl(var(--primary));font-weight:650}
+  .home-music-heading h3{margin:.35rem 0;font-size:1.3rem;font-weight:680;color:hsl(var(--foreground))}
+  .home-music-heading p{margin:0;font-size:.78rem;color:hsl(var(--muted-foreground))}
+  .home-music-heading>a{font-size:.76rem;color:hsl(var(--primary));white-space:nowrap}
+  .home-music-section :global(.is-compact){max-width:100%}
+  @media(max-width:640px){.home-music-section{margin:2rem 0 1.5rem}.home-music-heading h3{font-size:1.15rem}}
   @keyframes home-avatar-float {
     0%, 100% { transform: translate3d(0, 0, 0) scale(1.18); }
     50% { transform: translate3d(0, -6px, 0) scale(1.18); }
