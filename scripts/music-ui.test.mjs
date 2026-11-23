@@ -79,3 +79,6 @@ test('waveform seek keeps native keyboard and touch controls', () => {
   assert.match(player, /touch-action:pan-y/)
   assert.match(player, /aria-hidden='true'/)
 })
+
+
+test('visual refinements keep seek accessibility and compact controls',()=>{assert.match(player,/music-spindle/);assert.match(player,/music-track-equalizer/);assert.match(player,/aria-current/);assert.match(player,/data-seek-tooltip/);assert.match(player,/pointercancel/);assert.match(player,/aria-valuetext/);assert.match(player,/prefers-reduced-motion:reduce/);assert.match(player,/\.is-compact \.music-actions \[data-shuffle\]/)})
