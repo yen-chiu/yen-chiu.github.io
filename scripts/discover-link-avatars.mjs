@@ -22,11 +22,24 @@ function safe(raw) {
 function resolve(href, base) { try { return safe(new URL(href, base).href) } catch { return null } }
 async function bounded(url, limit, accept) {
   if (!safe(url)) throw Error('Unsafe URL')
-  const response = await fetch(url, {
-    redirect: 'error', signal: AbortSignal.timeout(6000),
-    headers: { accept, 'user-agent': 'VesperIcons/1.0' }
-  })
-  if (!response.ok || Number(response.headers.get('content-length') || 0) > limit) throw Error('HTTP/size')
+  // Follow a few HTTPS redirects only after validating each destination.
+  // This supports ordinary www/canonical redirects without blindly following
+  // redirects to local networks or metadata endpoints.
+  let address = url
+  let response
+  for (let hop = 0; hop < 4; hop++) {
+    response = await fetch(address, {
+      redirect: 'manual', signal: AbortSignal.timeout(6000),
+      headers: { accept, 'user-agent': 'VesperIcons/1.0' }
+    })
+    if (![301, 302, 303, 307, 308].includes(response.status)) break
+    const location = response.headers.get('location')
+    const next = location && resolve(location, address)
+    if (!next || hop === 3) throw Error('Unsafe or excessive redirect')
+    await response.body?.cancel()
+    address = next
+  }
+  if (!response?.ok || Number(response.headers.get('content-length') || 0) > limit) throw Error('HTTP/size')
   const reader = response.body?.getReader()
   if (!reader) throw Error('Empty body')
   const chunks = []
@@ -51,7 +64,9 @@ function detect(type, bytes) {
   if (bytes.subarray(0, 4).toString() === 'RIFF' && bytes.subarray(8,12).toString() === 'WEBP') return 'webp'
   // Do not store third-party SVG: remote embeds and active content are not trustworthy.
   if (type === 'image/svg+xml') return null
-  return formats[type] || null
+  // A valid AVIF is marked by an ISO BMFF file-type box.
+  if (type === 'image/avif' && bytes.subarray(4, 12).toString().includes('avif')) return 'avif'
+  return null
 }
 async function candidates(link) {
   const home = new URL(link.link)
@@ -95,7 +110,8 @@ async function save(link) {
   // Keep old cached path if the host is temporarily unreachable.
 }
 await mkdir(root, { recursive: true })
-for (const group of data.friends) for (const link of group.link_list) await save(link)
+const entries = data.friends.flatMap(group => group.link_list)
+for (let i = 0; i < entries.length; i += 3) await Promise.all(entries.slice(i, i + 3).map(save))
 const active = new Set(data.friends.flatMap(g => g.link_list.map(l => l.link)))
 for (const url of Object.keys(avatars)) if (!active.has(url)) delete avatars[url]
 await writeFile('public/links-avatars.json', JSON.stringify({ avatars }, null, 2) + '\n')
