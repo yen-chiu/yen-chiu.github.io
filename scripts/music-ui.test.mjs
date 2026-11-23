@@ -19,15 +19,20 @@ test('separate music page and embedded homepage radio both exist', () => {
 
 test('player is opt-in, accessible and mobile responsive', () => {
   assert.match(engine, /preload = 'none'/)
-  assert.match(player, /audio\.play\(\)/)
-  assert.match(player, /audio\.pause\(\)/)
+  // Playback moved into the shared engine so one track keeps running across
+  // pages; the player must drive it through the engine, not its own <audio>.
+  assert.match(engine, /await this\.audio\.play\(\)/)
+  assert.match(engine, /this\.audio\.pause\(\)/)
+  assert.match(player, /musicEngine\.toggle\(\)/)
+  assert.match(player, /musicEngine\.subscribe/)
+  assert.match(player, /musicEngine\.seek\(/)
+  assert.match(player, /musicEngine\.setVolume\(/)
   assert.match(player, /aria-label='播放进度'/)
   assert.match(player, /aria-label='音量'/)
   assert.match(player, /@media\(max-width:680px\)/)
   assert.match(player, /prefers-reduced-motion:reduce/)
   assert.doesNotMatch(player, /autoplay/i)
-  assert.match(player, /musicEngine\\.subscribe/)
-  assert.match(engine, /export const musicEngine = new MusicEngine\\(\\)/)
+  assert.match(engine, /export const musicEngine = new MusicEngine\(\)/)
   assert.doesNotMatch(player, /astro:before-swap/)
 })
 
@@ -37,5 +42,7 @@ test('mixed sources use official websites and sample rights are disclosed', () =
   assert.match(tracks, /CC0 1\.0/)
   assert.match(tracks, /https:\/\/open\.spotify\.com\//)
   assert.match(tracks, /https:\/\/soundcloud\.com\//)
-  assert.match(page, /查看/)
+  // The page states that mixed sources use official entry points; the old
+  // "查看原曲" link text was replaced by that sentence in the player refactor.
+  assert.match(page, /官方播放入口/)
 })
