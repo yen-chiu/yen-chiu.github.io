@@ -109,7 +109,10 @@ const friendInfo = [
               </p>
             </>
           )}
-          <div class='link-cards' id={group.id_name === 'friends' ? 'friend-links-grid' : undefined} data-card-grid>
+          <div class='link-cards' id={group.id_name === 'friends' ? 'friend-links-grid' : undefined}
+            role={group.id_name === 'friends' ? 'tabpanel' : undefined}
+            aria-labelledby={group.id_name === 'friends' ? 'friend-tab-active' : undefined}
+            data-card-grid>
             {group.link_list.map(link => (
               <a class='link-card' href={link.link} target='_blank' rel='noopener noreferrer'
                 data-link-card data-link-state={healthByUrl.get(link.link)?.state ?? 'unknown'}
@@ -247,6 +250,13 @@ const friendInfo = [
           tab.setAttribute('aria-selected', String(active))
           tab.tabIndex = active ? 0 : -1
         })
+        if (friendGrid) {
+          // 收录/异常两个视图共用同一块面板，标签指向当前选中的那个
+          friendGrid.setAttribute(
+            'aria-labelledby',
+            currentFriendView === 'down' ? 'friend-tab-down' : 'friend-tab-active'
+          )
+        }
         let count = 0
         panels.forEach(panel => {
           const active = panel.dataset.linkPanel === currentGroup
