@@ -93,7 +93,7 @@
     root.dataset.bannerTitle = String(settings.title)
     root.dataset.bannerWaves = String(settings.waves)
     root.dataset.motion = settings.motion
-    root.dataset.animatedAvatar = String(settings.animatedAvatar && !reduceMotion())
+    root.dataset.animatedAvatar = String(settings.animatedAvatar && settings.motion !== 'reduced' && !matchMedia('(prefers-reduced-motion: reduce)').matches)
     root.classList.toggle('motion-always', settings.motion === 'always')
     root.classList.toggle('motion-off', settings.motion === 'reduced')
     window.dispatchEvent(new CustomEvent('wendell:appearance'))
