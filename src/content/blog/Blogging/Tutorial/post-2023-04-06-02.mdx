@@ -931,18 +931,25 @@ gantt
 
 ### 视频播放器
 
-视频文件来自本站自己的媒体域。为避免打开文章就下载大文件，播放器使用 `preload="none"`：
+这里使用 Bilibili 的官方嵌入播放器展示《宇宙时空之旅》相关视频，不再加载本站原有的私人视频文件。点击播放时，Bilibili 可能读取 Cookie 或收集播放数据；不希望连接第三方服务的读者可以直接打开原视频页面。
 
-<video controls preload="none" playsInline poster="/images/moonlit-cover.svg" width="100%" style={{ maxWidth: '100%', borderRadius: '12px' }}>
-  <source src="https://media.yenchiu.com/videos/marxism-micro-lesson.mp4" type="video/mp4" />
-  浏览器不支持 HTML5 视频，请使用下方链接打开。
-</video>
+<div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: '12px', background: '#101827' }}>
+  <iframe
+    src="https://player.bilibili.com/player.html?bvid=BV1ie4y1A7MH&page=1"
+    title="Bilibili 视频：宇宙时空之旅（中英文字幕）"
+    loading="lazy"
+    allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+    allowFullScreen
+    referrerPolicy="strict-origin-when-cross-origin"
+    style={{ width: '100%', height: '100%', border: 0 }}
+  />
+</div>
 
-[单独打开理论微课视频](https://media.yenchiu.com/videos/marxism-micro-lesson.mp4)。如果播放器报错，应检查网络、媒体域名和视频文件是否还存在；这并不等于 Markdown 语法出错。
+[在 Bilibili 打开《宇宙时空之旅》视频](https://www.bilibili.com/video/BV1ie4y1A7MH)。
 
-<Aside type="caution" title="嵌入媒体与隐私">
+<Aside type="caution" title="第三方播放器与隐私">
 
-外部 iframe、在线地图或视频平台可能使用 Cookie、被网络拦截或加载缓慢。为了让这篇排版样本尽量稳定，没有自动加载额外的第三方播放器。
+嵌入播放器会连接 Bilibili 服务，可能使用 Cookie 或记录播放行为；链接已去除分享会话、设备标识等追踪参数。本站不下载、不重新托管该视频。部分浏览器或网络环境可能限制嵌入播放，此时请使用上面的原站链接。
 
 </Aside>
 
