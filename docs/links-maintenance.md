@@ -36,7 +36,11 @@
 }
 ```
 
-RSS 地址可以由维护者审核后显式填写（优先使用）；未填写时，`scripts/aggregate-friend-feeds.mjs` 会读取友链首页公开的 `<link rel="alternate" type="application/rss+xml">` / Atom 声明，并试探站点根路径下的常见订阅地址。**候选地址必须返回可解析的 RSS/Atom 文章才会收录**，不会将猜测链接当作订阅结果，也不会改写 `links.json`。每个站点最多采集 4 篇，汇总最多展示 18 篇；无法找到有效订阅源时保持空态。网络读取失败不影响其他站点。每日定时任务负责刷新 `public/links-feed.json`；仅提交代码不会立即填充旧快照。
+RSS 地址可以由维护者审核后显式填写（优先使用）；未填写时，`scripts/aggregate-friend-feeds.mjs` 会读取友链首页公开的 `<link rel="alternate" type="application/rss+xml">` / Atom 声明，并试探站点根路径下的常见订阅地址。**候选地址必须返回可解析的 RSS/Atom 文章才会收录**，不会将猜测链接当作订阅结果，也不会改写 `links.json`。每个站点最多采集 12 篇，汇总最多存储 120 篇；实际文章数仍由对方 RSS 提供的内容决定。无法找到有效订阅源时保持空态。网络读取失败不会影响其他站点，并对失败站点暂时保留上次成功的文章快照（标记 `stale`，不计入本轮活跃订阅源）。每日定时任务负责刷新 `public/links-feed.json`；仅提交代码不会立即填充旧快照。
+
+`public/links-feed.json` 包含 `updatedAt`、`feeds`（本轮尝试抓取数）、`activeFeeds`（本轮成功数）、`totalFriends`、`articleCount`、`items` 与 `errors`。这些是 **RSS 抓取统计**，不能与链接健康检查的正常数混用，也不是全网文章总量。只使用本博客的友好邻居数据，不调用其他博客的 FriendCircleLite 接口。
+
+前端 `src/components/links/FriendFeed.astro` 与 `friendFeedClient.ts` 提供随机漫游、换一篇、点击作者查看当前快照里的文章、每次显示更多 6 篇、收起和统计/更新时间。已收录文章不足 7 篇时不会出现无意义的「显示更多」按钮。
 
 ## 变更记录
 
