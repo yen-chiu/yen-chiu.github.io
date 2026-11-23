@@ -571,3 +571,116 @@ html.dark .astro-code pre code .line::before {
   .highlight { color: hsl(var(--foreground)) !important; }
   .post-preview { --preview-highlight: hsl(var(--primary)); --preview-highlight-bg: hsl(var(--primary) / .12); }
 }
+
+/* Mobile reading surfaces: keep wallpaper visible without sacrificing contrast. */
+@media (max-width: 767px) {
+  html[data-wallpaper='fullscreen'] body[data-page='content'] article.article-reading-column,
+  html[data-wallpaper='overlay'] body[data-page='content'] article.article-reading-column {
+    background: hsl(var(--background) / .88);
+    border-radius: 1rem;
+  }
+}
+
+/* Shiki: a dark code surface must use the dark token palette even in light mode.
+   Shiki emits token custom properties on nested spans, not always on the outer span. */
+#content .astro-code {
+  min-width: 0;
+  max-width: 100%;
+  background: #161b26 !important;
+  color: #e6edf3;
+  overflow: hidden;
+}
+#content .astro-code pre {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: transparent !important;
+}
+#content .astro-code pre code::before,
+#content .astro-code pre code .line::before {
+  background: #161b26 !important;
+}
+#content .astro-code pre span {
+  color: var(--shiki-dark, #e6edf3) !important;
+}
+#content .astro-code .language,
+#content .astro-code .title,
+#content .astro-code .copy,
+#content .astro-code .collapse-toggle {
+  color: #d1d9e6;
+}
+#content .astro-code .collapse-toggle {
+  position: relative;
+  flex: none;
+  width: calc(100% - 1rem);
+  min-height: 2.5rem;
+  margin: .5rem;
+  background: #273244;
+}
+#content .astro-code.collapsed .collapse-fade {
+  bottom: 3.5rem;
+  background: linear-gradient(to bottom, transparent, #161b26);
+}
+@media (hover: none) {
+  #content .astro-code button.copy { opacity: 1; }
+  #content .astro-code .language { opacity: 0; }
+}
+
+/* Math: left-start long equations rather than centering an oversized inner box. */
+#content .katex-display {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: left;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+#content .katex-display > .katex {
+  display: inline-block;
+  min-width: max-content;
+  text-align: left;
+  white-space: nowrap;
+}
+#content .katex-html { overflow: visible; }
+#content .katex-html .base { margin-inline: 0; }
+
+/* Mermaid: do not squeeze dense timelines into a narrow viewport. */
+#content .mermaid {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  text-align: center;
+  overscroll-behavior-x: contain;
+}
+#content .mermaid svg {
+  display: block;
+  height: auto !important;
+  margin-inline: auto;
+}
+@media (max-width: 767px) {
+  #content .mermaid svg[aria-roledescription='gantt'],
+  #content .mermaid svg[id*='gantt'] {
+    min-width: 720px;
+    max-width: none !important;
+    margin-inline: 0;
+  }
+  #content .mermaid svg[aria-roledescription='pie'],
+  #content .mermaid svg[id*='pie'] {
+    min-width: 420px;
+    max-width: none !important;
+    margin-inline: 0;
+  }
+}
+
+/* Typst output is usually an SVG; contain it without cutting off text. */
+#content svg.typst-doc,
+#content .typst-doc,
+#content .typst-container {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+#content:has(.typst-doc) { min-width: 0; }
