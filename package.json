@@ -13,6 +13,7 @@
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",
+    "test": "tsx --test \"scripts/**/*.test.mjs\"",
     "astro": "astro",
     "pure": "astro-pure",
     "format": "prettier --write  '**/*.{js,jsx,ts,tsx,md,mdx,astro}'",
@@ -68,6 +69,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "shiki": "^4.0.2",
+    "tsx": "^4.23.15",
     "ultrahtml": "^1.6.0",
     "unified": "^11.0.5",
     "vfile": "^6.0.3"
