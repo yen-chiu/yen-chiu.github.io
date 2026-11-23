@@ -59,3 +59,29 @@ test('queue navigation and playback modes are wired to shared engine', () => {
   assert.match(player, /data-repeat/)
   assert.match(player, /data-shuffle/)
 })
+
+
+test('cover and lyrics fallback and mobile controls exist', () => {
+  assert.match(player, /data-cover/)
+  assert.match(player, /data-cover-fallback/)
+  assert.match(player, /data-lyrics-body/)
+  assert.match(player, /track\.lyrics\?\.trim\(\)/)
+  assert.match(player, /min-width:44px/)
+})
+
+
+test('waveform seek keeps native keyboard and touch controls', () => {
+  assert.match(player, /data-wave-seek/)
+  assert.match(player, /music-wave-bars/)
+  assert.match(player, /music-wave-played/)
+  assert.match(player, /data-seek type='range'/)
+  assert.match(player, /musicEngine\.seek\(Number\(seek\.value\)\/1000\)/)
+  assert.match(player, /touch-action:pan-y/)
+  assert.match(player, /aria-hidden='true'/)
+})
+
+
+test('visual refinements keep seek accessibility and compact controls',()=>{assert.match(player,/music-spindle/);assert.match(player,/music-track-equalizer/);assert.match(player,/aria-current/);assert.match(player,/data-seek-tooltip/);assert.match(player,/pointercancel/);assert.match(player,/aria-valuetext/);assert.match(player,/prefers-reduced-motion:reduce/);assert.match(player,/\.is-compact \.music-actions \[data-shuffle\]/)})
+
+
+test('waveform data is sourced from precomputed RMS values, not synthetic trigonometry',()=>{assert.match(player,/music-waveforms\.json/);assert.match(player,/data-waveforms/);assert.match(player,/renderWave\(track\.id\)/);assert.doesNotMatch(player,/Math\.sin\(i\*1\.73\)/)})
