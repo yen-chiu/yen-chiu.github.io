@@ -8,6 +8,7 @@ const page = read('src/pages/music/index.astro')
 const home = read('src/pages/index.astro')
 const header = read('src/components/CustomHeader.astro')
 const tracks = read('src/data/music.ts')
+const engine = read('src/utils/music-engine.ts')
 
 test('separate music page and embedded homepage radio both exist', () => {
   assert.match(page, /<MusicPlayer\s*\/>/)
@@ -17,7 +18,7 @@ test('separate music page and embedded homepage radio both exist', () => {
 })
 
 test('player is opt-in, accessible and mobile responsive', () => {
-  assert.match(player, /preload='none'/)
+  assert.match(engine, /preload = 'none'/)
   assert.match(player, /audio\.play\(\)/)
   assert.match(player, /audio\.pause\(\)/)
   assert.match(player, /aria-label='播放进度'/)
@@ -25,6 +26,9 @@ test('player is opt-in, accessible and mobile responsive', () => {
   assert.match(player, /@media\(max-width:680px\)/)
   assert.match(player, /prefers-reduced-motion:reduce/)
   assert.doesNotMatch(player, /autoplay/i)
+  assert.match(player, /musicEngine\\.subscribe/)
+  assert.match(engine, /export const musicEngine = new MusicEngine\\(\\)/)
+  assert.doesNotMatch(player, /astro:before-swap/)
 })
 
 test('mixed sources use official websites and sample rights are disclosed', () => {

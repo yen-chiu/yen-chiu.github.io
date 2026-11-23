@@ -43,86 +43,56 @@ const { compact = false } = Astro.props
     </div>
     <p class='music-side-note'>曲目来自明确标注许可的公开示范音源；<a href='https://commons.wikimedia.org/wiki/File:Nocturne_Op._9_no._2_in_E_flat_major.mp3' target='_blank' rel='noopener noreferrer'>查看录音来源与授权 ↗</a></p>
   </section>}
-  <audio data-audio preload='none'></audio>
 </vesper-music-player>
 
 <script>
-  type Track = { id:string; title:string; artist:string; source:'audio'|'external'; url:string; provider:string; attribution:string }
+  import { musicEngine } from '@/utils/music-engine'
+  import type { MusicTrack } from '@/utils/music-engine'
   const formatTime = (value:number) => Number.isFinite(value) ? `${Math.floor(value/60)}:${String(Math.floor(value%60)).padStart(2,'0')}` : '--:--'
   class VesperMusicPlayer extends HTMLElement {
     private controller?:AbortController
+    private unsubscribe?:()=>void
     connectedCallback() {
       this.controller?.abort()
-      this.controller = new AbortController()
-      const { signal } = this.controller
-      const tracks:Track[] = JSON.parse(this.dataset.tracks || '[]')
-      const audio = this.querySelector<HTMLAudioElement>('[data-audio]')!
-      const play = this.querySelector<HTMLButtonElement>('[data-play]')!
-      const symbol = this.querySelector<HTMLElement>('[data-play-symbol]')!
-      const seek = this.querySelector<HTMLInputElement>('[data-seek]')!
-      const volume = this.querySelector<HTMLInputElement>('[data-volume]')!
-      const current = this.querySelector<HTMLElement>('[data-current]')!
-      const duration = this.querySelector<HTMLElement>('[data-duration]')!
-      const status = this.querySelector<HTMLElement>('[data-status]')!
-      const title = this.querySelector<HTMLElement>('[data-song-title]')!
-      const artist = this.querySelector<HTMLElement>('[data-song-artist]')!
-      const setStatus = (message:string) => { status.textContent = message }
-      let index = 0
-      audio.volume = 0.7
-      try {
-        const saved = JSON.parse(localStorage.getItem('vesper-music-v1') || '{}')
-        index = Math.max(0, tracks.findIndex(track => track.id === saved.id))
-        if (Number.isFinite(saved.volume)) audio.volume = Math.min(1,Math.max(0,saved.volume))
-      } catch { /* Storage is optional. */ }
-      volume.value = String(audio.volume)
-      const persist = () => {
-        try { localStorage.setItem('vesper-music-v1', JSON.stringify({ id:tracks[index]?.id, volume:audio.volume })) } catch {}
-      }
-      const select = (position:number) => {
-        const track = tracks[position]
-        if (!track || track.source !== 'audio') return
-        audio.pause()
-        if (audio.hasAttribute('src')) {
-          audio.removeAttribute('src')
-          audio.load()
-        }
-        index=position
-        title.textContent=track.title
-        artist.textContent=track.artist
-        current.textContent='0:00'
-        duration.textContent='--:--'
-        seek.value='0'
-        setStatus('点击播放开始收听 · 不会自动播放')
-        this.querySelectorAll<HTMLElement>('[data-track-id]').forEach(el=>el.classList.toggle('is-active',el.dataset.trackId===track.id))
-        persist()
-      }
-      // Keep preload=none until the first explicit user action.
-      const start = async () => {
-        const track = tracks[index]
-        if (!track || track.source!=='audio') return
-        if (!audio.getAttribute('src')) audio.src=track.url
-        setStatus('正在连接音源…')
-        try { await audio.play(); setStatus('正在播放 · '+track.provider) }
-        catch { setStatus('播放失败：音源暂不可用，或浏览器阻止了播放。') }
-      }
-      play.addEventListener('click',()=>{ if(audio.paused) void start(); else {audio.pause();setStatus('已暂停')} },{signal})
-      audio.addEventListener('play',()=>{play.setAttribute('aria-label','暂停');play.setAttribute('aria-pressed','true');symbol.textContent='Ⅱ';this.classList.add('is-playing')},{signal})
-      audio.addEventListener('pause',()=>{play.setAttribute('aria-label','播放');play.setAttribute('aria-pressed','false');symbol.textContent='▶';this.classList.remove('is-playing')},{signal})
-      audio.addEventListener('timeupdate',()=>{current.textContent=formatTime(audio.currentTime);if(audio.duration)seek.value=String(Math.round(audio.currentTime/audio.duration*1000))},{signal})
-      audio.addEventListener('loadedmetadata',()=>{duration.textContent=formatTime(audio.duration)},{signal})
-      audio.addEventListener('ended',()=>{setStatus('播放结束')},{signal})
-      audio.addEventListener('error',()=>{setStatus('音源加载失败，请尝试在来源页收听。')},{signal})
-      seek.addEventListener('input',()=>{if(Number.isFinite(audio.duration)&&audio.duration>0)audio.currentTime=Number(seek.value)/1000*audio.duration},{signal})
-      volume.addEventListener('input',()=>{audio.volume=Number(volume.value);persist()},{signal})
-      this.querySelectorAll<HTMLButtonElement>('[data-select-song]').forEach(button=>button.addEventListener('click',()=>{const next=tracks.findIndex(track=>track.id===button.dataset.selectSong);if(next>=0)select(next)},{signal}))
+      this.unsubscribe?.()
+      this.controller=new AbortController()
+      const {signal}=this.controller
+      let tracks:MusicTrack[]=[]
+      try { tracks=JSON.parse(this.dataset.tracks || '[]') } catch {}
+      musicEngine.configure(tracks)
+      const play=this.querySelector<HTMLButtonElement>('[data-play]')!
+      const symbol=this.querySelector<HTMLElement>('[data-play-symbol]')!
+      const seek=this.querySelector<HTMLInputElement>('[data-seek]')!
+      const volume=this.querySelector<HTMLInputElement>('[data-volume]')!
+      const current=this.querySelector<HTMLElement>('[data-current]')!
+      const duration=this.querySelector<HTMLElement>('[data-duration]')!
+      const status=this.querySelector<HTMLElement>('[data-status]')!
+      const title=this.querySelector<HTMLElement>('[data-song-title]')!
+      const artist=this.querySelector<HTMLElement>('[data-song-artist]')!
+      this.unsubscribe=musicEngine.subscribe(snapshot=>{
+        const track=tracks.find(track=>track.id===snapshot.id)
+        if(track){title.textContent=track.title;artist.textContent=track.artist}
+        current.textContent=formatTime(snapshot.currentTime)
+        duration.textContent=snapshot.duration?formatTime(snapshot.duration):'--:--'
+        seek.value=String(snapshot.duration?Math.round(snapshot.currentTime/snapshot.duration*1000):0)
+        volume.value=String(snapshot.volume)
+        status.textContent=snapshot.status
+        play.setAttribute('aria-label',snapshot.playing?'暂停':'播放')
+        play.setAttribute('aria-pressed',String(snapshot.playing))
+        symbol.textContent=snapshot.playing?'Ⅱ':'▶'
+        this.classList.toggle('is-playing',snapshot.playing)
+        this.querySelectorAll<HTMLElement>('[data-track-id]').forEach(el=>el.classList.toggle('is-active',el.dataset.trackId===snapshot.id))
+      })
+      play.addEventListener('click',()=>{void musicEngine.toggle()},{signal})
+      seek.addEventListener('input',()=>musicEngine.seek(Number(seek.value)/1000),{signal})
+      volume.addEventListener('input',()=>musicEngine.setVolume(Number(volume.value)),{signal})
+      this.querySelectorAll<HTMLButtonElement>('[data-select-song]').forEach(button=>button.addEventListener('click',()=>musicEngine.select(button.dataset.selectSong||''),{signal}))
       const search=this.querySelector<HTMLInputElement>('[data-search]')
       search?.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();this.querySelectorAll<HTMLElement>('[data-search-text]').forEach(row=>{row.hidden=!(row.dataset.searchText||'').includes(q)})},{signal})
       const tabs=[...this.querySelectorAll<HTMLButtonElement>('[data-tab]')]
       tabs.forEach(tab=>tab.addEventListener('click',()=>{for(const button of tabs)button.setAttribute('aria-selected',String(button===tab));this.querySelectorAll<HTMLElement>('[data-panel]').forEach(panel=>{panel.hidden=panel.dataset.panel!==tab.dataset.tab})},{signal}))
-      document.addEventListener('astro:before-swap',()=>{audio.pause();this.controller?.abort()},{signal})
-      select(index)
     }
-    disconnectedCallback(){this.controller?.abort();this.querySelector('audio')?.pause()}
+    disconnectedCallback(){this.controller?.abort();this.unsubscribe?.()}
   }
   if(!customElements.get('vesper-music-player'))customElements.define('vesper-music-player',VesperMusicPlayer)
 </script>
