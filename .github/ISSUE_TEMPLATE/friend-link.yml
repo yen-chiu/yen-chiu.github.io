@@ -14,7 +14,7 @@ body:
     id: site-name
     attributes:
       label: 网站名称 / Site name
-      placeholder: Wendell · Vesper
+      placeholder: 你的博客名称 / Your blog name
     validations:
       required: true
 
