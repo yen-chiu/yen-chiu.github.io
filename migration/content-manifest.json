@@ -28,7 +28,7 @@
   {
     "source": "_posts\\2023-04-06-markdown.md",
     "sha256": "355a693c0c1a030a62a165aa2e752ea9856990a03f52effbe25ea0f32ee53679",
-    "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2023-04-06-02.md",
+    "destination": "src\\content\\blog\\Blogging\\Tutorial\\post-2023-04-06-02.mdx",
     "url": "/blog/markdown",
     "originalMetadata": {
       "title": "Markdown",
