@@ -12,7 +12,7 @@ const posts = (await getCollection('blog')).filter((p) => !p.data.draft)
 const selections = [
   { slug: 'qq-bot-postmortem', label: '从一次失败开始', reason: '三次碰壁之后，写下 QQ 接入 AI 助手的排查过程与取舍。' },
   { slug: 'xss-audit', label: '看一次真正的修复', reason: '审查自己的写作台，跟着一个 XSS 漏洞走完发现与修复。' },
-  { slug: 'miko-web', label: '认识一个作品', reason: '从旧游戏的逆向分析，到异次元通讯网页版的重建故事。' }
+  { slug: 'miko-web', label: '旧游戏的新入口', reason: '拆开《异次元通讯》的剧情文件，再把它做成浏览器能玩的版本。' }
 ]
 const featuredPosts = selections.map(selection => {
   const post = posts.find(post => getPostSlug(post) === selection.slug)
@@ -22,7 +22,7 @@ const featuredPosts = selections.map(selection => {
 const entries = [
   { title: '博客', desc: '技术实践与生活记录', path: '/blog', symbol: '✎' },
   { title: '时光机', desc: '在日历里回看写作', path: '/archives', symbol: '◷' },
-  { title: '念真', desc: '一个一直在生长的故事', path: '/persona', symbol: '☾' },
+  { title: '念真', desc: '认识念真，也可以直接聊两句', path: '/persona', symbol: '☾' },
   { title: '链接', desc: '常去的地方与网络邻居', path: '/links', symbol: '↗' }
 ]
 ---
@@ -84,7 +84,7 @@ const entries = [
           </nav>
         </div>
         <button type='button' class='scroll-hint' data-collapse aria-describedby='scroll-hint-hint'
-          ><span>向下探索</span><b aria-hidden='true'>⌄</b></button
+          ><span>往下看看</span><b aria-hidden='true'>⌄</b></button
         ><span class='sr-only' id='scroll-hint-hint'>收起全屏封面，进入正文</span>
         <a
           class='cover-credit'
@@ -101,7 +101,7 @@ const entries = [
         <div>
           <p class='section-kicker'>WELCOME TO MY CORNER</p><h2 id='doorway-title'>
             你好，路过的朋友。
-          </h2><p>第一次来，可以先读这三篇。这里有折腾的过程，也有做成的作品。</p>
+          </h2><p>第一次来？不妨先从这三篇读起：有失败记录，也有最后做出来的东西。</p>
         </div><a href='#' class='expand-cover'>展开封面 ↑</a>
       </header>
       <section class='reading-guide' aria-labelledby='reading-guide-title'>
