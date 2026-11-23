@@ -5,12 +5,17 @@ import UpdateList from '@/components/about/UpdateList.astro'
 import { Giscus } from '@/components/giscus'
 import { sitePath } from '@/utils/site-path'
 import changelog from '../data/changelog.json'
+import { getRecentGitUpdates } from '@/utils/recent-git-updates'
 import generations from '../data/site-generations.json'
 import sites from '../data/sites.json'
 
 const unreleased = changelog.filter(entry => entry.status === 'unreleased')
 const released = changelog.filter(entry => entry.status !== 'unreleased')
 const total = released.reduce((sum, entry) => sum + entry.items.length, 0)
+const latestEditorialDay = released.reduce(
+  (date, entry) => entry.date > date ? entry.date : date, '2023-03-12'
+)
+const autoUpdates = getRecentGitUpdates(latestEditorialDay)
 const commits = generations.reduce((sum, gen) => sum + gen.commits, 0)
 const siteOf = (entry: { site?: string }) => entry.site ?? 'main'
 const siteOrder = (entry: { site?: string }) => {
@@ -69,6 +74,13 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 
     <div class='changelog-layout'>
       <div class='changelog-main'>
+        {autoUpdates.length > 0 && <section class='changelog-list auto-commits' aria-labelledby='auto-commits-title'>
+          <header class='list-head'>
+            <h2 id='auto-commits-title'>最近提交</h2>
+            <span>随 main 部署自动整理 · 正式版本记录另列</span>
+          </header>
+          <UpdateList entries={autoUpdates} showSite clamp />
+        </section>}
         {unreleased.length > 0 && <section class='changelog-list unreleased' aria-labelledby='unreleased-title'>
           <header class='list-head'>
             <h2 id='unreleased-title'>在途改动</h2>
