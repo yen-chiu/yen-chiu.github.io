@@ -54,7 +54,7 @@ export const projects = [
     name: 'YenChiu · 博客',
     kind: '个人网站 · Vesper 主题',
     status: '持续维护',
-    description: 'Wendell 的 YenChiu 博客，使用 Vesper（暮星）主题；记录从 Jekyll 到 Astro 的改版过程。'
+    description: 'Wendell 的 YenChiu 博客，使用 Vesper（暮星）主题；记录从 Jekyll 到 Astro 的改版过程。',
     tags: ['Astro', 'Vesper', 'GitHub Pages'],
     primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu.github.io' },
     secondary: {
