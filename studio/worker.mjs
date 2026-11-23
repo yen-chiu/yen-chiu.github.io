@@ -64,8 +64,8 @@ function validatePng(buffer) {
   if (width < 128 || height < 128 || width > 2048 || height > 2048 || width !== height) {
     throw new Error('Use a square PNG between 128px and 2048px')
   }
-  if (![2, 6].includes(bytes[25]) || bytes[24] !== 8) {
-    throw new Error('Use an 8-bit RGB or RGBA PNG')
+  if (![2, 3, 6].includes(bytes[25]) || bytes[24] !== 8) {
+    throw new Error('Use an 8-bit RGB, indexed or RGBA PNG')
   }
   if (bytes[26] !== 0 || bytes[27] !== 0 || bytes[28] !== 0) throw new Error('Unsupported PNG encoding')
   // PNG ends with a zero-length IEND chunk (length, type and CRC).
