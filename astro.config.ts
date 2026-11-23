@@ -83,7 +83,8 @@ export default defineConfig({
     // https://docs.astro.build/en/guides/syntax-highlighting/
     shikiConfig: {
       themes: {
-        light: 'github-light',
+        // Code panels are dark in both UI modes; use one matching token palette.
+        light: 'github-dark',
         dark: 'github-dark'
       },
       transformers: [
