@@ -1,0 +1,179 @@
+---
+import { sitePath } from '@/utils/site-path'
+import rawFeeds from '../../../public/links-feed.json'
+import rawLinks from '../../../public/links.json'
+import '@/assets/styles/friend-feed.css'
+
+interface Article {
+  title: string
+  url: string
+  site: string
+  siteUrl: string
+  publishedAt: string | null
+  avatar?: string
+  stale?: boolean
+}
+interface Snapshot {
+  updatedAt: string | null
+  feeds: number
+  activeFeeds?: number
+  totalFriends?: number
+  articleCount?: number
+  items: Article[]
+  errors: { site: string; message: string }[]
+}
+const snapshot = rawFeeds as Snapshot
+const friendLinks = rawLinks.friends.find(group => group.id_name === 'friends')?.link_list ?? []
+const avatars = new Map(friendLinks.map(friend => [friend.link, friend.avatar]))
+const validUrl = (value: string) => {
+  try { return ['http:', 'https:'].includes(new URL(value).protocol) } catch { return false }
+}
+const articles = (snapshot.items ?? []).filter(article =>
+  validUrl(article.url) && validUrl(article.siteUrl)
+).slice(0, 120).map(article => ({
+  ...article,
+  avatar: article.avatar || avatars.get(article.siteUrl) || sitePath('/favicon/wendell-avatar-192.png')
+}))
+const dateText = (date: string | null) => {
+  if (!date || !Number.isFinite(new Date(date).valueOf())) return '日期未知'
+  return new Intl.DateTimeFormat('zh-CN', {
+    timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(new Date(date))
+}
+const updated = snapshot.updatedAt && Number.isFinite(new Date(snapshot.updatedAt).valueOf())
+  ? new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    }).format(new Date(snapshot.updatedAt))
+  : null
+const activeFeeds = snapshot.activeFeeds ?? new Set(articles.filter(article => !article.stale).map(article => article.siteUrl)).size
+const first = articles[0]
+const FALLBACK_AVATAR = sitePath('/favicon/wendell-avatar-192.png')
+const PAGE_SIZE = 6
+---
+
+<section class='vesper-feed' id='neighbor-feed' aria-labelledby='neighbor-feed-heading' data-neighbor-feed>
+  <header class='vesper-feed__heading'>
+    <span class='vesper-feed__symbol' aria-hidden='true'>
+      <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'>
+        <circle cx='5' cy='19' r='1.25' fill='currentColor' stroke='none'></circle>
+        <path d='M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16'></path>
+      </svg>
+    </span>
+    <div>
+      <span class='vesper-feed__eyebrow'>NEIGHBORHOOD FEED</span>
+      <h2 id='neighbor-feed-heading'>邻站动态</h2>
+      <p>来自友好邻居 RSS / Atom 的近期文章，点击作者可查看该站已收录的文章。</p>
+    </div>
+  </header>
+
+  {articles.length ? (
+    <>
+      <div class='vesper-feed__feature' data-feed-feature>
+        <span class='vesper-feed__feature-bg' aria-hidden='true'>
+          <img src={first.avatar} alt='' data-feature-bg data-feed-fallback={FALLBACK_AVATAR} />
+        </span>
+        <div class='vesper-feed__feature-top'>
+          <span class='vesper-feed__pill'>随机漫游</span>
+          <button type='button' class='vesper-feed__refresh' data-feed-refresh title='换一篇文章'
+            aria-label='换一篇随机文章'>
+            <svg viewBox='0 0 24 24' aria-hidden='true' fill='none' stroke='currentColor'
+              stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+              <path d='M20 11a8 8 0 0 0-14.7-4.3L3 9m0-5v5h5M4 13a8 8 0 0 0 14.7 4.3L21 15m0 5v-5h-5'></path>
+            </svg>
+          </button>
+        </div>
+        <button type='button' class='vesper-feed__feature-author' data-feature-author
+          data-site-url={first.siteUrl} aria-label={'查看 ' + first.site + ' 的近期文章'}>
+          <img src={first.avatar} alt='' data-feature-avatar data-feed-fallback={FALLBACK_AVATAR} />
+          <span data-feature-site>{first.site}</span>
+        </button>
+        <a href={first.url} class='vesper-feed__feature-title' data-feature-link
+          target='_blank' rel='noopener noreferrer'>{first.title}</a>
+        <div class='vesper-feed__feature-foot'>
+          <time data-feature-date datetime={first.publishedAt ?? undefined}>{dateText(first.publishedAt)}</time>
+          <span data-feature-stale hidden>历史缓存</span>
+        </div>
+      </div>
+
+      <ul class='vesper-feed__articles' data-feed-list>
+        {articles.map((article, index) => (
+          <li class='vesper-feed__article' data-feed-article
+            data-article-title={article.title}
+            data-article-url={article.url}
+            data-article-site={article.site}
+            data-article-site-url={article.siteUrl}
+            data-article-avatar={article.avatar}
+            data-article-date={dateText(article.publishedAt)}
+            data-article-iso={article.publishedAt ?? ''}
+            data-article-stale={article.stale === true ? 'true' : 'false'}
+            hidden={index >= PAGE_SIZE}>
+            <img class='vesper-feed__article-bg' src={article.avatar} alt='' aria-hidden='true'
+              loading='lazy' data-feed-fallback={FALLBACK_AVATAR} />
+            <div class='vesper-feed__article-top'>
+              <button type='button' class='vesper-feed__author' data-feed-author
+                data-site-url={article.siteUrl}
+                aria-label={'查看 ' + article.site + ' 的近期文章'}>
+                <img src={article.avatar} alt='' width='44' height='44'
+                  loading='lazy' data-feed-fallback={FALLBACK_AVATAR} />
+                <span>{article.site}</span>
+              </button>
+              <time datetime={article.publishedAt ?? undefined}>{dateText(article.publishedAt)}</time>
+            </div>
+            <a href={article.url} target='_blank' rel='noopener noreferrer'
+              class='vesper-feed__article-title'>{article.title}</a>
+            {article.stale && <span class='vesper-feed__cached'>历史缓存</span>}
+          </li>
+        ))}
+      </ul>
+
+      <div class='vesper-feed__controls'>
+        <button type='button' data-feed-more hidden={articles.length <= PAGE_SIZE}>显示更多 <span aria-hidden='true'>↓</span></button>
+        <button type='button' data-feed-less hidden>收起 <span aria-hidden='true'>↑</span></button>
+      </div>
+      <p class='vesper-feed__counter' data-feed-counter aria-live='polite'>
+        当前显示 {Math.min(PAGE_SIZE, articles.length)} / {articles.length} 篇文章
+      </p>
+    </>
+  ) : (
+    <div class='vesper-feed__empty'>
+      <strong>暂无邻站文章</strong>
+      <p>友链 RSS 尚未成功采集到内容；收录更多支持 RSS 的站点后会逐步丰富。</p>
+    </div>
+  )}
+
+  <footer class='vesper-feed__stats'>
+    <span>{friendLinks.length} 个友好邻居 · {activeFeeds} 个已抓取订阅源 · {articles.length} 篇文章</span>
+    <span>{updated ? '最近抓取：' + updated + '（UTC+8）' : '尚未执行首次抓取'}</span>
+    {snapshot.errors?.length > 0 && (
+      <span>{snapshot.errors.length} 个订阅源抓取失败{articles.some(article => article.stale) ? '，已保留可用历史缓存' : ''}</span>
+    )}
+    <span>数据来自本站 GitHub Actions RSS 聚合</span>
+  </footer>
+
+  <dialog class='vesper-feed__dialog' data-feed-dialog aria-labelledby='vesper-feed-dialog-title'>
+    <div class='vesper-feed__dialog-shell'>
+      <header class='vesper-feed__dialog-head'>
+        <div class='vesper-feed__dialog-identity'>
+          <img data-dialog-avatar alt='' width='52' height='52'
+            src={FALLBACK_AVATAR} data-feed-fallback={FALLBACK_AVATAR} />
+          <div>
+            <span>近期文章</span>
+            <h3 id='vesper-feed-dialog-title' data-dialog-author>邻站作者</h3>
+          </div>
+        </div>
+        <button type='button' data-dialog-close aria-label='关闭作者文章' class='vesper-feed__dialog-close'>×</button>
+      </header>
+      <ul class='vesper-feed__dialog-list' data-dialog-list></ul>
+      <footer class='vesper-feed__dialog-foot'>
+        <a href='#' data-dialog-site target='_blank' rel='noopener noreferrer'>访问站点 ↗</a>
+      </footer>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  import { initFriendFeed } from './friendFeedClient'
+  initFriendFeed()
+  document.addEventListener('astro:page-load', initFriendFeed)
+</script>
