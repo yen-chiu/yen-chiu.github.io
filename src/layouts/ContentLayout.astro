@@ -753,8 +753,19 @@ const isSingleColumn = mode === 'centered' || mode === 'wide'
       transform: none;
     }
 
+    /* Keep header, prose and metadata on the same comfortable reading inset.
+       The outer site shell already supplies 1rem; this is article-only spacing. */
     .article-reading-column {
       width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      padding-inline: clamp(.875rem, 3.5vw, 1.25rem);
+    }
+
+    .article-reading-column #content,
+    .article-reading-column #content-header {
+      min-width: 0;
+      max-width: 100%;
     }
 
     .article-left-rail {
