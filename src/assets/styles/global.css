@@ -703,11 +703,20 @@ html.dark #content .astro-code pre span {
     max-width: none !important;
     margin-inline: 0;
   }
+  /* Pie charts are overview graphics, not wide timelines. Keep them
+     inside the reading column instead of forcing a 420px overflow. */
+  #content .mermaid:has(svg[aria-roledescription='pie']),
+  #content .mermaid:has(svg[id*='pie']) {
+    overflow-x: hidden;
+  }
   #content .mermaid svg[aria-roledescription='pie'],
   #content .mermaid svg[id*='pie'] {
-    min-width: 420px;
-    max-width: none !important;
-    margin-inline: 0;
+    display: block;
+    width: min(82%, 340px) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-inline: auto !important;
+    height: auto !important;
   }
 }
 
