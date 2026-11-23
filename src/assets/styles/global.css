@@ -631,6 +631,10 @@ html.dark #content .astro-code pre span {
 @media (hover: none) {
   #content .astro-code .language { opacity: 0; }
 }
+/* 有标题的代码块：标题已经写明文件名/语言，语言角标会和复制按钮撞在一起 */
+#content .astro-code.has-code-title .language {
+  display: none;
+}
 
 /* Wide math: local scrolling, natural left origin, no viewport clipping. */
 #content .katex-display {
