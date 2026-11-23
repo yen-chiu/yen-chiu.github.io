@@ -161,6 +161,11 @@ const wallpaperPresets = [
     <p class='setting-hint'>觉得页面太晃就选「减少动画」。想保留打字机、卡片浮现和点击烟花，可以选「总是开启」。</p>
   </fieldset>
   <fieldset>
+    <legend>头像</legend>
+    <label class='switch'>动态头像（Animated WebP）<input type='checkbox' data-animated-avatar-choice /></label>
+    <p class='setting-hint'>默认静态。开启后首页与关于页头像播放轻微呼吸动画；选择「减少动画」或系统启用减少动态效果时保持静态。</p>
+  </fieldset>
+  <fieldset>
     <legend>首页开场</legend>
     <label class='switch'>银墨开场动画<input type='checkbox' data-silver-ink-choice /></label>
     <p class='setting-hint'>默认关闭。开启后，每次新会话进入首页时最多播放一次银墨动画；不喜欢可以随时关掉。</p>
@@ -250,7 +255,8 @@ const wallpaperPresets = [
           ['data-cover-choice', settings.cover],
           ['data-title-choice', settings.title],
           ['data-waves-choice', settings.waves],
-          ['data-silver-ink-choice', settings.silverInk]
+          ['data-silver-ink-choice', settings.silverInk],
+          ['data-animated-avatar-choice', settings.animatedAvatar]
         ] as const) {
           const checkbox = this.querySelector<HTMLInputElement>('[' + attr + ']')
           if (checkbox) checkbox.checked = value
@@ -453,6 +459,7 @@ const wallpaperPresets = [
         if (input.hasAttribute('data-title-choice')) api()?.set({ title: input.checked })
         if (input.hasAttribute('data-waves-choice')) api()?.set({ waves: input.checked })
         if (input.hasAttribute('data-silver-ink-choice')) api()?.set({ silverInk: input.checked })
+        if (input.hasAttribute('data-animated-avatar-choice')) api()?.set({ animatedAvatar: input.checked })
       }, { signal })
       window.addEventListener('wendell:appearance', sync, { signal })
       sync()
