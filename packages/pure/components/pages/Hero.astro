@@ -43,7 +43,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 {draft ? <span class='text-red-500'>(Draft)</span> : null}
 
 <div class='article-info max-lg:mx-auto'>
-  <div class='flex flex-wrap gap-x-4 gap-y-2 text-xs leading-6 text-muted-foreground'>
+  <div class='article-meta flex flex-wrap gap-x-4 gap-y-2 text-xs leading-6 text-muted-foreground'>
     {/* Article date */}
     <div class='flex items-center gap-1'>
       <Icon name='calendar' class='size-5' />
@@ -94,18 +94,18 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
     }
   </div>
 
-  <h1 class='mt-4 text-2xl font-medium sm:mb-2 sm:mt-6 sm:text-3xl'>
+  <h1 class='article-title mt-4 text-2xl font-medium sm:mb-2 sm:mt-6 sm:text-3xl'>
     {title}
   </h1>
 
-  <div class='mt-3 italic'>
-    <blockquote class='text-sm text-muted-foreground'><q>{description}</q></blockquote>
+  <div class='article-intro mt-3'>
+    <p class='article-summary text-sm text-muted-foreground'>{description}</p>
     <slot name='description' />
   </div>
 </div>
 
 {/* Dividing line */}
-<div class='mt-4 w-1/2 border-t max-md:mx-auto sm:mt-6 sm:w-1/3'></div>
+<div class='article-divider mt-4 w-1/2 border-t max-md:mx-auto sm:mt-6 sm:w-1/3'></div>
 
 <script>
   const viewportHeight = window.innerHeight
@@ -131,6 +131,19 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 </script>
 
 <style>
+  .article-title { max-width: 28ch; line-height: 1.32; letter-spacing: -.025em; text-wrap: pretty; }
+  .article-summary { max-width: 65ch; margin: 0; font-style: normal; line-height: 1.8; overflow-wrap: anywhere; }
+  .article-intro { margin-top: .8rem; }
+  .article-divider { border-color: hsl(var(--border) / .6); }
+  @media (max-width: 767px) {
+    .article-meta { gap: .35rem .9rem; font-size: .76rem; }
+    .article-meta :global(svg) { width: 1rem; height: 1rem; }
+    .article-title { font-size: clamp(1.65rem, 6.3vw, 2.1rem); line-height: 1.38; margin-top: 1.1rem; font-weight: 650; }
+    .article-summary { font-size: .92rem; line-height: 1.75; }
+    .article-tags { margin-top: .35rem; }
+    .article-tags__list a { font-size: .72rem; padding: .08rem .5rem; border-radius: 999px; }
+    .article-divider { margin-top: 1.5rem; width: 22%; margin-inline: 0; }
+  }
   .article-tags{display:flex;align-items:flex-start;gap:.4rem;min-width:0;max-width:100%;flex-basis:100%;}
   .article-tags :global(svg){flex-shrink:0;margin-top:.2rem;}
   .article-tags__list{display:flex;flex-wrap:wrap;gap:.3rem .4rem;min-width:0;}
