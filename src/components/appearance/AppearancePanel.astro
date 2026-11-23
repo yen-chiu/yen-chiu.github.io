@@ -1,84 +1,392 @@
 ---
-const presets = [{name:'紫',hue:267},{name:'蓝',hue:215},{name:'青',hue:165},{name:'粉',hue:335},{name:'琥珀',hue:35}]
+import { sitePath } from '@/utils/site-path'
+const colors = [
+  { name: '紫', hue: 267 }, { name: '蓝', hue: 215 }, { name: '青', hue: 165 },
+  { name: '粉', hue: 335 }, { name: '琥珀', hue: 35 }
+]
+const wallpaperPresets = [
+  { name: '星夜', subtitle: '原版封面', src: '/images/moonlit-cover.svg' },
+  { name: '极光', subtitle: '深蓝与湖绿', src: '/images/wallpapers/aurora-ridge.svg' },
+  { name: '晨雾', subtitle: '冷银与远山', src: '/images/wallpapers/silver-mist.svg' },
+  { name: '晚霞', subtitle: '玫瑰色海面', src: '/images/wallpapers/rose-twilight.svg' }
+]
 ---
 <appearance-panel id='appearance-panel' class='appearance-panel' hidden aria-label='外观设置'>
-  <header><strong>外观设置</strong><button type='button' data-appearance-close aria-label='关闭外观设置'>×</button></header>
-  <fieldset><legend>主题颜色 <output data-hue-value>267°</output></legend>
-    <div class='presets'>{presets.map(p => <button type='button' data-hue={p.hue} aria-pressed='false' style={`--swatch:hsl(${p.hue} 55% 58%)`}><i aria-hidden='true'></i>{p.name}</button>)}</div>
-    <input type='range' min='0' max='360' step='1' value='267' aria-label='主题色相' data-hue-slider />
+  <header>
+    <strong>外观设置</strong>
+    <button type='button' data-appearance-close aria-label='关闭外观设置'>×</button>
+  </header>
+  <fieldset>
+    <legend>主题颜色 <output data-hue-value>267°</output></legend>
+    <div class='presets'>{colors.map(color => (
+      <button type='button' data-hue={color.hue} aria-pressed='false'
+        style={'--swatch:hsl(' + color.hue + ' 55% 58%)'}>
+        <i aria-hidden='true'></i>{color.name}
+      </button>
+    ))}</div>
+    <input type='range' min='0' max='360' step='1' value='267'
+      aria-label='主题色相' data-hue-slider />
   </fieldset>
-  <fieldset><legend>显示模式</legend><div class='options'>{['system','light','dark'].map((value,i) => <button type='button' data-theme-choice={value} aria-pressed={i===0?'true':'false'}>{['跟随系统','浅色','深色'][i]}</button>)}</div></fieldset>
-  <fieldset><legend>内页背景</legend><div class='options wallpaper'>{['banner','fullscreen','overlay'].map((value,i) => <button type='button' data-wallpaper-choice={value} aria-pressed={i===0?'true':'false'}>{['纯色','壁纸','柔化'][i]}</button>)}</div><p class='setting-hint'>只影响博客、文章和归档等内页，首页封面不受影响。</p></fieldset>
-  <fieldset><legend>文章布局</legend><div class='options'><button type='button' data-layout-choice='list' aria-pressed='true'>列表</button><button type='button' data-layout-choice='grid' aria-pressed='false'>网格</button></div></fieldset>
-  <fieldset><legend>动画效果</legend><div class='options'>{['system','always','reduced'].map((value,i) => <button type='button' data-motion-choice={value} aria-pressed={i===0?'true':'false'}>{['跟随系统','总是开启','减少动画'][i]}</button>)}</div><p class='setting-hint'>觉得页面太晃就选「减少动画」。想保留打字机、卡片浮现和点击烟花，可以选「总是开启」。</p></fieldset>
-  <fieldset><legend>首页开场</legend><label class='switch'>银墨开场动画<input type='checkbox' data-silver-ink-choice /></label><p class='setting-hint'>默认关闭。开启后，每次新会话进入首页时最多播放一次银墨动画；不喜欢可以随时关掉。</p></fieldset>
-  <fieldset><legend>首页封面</legend><label class='switch'>显示封面插画<input type='checkbox' data-cover-choice checked /></label><label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label><label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label><p class='setting-hint'>首页保留全屏入口，下滑后收起。</p></fieldset>
+
+  <fieldset>
+    <legend>显示模式</legend>
+    <div class='options'>
+      {['system', 'light', 'dark'].map((value, i) => (
+        <button type='button' data-theme-choice={value} aria-pressed={i === 0 ? 'true' : 'false'}>
+          {['跟随系统', '浅色', '深色'][i]}
+        </button>
+      ))}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>内页背景</legend>
+    <div class='options wallpaper'>
+      {['banner', 'fullscreen', 'overlay'].map((value, i) => (
+        <button type='button' data-wallpaper-choice={value} aria-pressed={i === 0 ? 'true' : 'false'}>
+          {['纯色', '壁纸', '柔化'][i]}
+        </button>
+      ))}
+    </div>
+    <p class='setting-hint'>应用于博客、文章、归档等内页。首页封面保持原样。</p>
+  </fieldset>
+
+  <fieldset class='wallpaper-settings'>
+    <legend>选择壁纸</legend>
+    <div class='wallpaper-gallery' aria-label='壁纸预设'>
+      {wallpaperPresets.map(preset => (
+        <button type='button' class='wallpaper-tile' data-wallpaper-source={preset.src}
+          aria-pressed='false' title={preset.subtitle}>
+          <img src={sitePath(preset.src)} alt='' width='150' height='78'
+            loading='lazy' decoding='async' />
+          <span class='wallpaper-tile-caption'><strong>{preset.name}</strong><small>{preset.subtitle}</small></span>
+        </button>
+      ))}
+      <button type='button' class='wallpaper-tile wallpaper-tile-uploaded'
+        data-wallpaper-use-uploaded aria-pressed='false' hidden>
+        <span class='wallpaper-uploaded-preview' aria-hidden='true'></span>
+        <span class='wallpaper-tile-caption'><strong>我的图片</strong><small>保存在本机</small></span>
+      </button>
+    </div>
+    <div class='wallpaper-opacity'>
+      <label for='wallpaper-opacity'>壁纸强度</label>
+      <output for='wallpaper-opacity' data-wallpaper-opacity>24%</output>
+    </div>
+    <input id='wallpaper-opacity' data-wallpaper-opacity-slider
+      type='range' min='8' max='75' step='1' value='24'
+      aria-label='壁纸显示强度' />
+    <p class='setting-hint'>选择预设后会自动切换到壁纸模式；阅读时觉得花，就调低强度或选「柔化」。</p>
+
+    <div class='wallpaper-custom'>
+      <label for='wallpaper-custom-url'>图片地址（HTTPS）</label>
+      <div class='wallpaper-url-row'>
+        <input id='wallpaper-custom-url' data-wallpaper-url type='url'
+          inputmode='url' maxlength='2048' spellcheck='false'
+          placeholder='https://example.com/photo.webp' autocomplete='off' />
+        <button type='button' data-wallpaper-url-apply>使用链接</button>
+      </div>
+      <p class='setting-hint'>外链图片由浏览器直接请求原网站；对方可能禁止引用，也可能记录访问请求。</p>
+    </div>
+    <div class='wallpaper-local-actions'>
+      <label class='wallpaper-upload-action' for='wallpaper-upload'>
+        上传本地图片
+        <input id='wallpaper-upload' type='file' data-wallpaper-file
+          accept='image/jpeg,image/png,image/webp,image/avif' />
+      </label>
+      <button type='button' data-wallpaper-clear-upload hidden>删除本地图片</button>
+    </div>
+    <p class='setting-hint'>支持 JPG / PNG / WebP / AVIF，最大 8 MB。图片只存于当前浏览器，清除浏览器数据后会消失，也不会同步到其他设备。</p>
+    <p class='wallpaper-status' data-wallpaper-status role='status' aria-live='polite'></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>文章布局</legend>
+    <div class='options'>
+      <button type='button' data-layout-choice='list' aria-pressed='true'>列表</button>
+      <button type='button' data-layout-choice='grid' aria-pressed='false'>网格</button>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>动画效果</legend>
+    <div class='options'>
+      {['system', 'always', 'reduced'].map((value, i) => (
+        <button type='button' data-motion-choice={value} aria-pressed={i === 0 ? 'true' : 'false'}>
+          {['跟随系统', '总是开启', '减少动画'][i]}
+        </button>
+      ))}
+    </div>
+    <p class='setting-hint'>觉得页面太晃就选「减少动画」。想保留打字机、卡片浮现和点击烟花，可以选「总是开启」。</p>
+  </fieldset>
+  <fieldset>
+    <legend>首页开场</legend>
+    <label class='switch'>银墨开场动画<input type='checkbox' data-silver-ink-choice /></label>
+    <p class='setting-hint'>默认关闭。开启后，每次新会话进入首页时最多播放一次银墨动画；不喜欢可以随时关掉。</p>
+  </fieldset>
+  <fieldset>
+    <legend>首页封面</legend>
+    <label class='switch'>显示封面插画<input type='checkbox' data-cover-choice checked /></label>
+    <label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label>
+    <label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label>
+    <p class='setting-hint'>首页保留全屏入口，下滑后收起。</p>
+  </fieldset>
   <button class='reset' type='button' data-appearance-reset>恢复默认外观</button>
 </appearance-panel>
+
 <script>
   import type { AppearanceSettings } from '../../types/appearance'
+
   class AppearancePanel extends HTMLElement {
     private controller?: AbortController
+
     connectedCallback() {
-      this.controller?.abort();this.controller=new AbortController()
-      const {signal}=this.controller
-      const sync=()=>{
-        const s=window.wendellAppearance?.get()
-        if(!s)return
-        this.querySelectorAll<HTMLButtonElement>('[data-hue]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.hue)===s.hue)))
-        for(const [selector,key] of [['theme-choice','theme'],['wallpaper-choice','wallpaper'],['layout-choice','layout'],['motion-choice','motion']] as const){
-          this.querySelectorAll<HTMLButtonElement>(`[data-${selector}]`).forEach(b=>b.setAttribute('aria-pressed',String(b.getAttribute(`data-${selector}`)===s[key])))
-        }
-        this.querySelector<HTMLOutputElement>('[data-hue-value]')!.value=`${s.hue}°`
-        this.querySelector<HTMLInputElement>('[data-hue-slider]')!.value=String(s.hue)
-        this.querySelector<HTMLInputElement>('[data-cover-choice]')!.checked=s.cover
-        this.querySelector<HTMLInputElement>('[data-title-choice]')!.checked=s.title
-        this.querySelector<HTMLInputElement>('[data-waves-choice]')!.checked=s.waves
-        this.querySelector<HTMLInputElement>('[data-silver-ink-choice]')!.checked=s.silverInk
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const api = () => window.wendellAppearance
+      const status = this.querySelector<HTMLElement>('[data-wallpaper-status]')
+      const urlInput = this.querySelector<HTMLInputElement>('[data-wallpaper-url]')
+      const uploadInput = this.querySelector<HTMLInputElement>('[data-wallpaper-file]')
+      const savedImageButton = this.querySelector<HTMLButtonElement>('[data-wallpaper-use-uploaded]')
+      const clearImageButton = this.querySelector<HTMLButtonElement>('[data-wallpaper-clear-upload]')
+      const setStatus = (message: string, error = false) => {
+        if (!status) return
+        status.textContent = message
+        status.dataset.error = String(error)
       }
-      this.addEventListener('click',e=>{
-        const b=(e.target as Element).closest<HTMLButtonElement>('button');if(!b)return
-        const api=window.wendellAppearance;if(!api)return
-        if(b.hasAttribute('data-hue'))api.set({hue:Number(b.dataset.hue)})
-        if(b.dataset.themeChoice)api.set({theme:b.dataset.themeChoice as AppearanceSettings['theme']})
-        if(b.dataset.wallpaperChoice)api.set({wallpaper:b.dataset.wallpaperChoice as AppearanceSettings['wallpaper']})
-        if(b.dataset.layoutChoice)api.set({layout:b.dataset.layoutChoice as AppearanceSettings['layout']})
-        if(b.dataset.motionChoice)api.set({motion:b.dataset.motionChoice as AppearanceSettings['motion']})
-        if(b.hasAttribute('data-appearance-reset'))api.reset()
-      },{signal})
-      this.querySelector('[data-hue-slider]')?.addEventListener('input',e=>window.wendellAppearance?.set({hue:Number((e.target as HTMLInputElement).value)}),{signal})
-      this.addEventListener('change',e=>{
-        const input=e.target as HTMLInputElement
-        if(input.hasAttribute('data-cover-choice'))window.wendellAppearance?.set({cover:input.checked})
-        if(input.hasAttribute('data-title-choice'))window.wendellAppearance?.set({title:input.checked})
-        if(input.hasAttribute('data-waves-choice'))window.wendellAppearance?.set({waves:input.checked})
-        if(input.hasAttribute('data-silver-ink-choice'))window.wendellAppearance?.set({silverInk:input.checked})
-      },{signal})
-      window.addEventListener('wendell:appearance',sync,{signal});sync()
+      const sync = () => {
+        const settings = api()?.get()
+        if (!settings) return
+        this.querySelectorAll<HTMLButtonElement>('[data-hue]').forEach(button =>
+          button.setAttribute('aria-pressed', String(Number(button.dataset.hue) === settings.hue)))
+        for (const [selector, key] of [
+          ['theme-choice', 'theme'], ['wallpaper-choice', 'wallpaper'],
+          ['layout-choice', 'layout'], ['motion-choice', 'motion']
+        ] as const) {
+          this.querySelectorAll<HTMLButtonElement>('[data-' + selector + ']').forEach(button =>
+            button.setAttribute('aria-pressed',
+              String(button.getAttribute('data-' + selector) === settings[key])))
+        }
+        this.querySelectorAll<HTMLButtonElement>('[data-wallpaper-source]').forEach(button =>
+          button.setAttribute('aria-pressed',
+            String(button.dataset.wallpaperSource === settings.wallpaperSource)))
+        savedImageButton?.setAttribute('aria-pressed',
+          String(settings.wallpaperSource === 'uploaded'))
+        const hueOutput = this.querySelector<HTMLOutputElement>('[data-hue-value]')
+        if (hueOutput) hueOutput.value = settings.hue + '°'
+        const hueSlider = this.querySelector<HTMLInputElement>('[data-hue-slider]')
+        if (hueSlider) hueSlider.value = String(settings.hue)
+        const opacityOutput = this.querySelector<HTMLOutputElement>('[data-wallpaper-opacity]')
+        if (opacityOutput) opacityOutput.value = settings.wallpaperOpacity + '%'
+        const opacitySlider = this.querySelector<HTMLInputElement>('[data-wallpaper-opacity-slider]')
+        if (opacitySlider) opacitySlider.value = String(settings.wallpaperOpacity)
+        for (const [attr, value] of [
+          ['data-cover-choice', settings.cover],
+          ['data-title-choice', settings.title],
+          ['data-waves-choice', settings.waves],
+          ['data-silver-ink-choice', settings.silverInk]
+        ] as const) {
+          const checkbox = this.querySelector<HTMLInputElement>('[' + attr + ']')
+          if (checkbox) checkbox.checked = value
+        }
+        if (urlInput && document.activeElement !== urlInput)
+          urlInput.value = settings.wallpaperSource.startsWith('https://')
+            ? settings.wallpaperSource : ''
+      }
+      const refreshUploaded = async () => {
+        try {
+          const hasSaved = await api()?.hasUpload()
+          if (!this.isConnected) return
+          if (savedImageButton) savedImageButton.hidden = !hasSaved
+          if (clearImageButton) clearImageButton.hidden = !hasSaved
+        } catch {
+          if (savedImageButton) savedImageButton.hidden = true
+          if (clearImageButton) clearImageButton.hidden = true
+        }
+      }
+      const applyExternalImage = async () => {
+        const raw = urlInput?.value.trim() ?? ''
+        let url: URL
+        try {
+          url = new URL(raw)
+          if (url.protocol !== 'https:' || url.username || url.password || raw.length > 2048)
+            throw new Error('请使用有效的 HTTPS 图片地址')
+        } catch {
+          setStatus('图片地址不正确，请填完整的 HTTPS 链接。', true)
+          return
+        }
+        setStatus('正在检查图片链接…')
+        const button = this.querySelector<HTMLButtonElement>('[data-wallpaper-url-apply]')
+        if (button) button.disabled = true
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const image = new Image()
+            image.onload = () => resolve()
+            image.onerror = () => reject(new Error('图片无法加载，可能是链接失效或网站禁止引用'))
+            image.src = url.href
+          })
+          if (!this.isConnected) return
+          api()?.set({ wallpaperSource: url.href, wallpaper: 'fullscreen' })
+          setStatus('已切换到自定义壁纸。')
+        } catch (error) {
+          setStatus(error instanceof Error ? error.message : '图片加载失败', true)
+        } finally {
+          if (button) button.disabled = false
+        }
+      }
+
+      this.addEventListener('click', event => {
+        const button = (event.target as Element).closest<HTMLButtonElement>('button')
+        if (!button || !api()) return
+        if (button.hasAttribute('data-hue')) api()?.set({ hue: Number(button.dataset.hue) })
+        if (button.dataset.themeChoice)
+          api()?.set({ theme: button.dataset.themeChoice as AppearanceSettings['theme'] })
+        if (button.dataset.wallpaperChoice)
+          api()?.set({ wallpaper: button.dataset.wallpaperChoice as AppearanceSettings['wallpaper'] })
+        if (button.dataset.wallpaperSource) {
+          api()?.set({ wallpaperSource: button.dataset.wallpaperSource, wallpaper: 'fullscreen' })
+          setStatus('壁纸已切换。')
+        }
+        if (button.dataset.layoutChoice)
+          api()?.set({ layout: button.dataset.layoutChoice as AppearanceSettings['layout'] })
+        if (button.dataset.motionChoice)
+          api()?.set({ motion: button.dataset.motionChoice as AppearanceSettings['motion'] })
+        if (button.hasAttribute('data-wallpaper-url-apply')) void applyExternalImage()
+        if (button.hasAttribute('data-wallpaper-use-uploaded')) {
+          void api()?.useUpload()
+            .then(() => setStatus('已切换到本地图片。'))
+            .catch((error: unknown) => setStatus(
+              error instanceof Error ? error.message : '无法读取本地图片', true))
+        }
+        if (button.hasAttribute('data-wallpaper-clear-upload')) {
+          void api()?.clearUpload()
+            .then(() => { setStatus('本地图片已删除。'); void refreshUploaded() })
+            .catch((error: unknown) => setStatus(
+              error instanceof Error ? error.message : '无法删除本地图片', true))
+        }
+        if (button.hasAttribute('data-appearance-reset')) {
+          api()?.reset()
+          setStatus('已恢复默认外观；已上传图片未删除，需要时可以重新选择。')
+        }
+      }, { signal })
+      this.querySelector('[data-hue-slider]')?.addEventListener('input', event =>
+        api()?.set({ hue: Number((event.target as HTMLInputElement).value) }), { signal })
+      this.querySelector('[data-wallpaper-opacity-slider]')?.addEventListener('input', event =>
+        api()?.set({ wallpaperOpacity: Number((event.target as HTMLInputElement).value) }), { signal })
+      urlInput?.addEventListener('keydown', event => {
+        if (event.key === 'Enter') { event.preventDefault(); void applyExternalImage() }
+      }, { signal })
+      uploadInput?.addEventListener('change', () => {
+        const image = uploadInput.files?.[0]
+        if (!image) return
+        setStatus('正在保存图片到本地…')
+        void api()?.upload(image)
+          .then(() => { setStatus('壁纸已保存到当前浏览器。'); void refreshUploaded() })
+          .catch((error: unknown) =>
+            setStatus(error instanceof Error ? error.message : '图片保存失败', true))
+          .finally(() => { uploadInput.value = '' })
+      }, { signal })
+      this.addEventListener('change', event => {
+        const input = event.target as HTMLInputElement
+        if (input.hasAttribute('data-cover-choice')) api()?.set({ cover: input.checked })
+        if (input.hasAttribute('data-title-choice')) api()?.set({ title: input.checked })
+        if (input.hasAttribute('data-waves-choice')) api()?.set({ waves: input.checked })
+        if (input.hasAttribute('data-silver-ink-choice')) api()?.set({ silverInk: input.checked })
+      }, { signal })
+      window.addEventListener('wendell:appearance', sync, { signal })
+      sync()
+      void refreshUploaded()
     }
-    disconnectedCallback(){this.controller?.abort()}
+    disconnectedCallback() { this.controller?.abort() }
   }
-  if(!customElements.get('appearance-panel'))customElements.define('appearance-panel',AppearancePanel)
+  if (!customElements.get('appearance-panel'))
+    customElements.define('appearance-panel', AppearancePanel)
 </script>
+
 <style>
-  appearance-panel{position:absolute;right:0;top:calc(100% + .65rem);width:min(21rem,calc(100vw - 2rem));max-height:calc(100vh - 6rem);max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;padding:1rem;border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;background:hsl(var(--background)/.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 40px hsl(var(--foreground)/.13);z-index:60;scrollbar-width:thin;}
-  appearance-panel[hidden]{display:none!important;}
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;font-size:.95rem;}
-  button{font:inherit;cursor:pointer;color:inherit;}
-  header button{border:0;background:transparent;font-size:1.3rem;min-width:44px;min-height:44px;}
-  fieldset{border:0;padding:0;margin:1rem 0;min-width:0;}
-  legend{display:flex;justify-content:space-between;width:100%;font-size:.78rem;font-weight:650;margin-bottom:.65rem;}
-  output{color:hsl(var(--primary));font-variant-numeric:tabular-nums;}
-  .setting-hint{margin:.55rem 0 0;font-size:.65rem;line-height:1.7;color:hsl(var(--muted-foreground));}
-  .presets,.options{display:flex;gap:.3rem;}
-  .presets button,.options button{flex:1;min-height:44px;border:1px solid transparent;border-radius:.55rem;padding:.45rem .35rem;background:hsl(var(--muted)/.7);font-size:.73rem;white-space:nowrap;}
-  button[aria-pressed=true]{color:hsl(var(--primary));background:hsl(var(--primary)/.12);border-color:hsl(var(--primary)/.35);}
-  .presets i{display:block;width:.7rem;height:.7rem;border-radius:50%;background:var(--swatch);margin:0 auto .3rem;}
-  input[type=range]{width:100%;height:24px;margin-top:.85rem;appearance:none;border-radius:.4rem;background:linear-gradient(90deg,#e77a79,#e5c274,#7cc79c,#66b8cc,#8599e2,#c28cda,#e77a79);cursor:ew-resize;}
-  input[type=range]::-webkit-slider-thumb{appearance:none;width:12px;height:30px;border:2px solid hsl(var(--background));border-radius:.3rem;background:hsl(var(--foreground));}
-  input[type=range]::-moz-range-thumb{width:10px;height:26px;border:2px solid hsl(var(--background));border-radius:.3rem;background:hsl(var(--foreground));}
-  .switch{display:flex;justify-content:space-between;align-items:center;min-height:44px;font-size:.78rem;cursor:pointer;}
-  input[type=checkbox]{accent-color:hsl(var(--primary));width:1.1rem;height:1.1rem;}
-  .reset{width:100%;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:transparent;font-size:.78rem;}
-  :is(button,input):focus-visible{outline:2px solid hsl(var(--primary));outline-offset:2px;}
+  appearance-panel {
+    position:absolute;right:0;top:calc(100% + .65rem);
+    width:min(22rem,calc(100vw - 2rem));
+    max-height:calc(100vh - 6rem);max-height:calc(100dvh - 6rem);
+    overflow:auto;overscroll-behavior:contain;padding:1rem;
+    border:1px solid hsl(var(--border)/.7);border-radius:1.1rem;
+    background:hsl(var(--background)/.93);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:0 14px 40px hsl(var(--foreground)/.13);
+    z-index:60;scrollbar-width:thin;
+  }
+  appearance-panel[hidden] { display:none!important; }
+  header { display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;font-size:.95rem; }
+  button { font:inherit;cursor:pointer;color:inherit; }
+  button:disabled { cursor:wait;opacity:.5; }
+  header button { border:0;background:transparent;font-size:1.3rem;min-width:44px;min-height:44px; }
+  fieldset { border:0;padding:0;margin:1rem 0;min-width:0; }
+  legend { display:flex;justify-content:space-between;width:100%;font-size:.78rem;font-weight:650;margin-bottom:.65rem; }
+  output { color:hsl(var(--primary));font-variant-numeric:tabular-nums; }
+  .setting-hint { margin:.55rem 0 0;font-size:.65rem;line-height:1.7;color:hsl(var(--muted-foreground)); }
+  .presets,.options { display:flex;gap:.3rem; }
+  .presets button,.options button {
+    flex:1;min-height:44px;border:1px solid transparent;border-radius:.55rem;
+    padding:.45rem .35rem;background:hsl(var(--muted)/.7);font-size:.73rem;white-space:nowrap;
+  }
+  button[aria-pressed=true] { color:hsl(var(--primary));background:hsl(var(--primary)/.12);border-color:hsl(var(--primary)/.35); }
+  .presets i { display:block;width:.7rem;height:.7rem;border-radius:50%;background:var(--swatch);margin:0 auto .3rem; }
+  input[type=range] { width:100%;height:24px;margin-top:.85rem;appearance:none;border-radius:.4rem;background:linear-gradient(90deg,#e77a79,#e5c274,#7cc79c,#66b8cc,#8599e2,#c28cda,#e77a79);cursor:ew-resize; }
+  input[type=range]::-webkit-slider-thumb { appearance:none;width:12px;height:30px;border:2px solid hsl(var(--background));border-radius:.3rem;background:hsl(var(--foreground)); }
+  input[type=range]::-moz-range-thumb { width:10px;height:26px;border:2px solid hsl(var(--background));border-radius:.3rem;background:hsl(var(--foreground)); }
+  .switch { display:flex;justify-content:space-between;align-items:center;min-height:44px;font-size:.78rem;cursor:pointer; }
+  input[type=checkbox] { accent-color:hsl(var(--primary));width:1.1rem;height:1.1rem; }
+  .reset { width:100%;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;background:transparent;font-size:.78rem; }
+  .wallpaper-gallery { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem; }
+  .wallpaper-tile {
+    display:flex;flex-direction:column;overflow:hidden;padding:0;
+    min-width:0;border:1px solid hsl(var(--border));border-radius:.8rem;
+    background:hsl(var(--muted)/.28);text-align:left;
+  }
+  .wallpaper-tile[hidden], .wallpaper-local-actions button[hidden] { display:none!important; }
+  .wallpaper-tile img,.wallpaper-uploaded-preview {
+    display:block;width:100%;height:76px;object-fit:cover;
+    background-color:hsl(var(--muted));
+  }
+  .wallpaper-uploaded-preview {
+    background-image:var(--site-wallpaper-image);background-position:center;background-size:cover;
+  }
+  .wallpaper-tile-caption { display:flex;align-items:center;justify-content:space-between;gap:.3rem;padding:.5rem .55rem;width:100%; }
+  .wallpaper-tile-caption strong { font-size:.74rem;font-weight:650; }
+  .wallpaper-tile-caption small { font-size:.57rem;color:hsl(var(--muted-foreground));white-space:nowrap; }
+  .wallpaper-tile[aria-pressed=true] { box-shadow:0 0 0 1px hsl(var(--primary)/.4); }
+  .wallpaper-opacity { display:flex;align-items:center;justify-content:space-between;margin-top:1rem;font-size:.75rem; }
+  .wallpaper-settings [data-wallpaper-opacity-slider] {
+    margin-top:.5rem;height:8px;background:linear-gradient(90deg,hsl(var(--muted)),hsl(var(--primary)/.7));
+  }
+  .wallpaper-settings [data-wallpaper-opacity-slider]::-webkit-slider-thumb {
+    width:17px;height:17px;border-radius:50%;background:hsl(var(--primary));
+  }
+  .wallpaper-custom { margin-top:1rem; }
+  .wallpaper-custom label { display:block;font-size:.75rem;font-weight:550;margin-bottom:.5rem; }
+  .wallpaper-url-row { display:flex;gap:.4rem; }
+  .wallpaper-url-row input {
+    width:100%;min-width:0;flex:1;padding:.55rem .6rem;
+    border-radius:.55rem;border:1px solid hsl(var(--border));
+    background:hsl(var(--background));color:hsl(var(--foreground));font-size:.72rem;
+  }
+  .wallpaper-url-row button,.wallpaper-local-actions button,.wallpaper-upload-action {
+    display:inline-flex;align-items:center;justify-content:center;flex:none;
+    min-height:42px;padding:.5rem .65rem;border:1px solid hsl(var(--border));
+    border-radius:.55rem;background:hsl(var(--muted)/.5);
+    font-size:.7rem;white-space:nowrap;
+  }
+  .wallpaper-local-actions { display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:1rem; }
+  .wallpaper-upload-action { position:relative;overflow:hidden;cursor:pointer; }
+  .wallpaper-upload-action input {
+    position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;
+  }
+  .wallpaper-status { font-size:.68rem;min-height:1em;line-height:1.6;margin:.55rem 0 0;color:hsl(var(--primary)); }
+  .wallpaper-status[data-error=true] { color:hsl(var(--foreground)); }
+  :is(button,input):focus-visible,.wallpaper-upload-action:focus-within {
+    outline:2px solid hsl(var(--primary));outline-offset:2px;
+  }
+  @media(max-width:450px) {
+    appearance-panel { right:-.2rem; }
+    .wallpaper-tile-caption small { font-size:.55rem; }
+  }
 </style>
