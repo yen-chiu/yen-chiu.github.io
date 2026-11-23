@@ -41,7 +41,7 @@ const { compact = false } = Astro.props
         </li>)}
       </ol>
     </div>
-    <p class='music-side-note'>曲目来自明确标注许可的公开示范音源；<a href='https://commons.wikimedia.org/wiki/File:Nocturne_Op._9_no._2_in_E_flat_major.mp3' target='_blank' rel='noopener noreferrer'>查看录音来源与授权 ↗</a></p>
+    <div class='music-side-note'><p>示范曲目采用不同的开放许可；具体署名与授权请查看各曲目来源。</p><ul>{musicTracks.map(track=><li><a href={track.attribution.match(/https:\/\/\S+/)?.[0] || '#'} target='_blank' rel='noopener noreferrer'>{track.title} · 来源与许可 ↗</a></li>)}</ul></div>
   </section>}
 </vesper-music-player>
 
