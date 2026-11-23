@@ -68,6 +68,7 @@ const { compact = false } = Astro.props
       const artist = this.querySelector<HTMLElement>('[data-song-artist]')!
       const setStatus = (message:string) => { status.textContent = message }
       let index = 0
+      audio.volume = 0.7
       try {
         const saved = JSON.parse(localStorage.getItem('vesper-music-v1') || '{}')
         index = Math.max(0, tracks.findIndex(track => track.id === saved.id))
@@ -81,8 +82,10 @@ const { compact = false } = Astro.props
         const track = tracks[position]
         if (!track || track.source !== 'audio') return
         audio.pause()
-        audio.removeAttribute('src')
-        audio.load()
+        if (audio.hasAttribute('src')) {
+          audio.removeAttribute('src')
+          audio.load()
+        }
         index=position
         title.textContent=track.title
         artist.textContent=track.artist
