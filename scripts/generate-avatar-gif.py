@@ -1,37 +1,71 @@
-from PIL import Image, ImageDraw
+"""Build Vesper animated avatar assets from the original transparent PNG.
+
+Both exports use the same untouched-RGBA frames. GIF is only a compatibility
+asset; the lossless animated WebP is used on the site.
+"""
 import math
 from pathlib import Path
+from PIL import Image, ImageDraw
 
-# Animated directly from the original Vesper PNG; no character regeneration.
-source = Path('src/assets/avatar.png')
-output = Path('public/favicon/wendell-avatar-animated.gif')
-size, count, duration = 320, 32, 110
-portrait = Image.open(source).convert('RGBA')
-portrait.thumbnail((size - 50, size - 50), Image.Resampling.LANCZOS)
+SOURCE = Path("src/assets/avatar.png")
+OUTPUT_DIR = Path("public/favicon")
+SIZE = 320
+COUNT = 24
+DURATION_MS = 120
 
+base = Image.open(SOURCE).convert("RGBA")
+base.thumbnail((SIZE - 24, SIZE - 24), Image.Resampling.LANCZOS)
 frames = []
-for i in range(count):
-    phase = 2 * math.pi * i / count
-    # Restrained one-pixel breathing and idle float preserve the original face.
-    scale = 1 + .008 * math.sin(phase)
-    width, height = round(portrait.width * scale), round(portrait.height * scale)
-    img = portrait.resize((width, height), Image.Resampling.LANCZOS)
-    dy = round(2 * math.sin(phase - .5))
-    frame = Image.new('RGBA', (size, size), (0, 0, 0, 0))
-    frame.alpha_composite(img, ((size - width) // 2, (size - height) // 2 + dy))
-
-    # The silver sparkle stays outside the head and fades as the loop turns.
-    sparkle = max(0, math.sin(phase + 1.2))
-    if sparkle > .08:
-        cx, cy = size - 40, 61
-        radius = 4 + 3 * sparkle
-        alpha = int(95 * sparkle)
-        draw = ImageDraw.Draw(frame)
-        draw.line((cx-radius, cy, cx+radius, cy), fill=(200, 216, 247, alpha), width=1)
-        draw.line((cx, cy-radius, cx, cy+radius), fill=(200, 216, 247, alpha), width=1)
+for index in range(COUNT):
+    phase = 2 * math.pi * index / COUNT
+    frame = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    # Integer-only idle motion avoids continuously resampling semi-transparent
+    # hair and fabric outlines, which caused the previous coloured GIF fringes.
+    y = (SIZE - base.height) // 2 + round(2 * math.sin(phase))
+    frame.alpha_composite(base, ((SIZE - base.width) // 2, y))
     frames.append(frame)
 
-output.parent.mkdir(parents=True, exist_ok=True)
-frames[0].save(output, save_all=True, append_images=frames[1:],
-               duration=duration, loop=0, disposal=2, optimize=False)
-print(f'Generated {output} from {source}: {len(frames)} frames / {duration} ms')
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+webp = OUTPUT_DIR / "wendell-avatar-animated.webp"
+frames[0].save(
+    webp, format="WEBP", save_all=True, append_images=frames[1:],
+    duration=DURATION_MS, loop=0, lossless=True, method=6, exact=True,
+)
+
+# GIF supports only indexed colours and binary transparency. Build a shared
+# palette on a neutral matte; reserve index 0 for transparent pixels and never
+# introduce per-frame colour dithering.
+matte = (245, 245, 248)
+def flatten(image):
+    rgb = Image.new("RGB", image.size, matte)
+    rgb.paste(image, mask=image.getchannel("A"))
+    return rgb
+
+palette_source = Image.new("RGB", (SIZE * COUNT, SIZE), matte)
+for i, frame in enumerate(frames):
+    palette_source.paste(flatten(frame), (i * SIZE, 0))
+palette = palette_source.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+shared_rgb = Image.new("P", (1, 1))
+shared_rgb.putpalette(palette.getpalette()[:765] + [0] * (768 - len(palette.getpalette()[:765])))
+
+indexed = []
+for frame in frames:
+    quantized = flatten(frame).quantize(palette=shared_rgb, dither=Image.Dither.NONE)
+    # Shift palette indices by one, keeping slot 0 fully transparent.
+    raw = quantized.tobytes()
+    shifted = bytes(value + 1 for value in raw)
+    alpha = frame.getchannel("A").tobytes()
+    pixels = bytes(p if a >= 128 else 0 for p, a in zip(shifted, alpha))
+    output = Image.frombytes("P", frame.size, pixels)
+    colors = shared_rgb.getpalette()[:765]
+    output.putpalette([0, 0, 0] + colors + [0] * (768 - 3 - len(colors)))
+    output.info["transparency"] = 0
+    indexed.append(output)
+
+gif = OUTPUT_DIR / "wendell-avatar-animated.gif"
+indexed[0].save(
+    gif, format="GIF", save_all=True, append_images=indexed[1:],
+    duration=DURATION_MS, loop=0, transparency=0, disposal=2,
+    optimize=False,
+)
+print(f"Created {webp} (lossless RGBA) and {gif} (shared palette) from {SOURCE}")
