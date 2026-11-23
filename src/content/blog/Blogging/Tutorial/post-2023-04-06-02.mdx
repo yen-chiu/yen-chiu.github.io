@@ -1,0 +1,684 @@
+---
+title: "Markdown 排版实验室：Vesper 显示效果测试"
+description: "YenChiu 的 Markdown 与 MDX 排版样本，展示标题、列表、表格、代码、公式、Mermaid、媒体、双链、提示框、交互组件和 Typst。"
+publishDate: 2023-04-06 16:10:46 +0800
+updatedDate: 2026-11-23 10:00:00 +0800
+tags:
+  - Markdown
+  - MDX
+  - Blogging
+  - Tutorial
+slug: markdown
+draft: false
+comment: true
+aliases:
+  - post-2023-04-06-02
+originalUrl: https://yenchiu.com/posts/markdown/
+---
+
+import { Aside, Button, Card, Tabs, TabItem, Steps, Spoiler } from 'astro-pure/user'
+import { Typst } from 'astro-typst/src/components'
+
+# Markdown 排版实验室
+
+这是一篇可以直接拿来测试 **YenChiu / Vesper** 阅读页的文章。用手机打开看看表格会不会横向撑破屏幕；切换深浅色，检查代码和数学公式是否清楚；再试试目录、链接、折叠块和标签页。哪处显示得别扭，就能顺着这一页找到具体问题。
+
+它不仅介绍语法，也展示**真正渲染出来的效果**。大部分内容是 Markdown，少量交互元素用 MDX 调用了本站已安装的 Astro 组件。
+
+<Aside type="note" title="先分清三个概念">
+
+**Markdown** 是轻量标记语法；**MDX** 允许在 Markdown 中使用组件；**Vesper** 决定它们最终长什么样。同一段源码换个渲染器，外观甚至功能都可能不同。
+
+</Aside>
+
+## 01. 标题、段落与文字
+
+### 标题层级
+
+下面依次放一组标题，检查字号、字重、间距及侧栏目录。文章自身已经有一级标题，因此示例从二级标题开始；在正常文章里，通常不需要反复使用一级标题。
+
+#### 四级标题：细分步骤
+
+##### 五级标题：补充说明
+
+###### 六级标题：最小一级
+
+标题源码示例：
+
+~~~markdown
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+~~~
+
+### 段落、换行与强调
+
+这是第一段。这里有 **粗体**、*斜体*、***粗斜体***、~~删除线~~，以及 `git status` 这样的行内代码。
+
+这是第二段。它与上一段之间留有一个空行，浏览器应将其识别成独立段落。下面两行没有空行，按普通 Markdown 规则通常会连接成同一段：
+
+第一行写在这里，
+第二行仍在同一个段落。
+
+如果需要明确换行，可以用行尾两个空格，或者使用 HTML 换行标签。例如：
+
+晚风从窗边经过。  
+电脑还没关。
+
+这里测试几个常见的英文单词：Markdown、Astro、TypeScript、GitHub、CSS、LaTeX。再来几个符号：© ® ™ → ← ↔ ± × ÷ ≈ ≠ ∞。
+
+### 行内 HTML 与特殊字符
+
+使用 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> 打开编辑器的命令面板。这里还有 <mark>高亮文字</mark>、上标 x<sup>2</sup>、下标 H<sub>2</sub>O，以及 <abbr title="Cascading Style Sheets">CSS</abbr> 缩写说明。
+
+为汉字加拼音也可以用 <ruby>砚秋<rt>yàn qiū</rt></ruby>。它们是 HTML 元素，不是所有 Markdown 渲染器都会提供相同样式。
+
+转义字符示例：\*这段不会变成斜体\*，\# 这里不是标题，\~\~这段不是删除线\~\~。
+
+<Aside type="tip" title="排版检查点">
+
+手机端应当能自然换行；行内代码不应把整段撑宽；标题跳转后也不该被固定导航挡住。切换外观设置的字体或明暗模式后，重新看一遍通常更容易发现问题。
+
+</Aside>
+
+---
+
+## 02. 链接、引用与脚注
+
+### 普通链接与锚点
+
+这是 [站内博客入口](/blog/)，这是 [关于页](/about/)，这是 [Astro 官方文档](https://docs.astro.build/)。外链是否有标记、鼠标悬停时是否变色，都由当前主题处理。
+
+还可以直接跳回本文的[公式部分](#05-数学公式与-katex)。如果目录锚点经过了自动规范化，具体链接请以侧边目录生成的地址为准。
+
+自动识别的 URL：<https://yenchiu.com/>；邮箱：<hello@example.com>（这是演示地址，不是本站联系方式）。
+
+### 引用块与嵌套引用
+
+> 日记不一定每天都有重要的事。今天修好一个小 bug，也值得记一笔。
+>
+> 第二段仍然属于同一块引用。
+>
+> > 里面再嵌套一层引用，看看左侧竖线如何排列。
+
+也可以把其他格式放进引用块：
+
+> **检查清单**
+>
+> - 标题是否对齐
+> - 链接是否能点
+> - 在窄屏上有没有横向溢出
+
+### 脚注
+
+脚注适合放那些有用、但塞在正文里会打断阅读的补充信息。例如 KaTeX 不等于完整的 LaTeX 编译器[^katex]；而 Markdown 各种扩展语法之间，也未必完全兼容[^flavors]。
+
+脚注在文末自动集中显示，点击编号后通常可以在正文与注释之间来回跳转。
+
+---
+
+## 03. 各种列表
+
+### 无序、有序与嵌套列表
+
+- 文字
+  - 段落
+  - 标题
+    - 章节
+    - 小节
+- 图像
+  - 图注
+  - 缩放
+- 代码
+
+1. 写一段 Markdown。
+2. 在本地预览。
+   1. 检查手机视口。
+   2. 切换浅色和深色。
+3. 提交到仓库。
+4. 部署后再打开正式地址确认。
+
+也可以从非 1 的数字开始：
+
+7. 第七项
+8. 第八项
+9. 第九项
+
+### 任务清单
+
+- [x] 标题与段落
+- [x] Markdown 表格
+- [x] 行内与块级公式
+- [ ] 检查所有浏览器的排版
+- [ ] 把后续发现的小问题修完
+
+复选框在这篇文章中只是**任务状态展示**，不是可保存的待办应用。点击后若没有改变，不代表渲染失败。
+
+### 混合内容的列表
+
+1. **准备环境**
+
+   先检查 Node.js 版本。命令放在独立代码块里，看看列表缩进是否正常：
+
+   ~~~bash
+   node --version
+   npm --version
+   ~~~
+
+2. **运行项目**
+
+   打开终端执行 `npm run dev`，再去浏览器查看。
+
+3. **确认结果**
+
+   如果看到 404，先核对地址和尾部斜杠，别急着重装依赖。
+
+---
+
+## 04. 表格、对齐与长内容
+
+### 普通表格与对齐方式
+
+| 项目 | 类型 | 状态 | 数量 |
+| :--- | :---: | :--- | ---: |
+| Markdown | 标记语言 | ✅ 可用 | 1 |
+| Shiki | 代码高亮 | ✅ 可用 | 12 |
+| KaTeX | 公式渲染 | ✅ 可用 | 2 |
+| Mermaid | 图表 | ✅ 可用 | 4 |
+| Typst | MDX 组件 | 🔎 展示中 | 1 |
+
+第一列左对齐、第二列居中、最后一列右对齐。表格里的粗体、行内代码和链接也应该正常工作。
+
+### 宽表格压力测试
+
+手机上最容易出问题的就是长表格。下面故意保留多列：正常情况下应能横向滚动或在内容区域内合理处理，而不是把整个页面撑宽。
+
+| 检查项 | Chrome Android | Safari iOS | 桌面 Chrome | Firefox | 深色模式 | 备注 |
+| :--- | :---: | :---: | :---: | :---: | :---: | --- |
+| 一级至六级标题 | 待核验 | 待核验 | 待核验 | 待核验 | 待核验 | 字号、行距、标题锚点 |
+| 多行代码块 | 待核验 | 待核验 | 待核验 | 待核验 | 待核验 | 复制按钮与横向滚动 |
+| 超宽数学公式 | 待核验 | 待核验 | 待核验 | 待核验 | 待核验 | 不应撑破视口 |
+| Mermaid 流程图 | 待核验 | 待核验 | 待核验 | 待核验 | 待核验 | 缩放、颜色、文字清晰度 |
+| 表格与图片 | 待核验 | 待核验 | 待核验 | 待核验 | 待核验 | 图注与自适应宽度 |
+
+<Aside type="caution" title="不要把待核验当成已通过">
+
+这张表就是用来做手工验收的。我没有在这篇文章里编造各浏览器的测试结果；实际点开对应设备检查后，才有资格把“待核验”改成“通过”。
+
+</Aside>
+
+---
+
+## 05. 数学公式与 KaTeX
+
+### 行内公式
+
+常见的行内公式有 $E=mc^2$、欧拉恒等式 $e^{i\pi}+1=0$，以及极限 $\lim_{n\to\infty}(1+\frac{1}{n})^n=e$。
+
+Markdown 里的 `$...$` 是行内数学；`$$...$$` 用于独占一行的展示公式。数学公式由本站的 `remark-math` 和 `rehype-katex` 处理。
+
+### 块级公式
+
+二次方程求根公式：
+
+$$
+x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}, \qquad a\neq0
+$$
+
+傅里叶变换：
+
+$$
+\widehat f(\xi)=\int_{-\infty}^{+\infty}
+f(x)e^{-2\pi i x\xi}\,\mathrm{d}x
+$$
+
+矩阵及其行列式：
+
+$$
+A=\begin{bmatrix}
+1&2&3\\
+0&1&4\\
+5&6&0
+\end{bmatrix},
+\qquad
+\det(A)=1
+$$
+
+分段函数：
+
+$$
+f(x)=
+\begin{cases}
+x^2,& x\ge 0,\\
+-x,& x<0.
+\end{cases}
+$$
+
+### 对齐公式
+
+$$
+\begin{aligned}
+(a+b)^2
+  &= (a+b)(a+b)\\
+  &= a^2+2ab+b^2.
+\end{aligned}
+$$
+
+### 一个与实际研究更近的例子
+
+高指标鞍点动力系统中会出现向量、梯度和约束。这里放一个简单的约束表达式，用来测试长公式与多个数学符号：
+
+$$
+\dot{x}=-\nabla E(x)
+ +2\sum_{i=1}^{k}
+ \left\langle \nabla E(x),v_i\right\rangle v_i,
+\qquad
+\left\langle v_i,v_j\right\rangle=\delta_{ij}.
+$$
+
+<Aside type="note" title="公式和代码块是两种东西">
+
+`~~~math` 代码围栏通常只是展示数学源代码，不一定会计算成公式。要得到上面的效果，请使用 `$` 或 `$$` 包围 LaTeX 表达式。
+
+</Aside>
+
+---
+
+## 06. 代码高亮与 Shiki
+
+### JavaScript / TypeScript
+
+下面的代码块会展示语法高亮、语言标签和复制按钮。标题栏是本站 Shiki Transformer 提供的扩展。
+
+~~~ts title="src/utils/format-date.ts"
+export function formatDate(value: Date): string {
+  const formatter = new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Shanghai',
+  })
+  return formatter.format(value)
+}
+
+console.log(formatDate(new Date()))
+~~~
+
+### Python
+
+~~~python title="entropy.py"
+from math import log2
+
+def entropy(probs: list[float]) -> float:
+    """Shannon entropy measured in bits."""
+    return -sum(p * log2(p) for p in probs if p > 0)
+
+print(entropy([0.5, 0.25, 0.25]))  # 1.5
+~~~
+
+### Bash 与 JSON
+
+~~~bash title="terminal.sh"
+# 一次普通的本地检查
+git status
+npm test
+npm run build
+~~~
+
+~~~json title="example.json"
+{
+  "site": "YenChiu",
+  "theme": "Vesper",
+  "features": ["Markdown", "MDX", "KaTeX", "Mermaid"],
+  "draft": false,
+  "version": 1
+}
+~~~
+
+### Diff 与重点行
+
+本站配置的 Shiki 还支持特殊标记：绿色表示新增、红色表示删除，突出显示用于提醒读者看某一行。这些标记只作用于**代码展示**。
+
+~~~js title="diff-example.js"
+// 示例：不是真实执行的补丁
+const oldValue = '旧值' // [!code --]
+const newValue = '新值' // [!code ++]
+console.log(newValue) // [!code highlight]
+~~~
+
+### 较长代码块与折叠
+
+下面的代码超过常见的折叠阈值，可以检查“展开全部”、复制代码、行号与滚动是否冲突。
+
+~~~python title="long-example.py"
+def render_checklist():
+    sections = [
+        "01 headings",
+        "02 typography",
+        "03 links",
+        "04 lists",
+        "05 tables",
+        "06 equations",
+        "07 highlighting",
+        "08 mermaid",
+        "09 media",
+        "10 components",
+        "11 typst",
+        "12 mobile",
+        "13 dark mode",
+        "14 anchors",
+        "15 accessibility",
+        "16 footnotes",
+        "17 wikilinks",
+        "18 summary",
+    ]
+    for index, section in enumerate(sections, start=1):
+        print(f"{index:02d}: {section}")
+
+render_checklist()
+~~~
+
+代码太长会产生滚动条，手机上尤其值得检查。按一下复制，再粘贴到文本编辑器，看有没有混入行号或 HTML。
+
+---
+
+## 07. Mermaid 图表
+
+Vesper 已集成 Mermaid，这些不是图片截图，而是由图表语法转换的图形。不同图表的文字密度、颜色与窄屏布局也各不相同。
+
+### 流程图
+
+~~~mermaid
+flowchart TD
+    A[写下文章] --> B{本地构建通过?}
+    B -->|是| C[提交 Git]
+    B -->|否| D[查看报错]
+    D --> E[修改源码]
+    E --> B
+    C --> F[部署到 GitHub Pages]
+    F --> G[检查手机端展示]
+~~~
+
+### 时序图
+
+~~~mermaid
+sequenceDiagram
+    autonumber
+    actor Visitor as 读者
+    participant Browser as 浏览器
+    participant Site as YenChiu
+    Visitor->>Browser: 点击文章
+    Browser->>Site: GET /blog/markdown/
+    Site-->>Browser: 返回静态 HTML
+    Browser-->>Visitor: 显示正文与目录
+    Visitor->>Browser: 展开代码 / 点击标签
+~~~
+
+### 饼图
+
+~~~mermaid
+pie showData
+    title 文章演示内容的示意比例
+    "文字与列表" : 30
+    "代码与公式" : 30
+    "图表与媒体" : 20
+    "组件与交互" : 20
+~~~
+
+### 甘特图
+
+~~~mermaid
+gantt
+    title 排版测试流程示意
+    dateFormat YYYY-MM-DD
+    axisFormat %m/%d
+    section 准备
+    盘点组件 :done, a, 2026-11-23, 1d
+    section 检查
+    桌面排版 :b, after a, 1d
+    手机排版 :c, after b, 1d
+    section 收尾
+    记录问题 :d, after c, 1d
+~~~
+
+<Aside type="tip" title="Mermaid 常见问题">
+
+图表源码写对了，也可能因为主题色、容器宽度或字体导致显示不好。这里四张图故意使用不同形状，方便检查 SVG 的缩放与文字是否溢出。
+
+</Aside>
+
+---
+
+## 08. 图片、图注与媒体
+
+### 普通 Markdown 图片
+
+下面使用本站自己的 SVG 封面，不调用会失效的随机图片接口：
+
+![YenChiu 的星夜封面：月亮、星光与远山](/images/moonlit-cover.svg)
+
+图片带有替代文字；站点若启用了自动图注，会从图片描述生成图注。尝试点击图片，检查缩放预览能否正常关闭。
+
+### 另一种色调
+
+![冷银晨雾和远山壁纸](/images/wallpapers/silver-mist.svg)
+
+这张图也来自本站壁纸预设。宽屏、窄屏下应按比例缩小，而不是被强行拉长。
+
+### 自定义 HTML 图片
+
+<figure>
+  <img src="/images/wallpapers/rose-twilight.svg" alt="玫瑰色晚霞与海面" width="1200" height="712" loading="lazy" style={{ width: '100%', height: 'auto', borderRadius: '12px' }} />
+  <figcaption>同样是图片，这次使用 figure 和 figcaption 自行控制图注。</figcaption>
+</figure>
+
+### 视频播放器
+
+视频文件来自本站自己的媒体域。为避免打开文章就下载大文件，播放器使用 `preload="none"`：
+
+<video controls preload="none" playsInline poster="/images/moonlit-cover.svg" width="100%" style={{ maxWidth: '100%', borderRadius: '12px' }}>
+  <source src="https://media.yenchiu.com/videos/marxism-micro-lesson.mp4" type="video/mp4" />
+  浏览器不支持 HTML5 视频，请使用下方链接打开。
+</video>
+
+[单独打开理论微课视频](https://media.yenchiu.com/videos/marxism-micro-lesson.mp4)。如果播放器报错，应检查网络、媒体域名和视频文件是否还存在；这并不等于 Markdown 语法出错。
+
+<Aside type="caution" title="嵌入媒体与隐私">
+
+外部 iframe、在线地图或视频平台可能使用 Cookie、被网络拦截或加载缓慢。为了让这篇排版样本尽量稳定，没有自动加载额外的第三方播放器。
+
+</Aside>
+
+---
+
+## 09. 双链、内部跳转与知识网络
+
+Vesper 配置了 Obsidian 风格的 Wiki-link 转换。下面的语法会被转换成指向博客文章的链接：
+
+- [[refresh-button|刷新一下]]：关于博客改造的一篇随笔。
+- [[qq-bot-postmortem|QQ 接入失败复盘]]：有日志、有失败过程。
+- [[miko-web|异次元通讯网页版]]：逆向与前端重建记录。
+
+常见的源码写法：
+
+~~~markdown
+[[refresh-button]]
+[[miko-web|异次元通讯网页版]]
+~~~
+
+这些双链最终会落到 `/blog/` 路径下。文章底部的反向链接、知识图谱以及点击预览是否正确，要以页面实际上线后的表现为准。
+
+---
+
+## 10. 折叠、提示与特殊内容
+
+### 原生 HTML 折叠
+
+<details>
+  <summary>点击展开：这里藏着一份短清单</summary>
+  <p>折叠块可以放段落、列表和代码，不需要额外 JavaScript。</p>
+  <ul>
+    <li>第一项：展开之后看得到。</li>
+    <li>第二项：按键盘 Enter / 空格也应能操作。</li>
+    <li>第三项：关掉之后内容不会丢。</li>
+  </ul>
+</details>
+
+### 四种提示框
+
+<Aside type="note" title="NOTE / 补充说明">
+
+适合补充背景知识，不必抢走正文的注意力。
+
+</Aside>
+
+<Aside type="tip" title="TIP / 小技巧">
+
+小技巧可以让读者少走一点弯路。例如长代码块的复制按钮，不用自己拖选几十行。
+
+</Aside>
+
+<Aside type="caution" title="CAUTION / 注意">
+
+这里应该写需要额外确认的操作。比如发布前先检查路径，不要因为本地预览没问题，就默认线上一定没问题。
+
+</Aside>
+
+<Aside type="danger" title="DANGER / 重要警告">
+
+不要把密码、访问令牌、个人隐私或真实生产环境的密钥粘进公开文章。这不是装饰性的红框。
+
+</Aside>
+
+### 隐藏剧透
+
+下面这句只有在悬停或相应交互时才容易看见：<Spoiler>其实这篇文章就是一个超长的样式回归测试。</Spoiler>
+
+移动端没有鼠标悬停，因此剧透组件的可发现性需要另行检查，不能假定所有设备体验一致。
+
+---
+
+## 11. MDX 组件：卡片、按钮、标签页与步骤
+
+从这里开始是 MDX 语法：页面会调用已经安装在 Astro Theme Pure / Vesper 中的组件。**普通 .md 文件不能直接这样 import 组件；本篇已使用 .mdx 作为源文件，但公开 URL 仍然是 /blog/markdown/。**
+
+### 卡片与按钮
+
+<Card
+  heading="Vesper · 排版测试卡"
+  subheading="卡片有自己的边框、间距和背景色，应该同时适配明暗主题"
+  date="2026-11-23"
+>
+  这张卡片用于检查组件里混排的 **粗体**、链接、文字长度和移动端换行。
+</Card>
+
+<Button href="/blog/" variant="ahead">返回博客列表</Button> <Button href="/about/" variant="pill">关于 YenChiu</Button>
+
+### 标签页
+
+<Tabs>
+  <TabItem label="Markdown">
+    使用 `.md` 写普通文章，语法简洁，适合绝大多数技术笔记。
+  </TabItem>
+  <TabItem label="MDX">
+    使用 `.mdx` 可以导入组件。例如本页的提示框、卡片、标签页和 Typst。
+  </TabItem>
+  <TabItem label="适用场景">
+    如果正文只是文字、公式和代码，不必为了使用 MDX 而使用 MDX。需要复杂组件时再切换。
+  </TabItem>
+</Tabs>
+
+### 步骤组件
+
+<Steps>
+  1. 打开本地开发环境，在桌面浏览器检查组件排版。
+  2. 切换到手机尺寸，重点看表格、数学公式和 Mermaid 图表。
+  3. 改用深色主题，再检查代码颜色和背景对比度。
+  4. 部署成功后打开线上地址，确认缓存和静态资源路径无误。
+</Steps>
+
+如果步骤数字或竖线有错位，这一节就能直接定位到组件样式。
+
+---
+
+## 12. Typst：更进一步的排版
+
+下面是参考展示页里比较特别的一项。本站已经安装 `astro-typst` 及相应编译依赖，因此可在 MDX 中直接导入 `Typst` 组件，展示公式和表格排版。
+
+这段示例故意保持短小，避免测试页面被大量排版源码淹没：
+
+<Typst code={`
+#set page(width: auto, height: auto, margin: 0.8em)
+#set text(size: 11pt)
+
+= Typst layout test
+
+A simple matrix and a comparison table.
+
+$ A = mat(1, 2; 3, 4) $
+
+#table(
+  columns: 3,
+  [*Item*], [*Value*], [*Status*],
+  [Alpha], [1.0], [OK],
+  [Beta], [2.0], [OK],
+)
+`} />
+
+如果编译正常，上方应当直接出现一段排好的 Typst 内容，而不是原始 `#table` 源码。
+
+<Aside type="note" title="Typst 与 LaTeX 不是同一种语法">
+
+KaTeX 负责本文的 LaTeX 数学公式；Typst 是另一套排版语言，组件通常在构建时渲染。若 Typst 这段失败，需要先检查编译器与字体，而不是仅改正文 CSS。
+
+</Aside>
+
+---
+
+## 13. 页面级功能检查
+
+除了文章正文，Vesper 还给阅读页增加了一些工具：
+
+- **目录与阅读进度：** 长文章最适合测试当前章节高亮、左侧进度条以及返回顶部。
+- **代码复制与长代码折叠：** 前面的 Shiki 代码块可以用来测试。
+- **图片放大：** 点击 SVG 图片，看能否进入和退出预览。
+- **双链与反向链接：** 用第 09 节的文章链接检查。
+- **明暗主题、壁纸与阅读布局：** 在右上角外观设置里切换，观察正文背景、图表和提示框的对比。
+- **评论与分享：** 留言模块和分享按钮属于文章布局；是否可用取决于对应服务是否连接成功。
+
+### 最后做一轮检查
+
+| 检查目标 | 应看到的效果 | 状态 |
+| --- | --- | --- |
+| 标题 | 层级清晰、目录可定位 | 待实测 |
+| 文字 | 中英文混排、行内代码不溢出 | 待实测 |
+| 列表 | 缩进与复选框正确 | 待实测 |
+| 表格 | 宽表格不撑破手机 | 待实测 |
+| 代码 | 高亮、标题、复制、折叠可用 | 待实测 |
+| 公式 | KaTeX 正常显示且没有原始符号 | 待实测 |
+| 图表 | Mermaid SVG 与标签清晰 | 待实测 |
+| 媒体 | 图片、图注、视频布局正常 | 待实测 |
+| 组件 | 提示框、标签页、步骤、卡片可用 | 待实测 |
+| Typst | 能看到渲染后的排版结果 | 待实测 |
+| 主题 | 浅色、深色、手机布局可读 | 待实测 |
+
+这张表不预先打勾。以后改主题 CSS、升级 Astro、换 Markdown 插件，再来打开这篇文章，一眼就知道哪里出了问题。
+
+---
+
+## 参考与资料
+
+本篇的测试项目参考了 [灵的梦境的 MDX 综合测试页](https://lemonadorable.github.io/blog/test-mdx/)（[原始源码](https://github.com/LemonAdorable/lemonadorable.github.io/blob/main/src/content/blog/test-mdx.mdx)），但示例、文字和检查项目按 YenChiu 自己的功能重新组织。
+
+- [CommonMark 规范](https://spec.commonmark.org/)
+- [GitHub Flavored Markdown](https://github.github.com/gfm/)
+- [Astro 的 Markdown 与 MDX](https://docs.astro.build/en/guides/markdown-content/)
+- [KaTeX 支持的函数](https://katex.org/docs/supported.html)
+- [Mermaid 文档](https://mermaid.js.org/)
+- [Typst 文档](https://typst.app/docs/)
+
+[^katex]: KaTeX 专注于浏览器中的数学排版，支持常用 LaTeX 数学命令，但不是完整的 TeX 排版系统。
+[^flavors]: CommonMark、GitHub Flavored Markdown 和不同站点的自定义插件之间存在差异。例如 Wiki-link、Mermaid、任务列表和脚注都可能依赖额外支持。
