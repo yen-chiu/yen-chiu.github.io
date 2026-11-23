@@ -46,7 +46,7 @@ const animatedSource = sitePath('/favicon/wendell-avatar-animated.webp')
         if (!image) return
         const enabled = document.documentElement.dataset.animatedAvatar === 'true'
         if (enabled) {
-          if (image.dataset.avatarAnimated === 'true') return
+          if (image.dataset.avatarAnimated === 'true' || image.dataset.avatarAnimated === 'failed') return
           image.removeAttribute('srcset')
           image.removeAttribute('sizes')
           image.src = this.dataset.animatedSrc || staticSource
@@ -58,6 +58,15 @@ const animatedSource = sitePath('/favicon/wendell-avatar-animated.webp')
           image.dataset.avatarAnimated = 'false'
         }
       }
+      image?.addEventListener('error', () => {
+        if (image.dataset.avatarAnimated !== 'true') return
+        // If the animated asset is missing or unsupported, fall back to Astro's
+        // static PNG rendition and do not retry the broken asset repeatedly.
+        image.src = staticSource
+        if (staticSrcset != null) image.setAttribute('srcset', staticSrcset)
+        if (staticSizes != null) image.setAttribute('sizes', staticSizes)
+        image.dataset.avatarAnimated = 'failed'
+      }, { signal })
       window.addEventListener('wendell:appearance', syncAvatarImage, { signal })
       reduced.addEventListener('change', () => {
         // Bootstrap may not have applied the new system preference yet.
