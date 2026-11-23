@@ -59,3 +59,13 @@ test('mobile readability rules include internal scrolling for wide content', () 
   assert.match(css, /span\.katex-display\s*\{[^}]*overflow-x:\s*auto/s)
   assert.match(css, /#content table\s*\{[^}]*overflow-x:\s*auto/s)
 })
+
+test('Mermaid chart types use distinct mobile sizing and one scroll container', () => {
+  const css = readFileSync('src/assets/styles/global.css', 'utf8')
+  assert.match(css, /#content \.mermaid\s*\{[^}]*overflow-x:\s*auto/s)
+  assert.match(css, /svg\[aria-roledescription='pie'\]/)
+  assert.match(css, /svg\[aria-roledescription='gantt'\]/)
+  assert.match(css, /svg\[aria-roledescription='sequence'\]/)
+  assert.doesNotMatch(css, /min-width:\s*720px/)
+  assert.doesNotMatch(css, /min-width:\s*420px/)
+})
