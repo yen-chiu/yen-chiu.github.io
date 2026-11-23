@@ -542,8 +542,25 @@ html.dark .astro-code pre,
 html.dark .astro-code pre code {
   color: #e6edf3;
 }
-html.dark .astro-code pre span {
-  color: var(--shiki-dark, #e6edf3) !important;
+/* Match Shiki token colors to a stable high-contrast code surface.
+   Avoid using the translucent --muted wallpaper surface for dark tokens. */
+html.dark .astro-code {
+  background-color: #161b26 !important;
+}
+html.dark .astro-code pre code::before,
+html.dark .astro-code pre code .line::before {
+  background-color: #161b26;
+}
+html.dark .astro-code pre span[style*="--shiki-dark"] {
+  color: color-mix(in srgb, var(--shiki-dark, #e6edf3) 72%, #ffffff 28%) !important;
+}
+html.dark .astro-code pre span:not([style*="--shiki-dark"]) {
+  color: #e6edf3;
+}
+@supports not (color: color-mix(in srgb, white, black)) {
+  html.dark .astro-code pre span {
+    color: var(--shiki-dark, #e6edf3) !important;
+  }
 }
 html.dark .astro-code pre code .line::before {
   color: #9da7b3;
