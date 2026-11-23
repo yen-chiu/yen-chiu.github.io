@@ -41,14 +41,14 @@ const statusLabel = status === 'open' ? '生长中' : '待整理'
       <div><strong>{commitCount ?? '—'}</strong><span>Git 提交{commitCount === null ? '（待核验）' : ''}</span></div>
     </div></section>
     <section aria-labelledby='works'><h2 id='works'>作品档案</h2>
-      {works.length ? <ul class='entries'>{works.map(work=><li><time datetime={work.publishedAt ?? undefined}>{work.publishedAt ?? '日期未知'}</time><a href={work.url}>{work.title}</a><small>{work.type === 'article' ? '文章' : 'Folio'} · {work.dateSource}</small></li>)}</ul> : <p class='empty'>当前没有可确认属于这一生长年度的公开作品。</p>}
-      <p class='note'>Folio 为独立仓库；尚未取得经过日期核验的完整公开作品清单，暂不将主站 docs 冒充为 Folio。</p>
+      {works.length ? <ul class='entries'>{works.map(work=><li><time datetime={work.publishedAt ?? undefined}>{work.publishedAt ?? '日期未知'}</time><a href={work.url}>{work.title}</a><small>{work.type === 'article' ? '文章' : 'Folio'} · {work.dateSource}</small></li>)}</ul> : <p class='empty'>目前没有能确认属于这一年的公开作品。</p>}
+      <p class='note'>Folio 是独立仓库，历史文档还没完整核对日期。这里先不混入主站的 docs，免得数字看着热闹，实际对不上。</p>
     </section>
     <section aria-labelledby='events'><h2 id='events'>重要事件</h2>
       {record.milestones.length ? <ol class='entries'>{record.milestones.filter(m=>m.verification!=='unverified').map(m=><li><time datetime={m.date}>{m.date}</time><strong>{m.title}</strong><p>{m.description}</p><small>{m.verification==='manual'?'站长确认':'有来源记录'}</small>{m.sourceUrls.length>0&&<p>{m.sourceUrls.map(url=><a href={url} rel='noopener noreferrer'>查看来源 ↗</a>)}</p>}</li>)}</ol> : <p class='empty'>这一年尚未整理可核验的重要事件。</p>}
     </section>
     <section aria-labelledby='letter'><h2 id='letter'>年度手记</h2>
-      {letter ? <article><h3>{letter.title}</h3><p>{letter.content}</p><small>写于 {letter.writtenAt}</small></article> : <p class='empty'>这一年的手记尚未公开；空白不代表没有故事。</p>}
+      {letter ? <article><h3>{letter.title}</h3><p>{letter.content}</p><small>写于 {letter.writtenAt}</small></article> : <p class='empty'>这一年还没写手记。等有话想说再补，不拿套话填空。</p>}
     </section>
     <details class='sources'><summary>数据来源与完整性说明</summary>
       <ul>
