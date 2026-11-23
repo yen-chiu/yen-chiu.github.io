@@ -34,11 +34,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare animated avatar
-        run: |
-          python -m pip install --disable-pip-version-check Pillow==11.3.0
-          python scripts/generate-avatar-gif.py
-
+      # 动画头像（public/favicon/wendell-avatar-animated.{webp,gif}）是提交进
+      # 仓库的产物，由 scripts/generate-avatar-gif.py 在本地生成；CI 不再安装
+      # Python/Pillow，避免构建依赖 pip 版本与网络。
       - name: Build
         run: node --check scripts/discover-link-avatars.mjs && node scripts/discover-link-avatars.mjs && node --check scripts/check-friend-links.mjs && node --check scripts/aggregate-friend-feeds.mjs && node --check scripts/build-links-history.mjs && node --check .github/scripts/process-friend-request.cjs && npm test && npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built && node scripts/seo-audit.test.mjs
 
