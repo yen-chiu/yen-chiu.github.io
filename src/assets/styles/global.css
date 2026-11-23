@@ -572,15 +572,6 @@ html.dark .astro-code pre code .line::before {
   .post-preview { --preview-highlight: hsl(var(--primary)); --preview-highlight-bg: hsl(var(--primary) / .12); }
 }
 
-/* Mobile reading surfaces: keep wallpaper visible without sacrificing contrast. */
-@media (max-width: 767px) {
-  html[data-wallpaper='fullscreen'] body[data-page='content'] article.article-reading-column,
-  html[data-wallpaper='overlay'] body[data-page='content'] article.article-reading-column {
-    background: hsl(var(--background) / .88);
-    border-radius: 1rem;
-  }
-}
-
 /* Shiki: a dark code surface must use the dark token palette even in light mode.
    Shiki emits token custom properties on nested spans, not always on the outer span. */
 #content .astro-code {
