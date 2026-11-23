@@ -13,6 +13,7 @@ export interface AppearanceSettings {
   waves: boolean
   motion: 'system' | 'always' | 'reduced'
   silverInk: boolean
+  animatedAvatar: boolean
 }
 declare global {
   interface Window {
