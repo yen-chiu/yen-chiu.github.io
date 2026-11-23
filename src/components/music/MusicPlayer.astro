@@ -6,7 +6,7 @@ const { compact = false } = Astro.props
 ---
 <vesper-music-player class:list={['vesper-music-player', compact && 'is-compact']} data-tracks={JSON.stringify(musicTracks)} aria-label='Vesper 音乐播放器'>
   <div class='music-deck'>
-    <div class='music-art' aria-hidden='true'><div class='music-vinyl'><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span></div></div>
+    <div class='music-art' aria-hidden='true'><div class='music-vinyl'><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span></div><div class='music-tonearm'><span class='music-tonearm-pivot'></span><span class='music-tonearm-rod'></span><span class='music-tonearm-head'></span></div></div>
     <div class='music-info'>
       <span class='music-kicker'>VESPER · NIGHT RADIO</span>
       <h3 data-song-title>夜曲 Op. 9 No. 2</h3>
@@ -45,7 +45,7 @@ const { compact = false } = Astro.props
         </li>)}
       </ol>
     </div>
-    <div class='music-side-note'><p>示范曲目采用不同的开放许可；具体署名与授权请查看各曲目来源。</p><ul>{musicTracks.map(track=><li><a href={track.attribution.match(/https:\/\/\S+/)?.[0] || '#'} target='_blank' rel='noopener noreferrer'>{track.title} · 来源与许可 ↗</a></li>)}</ul></div>
+    
   </section>}
 </vesper-music-player>
 
@@ -134,6 +134,12 @@ const { compact = false } = Astro.props
   .music-deck,.music-side{min-width:0;min-height:430px;border:1px solid hsl(var(--border)/.7);border-radius:1.5rem;background:hsl(var(--background)/.76);box-shadow:0 12px 36px hsl(var(--foreground)/.055);padding:clamp(1rem,3vw,2rem)}
   .music-deck{display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center}
   .music-art{width:clamp(150px,20vw,240px);aspect-ratio:1;display:grid;place-items:center;margin:1rem auto 1.3rem;border-radius:50%;background:radial-gradient(circle at 55% 38%,hsl(var(--primary)/.28),transparent 60%);filter:drop-shadow(0 12px 22px hsl(var(--primary)/.18))}
+  .music-art{position:relative;isolation:isolate}
+  .music-tonearm{position:absolute;z-index:2;top:2%;right:3%;width:38%;height:58%;transform-origin:84% 11%;transform:rotate(-28deg);transition:transform .65s cubic-bezier(.22,.8,.3,1);pointer-events:none;filter:drop-shadow(0 3px 3px #0005)}
+  .is-playing .music-tonearm{transform:rotate(0deg)}
+  .music-tonearm-pivot{position:absolute;top:0;right:0;width:23%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 34%,#f0f2f4,#8e99a7 55%,#3b4552 72%);box-shadow:0 0 0 3px #273346}
+  .music-tonearm-rod{position:absolute;top:10%;right:9%;width:9%;height:77%;border-radius:999px;background:linear-gradient(90deg,#697483,#e2e8ee 45%,#8996a5);transform:rotate(-18deg);transform-origin:top center}
+  .music-tonearm-head{position:absolute;bottom:6%;right:26%;width:27%;height:12%;border-radius:3px;background:linear-gradient(145deg,#cbd4df,#475467);transform:rotate(-18deg)}
   .music-vinyl{width:90%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:repeating-radial-gradient(circle at center,transparent 0 3px,#ffffff0c 4px 5px,transparent 6px 9px),conic-gradient(from 30deg,#192238,#384865,#11192d,#536178,#172036,#192238);box-shadow:0 12px 26px #0004;animation:music-spin 24s linear infinite;animation-play-state:paused}
   .is-playing .music-vinyl{animation-play-state:running}
   .music-cover{width:100%;height:100%;object-fit:cover;border-radius:50%;grid-area:1/1}.music-cover[hidden],.music-vinyl-label[hidden]{display:none!important}
@@ -150,7 +156,8 @@ const { compact = false } = Astro.props
   @keyframes music-spin{to{transform:rotate(360deg)}}
   .music-empty .has-lyrics{white-space:pre-line;line-height:2;overflow-wrap:anywhere}
   @media(max-width:680px){.music-actions{gap:.35rem .65rem}.music-transport-button{min-width:44px;min-height:44px}.music-volume{flex-basis:100%;justify-content:center}.is-compact .music-actions{justify-content:center}.is-compact .music-more{margin:0}.music-tabs button{min-height:44px}.vesper-music-player:not(.is-compact){grid-template-columns:1fr}.music-deck,.music-side{min-height:0}.music-side{min-height:300px}.music-art{width:clamp(150px,44vw,210px)}.music-pane{min-height:200px}.music-side-note{margin-top:0}}
-  @media(prefers-reduced-motion:reduce){.music-vinyl{animation:none!important}}
+  @media(prefers-reduced-motion:reduce){.music-vinyl{animation:none!important}.music-tonearm{transition:none!important}}
+  :global(html.motion-off) .music-tonearm,:global(html[data-effect-quality='low']) .music-tonearm,:global(html[data-effect-quality='static']) .music-tonearm{transition:none!important}
   :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='low']) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
   :global(html[data-effects-paused='true']) .music-vinyl{animation-play-state:paused!important}
   button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--music-accent);outline-offset:3px}
