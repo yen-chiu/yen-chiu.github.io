@@ -38,7 +38,7 @@ const animatedSource = sitePath('/favicon/wendell-avatar-animated.webp')
         button = this.querySelector('button')!
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
       const motionReduced = () => (globalThis as any).wendellMotion?.reduce?.() ?? reduced.matches
-      const image = button.querySelector<HTMLImageElement>('img')
+      const image = button.querySelector?.('img') as HTMLImageElement | null | undefined
       const staticSource = image?.getAttribute('src') ?? ''
       const staticSrcset = image?.getAttribute('srcset')
       const staticSizes = image?.getAttribute('sizes')
@@ -68,7 +68,7 @@ const animatedSource = sitePath('/favicon/wendell-avatar-animated.webp')
         image.dataset.avatarAnimated = 'failed'
       }, { signal })
       window.addEventListener('wendell:appearance', syncAvatarImage, { signal })
-      reduced.addEventListener('change', () => {
+      reduced.addEventListener?.('change', () => {
         // Bootstrap may not have applied the new system preference yet.
         window.wendellAppearance?.apply()
         syncAvatarImage()
