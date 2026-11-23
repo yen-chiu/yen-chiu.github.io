@@ -30,7 +30,7 @@
     {
       "id_name": "references",
       "title": "参考与发现",
-      "desc": "开源主题、常读内容和有趣的网站。",
+      "desc": "做网站时参考过的主题，还有一些常逛的地方。",
       "link_list": [
         {
           "name": "Fuwari",
@@ -72,7 +72,7 @@
     {
       "id_name": "friends",
       "title": "友好邻居",
-      "desc": "慢慢认识，认真收录。",
+      "desc": "交换过友链的朋友，都在这里。",
       "link_list": [
         {
           "name": "灵的梦境",
