@@ -57,6 +57,26 @@ for(let hue=0;hue<=360;hue++){
  const [h,s,l]=one.styles.get('--primary-light').match(/[\d.]+/g).map(Number)
  assert.ok(1.05/(luminance(h,s,l)+.05)>=5.2-1e-6,`Contrast failed at hue ${hue}`)
 }
+// Dynamic avatar is opt-in and must respect both browser and site motion settings.
+const avatarSettings = boot()
+assert.equal(avatarSettings.api.get().animatedAvatar, false)
+assert.equal(avatarSettings.dataset.animatedAvatar, 'false')
+avatarSettings.api.set({ animatedAvatar: true })
+assert.equal(avatarSettings.dataset.animatedAvatar, 'true')
+avatarSettings.media.matches = true
+avatarSettings.media.dispatchEvent(new Event('change'))
+assert.equal(avatarSettings.dataset.animatedAvatar, 'false')
+avatarSettings.api.set({ motion: 'always' })
+assert.equal(avatarSettings.dataset.animatedAvatar, 'true')
+avatarSettings.api.set({ motion: 'reduced' })
+assert.equal(avatarSettings.dataset.animatedAvatar, 'false')
+avatarSettings.api.reset()
+assert.equal(avatarSettings.api.get().animatedAvatar, false)
+assert.equal(avatarSettings.dataset.animatedAvatar, 'false')
+const avatarPersisted = boot(new Map([['wendell-appearance-v1', JSON.stringify({ animatedAvatar: true })]]))
+assert.equal(avatarPersisted.api.get().animatedAvatar, true)
+assert.equal(avatarPersisted.dataset.animatedAvatar, 'true')
+console.log('Avatar motion opt-in, persistence and reduced-motion checks passed')
 console.log('Appearance persistence, storage recovery, theme behavior and 361 hue contrast checks passed')
 
 // Existing wallpaper preferences survive while the old combined hidden mode
