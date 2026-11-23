@@ -5,7 +5,7 @@
     "site": "main",
     "date": "2026-11-23",
     "title": "计划：Avatar Studio 私人头像工坊",
-    "summary": "拟将头像管理与公开博客隔离：专用 Cloudflare Worker + Access 单账号登录，上传 PNG 后预览并人工确认，由主站构建 Animated WebP 与 GIF。功能初版仅在独立开发分支，尚未部署。",
+    "summary": "Avatar Studio 功能与专用生成工作流保留在独立分支：上传 PNG 暂存，生成和验证 WebP/GIF 后三个资源一次提交至 main，随后触发主站部署。管理工具尚未通过真实登录与端到端发布验收。",
     "items": [
       {
         "change": "planned",
@@ -19,14 +19,14 @@
         "area": "feature",
         "scope": "Avatar Studio · 未来计划",
         "title": "PNG 上传、双态预览与人工确认发布",
-        "note": "正方形 PNG 本地预览静态与轻微浮动效果；只有二次确认才允许服务端按固定仓库和路径更新 main 头像源图，不自动合并开发分支。"
+        "note": "正方形 PNG 本地预览静态与轻微浮动效果；只有二次确认才暂存到 feature/avatar-studio。独立工作流验证成品后才会更新 main，不自动合并管理工具源码。"
       },
       {
         "change": "planned",
         "area": "infra",
         "scope": "Vesper · 未来计划",
         "title": "同源动画帧导出 WebP 和 GIF",
-        "note": "由原始 PNG 生成 RGBA 动画帧，分别输出透明 Animated WebP 和兼容 GIF；完成真实编码成品、毛边、构建和手机端验收后才能认定发布成功。"
+        "note": "主站 CI 已移除 Pillow 与头像转换；独立 Avatar Studio Actions 由原始 PNG 同源生成 WebP/GIF，检查有效性后与 PNG 一次提交并显式触发主站部署，仍待实际验收。"
       },
       {
         "change": "planned",
