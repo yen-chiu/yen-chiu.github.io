@@ -25,16 +25,12 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
       <Image
         alt={heroImage.alt || title}
         class='cover-image relative z-10 h-auto w-full max-w-[65ch] rounded-2xl object-contain'
+        {...heroImage}
         fetchpriority='high'
         loading='eager'
-        {...heroImage}
-      />
-      <Image
-        alt=''
-        loading='lazy'
-        id='blurImage'
-        class='absolute end-0 top-4 z-0 mt-0 h-full max-w-[65ch] rounded-3xl opacity-60 transition-opacity duration-300'
-        {...heroImage}
+        decoding='async'
+        widths={[360, 540, 720, 960, 1200]}
+        sizes='(max-width: 767px) calc(100vw - 2rem), (max-width: 1200px) 75vw, 65ch'
       />
     </div>
   )
@@ -110,28 +106,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 {/* Dividing line */}
 <div class='article-divider mt-6 border-t'></div>
 
-<script>
-  const viewportHeight = window.innerHeight
-  const threshold1 = viewportHeight / 9
-  const threshold2 = (viewportHeight * 2) / 9
-  const threshold3 = (viewportHeight * 3) / 9
-  const image = document.getElementById('blurImage') as HTMLImageElement
 
-  if (image) {
-    window.addEventListener('scroll', () => {
-      const scrollDistance = window.scrollY
-      // console.log(scrollDistance, threshold1, threshold2, threshold3)
-
-      if (scrollDistance >= threshold3) {
-        image.style.opacity = '0.15'
-      } else if (scrollDistance >= threshold2) {
-        image.style.opacity = '0.3'
-      } else if (scrollDistance >= threshold1) {
-        image.style.opacity = '0.45'
-      }
-    })
-  }
-</script>
 
 <style>
   .article-info { display: flex; flex-direction: column; }
@@ -160,8 +135,4 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
   .article-tags__list a{display:inline-block;max-width:100%;padding:.05rem .45rem;border:1px solid hsl(var(--border));border-radius:.4rem;line-height:1.7;overflow-wrap:anywhere;background:hsl(var(--muted)/.4);}
   .article-tags__list a:hover{color:hsl(var(--primary));border-color:hsl(var(--primary));}
 
-  #blurImage {
-    --un-blur: blur(24px);
-    filter: var(--un-blur);
-  }
 </style>
