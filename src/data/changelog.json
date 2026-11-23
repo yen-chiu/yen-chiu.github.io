@@ -30,7 +30,7 @@
       },
       {
         "change": "planned",
-        "area": "security",
+        "area": "infra",
         "scope": "Avatar Studio · 安全与验收",
         "title": "配置受保护域名与最小权限令牌",
         "note": "独立 Access 单邮箱策略、Worker Secret、严格上传验证和未经授权拒绝测试均待真实部署验证；不在公开页面或文档中保存邮箱、Token。"
@@ -40,7 +40,13 @@
         "area": "docs",
         "scope": "Folio · 项目书",
         "title": "Avatar Studio 私人头像工坊项目书",
-        "note": "项目目标、架构、阶段里程碑、发布边界、风险和验收标准已归档至 /folio/building/avatar-studio/；这不是已上线的功能。"
+        "note": "项目目标、架构、阶段里程碑、发布边界、风险和验收标准已归档至 /folio/building/avatar-studio/；这不是已上线的功能。",
+        "links": [
+          {
+            "label": "查看 Folio 项目书",
+            "url": "https://yenchiu.com/folio/building/avatar-studio/"
+          }
+        ]
       }
     ]
   },
