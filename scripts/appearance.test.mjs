@@ -67,6 +67,9 @@ avatarSettings.media.matches = true
 avatarSettings.media.dispatchEvent(new Event('change'))
 assert.equal(avatarSettings.dataset.animatedAvatar, 'false')
 avatarSettings.api.set({ motion: 'always' })
+assert.equal(avatarSettings.dataset.animatedAvatar, 'false', 'OS reduced-motion still disables animated images')
+avatarSettings.media.matches = false
+avatarSettings.media.dispatchEvent(new Event('change'))
 assert.equal(avatarSettings.dataset.animatedAvatar, 'true')
 avatarSettings.api.set({ motion: 'reduced' })
 assert.equal(avatarSettings.dataset.animatedAvatar, 'false')
