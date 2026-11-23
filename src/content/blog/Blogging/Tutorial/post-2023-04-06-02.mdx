@@ -18,6 +18,7 @@ originalUrl: https://yenchiu.com/posts/markdown/
 
 import { Aside, Button, Card, Tabs, TabItem, Steps, Spoiler } from 'astro-pure/user'
 import { Typst } from 'astro-typst/src/components'
+import AcademicLayoutDemo from '@/components/blog/AcademicLayoutDemo.astro'
 
 # Markdown 排版实验室
 
@@ -267,21 +268,190 @@ $$
 \end{aligned}
 $$
 
-### 一个与实际研究更近的例子
+### 学术例题：物理与化学中的复杂公式
 
-高指标鞍点动力系统中会出现向量、梯度和约束。这里放一个简单的约束表达式，用来测试长公式与多个数学符号：
+下面不用随手拼造的数学表达式，也不涉及本站作者的个人论文。我们从两本公开的大学教材中挑选**真实且可核对的科学关系式**，把它们整理成一小段论文式排版测试：向量场、闭合曲面积分、偏微分、多行推导、四阶矩阵、反应式和单位同时登场。
+
+#### 物理篇：Maxwell 方程组与电磁波
+
+资料来源：[OpenStax《University Physics Volume 2》，第 16.1 节](https://openstax.org/books/university-physics-volume-2/pages/16-1-maxwells-equations-and-electromagnetic-waves)，特别是式 16.8—16.11。原文有一句很适合放在这里：
+
+> “With the correction for the displacement current, Maxwell’s equations take the form”
+
+这句话说的是：把位移电流一项补进安培环路定律后，四条电磁规律就能写成完整的形式。下面是**依据教材标准公式重新组织的演示**，不是整段翻译或原书页面截图。
+
+先看微分形式。左边分别涉及散度和旋度，右边会出现电荷密度、电流密度与时间偏导数：
 
 $$
-\dot{x}=-\nabla E(x)
- +2\sum_{i=1}^{k}
- \left\langle \nabla E(x),v_i\right\rangle v_i,
+\begin{aligned}
+\nabla\cdot\mathbf{E}
+  &=\frac{\rho}{\varepsilon_0},
+&\qquad
+\nabla\cdot\mathbf{B}
+  &=0,\\[6pt]
+\nabla\times\mathbf{E}
+  &=-\frac{\partial\mathbf{B}}{\partial t},
+&\qquad
+\nabla\times\mathbf{B}
+  &=\mu_0\mathbf{J}
+    +\mu_0\varepsilon_0\frac{\partial\mathbf{E}}{\partial t}.
+\end{aligned}
+$$
+
+同一组规律也可以用积分形式表达。这里故意保留较长的积分上下标，检查手机上是否会溢出：
+
+$$
+\begin{aligned}
+\oiint_{\partial V}\mathbf{E}\cdot\mathrm{d}\mathbf{A}
+  &=\frac{Q_{\mathrm{enc}}}{\varepsilon_0},\\[5pt]
+\oiint_{\partial V}\mathbf{B}\cdot\mathrm{d}\mathbf{A}
+  &=0,\\[5pt]
+\oint_{\partial S}\mathbf{E}\cdot\mathrm{d}\boldsymbol{\ell}
+  &=-\frac{\mathrm{d}}{\mathrm{d}t}
+    \iint_S\mathbf{B}\cdot\mathrm{d}\mathbf{A},\\[5pt]
+\oint_{\partial S}\mathbf{B}\cdot\mathrm{d}\boldsymbol{\ell}
+  &=\mu_0 I_{\mathrm{enc}}
+    +\mu_0\varepsilon_0\frac{\mathrm{d}}{\mathrm{d}t}
+    \iint_S\mathbf{E}\cdot\mathrm{d}\mathbf{A}.
+\end{aligned}
+$$
+
+真空中若没有自由电荷和电流，适当使用向量恒等式与 Maxwell 方程，可以得到电磁场的波动方程：
+
+$$
+\boxed{
+\begin{aligned}
+\nabla^2\mathbf{E}
+ -\frac{1}{c^2}\frac{\partial^2\mathbf{E}}{\partial t^2}
+ &=\mathbf{0},\\[4pt]
+\nabla^2\mathbf{B}
+ -\frac{1}{c^2}\frac{\partial^2\mathbf{B}}{\partial t^2}
+ &=\mathbf{0},
 \qquad
-\left\langle v_i,v_j\right\rangle=\delta_{ij}.
+c=\frac{1}{\sqrt{\mu_0\varepsilon_0}}.
+\end{aligned}
+}
 $$
+
+这里 $\varepsilon_0$ 是真空介电常数，$\mu_0$ 是真空磁导率。方程中既有希腊字母、粗体向量，也有二阶偏导、框线和多行对齐；比一个单独的 $E=mc^2$ 更能暴露排版问题。
+
+如果还想检查高阶矩阵，可以放一个沿 $x$ 轴方向的洛伦兹变换。它与电磁学的相对论描述有关，是独立于本文其他内容的**矩阵排版样例**：
+
+$$
+\begin{pmatrix}
+ct'\\ x'\\ y'\\ z'
+\end{pmatrix}
+=
+\underbrace{
+\begin{pmatrix}
+\gamma & -\beta\gamma & 0 & 0\\
+-\beta\gamma & \gamma & 0 & 0\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+}_{\Lambda_x(\beta)}
+\begin{pmatrix}
+ct\\ x\\ y\\ z
+\end{pmatrix},
+\qquad
+\substack{
+\beta=v/c,\\
+\gamma=(1-\beta^2)^{-1/2}
+}.
+$$
+
+<Aside type="tip" title="哪些地方最难排？">
+
+这一组里有双行、双列对齐的 Maxwell 方程、带闭合积分符号的长公式，以及嵌套大括号的四阶矩阵。如果手机上必须横向拖动公式本身，那可以接受；**不应该让整个网页跟着横向滚动**。
+
+</Aside>
+
+#### 化学篇：反应自由能与 Nernst 方程
+
+资料来源：[OpenStax《Chemistry 2e》，第 17.4 节](https://openstax.org/books/chemistry-2e/pages/17-4-potential-free-energy-and-equilibrium)。教材在推导 Nernst 方程时写道：
+
+> “Notice the reaction quotient, Q, appears in this equation”
+
+这提醒我们，电池电势不仅与标准状态有关，也随反应体系的组成变化。先写出热力学的基本关系式，再与电池电势联系起来：
+
+$$
+\begin{aligned}
+\Delta_{\mathrm r}G
+  &=\Delta_{\mathrm r}G^\circ+RT\ln Q,\\[5pt]
+\Delta_{\mathrm r}G
+  &=-nFE_{\mathrm{cell}},\\[5pt]
+\Delta_{\mathrm r}G^\circ
+  &=-nFE^\circ_{\mathrm{cell}},\\[5pt]
+\therefore\quad
+\boxed{
+E_{\mathrm{cell}}
+ =E^\circ_{\mathrm{cell}}
+ -\frac{RT}{nF}\ln Q
+}.
+\end{aligned}
+$$
+
+其中 $R$ 为气体常数，$T$ 为绝对温度，$F$ 为法拉第常数，$n$ 为每摩尔反应转移的电子摩尔数，$Q$ 为按热力学活度定义的**无量纲反应商**。
+
+以常见的锌—铜电池作一个数值示范：
+
+$$
+\underbrace{\mathrm{Zn(s)}\longrightarrow
+\mathrm{Zn}^{2+}(aq)+2e^-}_{\text{阳极：氧化}}
+\qquad
+\underbrace{\mathrm{Cu}^{2+}(aq)+2e^-
+\longrightarrow\mathrm{Cu(s)}}_{\text{阴极：还原}}
+$$
+
+$$
+\mathrm{Zn(s)}+\mathrm{Cu}^{2+}(aq)
+\longrightarrow
+\mathrm{Zn}^{2+}(aq)+\mathrm{Cu(s)}
+$$
+
+在 $T=298.15\,\mathrm K$、$n=2$ 的条件下，可以写成以常用对数表示的形式：
+
+$$
+\begin{aligned}
+Q
+  &=\frac{a_{\mathrm{Zn}^{2+}}}{a_{\mathrm{Cu}^{2+}}},\\[5pt]
+E_{\mathrm{cell}}
+  &=E_{\mathrm{cell}}^\circ
+    -\frac{2.303\,RT}{nF}\log_{10}Q\\[4pt]
+  &\approx E_{\mathrm{cell}}^\circ
+    -\frac{0.05916\,\mathrm V}{n}\log_{10}Q.
+\end{aligned}
+$$
+
+例如取**仅供计算演示**的 $E^\circ_{\mathrm{cell}}\approx1.10\,\mathrm V$、$a_{\mathrm{Zn}^{2+}}=0.10$、$a_{\mathrm{Cu}^{2+}}=1.0$，则
+
+$$
+\begin{aligned}
+E_{\mathrm{cell}}
+  &\approx 1.10\,\mathrm V-
+    \frac{0.05916\,\mathrm V}{2}
+    \log_{10}\!\left(\frac{0.10}{1.0}\right)\\
+  &\approx \boxed{1.13\,\mathrm V}.
+\end{aligned}
+$$
+
+**这不是实测电压。** 实际电池还有活度系数、液接电势、过电势等问题。把示意计算当作真实实验结果，远比公式换行不好看严重。
+
+<Aside type="caution" title="科学符号也要对得上">
+
+$E$ 在电磁学部分表示电场强度，在电化学中则表示电池电势。两种学科恰好都用这个字母；同一页面中需要靠下标、单位和上下文区分它们。排版漂亮不代表物理量可以混着用。
+
+</Aside>
+
+#### 再来一段论文式混合版面
+
+下面这个组件故意模拟学术文章中的**长标题、摘要、双栏文字、曲线图、图注、符号表、参考文献**，但它是本站自己制作的排版样张，不是复制某篇论文的图表，也没有编造实验数据。
+
+<AcademicLayoutDemo />
 
 <Aside type="note" title="公式和代码块是两种东西">
 
-`~~~math` 代码围栏通常只是展示数学源代码，不一定会计算成公式。要得到上面的效果，请使用 `$` 或 `$$` 包围 LaTeX 表达式。
+带语言名的代码围栏通常只展示数学源代码；要渲染上面的公式，请使用 $...$ 或 $$...$$ 包围数学表达式。这里的引用只摘取了两本教材各一句短句，其余中文解说、组合排版和图形均为本站重新编写。
 
 </Aside>
 
