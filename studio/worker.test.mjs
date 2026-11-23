@@ -34,3 +34,17 @@ test('publishing without a signed Access session never calls external services',
   }), environment)
   assert.equal(response.status, 403)
 })
+
+test('publishing is staged; generation and Pages deployment are separate', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const workerSource = await readFile(new URL('./worker.mjs', import.meta.url), 'utf8')
+  const workflow = await readFile(new URL('../.github/workflows/avatar-studio-publish.yml', import.meta.url), 'utf8')
+  assert.match(workerSource, /const TARGET_BRANCH = 'feature\/avatar-studio'/)
+  assert.match(workerSource, /branch: TARGET_BRANCH/)
+  assert.doesNotMatch(workerSource, /branch: 'main'/)
+  assert.match(workflow, /src\/assets\/avatar\.png/)
+  assert.match(workflow, /public\/favicon\/wendell-avatar-animated\.webp/)
+  assert.match(workflow, /public\/favicon\/wendell-avatar-animated\.gif/)
+  assert.match(workflow, /git add -- src\/assets\/avatar\.png public\/favicon\/wendell-avatar-animated\.webp public\/favicon\/wendell-avatar-animated\.gif/)
+  assert.match(workflow, /gh workflow run deploy\.yml/)
+})
