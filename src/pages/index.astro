@@ -606,8 +606,9 @@ const entries = [
     height: 100%;
     border: 0;
     box-shadow: none;
-    /* Keep the portrait covering the frame throughout the 6px excursion. */
+    /* Extra bleed keeps the portrait inside the stationary circular crop. */
     object-fit: cover;
+    transform: scale(1.18);
   }
   .eyebrow {
     font-size: 0.7rem;
@@ -902,11 +903,10 @@ const entries = [
       font-size: 0.88rem;
     }
   }
-  /* The hero's frame is stationary. The portrait floats inside its crop.
-     A constant scale gives enough bleed to avoid exposed edges at -6px. */
+  /* The frame remains fixed; 18% portrait bleed covers the 6px lift. */
   @keyframes home-avatar-float {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1.14); }
-    50% { transform: translate3d(0, -6px, 0) scale(1.14); }
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.18); }
+    50% { transform: translate3d(0, -6px, 0) scale(1.18); }
   }
   @media (prefers-reduced-motion: no-preference) {
     .hero-intro :global(interactive-avatar button img) {
