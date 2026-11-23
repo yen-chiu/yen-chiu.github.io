@@ -24,7 +24,34 @@ export const musicTracks: MusicTrack[] = [
     provider: 'Wikimedia Commons',
     url: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Nocturne_Op._9_no._2_in_E_flat_major.mp3',
     attribution: '录音以 CC0 1.0 发布；来源及许可详情：Wikimedia Commons（见下方来源链接）'
-  }
+  },
+  {
+    id: 'debussy-clair-de-lune',
+    title: '月光 · Clair de lune',
+    artist: 'Claude Debussy · Laurens Goedhart',
+    source: 'audio',
+    provider: 'Wikimedia Commons',
+    url: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Clair_de_lune_(Claude_Debussy)_Suite_bergamasque.ogg',
+    attribution: '录音：Laurens Goedhart，CC BY 3.0，https://commons.wikimedia.org/wiki/File:Clair_de_lune_(Claude_Debussy)_Suite_bergamasque.ogg'
+  },
+  {
+    id: 'satie-gymnopedie-guitar',
+    title: 'Gymnopédie No. 1 · 吉他改编',
+    artist: 'Erik Satie · Michael Laucke',
+    source: 'audio',
+    provider: 'Wikimedia Commons',
+    url: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Satie_Gymnopedie_No_1_performed_by_Michael_Laucke.flac',
+    attribution: '录音与改编：Michael Laucke，CC BY-SA 4.0，https://commons.wikimedia.org/wiki/File:Satie_Gymnopedie_No_1_performed_by_Michael_Laucke.flac'
+  },
+  {
+    id: 'beethoven-moonlight',
+    title: '月光奏鸣曲 · Piano Sonata No. 14',
+    artist: 'Ludwig van Beethoven · Schwarzer Stern',
+    source: 'audio',
+    provider: 'Wikimedia Commons',
+    url: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Sonate_Clair_de_lune.ogg',
+    attribution: '录音：Schwarzer Stern，公有领域贡献，https://commons.wikimedia.org/wiki/File:Sonate_Clair_de_lune.ogg'
+  },
 ]
 
 export const musicSources = [
