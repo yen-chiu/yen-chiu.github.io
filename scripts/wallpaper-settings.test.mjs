@@ -143,3 +143,18 @@ test('homepage remote URLs are validated and resetting preserves old defaults', 
   assert.equal(api.get().homeWallpaperSource, 'inherit')
   assert.equal(api.get().wallpaperSource, '/images/moonlit-cover.svg')
 })
+
+
+test('homepage and settings panel both expose the independent cover controls', () => {
+  const home = readFileSync('src/pages/index.astro', 'utf8')
+  const panel = readFileSync('src/components/appearance/AppearancePanel.astro', 'utf8')
+  assert.match(home, /--home-wallpaper-image/)
+  assert.match(home, /data-home-wallpaper-custom/)
+  assert.match(home, /syncCoverCredit/)
+  assert.match(panel, /data-home-wallpaper-mode='inherit'/)
+  assert.match(panel, /data-home-wallpaper-mode='separate'/)
+  assert.match(panel, /data-home-wallpaper-source=/)
+  assert.match(panel, /data-home-wallpaper-file/)
+  assert.match(panel, /data-home-wallpaper-url/)
+  assert.match(panel, /uploadHome\(image\)/)
+})
