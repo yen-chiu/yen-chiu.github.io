@@ -42,7 +42,7 @@ const sections = [
           <p class='eyebrow'><span class='status-dot' aria-hidden='true'></span>{profile.profile.location} · 数据与代码</p>
           <h1 id='about-title'>你好，我是<br /><span>{profile.profile.name}。</span></h1>
           <p class='hero-tagline'><span class='prompt' aria-hidden='true'>~$</span><span class='typing' data-typing data-phrases={JSON.stringify(profile.profile.typing ?? [profile.profile.tagline])}>{profile.profile.typing?.[0] ?? profile.profile.tagline}</span><span class='caret' aria-hidden='true'></span></p>
-          <p class='hero-lede'>一名做数据分析的业余编程爱好者。白天和数字、模型打交道，晚上折腾 Linux、博客和自动化小工具。</p>
+          <p class='hero-lede'>做数据分析，也喜欢折腾 Linux、博客和自动化小工具。东西跑通了就想记一笔，跑不通更得记。</p>
           <div class='hero-actions'>
             <a class='action-primary' href={sitePath('/blog')}>读我的文章 <span aria-hidden='true'>↗</span></a>
             <a href={sitePath('/rss.xml')}>订阅 RSS</a>
@@ -57,7 +57,7 @@ const sections = [
           <dl class='profile-stats'>
             {stats.map(stat => <div><dt>{stat.label}</dt><dd><a href={stat.href} aria-label={`浏览 ${stat.value} 个${stat.label}`}>{stat.value}</a></dd></div>)}
           </dl>
-          <p class='profile-note'>记录本身，就是一种整理。</p>
+          <p class='profile-note'>遇到过的坑，记下来就不白踩。</p>
         </aside>
       </section>
 
@@ -84,7 +84,7 @@ const sections = [
           <article class='note-card'><p class='eyebrow'>习惯 / Tools</p><h3>常用工具</h3><ul class='chips tools' aria-label='常用工具'>{profile.tools.map(item => <li>{item}</li>)}</ul></article>
           <article class='note-card'><p class='eyebrow'>记录 / This site</p><h3>这个站</h3>
             <dl class='site-facts'><div><dt>现在</dt><dd>Astro + Vesper</dd></div><div><dt>原站</dt><dd>Jekyll + Chirpy</dd></div><div><dt>托管</dt><dd>GitHub Pages</dd></div><div><dt>媒体</dt><dd>Cloudflare R2</dd></div></dl>
-            <p class='site-note'>写作台与聊天页继续在原站运行。</p><a class='text-link' href='#changelog'>看看最近的变化 <span aria-hidden='true'>→</span></a>
+            <p class='site-note'>写作台和聊天功能保留各自的入口。</p><a class='text-link' href='#changelog'>看看最近的变化 <span aria-hidden='true'>→</span></a>
           </article>
         </div>
         <article class='play-note'>
@@ -101,20 +101,20 @@ const sections = [
           <ol class='recent-posts'>{posts.slice(0, 3).map((post, index) => <li><a href={sitePath(getPostPath(post))}><span class='post-number' aria-hidden='true'>0{index + 1}</span><div><time datetime={post.data.publishDate.toISOString()}>{dateLabel(post.data.publishDate)}</time><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span class='post-arrow' aria-hidden='true'>↗</span></a></li>)}</ol>
         </section>
         <section id='journey' aria-labelledby='journey-title'>
-          <header class='section-heading'><p class='eyebrow'>03 / 时间</p><h2 id='journey-title'>不着急，慢慢来</h2></header>
+          <header class='section-heading'><p class='eyebrow'>03 / 时间</p><h2 id='journey-title'>从最初的博客说起</h2></header>
           <ol class='milestones'>{profile.milestones.map(item => <li><time datetime={item.datetime}>{item.datetime.slice(0, 7).replace('-', '.')}</time><h3>{item.title}</h3><p>{item.text}</p></li>)}</ol>
         </section>
       </div>
 
       <section id='changelog' aria-labelledby='changelog-title'>
-        <header class='section-heading'><p class='eyebrow'>04 / 更新</p><div class='heading-row'><h2 id='changelog-title'>这个站，最近的变化</h2><span class='section-note'>共 {releasedVersionCount} 个版本</span></div></header>
+        <header class='section-heading'><p class='eyebrow'>04 / 更新</p><div class='heading-row'><h2 id='changelog-title'>最近改了什么</h2><span class='section-note'>共 {releasedVersionCount} 个版本</span></div></header>
         <UpdateList entries={releasedChangelog.slice(0, 3)} showSite clamp />
         <a class='text-link changelog-more' href={sitePath('/changelog')}>查看完整更新日志 <span aria-hidden='true'>→</span></a>
       </section>
 
       <section id='comments' aria-labelledby='comments-title'>
         <header class='section-heading'><p class='eyebrow'>05 / 相遇</p><h2 id='comments-title'>说点什么</h2></header>
-        <p class='comments-lede'>如果你也在做类似的事，或者只是想打个招呼，欢迎留句话。也可以<a href='mailto:yenchiu.he@gmail.com'>写信给我</a>。</p>
+        <p class='comments-lede'>有问题、想交流，或者只是路过打声招呼，都可以留言。也可以<a href='mailto:yenchiu.he@gmail.com'>写信给我</a>。</p>
         <details class='comments-details' data-about-comments>
           <summary><span class='when-closed'>展开留言板</span><span class='when-open'>收起留言板</span><span class='details-plus' aria-hidden='true'>＋</span></summary>
           <p class='comment-hint'>留言同步到 GitHub Discussions。</p>
