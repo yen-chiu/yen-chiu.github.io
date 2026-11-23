@@ -14,7 +14,17 @@ const { compact = false } = Astro.props
     </div>
     <div class='music-timeline'>
       <label class='sr-only' for={compact ? 'home-music-seek' : 'music-page-seek'}>播放进度</label>
-      <input id={compact ? 'home-music-seek' : 'music-page-seek'} data-seek type='range' min='0' max='1000' value='0' step='1' aria-label='播放进度' />
+      <div class='music-wave-seek' data-wave-seek style='--music-progress:0%'>
+        <div class='music-wave-bars' aria-hidden='true'>
+          {Array.from({length:64},(_,i)=>{const h=5+Math.round(23*Math.abs(Math.sin(i*1.73)*Math.cos(i*.37)+.2*Math.sin(i*.61)));return <span class='music-wave-bar' style={`--bar-height:${h}px`}></span>})}
+        </div>
+        <div class='music-wave-played' aria-hidden='true'>
+          <div class='music-wave-bars'>
+            {Array.from({length:64},(_,i)=>{const h=5+Math.round(23*Math.abs(Math.sin(i*1.73)*Math.cos(i*.37)+.2*Math.sin(i*.61)));return <span class='music-wave-bar' style={`--bar-height:${h}px`}></span>})}
+          </div>
+        </div>
+        <input id={compact ? 'home-music-seek' : 'music-page-seek'} data-seek type='range' min='0' max='1000' value='0' step='1' aria-label='播放进度' />
+      </div>
       <div class='music-times'><span data-current>0:00</span><span data-duration>--:--</span></div>
     </div>
     <div class='music-actions'>
@@ -69,6 +79,7 @@ const { compact = false } = Astro.props
       const shuffle=this.querySelector<HTMLButtonElement>('[data-shuffle]')!
       const symbol=this.querySelector<HTMLElement>('[data-play-symbol]')!
       const seek=this.querySelector<HTMLInputElement>('[data-seek]')!
+      const waveSeek=this.querySelector<HTMLElement>('[data-wave-seek]')!
       const volume=this.querySelector<HTMLInputElement>('[data-volume]')!
       const current=this.querySelector<HTMLElement>('[data-current]')!
       const duration=this.querySelector<HTMLElement>('[data-duration]')!
@@ -98,7 +109,9 @@ const { compact = false } = Astro.props
         }
         current.textContent=formatTime(snapshot.currentTime)
         duration.textContent=snapshot.duration?formatTime(snapshot.duration):'--:--'
-        seek.value=String(snapshot.duration?Math.round(snapshot.currentTime/snapshot.duration*1000):0)
+        const fraction=snapshot.duration?Math.max(0,Math.min(1,snapshot.currentTime/snapshot.duration)):0
+        seek.value=String(Math.round(fraction*1000))
+        waveSeek.style.setProperty('--music-progress',`${fraction*100}%`)
         volume.value=String(snapshot.volume)
         status.textContent=snapshot.status
         play.setAttribute('aria-label',snapshot.playing?'暂停':'播放')
@@ -116,7 +129,7 @@ const { compact = false } = Astro.props
       this.querySelector('[data-next]')?.addEventListener('click',()=>{void musicEngine.next()},{signal})
       repeat.addEventListener('click',()=>musicEngine.cycleRepeat(),{signal})
       shuffle.addEventListener('click',()=>musicEngine.toggleShuffle(),{signal})
-      seek.addEventListener('input',()=>musicEngine.seek(Number(seek.value)/1000),{signal})
+      seek.addEventListener('input',()=>{waveSeek.style.setProperty('--music-progress',`${Number(seek.value)/10}%`);musicEngine.seek(Number(seek.value)/1000)},{signal})
       volume.addEventListener('input',()=>musicEngine.setVolume(Number(volume.value)),{signal})
       this.querySelectorAll<HTMLButtonElement>('[data-select-song]').forEach(button=>button.addEventListener('click',()=>musicEngine.select(button.dataset.selectSong||''),{signal}))
       const search=this.querySelector<HTMLInputElement>('[data-search]')
@@ -146,6 +159,18 @@ const { compact = false } = Astro.props
   .music-vinyl-label{grid-area:1/1;display:grid;place-items:center;width:28%;aspect-ratio:1;border-radius:50%;background:linear-gradient(130deg,#bdcfe0,#e4e9ee);color:#24324c;font-family:Georgia,serif;font-size:2rem}
   .music-info{min-height:5rem}.music-kicker{font-size:.63rem;letter-spacing:.17em;color:hsl(var(--muted-foreground))}.music-info h3{font-size:clamp(1.08rem,2.5vw,1.4rem);margin:.65rem 0 .2rem}.music-info p{font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.65}
   .music-timeline{width:100%;max-width:28rem;margin:1.35rem 0 .8rem}.music-timeline input{width:100%;accent-color:var(--music-accent);cursor:pointer}.music-times{display:flex;justify-content:space-between;color:hsl(var(--muted-foreground));font-size:.72rem;font-variant-numeric:tabular-nums}
+  /* Decorative waveform, not a measured waveform of the remote recording. */
+  .music-wave-seek{position:relative;height:44px;width:100%;display:flex;align-items:center;--music-progress:0%}
+  .music-wave-bars{position:absolute;inset:0;display:flex;align-items:center;gap:2px;pointer-events:none}
+  .music-wave-bar{flex:1;min-width:0;height:var(--bar-height);max-height:30px;border-radius:999px;background:hsl(var(--muted-foreground)/.32)}
+  .music-wave-played{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--music-progress)) 0 0);pointer-events:none}
+  .music-wave-played .music-wave-bar{background:var(--music-accent)}
+  .music-wave-seek input[type='range']{position:absolute;inset:0;width:100%;height:100%;margin:0;cursor:pointer;appearance:none;-webkit-appearance:none;background:transparent;touch-action:pan-y}
+  .music-wave-seek input[type='range']::-webkit-slider-runnable-track{height:44px;background:transparent}
+  .music-wave-seek input[type='range']::-moz-range-track{height:44px;background:transparent}
+  .music-wave-seek input[type='range']::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:12px;height:12px;margin-top:16px;border-radius:50%;border:2px solid hsl(var(--background));background:var(--music-accent);box-shadow:0 1px 5px #0005}
+  .music-wave-seek input[type='range']::-moz-range-thumb{width:12px;height:12px;border-radius:50%;border:2px solid hsl(var(--background));background:var(--music-accent);box-shadow:0 1px 5px #0005}
+  .music-wave-seek:focus-within{outline:2px solid var(--music-accent);outline-offset:3px;border-radius:6px}
   .music-actions{width:100%;display:flex;align-items:center;justify-content:center;gap:1.25rem;flex-wrap:wrap}.music-main-button{border:0;background:var(--music-accent);color:hsl(var(--primary-foreground));width:3.4rem;height:3.4rem;min-width:48px;min-height:48px;border-radius:50%;cursor:pointer;box-shadow:0 5px 18px hsl(var(--primary)/.25);font-size:1.2rem}.music-volume{display:flex;align-items:center;gap:.4rem;font-size:.9rem;color:hsl(var(--muted-foreground))}.music-volume input{width:5rem;accent-color:var(--music-accent)}
   .music-transport-button{border:0;background:transparent;color:inherit;min-width:40px;min-height:40px;border-radius:50%;cursor:pointer;font-size:1.05rem}
   .music-transport-button[aria-pressed='true']{color:var(--music-accent);background:hsl(var(--primary)/.12)}
