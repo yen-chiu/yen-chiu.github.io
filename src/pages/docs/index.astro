@@ -370,6 +370,72 @@ const archive = [
     white-space: nowrap;
   }
 
+
+  /* Editorial index surfaces: one spacing and interaction language. */
+  .sheet {
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+    border: 1px solid hsl(var(--border) / 0.65);
+    border-radius: 1rem;
+    background: hsl(var(--background) / 0.88);
+    backdrop-filter: blur(12px);
+  }
+
+  .column + .column { margin-top: 2.5rem; }
+  .column__label { margin-bottom: 1rem; letter-spacing: 0.14em; }
+  .entry a {
+    min-height: 4.25rem;
+    align-items: start;
+    border-radius: 0.5rem;
+    padding-inline: 0.65rem;
+  }
+  .entry a:focus-visible,
+  .issue:focus-visible,
+  .archive a:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 3px;
+  }
+  .issue {
+    gap: 0.7rem;
+    border: 1px solid hsl(215 15% 38% / 0.45);
+    border-radius: 1rem;
+    background: #252b35;
+    color: #f0f2f6;
+    box-shadow: 0 12px 32px -28px #101722;
+  }
+  .issue__no { color: #c0c9d7; opacity: 1; }
+  .issue__sum { color: #d5dbe4; opacity: 1; }
+  .issue__go { color: #f0f2f6; }
+  .archive td a { text-underline-offset: 0.2em; }
+
+  @media (max-width: 880px) {
+    .sheet { padding: 1.15rem; }
+    .entry a {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.35rem;
+      padding: 1rem 0.75rem;
+    }
+    .entry__kind {
+      padding: 0;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+    .entry__title { font-size: 1rem; line-height: 1.5; }
+    .entry__desc { font-size: 0.85rem; line-height: 1.65; }
+    .issue { padding: 1.5rem 1.25rem; }
+    .archive tbody tr { padding: 0.85rem 0.75rem; }
+    .archive td:first-child { padding-top: 0; }
+    .archive__note { display: block; line-height: 1.6; }
+    .archive__kind { display: block; }
+  }
+  @media (max-width: 480px) {
+    .sheet { padding: 1rem; border-radius: 0.85rem; }
+    .folio { flex-wrap: wrap; }
+    .folio__counts { flex-wrap: wrap; }
+    .column + .column { margin-top: 2.25rem; }
+    .issue__title { font-size: 1.45rem; }
+  }
+
   @media (max-width: 880px) {
     .index-page {
       grid-template-columns: minmax(0, 1fr);
