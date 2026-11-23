@@ -69,7 +69,7 @@
   const effectQuality = () => {
     if (settings.motion === 'reduced' || matchMedia('(prefers-reduced-motion: reduce)').matches)
       return 'static'
-    const cores = navigator.hardwareConcurrency || 0
+    const cores = typeof navigator === 'undefined' ? 0 : (navigator.hardwareConcurrency || 0)
     if (window.innerWidth <= 480 || (cores > 0 && cores <= 4)) return 'low'
     return 'high'
   }
