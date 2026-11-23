@@ -236,7 +236,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-wrap {display:block;}
   /* 左侧那列公共刻度已由「每条自带的进度条」取代，保留节点避免脚本报错 */
   .toc-gauge {display:none;}
-  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;padding-bottom:.9rem;}
+  .toc-body {max-height:calc(min(56vh,30rem) - 2.6rem);overflow:auto;scrollbar-width:thin;padding-right:.2rem;padding-bottom:1.6rem;}
   /* 只在还有内容被卷起来的那一侧做渐隐，顶部一进来就别蒙住第一条 */
   .toc-body.can-up {mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem);}
   .toc-body.can-down {mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);}
