@@ -687,3 +687,22 @@ html.dark .astro-code pre code .line::before {
 #content .typst-mobile-scroll > * {
   max-width: 100%;
 }
+
+/* Quiet inline code in prose: keep code blocks and editor controls untouched. */
+#content :not(pre) > code {
+  background: hsl(var(--foreground) / 0.065) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--foreground) / 0.12) !important;
+  border-radius: 0.35rem !important;
+  padding: 0.06em 0.3em !important;
+  font-size: 0.9em;
+  font-weight: inherit;
+  box-shadow: none !important;
+  overflow-wrap: anywhere;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+#content :not(pre) > code::before,
+#content :not(pre) > code::after {
+  content: none !important;
+}
