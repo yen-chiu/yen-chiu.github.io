@@ -3,6 +3,51 @@
     "status": "unreleased",
     "gen": 3,
     "site": "main",
+    "date": "2026-11-23",
+    "title": "计划：Avatar Studio 私人头像工坊",
+    "summary": "拟将头像管理与公开博客隔离：专用 Cloudflare Worker + Access 单账号登录，上传 PNG 后预览并人工确认，由主站构建 Animated WebP 与 GIF。功能初版仅在独立开发分支，尚未部署。",
+    "items": [
+      {
+        "change": "planned",
+        "area": "feature",
+        "scope": "Avatar Studio · 未来计划",
+        "title": "仅本人登录的头像管理页",
+        "note": "独立 Worker 受 Cloudflare Access 保护，限制单一授权账号，Worker 再核验签名令牌；管理入口不部署在公开 GitHub Pages 上。"
+      },
+      {
+        "change": "planned",
+        "area": "feature",
+        "scope": "Avatar Studio · 未来计划",
+        "title": "PNG 上传、双态预览与人工确认发布",
+        "note": "正方形 PNG 本地预览静态与轻微浮动效果；只有二次确认才允许服务端按固定仓库和路径更新 main 头像源图，不自动合并开发分支。"
+      },
+      {
+        "change": "planned",
+        "area": "infra",
+        "scope": "Vesper · 未来计划",
+        "title": "同源动画帧导出 WebP 和 GIF",
+        "note": "由原始 PNG 生成 RGBA 动画帧，分别输出透明 Animated WebP 和兼容 GIF；完成真实编码成品、毛边、构建和手机端验收后才能认定发布成功。"
+      },
+      {
+        "change": "planned",
+        "area": "security",
+        "scope": "Avatar Studio · 安全与验收",
+        "title": "配置受保护域名与最小权限令牌",
+        "note": "独立 Access 单邮箱策略、Worker Secret、严格上传验证和未经授权拒绝测试均待真实部署验证；不在公开页面或文档中保存邮箱、Token。"
+      },
+      {
+        "change": "added",
+        "area": "docs",
+        "scope": "Folio · 项目书",
+        "title": "Avatar Studio 私人头像工坊项目书",
+        "note": "项目目标、架构、阶段里程碑、发布边界、风险和验收标准已归档至 /folio/building/avatar-studio/；这不是已上线的功能。"
+      }
+    ]
+  },
+  {
+    "status": "unreleased",
+    "gen": 3,
+    "site": "main",
     "date": "2026-11-21",
     "title": "计划：Vesper 夜航计划（Night Voyage）",
     "summary": "下一步拟实现阅读书签、首页旧文来信与页脚月相日历；目前仅完成技术任务书归档，功能尚未开发或发布。",
