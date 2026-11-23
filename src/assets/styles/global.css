@@ -72,12 +72,15 @@ html.motion-off *::after {
   animation-delay: 150ms;
 }
 
-/* [KaTeX] Keep long equations inside the reading column on narrow screens. */
+/* [KaTeX] Keep long equations inside the reading column on narrow screens.
+   只让 .katex-display 这一层横向滚动：内层 .katex-html 不设滚动，
+   否则会出现嵌套滚动容器（手机上手势容易落到错误的层上，看起来像不能滑）。 */
 span.katex-display {
   display: block;
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-inline: contain;
   padding: 0.7rem 0.5rem;
   scrollbar-width: thin;
 }
@@ -92,8 +95,16 @@ span.katex-display {
 }
 
 .katex-html {
-  overflow: auto hidden;
+  /* 内容按自身宽度排布，超出部分交给外层 .katex-display 滚动 */
+  overflow: visible;
   padding: 3px;
+}
+
+.katex-display > .katex {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  text-align: center;
 }
 
 .katex-html .base {
