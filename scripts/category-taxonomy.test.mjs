@@ -6,7 +6,7 @@ import { getAllCategories, getPostCategory, getPostPath, getPostSourceId } from 
 
 const manifest = JSON.parse(readFileSync('migration/content-manifest.json', 'utf8'))
 const posts = manifest.map(row => ({
-  id: row.destination.replaceAll('\\', '/').replace('src/content/blog/', '').replace(/\.md$/, ''),
+  id: row.destination.replaceAll('\\', '/').replace('src/content/blog/', '').replace(/\.(md|mdx)$/, ''),
   filePath: row.destination.replaceAll('\\', '/'),
   data: { slug: row.url.slice('/blog/'.length) }
 }))
