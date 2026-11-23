@@ -338,7 +338,8 @@ const sections = [
   .about-hero {display:grid;grid-template-columns:minmax(0,1.5fr) minmax(16rem,1fr);gap:3rem;align-items:center;padding:1rem 0 3rem;}
   h1 {font-size:clamp(2.8rem,6vw,4.6rem);line-height:1.12;letter-spacing:-.055em;font-weight:750;padding:1.1rem 0;}
   h1 span {color:hsl(var(--primary));}
-  .hero-tagline {font-size:1.3rem;letter-spacing:.06em;padding:.6rem 0 1.1rem;}
+  /* Reserve space for the longest rotating sentence, so typing never pushes the lede or actions down. */
+  .hero-tagline {font-size:1.3rem;letter-spacing:.06em;line-height:1.6;min-height:calc(3.2em + 1.7rem);padding:.6rem 0 1.1rem;}
   .hero-lede {max-width:33rem;line-height:1.95;color:hsl(var(--muted-foreground));}
   .hero-actions {display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:1.5rem 0;}
   .hero-actions a {display:inline-flex;align-items:center;justify-content:center;gap:1rem;min-height:44px;padding:.65rem 1rem;border:1px solid hsl(var(--border));border-radius:.7rem;font-size:.85rem;}
@@ -436,7 +437,7 @@ const sections = [
     .about-page {margin-top:1.5rem;}
     .about-hero {grid-template-columns:1fr;gap:2rem;padding-top:0;padding-bottom:2rem;}
     h1 {font-size:3rem;}
-    .hero-tagline {font-size:1.15rem;}
+    .hero-tagline {font-size:1.15rem;min-height:calc(3.2em + 1.7rem);}
     .hero-lede {font-size:.9rem;}
     .hero-actions {gap:.5rem;}
     .hero-actions a {padding:.6rem .8rem;font-size:.78rem;gap:.6rem;}
