@@ -9,7 +9,7 @@
     hue: 267, theme: 'system', wallpaper: 'banner',
     wallpaperSource: DEFAULT_SOURCE, wallpaperOpacity: 24,
     homeWallpaperSource: 'inherit',
-    cover: true, layout: 'list', title: true, waves: true, motion: 'system', silverInk: false, animatedAvatar: false
+    cover: true, layout: 'list', title: true, waves: true, motion: 'system', silverInk: false, animatedAvatar: true
   }
   const safeSource = value => {
     if (value === 'uploaded') return value
