@@ -48,7 +48,7 @@ const wallpaperPresets = [
         </button>
       ))}
     </div>
-    <p class='setting-hint'>应用于博客、文章、归档等内页。首页封面保持原样。</p>
+    <p class='setting-hint'>应用于博客、文章、归档等内页。首页默认使用这里选中的图片，也可以单独指定。</p>
   </fieldset>
 
   <fieldset class='wallpaper-settings'>
@@ -97,6 +97,49 @@ const wallpaperPresets = [
     </div>
     <p class='setting-hint'>支持 JPG / PNG / WebP / AVIF，最大 8 MB。图片只存于当前浏览器，清除浏览器数据后会消失，也不会同步到其他设备。</p>
     <p class='wallpaper-status' data-wallpaper-status role='status' aria-live='polite'></p>
+  </fieldset>
+
+  <fieldset class='home-wallpaper-settings'>
+    <legend>首页壁纸</legend>
+    <div class='options'>
+      <button type='button' data-home-wallpaper-mode='inherit' aria-pressed='true'>跟随内页</button>
+      <button type='button' data-home-wallpaper-mode='separate' aria-pressed='false'>单独设置</button>
+    </div>
+    <p class='setting-hint'>跟随内页只共享图片，不改变首页全屏封面。选择单独设置后，首页和文章可以用两张不同的图。</p>
+    <div data-home-wallpaper-specific hidden>
+      <div class='wallpaper-gallery home-wallpaper-gallery' aria-label='首页壁纸预设'>
+        {wallpaperPresets.map(preset => (
+          <button type='button' class='wallpaper-tile' data-home-wallpaper-source={preset.src}
+            aria-pressed='false' title={preset.subtitle}>
+            <img src={sitePath(preset.src)} alt='' width='150' height='78' loading='lazy' decoding='async' />
+            <span class='wallpaper-tile-caption'><strong>{preset.name}</strong><small>{preset.subtitle}</small></span>
+          </button>
+        ))}
+        <button type='button' class='wallpaper-tile' data-home-wallpaper-use-uploaded hidden aria-pressed='false'>
+          <span class='home-uploaded-preview' aria-hidden='true'></span>
+          <span class='wallpaper-tile-caption'><strong>首页照片</strong><small>仅保存在本机</small></span>
+        </button>
+      </div>
+      <div class='wallpaper-custom'>
+        <label for='home-wallpaper-custom-url'>首页图片地址（HTTPS）</label>
+        <div class='wallpaper-url-row'>
+          <input id='home-wallpaper-custom-url' data-home-wallpaper-url type='url'
+            inputmode='url' maxlength='2048' spellcheck='false'
+            placeholder='https://example.com/cover.webp' autocomplete='off' />
+          <button type='button' data-home-wallpaper-url-apply>使用链接</button>
+        </div>
+      </div>
+      <div class='wallpaper-local-actions'>
+        <label class='wallpaper-upload-action' for='home-wallpaper-upload'>
+          上传首页图片
+          <input id='home-wallpaper-upload' type='file' data-home-wallpaper-file
+            accept='image/jpeg,image/png,image/webp,image/avif' />
+        </label>
+        <button type='button' data-home-wallpaper-clear-upload hidden>删除首页图片</button>
+      </div>
+      <p class='setting-hint'>支持 JPG / PNG / WebP / AVIF（不超过 8 MB）。首页上传的图片与内页上传图分开保存，都只留在当前浏览器。</p>
+      <p class='wallpaper-status' data-home-wallpaper-status role='status' aria-live='polite'></p>
+    </div>
   </fieldset>
 
   <fieldset>
@@ -148,10 +191,21 @@ const wallpaperPresets = [
       const uploadInput = this.querySelector<HTMLInputElement>('[data-wallpaper-file]')
       const savedImageButton = this.querySelector<HTMLButtonElement>('[data-wallpaper-use-uploaded]')
       const clearImageButton = this.querySelector<HTMLButtonElement>('[data-wallpaper-clear-upload]')
+      const homeStatus = this.querySelector<HTMLElement>('[data-home-wallpaper-status]')
+      const homeUrlInput = this.querySelector<HTMLInputElement>('[data-home-wallpaper-url]')
+      const homeUploadInput = this.querySelector<HTMLInputElement>('[data-home-wallpaper-file]')
+      const homeSavedButton = this.querySelector<HTMLButtonElement>('[data-home-wallpaper-use-uploaded]')
+      const homeClearButton = this.querySelector<HTMLButtonElement>('[data-home-wallpaper-clear-upload]')
+      const homeSpecific = this.querySelector<HTMLElement>('[data-home-wallpaper-specific]')
       const setStatus = (message: string, error = false) => {
         if (!status) return
         status.textContent = message
         status.dataset.error = String(error)
+      }
+      const setHomeStatus = (message: string, error = false) => {
+        if (!homeStatus) return
+        homeStatus.textContent = message
+        homeStatus.dataset.error = String(error)
       }
       const sync = () => {
         const settings = api()?.get()
@@ -171,6 +225,19 @@ const wallpaperPresets = [
             String(button.dataset.wallpaperSource === settings.wallpaperSource)))
         savedImageButton?.setAttribute('aria-pressed',
           String(settings.wallpaperSource === 'uploaded'))
+        const homeSeparate = settings.homeWallpaperSource !== 'inherit'
+        this.querySelectorAll<HTMLButtonElement>('[data-home-wallpaper-mode]').forEach(button =>
+          button.setAttribute('aria-pressed',
+            String(button.dataset.homeWallpaperMode === (homeSeparate ? 'separate' : 'inherit'))))
+        if (homeSpecific) homeSpecific.hidden = !homeSeparate
+        this.querySelectorAll<HTMLButtonElement>('[data-home-wallpaper-source]').forEach(button =>
+          button.setAttribute('aria-pressed',
+            String(button.dataset.homeWallpaperSource === settings.homeWallpaperSource)))
+        homeSavedButton?.setAttribute('aria-pressed',
+          String(settings.homeWallpaperSource === 'home-uploaded'))
+        if (homeUrlInput && document.activeElement !== homeUrlInput)
+          homeUrlInput.value = settings.homeWallpaperSource.startsWith('https://')
+            ? settings.homeWallpaperSource : ''
         const hueOutput = this.querySelector<HTMLOutputElement>('[data-hue-value]')
         if (hueOutput) hueOutput.value = settings.hue + '°'
         const hueSlider = this.querySelector<HTMLInputElement>('[data-hue-slider]')
@@ -201,6 +268,54 @@ const wallpaperPresets = [
         } catch {
           if (savedImageButton) savedImageButton.hidden = true
           if (clearImageButton) clearImageButton.hidden = true
+        }
+      }
+      const refreshHomeUploaded = async () => {
+        try {
+          const saved = await api()?.hasHomeUpload()
+          if (!this.isConnected) return
+          if (homeSavedButton) homeSavedButton.hidden = !saved
+          if (homeClearButton) homeClearButton.hidden = !saved
+        } catch {
+          if (homeSavedButton) homeSavedButton.hidden = true
+          if (homeClearButton) homeClearButton.hidden = true
+        }
+      }
+      const applyHomeExternalImage = async () => {
+        const raw = homeUrlInput?.value.trim() ?? ''
+        let url: URL
+        try {
+          url = new URL(raw)
+          if (url.protocol !== 'https:' || url.username || url.password || raw.length > 2048)
+            throw new Error('请填写有效的 HTTPS 图片地址')
+        } catch {
+          setHomeStatus('图片地址不正确，请填完整的 HTTPS 链接。', true)
+          return
+        }
+        const button = this.querySelector<HTMLButtonElement>('[data-home-wallpaper-url-apply]')
+        if (button) button.disabled = true
+        setHomeStatus('正在检查首页图片…')
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const image = new Image()
+            const timeout = window.setTimeout(() => {
+              image.src = ''
+              reject(new Error('图片加载超时，请换个链接'))
+            }, 10000)
+            image.onload = () => { window.clearTimeout(timeout); resolve() }
+            image.onerror = () => {
+              window.clearTimeout(timeout)
+              reject(new Error('图片无法加载，可能是链接失效或禁止外链'))
+            }
+            image.src = url.href
+          })
+          if (!this.isConnected) return
+          api()?.set({ homeWallpaperSource: url.href })
+          setHomeStatus('首页壁纸已切换。')
+        } catch (error) {
+          setHomeStatus(error instanceof Error ? error.message : '无法使用这张图片', true)
+        } finally {
+          if (button) button.disabled = false
         }
       }
       const applyExternalImage = async () => {
@@ -253,6 +368,33 @@ const wallpaperPresets = [
           api()?.set({ wallpaperSource: button.dataset.wallpaperSource, wallpaper: 'fullscreen' })
           setStatus('壁纸已切换。')
         }
+        if (button.dataset.homeWallpaperMode === 'inherit')
+          api()?.set({ homeWallpaperSource: 'inherit' })
+        if (button.dataset.homeWallpaperMode === 'separate') {
+          const current = api()?.get()
+          if (current) api()?.set({
+            homeWallpaperSource: current.homeWallpaperSource === 'inherit'
+              ? current.wallpaperSource : current.homeWallpaperSource
+          })
+        }
+        if (button.dataset.homeWallpaperSource) {
+          api()?.set({ homeWallpaperSource: button.dataset.homeWallpaperSource })
+          setHomeStatus('首页壁纸已切换。')
+        }
+        if (button.hasAttribute('data-home-wallpaper-url-apply'))
+          void applyHomeExternalImage()
+        if (button.hasAttribute('data-home-wallpaper-use-uploaded')) {
+          void api()?.useHomeUpload()
+            .then(() => setHomeStatus('已切换到保存的首页图片。'))
+            .catch((error: unknown) => setHomeStatus(
+              error instanceof Error ? error.message : '无法读取首页图片', true))
+        }
+        if (button.hasAttribute('data-home-wallpaper-clear-upload')) {
+          void api()?.clearHomeUpload()
+            .then(() => { setHomeStatus('已删除保存的首页图片。'); void refreshHomeUploaded() })
+            .catch((error: unknown) => setHomeStatus(
+              error instanceof Error ? error.message : '无法删除首页图片', true))
+        }
         if (button.dataset.layoutChoice)
           api()?.set({ layout: button.dataset.layoutChoice as AppearanceSettings['layout'] })
         if (button.dataset.motionChoice)
@@ -279,6 +421,19 @@ const wallpaperPresets = [
         api()?.set({ hue: Number((event.target as HTMLInputElement).value) }), { signal })
       this.querySelector('[data-wallpaper-opacity-slider]')?.addEventListener('input', event =>
         api()?.set({ wallpaperOpacity: Number((event.target as HTMLInputElement).value) }), { signal })
+      homeUrlInput?.addEventListener('keydown', event => {
+        if (event.key === 'Enter') { event.preventDefault(); void applyHomeExternalImage() }
+      }, { signal })
+      homeUploadInput?.addEventListener('change', () => {
+        const image = homeUploadInput.files?.[0]
+        if (!image) return
+        setHomeStatus('正在保存首页图片…')
+        void api()?.uploadHome(image)
+          .then(() => { setHomeStatus('首页图片已保存到当前浏览器。'); void refreshHomeUploaded() })
+          .catch((error: unknown) => setHomeStatus(
+            error instanceof Error ? error.message : '首页图片保存失败', true))
+          .finally(() => { homeUploadInput.value = '' })
+      }, { signal })
       urlInput?.addEventListener('keydown', event => {
         if (event.key === 'Enter') { event.preventDefault(); void applyExternalImage() }
       }, { signal })
@@ -302,6 +457,7 @@ const wallpaperPresets = [
       window.addEventListener('wendell:appearance', sync, { signal })
       sync()
       void refreshUploaded()
+      void refreshHomeUploaded()
     }
     disconnectedCallback() { this.controller?.abort() }
   }
@@ -350,13 +506,18 @@ const wallpaperPresets = [
     background:hsl(var(--muted)/.28);text-align:left;
   }
   .wallpaper-tile[hidden], .wallpaper-local-actions button[hidden] { display:none!important; }
-  .wallpaper-tile img,.wallpaper-uploaded-preview {
+  .wallpaper-tile img,.wallpaper-uploaded-preview,.home-uploaded-preview {
     display:block;width:100%;height:76px;object-fit:cover;
     background-color:hsl(var(--muted));
   }
   .wallpaper-uploaded-preview {
     background-image:var(--site-uploaded-wallpaper-image,none);background-position:center;background-size:cover;
   }
+  .home-uploaded-preview {
+    background-image:var(--home-uploaded-wallpaper-image,none);background-position:center;background-size:cover;
+  }
+  .home-wallpaper-gallery { margin-top:.75rem; }
+  .home-wallpaper-settings [data-home-wallpaper-specific][hidden] { display:none!important; }
   .wallpaper-tile-caption { display:flex;align-items:center;justify-content:space-between;gap:.3rem;padding:.5rem .55rem;width:100%; }
   .wallpaper-tile-caption strong { font-size:.74rem;font-weight:650; }
   .wallpaper-tile-caption small { font-size:.57rem;color:hsl(var(--muted-foreground));white-space:nowrap; }
