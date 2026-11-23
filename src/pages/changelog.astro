@@ -103,7 +103,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
             </div>
           </header>
           <div class='groups'>
-            {groups.filter(group => group.entries.length > 0).map(group => <details class='gen-group' open={group.gen === 3}>
+            {groups.filter(group => group.entries.length > 0).map(group => <details class='gen-group' open>
               <summary>
                 <span class='gen-mark'>G{group.gen}</span>
                 <span class='group-name'>{group.name}</span>
@@ -182,18 +182,18 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
         <div class='toc-wrap'>
           <div class='toc-gauge' aria-hidden='true'></div>
           <nav class='toc-body'>
-            {groups.map(group => <details class='toc-group' data-gen={group.gen} open={group.gen === 3}>
-              <summary>
+            {groups.map(group => <div class='toc-group' data-gen={group.gen}>
+              <p class='toc-group-head'>
                 <span class='toc-gen'>G{group.gen}</span>
                 <span class='toc-name'>{group.name}</span>
                 <span class='toc-n'>{group.versions.length}</span>
-              </summary>
+              </p>
               <ol>
                 {group.versions.map(version => <li>
                   <a class='toc-link' href={`#ver-${group.gen}-${version.date}`} data-target={`ver-${group.gen}-${version.date}`}><i class='toc-bar' aria-hidden='true'></i><span class='toc-label'>{version.version}</span></a>
                 </li>)}
               </ol>
-            </details>)}
+            </div>)}
           </nav>
         </div>
       </aside>
@@ -242,10 +242,8 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .toc-body.can-down {mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - .9rem),transparent 100%);}
   .toc-body.can-up.can-down {mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem,#000 calc(100% - .9rem),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 .9rem,#000 calc(100% - .9rem),transparent 100%);}
   .toc-group {margin-bottom:.5rem;}
-  .toc-group > summary {display:flex;align-items:baseline;gap:.3rem;padding:.15rem .4rem;cursor:pointer;list-style:none;color:hsl(var(--muted-foreground));}
-  .toc-group > summary::-webkit-details-marker {display:none;}
-  .toc-group > summary:hover {color:hsl(var(--primary));}
-  .toc-group[open] > summary {color:hsl(var(--foreground));}
+  /* 目录里的分组只是分隔标题，不再折叠：整页版本永远一眼看全，从最新一路排到最早。 */
+  .toc-group-head {display:flex;align-items:baseline;gap:.3rem;margin:0;padding:.15rem .4rem;color:hsl(var(--muted-foreground));font-weight:inherit;}
   .toc-gen {font-size:.62rem;border:1px solid hsl(var(--primary)/.3);border-radius:.25rem;padding:0 .22rem;color:hsl(var(--primary));}
   .toc-name {font-size:.64rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .toc-n {margin-left:auto;font-size:.6rem;color:hsl(var(--muted-foreground));font-variant-numeric:tabular-nums;}
@@ -306,7 +304,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   .version-toc.is-sheet .toc-gauge {display:none;}
   .version-toc.is-sheet .toc-body {max-height:none;min-height:0;padding:.2rem 0 0;font-size:.82rem;}
   .version-toc.is-sheet .toc-group {margin-bottom:.35rem;}
-  .version-toc.is-sheet .toc-group > summary {position:sticky;top:0;z-index:1;gap:.4rem;padding:.5rem .2rem .35rem;background:hsl(var(--background));border-bottom:1px solid hsl(var(--border)/.6);font-size:.72rem;}
+  .version-toc.is-sheet .toc-group-head {position:sticky;top:0;z-index:1;gap:.4rem;padding:.5rem .2rem .35rem;background:hsl(var(--background));border-bottom:1px solid hsl(var(--border)/.6);font-size:.72rem;}
   .version-toc.is-sheet .toc-gen {font-size:.66rem;}
   .version-toc.is-sheet .toc-group ol {border-left:0;margin-top:.15rem;}
   .version-toc.is-sheet .toc-body a {display:flex;align-items:center;min-height:2.4rem;padding:.45rem .7rem;margin:0 0 2px;border-left:0;border-radius:.6rem;font-size:.86rem;color:hsl(var(--muted-foreground));}
@@ -489,7 +487,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
 
   // 目录跟着「当前视口里正在显示的那几节」走：同时高亮多条，和文章目录一致。
   const paintToc = (visibleIds: Set<string>, firstLink: HTMLElement | null) => {
-    const group = firstLink?.closest<HTMLElement>('details.toc-group') ?? null
+    const group = firstLink?.closest<HTMLElement>('.toc-group') ?? null
     const key = group?.dataset.gen ?? ''
     if (gauge && group && gauge.dataset.group !== key) {
       const links = [...group.querySelectorAll<HTMLElement>('a.toc-link')]
@@ -510,10 +508,6 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
   }
 
   const revealToc = (firstLink: HTMLElement, lastLink: HTMLElement | null) => {
-    const group = firstLink.closest<HTMLDetailsElement>('details.toc-group')
-    document.querySelectorAll<HTMLDetailsElement>('.toc-group').forEach((item) => {
-      item.open = item === group
-    })
     if (!tocBody) return
     requestAnimationFrame(() => {
       const max = tocBody.scrollHeight - tocBody.clientHeight
@@ -531,8 +525,9 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
         ? firstRect.top - bodyRect.top - 8
         : firstRect.top - bodyRect.top - (bodyRect.height - spanHeight) / 2
       const next = Math.max(0, Math.min(max, tocBody.scrollTop + delta))
-      if (Math.abs(next - tocBody.scrollTop) < 1) return
-      tocBody.scrollTo({ top: next, behavior: 'auto' })
+      // 小位移不动，避免每帧微调（那会看起来一直在抖）；超过阈值才顺势滑过去。
+      if (Math.abs(next - tocBody.scrollTop) < 32) return
+      tocBody.scrollTo({ top: next, behavior: reduceMotion() ? 'auto' : 'smooth' })
       updateTocFade()
     })
   }
@@ -565,22 +560,18 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
     }
     paintToc(visibleIds, firstLink)
 
-    // 每条目录自带进度条：按版本顺序单调推进——已经读完的填满、还没读到的留空，
-    // 正在读的这一段按各自位置填。收起的版本块没有布局，不能靠 rect 判断，所以用下标。
-    const progressLine = vh * 0.55
+    // 每条目录自带进度条：按版本顺序单调推进——已经读完的填满、还没读到的留空。
+    // 用"穿过屏幕的比例"来算：块从视口底部进来时 0%，从顶部离开时 100%，
+    // 于是高亮区块第一条的小条随上移逐渐填满、最后一条的小条则在刚出现时就开始涨。
     const startIndex = firstBlock ? blocks.indexOf(firstBlock) : 0
-    const endIndex = lastBlock ? blocks.indexOf(lastBlock) : -1
     blocks.forEach((block, index) => {
       const link = links.find((item) => item.dataset.target === block.id)
       if (!link) return
-      let percent = 0
-      if (index < startIndex) percent = 100
-      else if (index <= endIndex) {
-        const rect = block.getBoundingClientRect()
-        const span = Math.max(1, rect.height)
-        percent = Math.round(Math.min(1, Math.max(0, (progressLine - rect.top) / span)) * 100)
-      }
-      link.style.setProperty('--toc-progress', `${percent}%`)
+      const rect = block.getBoundingClientRect()
+      let ratio
+      if (rect.height < 1) ratio = index < startIndex ? 1 : 0
+      else ratio = Math.min(1, Math.max(0, (vh - rect.top) / (vh + rect.height)))
+      link.style.setProperty('--toc-progress', `${Math.round(ratio * 100)}%`)
     })
   }
 
