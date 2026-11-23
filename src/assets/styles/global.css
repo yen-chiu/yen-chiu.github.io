@@ -82,13 +82,50 @@ span.katex-display {
   scrollbar-width: thin;
 }
 
-/* Article tables scroll within their own area instead of clipping the page. */
+/* Article tables: keep real table layout so auto layout can wrap text, and let
+   the wrapper (`.overflow-x-auto`) own horizontal scrolling. The previous
+   `display: block` made the table itself the scroll container at a fixed 100%
+   width, which squeezed 7-column tables until cells broke character by
+   character and the trailing columns were unreachable. */
 #content table {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: thin;
+  display: table;
+  width: 100%;
+  overflow-x: visible;
+}
+
+/* Comparison tables (5+ columns) read better on one line per cell than wrapped
+   into a three-line ladder; they scroll horizontally instead. */
+#content table:has(thead th:nth-child(5)) {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* CJK text can break between any two characters, so `width: max-content` alone
+   still lets column headers stack one character per line. Keep header cells on
+   a single line: that sets a sane minimum column width and lets body cells wrap
+   inside it instead of squeezing the whole table back to the content width. */
+#content table:has(thead th:nth-child(5)) th {
+  white-space: nowrap;
+}
+
+/* Body cells also break between characters, so a long note column would shrink
+   to a single character per line. Give every cell a floor width instead. */
+#content table:has(thead th:nth-child(5)) td {
+  min-width: 5rem;
+}
+
+/* One very long cell must not turn the whole table into a 2000px horizontal
+   scroll: clamp cell width and let the text wrap inside it. */
+#content th,
+#content td {
+  max-width: 18rem;
+}
+
+/* The markdown table wrapper ships as `flex justify-center`: once the table is
+   wider than the column, flex centering pulls its left edge out of reach, so the
+   first columns can never be scrolled back into view. Start-align instead. */
+#content .overflow-x-auto {
+  justify-content: flex-start;
 }
 
 .katex-html {

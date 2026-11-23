@@ -57,7 +57,13 @@ test('code fences and display math blocks remain paired', () => {
 test('mobile readability rules include internal scrolling for wide content', () => {
   const css = readFileSync('src/assets/styles/global.css', 'utf8')
   assert.match(css, /span\.katex-display\s*\{[^}]*overflow-x:\s*auto/s)
-  assert.match(css, /#content table\s*\{[^}]*overflow-x:\s*auto/s)
+  // Wide tables scroll via the `.overflow-x-auto` wrapper rather than the table
+  // element itself: a block-level table would be capped at 100% and squeeze its
+  // columns. The table keeps real table layout and may grow past the column.
+  assert.match(css, /#content table\s*\{[^}]*display:\s*table/s)
+  assert.match(css, /#content table\s*\{[^}]*overflow-x:\s*visible/s)
+  // Flex centering would push a wider-than-column table's left edge out of reach.
+  assert.match(css, /#content \.overflow-x-auto\s*\{[^}]*justify-content:\s*flex-start/s)
 })
 
 test('Mermaid chart types use distinct mobile sizing and one scroll container', () => {
