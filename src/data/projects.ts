@@ -2,10 +2,10 @@ export const projects = [
   {
     id: 'nianzhen',
     group: 'interactive',
-    name: '念真',
-    kind: '个人 AI 对话',
-    status: '原站体验',
-    description: '在浏览器里和念真聊天；需要时，也能让她查找公开网页。',
+    name: 'Echora · 念真',
+    kind: '独立聊天与互动空间',
+    status: 'Echora',
+    description: '在 Echora 与念真对话；需要时，也能让她查找公开网页。',
     tags: ['AI 对话', '静态站', '联网检索'],
     primary: { label: '进入聊天', href: 'https://yenchiu.com/echora/' },
     secondary: { label: '认识念真', href: '/persona' }
@@ -51,10 +51,10 @@ export const projects = [
   {
     id: 'astro',
     group: 'building',
-    name: 'YenChiu · Vesper',
-    kind: '网站与写作',
+    name: 'YenChiu · 博客',
+    kind: '个人网站 · Vesper 主题',
     status: '持续维护',
-    description: '从 Jekyll 搬到 Astro 之后，继续折腾目录、阅读界面和那些看着不起眼的小细节。',
+    description: 'Wendell 的 YenChiu 博客，使用 Vesper（暮星）主题；记录从 Jekyll 到 Astro 的改版过程。'
     tags: ['Astro', 'Vesper', 'GitHub Pages'],
     primary: { label: '查看源码', href: 'https://github.com/yen-chiu/yen-chiu.github.io' },
     secondary: {
