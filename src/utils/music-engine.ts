@@ -1,5 +1,9 @@
 // A single Audio instance survives Astro ClientRouter page swaps.
-export type MusicTrack = { id:string; title:string; artist:string; source:'audio'|'external'; url:string; provider:string; attribution:string }
+// The catalogue type lives with the data so `cover`/`lyrics` stay in one place;
+// re-exported here for the player script that imports it from the engine.
+import type { MusicTrack } from '@/data/music'
+
+export type { MusicTrack }
 export type MusicSnapshot = { id:string; volume:number; playing:boolean; currentTime:number; duration:number; status:string; repeat:'off'|'all'|'one'; shuffle:boolean }
 const STORAGE_KEY = 'vesper-music-v1'
 class MusicEngine {
