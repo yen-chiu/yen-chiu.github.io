@@ -23,15 +23,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Check links and aggregate RSS
+      - name: Install dependencies for icon discovery
+        run: npm ci --ignore-scripts
+      - name: Check links, discover icons and aggregate RSS
         run: |
           node scripts/check-friend-links.mjs
+          node scripts/discover-link-avatars.mjs
           node scripts/aggregate-friend-feeds.mjs
       - name: Publish status snapshots
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/links-status.json public/links-feed.json
+          git add public/links-status.json public/links-feed.json public/links-avatars.json public/avatars/sites
           if git diff --cached --quiet; then
             echo "No updates"
             exit 0
