@@ -1,10 +1,13 @@
 ---
 import { musicTracks } from '@/data/music'
+import musicWaveforms from '@/data/music-waveforms.json'
 import { sitePath } from '@/utils/site-path'
 interface Props { compact?: boolean }
 const { compact = false } = Astro.props
+const fallbackWaveform = Array.from({length:64},()=>0.18)
+const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Record<string,number[]>)[id];return Array.isArray(values)&&values.length===64?values:fallbackWaveform}
 ---
-<vesper-music-player class:list={['vesper-music-player', compact && 'is-compact']} data-tracks={JSON.stringify(musicTracks)} aria-label='Vesper 音乐播放器'>
+<vesper-music-player class:list={['vesper-music-player', compact && 'is-compact']} data-tracks={JSON.stringify(musicTracks)} data-waveforms={JSON.stringify(musicWaveforms)} aria-label='Vesper 音乐播放器'>
   <div class='music-deck'>
     <div class='music-art' aria-hidden='true'><div class='music-vinyl'><span class='music-spindle'></span><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span></div><div class='music-tonearm'><span class='music-tonearm-pivot'></span><span class='music-tonearm-rod'></span><span class='music-tonearm-head'></span></div></div>
     <div class='music-info'>
@@ -16,11 +19,11 @@ const { compact = false } = Astro.props
       <label class='sr-only' for={compact ? 'home-music-seek' : 'music-page-seek'}>播放进度</label>
       <div class='music-wave-seek' data-wave-seek style='--music-progress:0%'><output class='music-seek-tooltip' data-seek-tooltip aria-hidden='true'>0:00</output>
         <div class='music-wave-bars' aria-hidden='true'>
-          {Array.from({length:64},(_,i)=>{const h=5+Math.round(23*Math.abs(Math.sin(i*1.73)*Math.cos(i*.37)+.2*Math.sin(i*.61)));return <span class='music-wave-bar' style={`--bar-height:${h}px`}></span>})}
+          {waveformFor(musicTracks[0]?.id||'').map(value=><span class='music-wave-bar' style={`--bar-height:${Math.round(4+value*26)}px`}></span>)}
         </div>
         <div class='music-wave-played' aria-hidden='true'>
           <div class='music-wave-bars'>
-            {Array.from({length:64},(_,i)=>{const h=5+Math.round(23*Math.abs(Math.sin(i*1.73)*Math.cos(i*.37)+.2*Math.sin(i*.61)));return <span class='music-wave-bar' style={`--bar-height:${h}px`}></span>})}
+            {waveformFor(musicTracks[0]?.id||'').map(value=><span class='music-wave-bar' style={`--bar-height:${Math.round(4+value*26)}px`}></span>)}
           </div>
         </div>
         <input id={compact ? 'home-music-seek' : 'music-page-seek'} data-seek type='range' min='0' max='1000' value='0' step='1' aria-label='播放进度' />
@@ -74,6 +77,8 @@ const { compact = false } = Astro.props
       let tracks:MusicTrack[]=[]
       try { tracks=JSON.parse(this.dataset.tracks || '[]') } catch {}
       musicEngine.configure(tracks)
+      let waveforms:Record<string,number[]>={}
+      try{waveforms=JSON.parse(this.dataset.waveforms||'{}')}catch{}
       const play=this.querySelector<HTMLButtonElement>('[data-play]')!
       const repeat=this.querySelector<HTMLButtonElement>('[data-repeat]')!
       const shuffle=this.querySelector<HTMLButtonElement>('[data-shuffle]')!
@@ -81,6 +86,9 @@ const { compact = false } = Astro.props
       const seek=this.querySelector<HTMLInputElement>('[data-seek]')!
       const waveSeek=this.querySelector<HTMLElement>('[data-wave-seek]')!
       const seekTooltip=this.querySelector<HTMLOutputElement>('[data-seek-tooltip]')!
+      const waveRows=[...this.querySelectorAll<HTMLElement>('.music-wave-bars')]
+      let currentWaveId=''
+      const renderWave=(id:string)=>{if(id===currentWaveId)return;currentWaveId=id;const values=waveforms[id];const amplitudes=Array.isArray(values)&&values.length===64?values:Array(64).fill(.18);for(const row of waveRows){row.querySelectorAll<HTMLElement>('.music-wave-bar').forEach((bar,i)=>bar.style.setProperty('--bar-height',`${Math.round(4+Math.max(0,Math.min(1,Number(amplitudes[i])||0))*26)}px`))}}
       let dragging=false
       const volume=this.querySelector<HTMLInputElement>('[data-volume]')!
       const current=this.querySelector<HTMLElement>('[data-current]')!
@@ -96,6 +104,7 @@ const { compact = false } = Astro.props
       this.unsubscribe=musicEngine.subscribe(snapshot=>{
         const track=tracks.find(track=>track.id===snapshot.id)
         if(track){
+          renderWave(track.id)
           title.textContent=track.title
           artist.textContent=track.artist
           const image=track.cover?.trim()
