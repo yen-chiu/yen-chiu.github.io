@@ -220,8 +220,15 @@ const wallpaperPresets = [
         try {
           await new Promise<void>((resolve, reject) => {
             const image = new Image()
-            image.onload = () => resolve()
-            image.onerror = () => reject(new Error('图片无法加载，可能是链接失效或网站禁止引用'))
+            const timeout = window.setTimeout(() => {
+              image.src = ''
+              reject(new Error('图片加载超时，试试换一个链接'))
+            }, 10000)
+            image.onload = () => { window.clearTimeout(timeout); resolve() }
+            image.onerror = () => {
+              window.clearTimeout(timeout)
+              reject(new Error('图片无法加载，可能是链接失效或网站禁止引用'))
+            }
             image.src = url.href
           })
           if (!this.isConnected) return
