@@ -1,0 +1,16 @@
+name = "vesper-avatar-studio"
+main = "worker.mjs"
+compatibility_date = "2026-11-23"
+workers_dev = false
+
+# Route this Worker to a dedicated hostname, e.g. studio.yenchiu.com,
+# and protect that hostname AND the Worker with Cloudflare Access.
+# Do not publish the studio under public GitHub Pages.
+#
+# Set nonsecret variables in Cloudflare dashboard / Wrangler:
+# ACCESS_TEAM_DOMAIN = "your-team.cloudflareaccess.com"
+# ACCESS_AUD = "Cloudflare Access app audience tag"
+# OWNER_EMAIL = "the single permitted login email"
+#
+# Set GITHUB_TOKEN as a Worker SECRET (fine-grained, Contents: Read/Write
+# only for yen-chiu/yen-chiu.github.io).
