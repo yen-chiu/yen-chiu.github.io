@@ -1,10 +1,18 @@
 import { readdir, readFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 
 const root = 'dist'
 const publicDir = 'public'
 const origin = 'https://yenchiu.com'
+
+// 这个脚本审计的是构建产物，`npm test` 在构建前跑时会没有 dist。
+// 此时直接跳过（并打印原因），构建之后 CI 会再单独跑一次做真正的检查。
+if (!existsSync(root)) {
+  console.log('SEO audit skipped: dist 还没构建，构建后单独运行 scripts/seo-audit.test.mjs')
+  process.exit(0)
+}
 
 async function collectHtml(dir, out = []) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
