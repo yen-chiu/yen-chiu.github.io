@@ -10,7 +10,6 @@ import PageTransition from '@/components/PageTransition.astro'
 import GrowingTree from '@/components/anniversary/GrowingTree.astro'
 import config from '@/site-config'
 import AppearanceBootstrap from '@/components/appearance/AppearanceBootstrap.astro'
-import { sitePath } from '@/utils/site-path'
 
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseLayout /> component.
@@ -52,7 +51,7 @@ const {
   </head>
 
   <body class='bg-background text-foreground' data-page={pageKind} {...props}>
-    <div class='site-wallpaper' style={`background-image:url('${sitePath('/images/moonlit-cover.svg')}')`} aria-hidden='true'></div>
+    <div class='site-wallpaper' aria-hidden='true'></div>
     <div
       id='highlight-gradient'
       class='pointer-events-none absolute start-0 top-0 z-0 h-screen w-full opacity-25'
@@ -78,10 +77,26 @@ const {
 
     {/* Set highlight color */}
     <style is:global>
-      .site-wallpaper{display:none;position:fixed;inset:0;pointer-events:none;z-index:0;background-position:center;background-size:cover;}
+      .site-wallpaper{
+        display:none;position:fixed;inset:0;pointer-events:none;z-index:0;
+        background-image:var(--site-wallpaper-image, url('/images/moonlit-cover.svg'));
+        background-position:center;background-repeat:no-repeat;background-size:cover;
+      }
       #main-container{position:relative;z-index:1;}
-      html[data-wallpaper='fullscreen'] body[data-page='content'] .site-wallpaper{display:block;opacity:.24;}
-      html[data-wallpaper='overlay'] body[data-page='content'] .site-wallpaper{display:block;opacity:.13;filter:blur(3px);}
+      html[data-wallpaper='fullscreen'] body[data-page='content'] .site-wallpaper{
+        display:block;opacity:var(--site-wallpaper-opacity,.24);
+      }
+      html[data-wallpaper='overlay'] body[data-page='content'] .site-wallpaper{
+        display:block;opacity:calc(var(--site-wallpaper-opacity,.24) * .58);filter:blur(3px);
+      }
+      /* Uploaded wallpaper is loaded locally from IndexedDB after initial paint. */
+      html[data-wallpaper='fullscreen'] body[data-page='content'] .site-wallpaper,
+      html[data-wallpaper='overlay'] body[data-page='content'] .site-wallpaper{
+        transition:opacity .2s ease;
+      }
+      @media(prefers-reduced-motion:reduce){
+        .site-wallpaper{transition:none!important;}
+      }
     </style>
     <style define:vars={{ highlightColor }}>
       :global(.highlight) {
