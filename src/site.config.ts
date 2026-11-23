@@ -48,12 +48,14 @@ export const theme: ThemeUserConfig = {
   /** Configure the header of your site. */
   header: {
     menu: [
-      { title: '博客', link: '/blog' },
+      { title: 'Vesper · 博客', link: '/blog' },
       { title: '念真', link: '/persona' },
       { title: '分类', link: '/categories' },
       { title: '标签', link: '/tags' },
       { title: '时光机', link: '/archives' },
-      { title: '文档', link: '/docs' },
+      { title: '站内文档', link: '/docs' },
+      { title: 'Folio · 文档库', link: 'https://yenchiu.com/folio/' },
+      { title: 'Echora · 聊天', link: 'https://yenchiu.com/echora/' },
       { title: '链接', link: '/links' },
       { title: '项目', link: '/projects' },
       { title: '关于', link: '/about' }
