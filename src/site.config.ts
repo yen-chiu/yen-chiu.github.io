@@ -95,9 +95,10 @@ export const theme: ThemeUserConfig = {
     blogPageSize: 8,
     /** Share buttons to show */
     // Currently support weibo, x, bluesky
-    share: ['weibo', 'x', 'bluesky']
+    share: ['weibo', 'x', 'bluesky'],
     /** Enable image captions (default false) */
-    // imageCaption: true
+    // 有 alt 的图片自动包成 <figure><figcaption>，省得手写图注。
+    imageCaption: true
   }
 }
 
@@ -155,7 +156,9 @@ export const integ: IntegrationUserConfig = {
   // https://astro-pure.js.org/docs/integrations/others#medium-zoom
   mediumZoom: {
     enable: true, // disable it will not load the whole library
-    selector: '.prose .zoomable',
+    // 只认 .zoomable 的话，手写 HTML 的 <figure><img> 点不开；
+    // 放宽到正文里所有图片，需要禁用的单个图片自己加 .no-zoom。
+    selector: '.prose img:not(.no-zoom)',
     options: {
       className: 'zoomable'
     }
