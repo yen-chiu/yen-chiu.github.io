@@ -9,7 +9,7 @@
     hue: 267, theme: 'system', wallpaper: 'banner',
     wallpaperSource: DEFAULT_SOURCE, wallpaperOpacity: 24,
     homeWallpaperSource: 'inherit',
-    cover: true, layout: 'list', title: true, waves: true, motion: 'system', silverInk: false
+    cover: true, layout: 'list', title: true, waves: true, motion: 'system', silverInk: false, animatedAvatar: false
   }
   const safeSource = value => {
     if (value === 'uploaded') return value
@@ -41,7 +41,8 @@
       title: typeof v.title === 'boolean' ? v.title : defaults.title,
       waves: typeof v.waves === 'boolean' ? v.waves : defaults.waves,
       motion: ['system', 'always', 'reduced'].includes(v.motion) ? v.motion : defaults.motion,
-      silverInk: typeof v.silverInk === 'boolean' ? v.silverInk : defaults.silverInk
+      silverInk: typeof v.silverInk === 'boolean' ? v.silverInk : defaults.silverInk,
+      animatedAvatar: typeof v.animatedAvatar === 'boolean' ? v.animatedAvatar : defaults.animatedAvatar
     }
   }
   let settings = { ...defaults }
@@ -92,6 +93,7 @@
     root.dataset.bannerTitle = String(settings.title)
     root.dataset.bannerWaves = String(settings.waves)
     root.dataset.motion = settings.motion
+    root.dataset.animatedAvatar = String(settings.animatedAvatar && !reduceMotion())
     root.classList.toggle('motion-always', settings.motion === 'always')
     root.classList.toggle('motion-off', settings.motion === 'reduced')
     window.dispatchEvent(new CustomEvent('wendell:appearance'))
