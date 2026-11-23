@@ -11,7 +11,7 @@ import FriendFeed from '@/components/links/FriendFeed.astro'
 
 const groups = links.friends,
   total = groups.reduce((n, g) => n + g.link_list.length, 0)
-const info = `名称：Wendell · Vesper
+const info = `名称：YenChiu
 简介：读书，买花，长大。
 博客：https://yenchiu.com/
 头像：https://yenchiu.com/favicon/wendell-avatar-192.png`
@@ -25,7 +25,7 @@ const friendDownCount = (friendGroup?.link_list ?? []).filter(link => healthByUr
 const friendActiveCount = (friendGroup?.link_list.length ?? 0) - friendDownCount
 const pendingCount = (friendGroup?.link_list ?? []).filter(link => !healthByUrl.has(link.link)).length
 const friendInfo = [
-  { name: '名称', val: 'Wendell · Vesper' },
+  { name: '名称', val: 'YenChiu' },
   { name: '简介', val: '读书，买花，长大。' },
   { name: '博客', val: 'https://yenchiu.com/' },
   { name: '头像', val: 'https://yenchiu.com/favicon/wendell-avatar-192.png' }
