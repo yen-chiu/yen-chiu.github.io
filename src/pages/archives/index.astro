@@ -84,7 +84,7 @@ const meta = {
       icon='time'
       eyebrow='Writing history'
       title='时光机'
-      description='沿着时间回看文字留下的轨迹，每一次记录都连接着当时的思考。'
+      description='文章按月份放好了。想翻旧账，就从某一年开始。'
       stats={[
         { label: '文章', value: allPosts.length },
         { label: '年份', value: archiveYears.length },
@@ -99,7 +99,7 @@ const meta = {
       <ArchiveCalendar items={calendarItems} />
       <div class='archive-sidecards'>
         <section class='writing-data' aria-labelledby='writing-data-title'>
-          <p class='dashboard-kicker'>IN NUMBERS</p><h2 id='writing-data-title'>记录的刻度</h2><dl>
+          <p class='dashboard-kicker'>IN NUMBERS</p><h2 id='writing-data-title'>写了多少</h2><dl>
             <div><dt>已发布文章</dt><dd>{allPosts.length}<small> 篇</small></dd></div><div>
               <dt>主题标签</dt><dd>{tagCount}<small> 个</small></dd>
             </div><div><dt>活跃月份</dt><dd>{activeMonths}<small> 个月</small></dd></div><div>
