@@ -72,6 +72,28 @@ html.motion-off *::after {
   animation-delay: 150ms;
 }
 
+/* Lightweight mobile effect tiers. These touch only decoration, not reading
+   transitions, navigation or content. System reduced motion is always static. */
+html[data-effect-quality='low'] .star-field,
+html[data-effect-quality='low'] .cover-wave,
+html[data-effect-quality='low'] .scroll-hint b,
+html[data-effect-quality='static'] .star-field,
+html[data-effect-quality='static'] .cover-wave,
+html[data-effect-quality='static'] .scroll-hint b,
+html[data-effects-paused='true'] .star-field,
+html[data-effects-paused='true'] .cover-wave,
+html[data-effects-paused='true'] .scroll-hint b {
+  animation: none !important;
+}
+html[data-effect-quality='low'] .site-wallpaper,
+html[data-effect-quality='static'] .site-wallpaper {
+  filter: none !important;
+}
+html[data-effect-quality='static'] .glitch-name,
+html[data-effects-paused='true'] .glitch-name {
+  animation: none !important;
+}
+
 /* Article tables: keep real table layout so auto layout can wrap text, and let
    the wrapper (`.overflow-x-auto`) own horizontal scrolling. The previous
    `display: block` made the table itself the scroll container at a fixed 100%
