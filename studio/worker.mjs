@@ -67,10 +67,9 @@ function validatePng(buffer) {
     throw new Error('Use an 8-bit RGB or RGBA PNG')
   }
   if (bytes[26] !== 0 || bytes[27] !== 0 || bytes[28] !== 0) throw new Error('Unsupported PNG encoding')
-  if (!String.fromCharCode(...bytes.slice(-8, -4)).includes('IEND')) {
-    // The IEND chunk type is exactly 8 bytes before the final CRC.
-    if (String.fromCharCode(...bytes.slice(-8, -4)) !== 'IEND') throw new Error('Incomplete PNG')
-  }
+  // PNG ends with a zero-length IEND chunk (length, type and CRC).
+  if (bytes.length < 45 || view.getUint32(bytes.length - 12) !== 0 ||
+      String.fromCharCode(...bytes.slice(-8, -4)) !== 'IEND') throw new Error('Incomplete PNG')
   return { width, height }
 }
 function base64(bytes) {
