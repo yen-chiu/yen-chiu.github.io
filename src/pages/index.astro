@@ -602,7 +602,7 @@ const entries = [
   .eyebrow {
     font-size: 0.7rem;
     letter-spacing: 0.3em;
-    margin: 1.7rem 0 0.6rem;
+    margin: 1.35rem 0 0.5rem;
     opacity: 0.8;
   }
   h1 {
@@ -640,7 +640,7 @@ const entries = [
   .tagline {
     font-size: 1rem;
     letter-spacing: 0.18em;
-    margin: 1rem 0 1.8rem;
+    margin: 0.8rem 0 1.55rem;
     color: #ffffffe0;
   }
   .cover-actions {
@@ -890,6 +890,24 @@ const entries = [
     }
     .tagline {
       font-size: 0.88rem;
+    }
+  }
+  /* Keep the float on the button: the scrolling hero transforms its wrapper. */
+  @keyframes home-avatar-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -6px, 0); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-intro :global(interactive-avatar button) {
+      animation: home-avatar-float 3.6s ease-in-out infinite;
+    }
+  }
+  :global(html.motion-off) .hero-intro :global(interactive-avatar button) {
+    animation: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-intro :global(interactive-avatar button) {
+      animation: none !important;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
