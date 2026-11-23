@@ -45,14 +45,7 @@ const entries = [
       </div>
 
       <section class='home-cover' aria-label='首页封面'>
-        <img
-          class='cover-image'
-          src={sitePath('/images/moonlit-cover.svg')}
-          alt=''
-          width='1600'
-          height='700'
-          fetchpriority='high'
-        />
+        <div class='cover-image' aria-hidden='true'></div>
         <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
         <div class='hero-intro'>
           <InteractiveAvatar
@@ -157,7 +150,37 @@ const entries = [
       const { signal } = this.controller,
         cover = this.querySelector<HTMLElement>('.home-cover')!,
         intro = this.querySelector<HTMLElement>('.hero-intro')!,
-        credit = this.querySelector<HTMLElement>('.cover-credit')!
+        credit = this.querySelector<HTMLAnchorElement>('.cover-credit')!
+      const syncCoverCredit = () => {
+        const appearance = window.wendellAppearance?.get()
+        const chosen = appearance?.homeWallpaperSource === 'inherit' || !appearance?.homeWallpaperSource
+          ? appearance?.wallpaperSource : appearance.homeWallpaperSource
+        const source = chosen || '/images/moonlit-cover.svg'
+        const label = credit.querySelector<HTMLElement>('.cover-credit-label')
+        const arrow = credit.querySelector<HTMLElement>('.cover-credit-arrow')
+        const presets: Record<string, string> = {
+          '/images/moonlit-cover.svg': '星夜',
+          '/images/wallpapers/aurora-ridge.svg': '极光',
+          '/images/wallpapers/silver-mist.svg': '晨雾',
+          '/images/wallpapers/rose-twilight.svg': '晚霞'
+        }
+        if (source === 'uploaded' || source === 'home-uploaded') {
+          credit.removeAttribute('href')
+          credit.removeAttribute('target')
+          credit.removeAttribute('rel')
+          if (label) label.textContent = '我的壁纸 · 保存在此浏览器'
+          if (arrow) arrow.hidden = true
+        } else {
+          credit.href = source.startsWith('https://')
+            ? source
+            : 'https://github.com/yen-chiu/yen-chiu.github.io/blob/main/public' + source
+          credit.target = '_blank'
+          credit.rel = 'noopener noreferrer'
+          if (label) label.textContent = presets[source]
+            ? presets[source] + ' · 本站矢量壁纸' : '自定义壁纸 · 外部图片'
+          if (arrow) arrow.hidden = false
+        }
+      }
       const reduced = matchMedia('(prefers-reduced-motion: reduce)')
       const motionReduced = () => (globalThis as any).wendellMotion?.reduce?.() ?? reduced.matches
       const layers = [
@@ -335,7 +358,11 @@ const entries = [
       this.viewportObserver.observe(document.documentElement)
       window.addEventListener('scroll', schedule, { passive: true, signal })
       window.addEventListener('resize', resize, { signal })
-      window.addEventListener('wendell:appearance', schedule, { signal })
+      window.addEventListener('wendell:appearance', () => {
+        syncCoverCredit()
+        schedule()
+      }, { signal })
+      syncCoverCredit()
       reduced.addEventListener(
         'change',
         () => {
@@ -432,10 +459,20 @@ const entries = [
     z-index: -1;
   }
   .cover-image {
-    object-position: 65% center;
+    background-image: var(--home-wallpaper-image, url('/images/moonlit-cover.svg'));
+    background-size: cover;
+    background-position: 65% center;
+    background-repeat: no-repeat;
   }
   .cover-shade {
     background: linear-gradient(180deg, #10172f44, #10172f33 30%, #10172fbb);
+  }
+  /* White home-cover copy must stay readable on bright custom photography. */
+  :global(html[data-home-wallpaper-custom='true']) .cover-shade {
+    background: linear-gradient(180deg, #0a10275c, #0a10276b 42%, #0a1027d8);
+  }
+  :global(html[data-home-wallpaper-custom='true']) .star-field {
+    display: none;
   }
   .star-field {
     background-image:
