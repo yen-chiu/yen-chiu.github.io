@@ -92,13 +92,15 @@ span.katex-display {
 }
 
 .katex-html {
-  overflow: auto hidden;
-  padding: 3px;
+  /* The display wrapper owns horizontal scrolling. Nested scroll containers
+     hide the true equation width and can leave its first columns off-screen. */
+  overflow: visible;
+  padding: 0;
 }
 
 .katex-html .base {
   margin-block: 0;
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 .katex-html .tag {
@@ -654,11 +656,30 @@ html.dark #content .astro-code pre span {
 }
 #content .katex-display > .katex {
   display: inline-block;
-  min-width: max-content;
+  width: max-content;
+  min-width: 0;
+  max-width: none;
   text-align: left;
   white-space: nowrap;
 }
-#content .katex-html { overflow: visible; }
+#content .katex-display .katex-html {
+  overflow: visible;
+  padding: 0;
+}
+#content .katex-display .katex-html .base {
+  margin-inline: 0;
+}
+/* Long expressions remain full-size and scroll inside the reading column.
+   A subtle inset edge signals that the equation is an independent viewport. */
+@media (max-width: 767px) {
+  #content .katex-display {
+    margin-inline: 0;
+    padding: .65rem 0 .9rem;
+    scroll-padding-inline: 0;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid hsl(var(--foreground) / .12);
+  }
+}
 
 /* Mermaid: dense diagrams scroll locally rather than compressing labels. */
 #content .mermaid {
