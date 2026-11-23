@@ -8,10 +8,12 @@
   const defaults = {
     hue: 267, theme: 'system', wallpaper: 'banner',
     wallpaperSource: DEFAULT_SOURCE, wallpaperOpacity: 24,
+    homeWallpaperSource: 'inherit',
     cover: true, layout: 'list', title: true, waves: true, motion: 'system', silverInk: false
   }
   const safeSource = value => {
     if (value === 'uploaded') return value
+    if (value === 'home-uploaded' || value === 'inherit') return null
     if (typeof value !== 'string' || value.length > 2048) return null
     if (/^\/images\/(?:moonlit-cover\.svg|wallpapers\/[a-z0-9-]+\.svg)$/.test(value)) return value
     try {
@@ -28,6 +30,10 @@
       theme: ['system', 'light', 'dark'].includes(v.theme) ? v.theme : defaults.theme,
       wallpaper: ['banner', 'fullscreen', 'overlay'].includes(v.wallpaper) ? v.wallpaper : defaults.wallpaper,
       wallpaperSource: safeSource(v.wallpaperSource) || DEFAULT_SOURCE,
+      homeWallpaperSource: v.homeWallpaperSource === 'inherit' || v.homeWallpaperSource == null
+        ? 'inherit'
+        : v.homeWallpaperSource === 'home-uploaded' ? 'home-uploaded'
+        : safeSource(v.homeWallpaperSource) || 'inherit',
       wallpaperOpacity: typeof v.wallpaperOpacity === 'number' && Number.isFinite(v.wallpaperOpacity)
         ? Math.max(8, Math.min(75, Math.round(v.wallpaperOpacity))) : defaults.wallpaperOpacity,
       cover: typeof v.cover === 'boolean' ? v.cover : v.wallpaper === 'hidden' ? false : defaults.cover,
@@ -40,6 +46,7 @@
   }
   let settings = { ...defaults }
   let uploadedObjectUrl = null
+  let homeUploadedObjectUrl = null
   try {
     const saved = localStorage.getItem(key)
     settings = normalize(saved ? JSON.parse(saved) : { ...defaults, theme: localStorage.getItem('theme') || 'system' })
@@ -71,6 +78,15 @@
       ? uploadedObjectUrl : settings.wallpaperSource
     root.style.setProperty('--site-wallpaper-image', source ? 'url(' + JSON.stringify(source) + ')' : 'none')
     root.style.setProperty('--site-wallpaper-opacity', String(settings.wallpaperOpacity / 100))
+    // Home cover follows the selected image by default, even if inner pages use
+    // the plain background mode. A separate image can override that choice.
+    const homeSelection = settings.homeWallpaperSource === 'inherit'
+      ? settings.wallpaperSource : settings.homeWallpaperSource
+    const homeImage = homeSelection === 'uploaded' ? uploadedObjectUrl
+      : homeSelection === 'home-uploaded' ? homeUploadedObjectUrl : homeSelection
+    root.style.setProperty('--home-wallpaper-image',
+      'url(' + JSON.stringify(homeImage || DEFAULT_SOURCE) + ')')
+    root.dataset.homeWallpaperCustom = String(homeSelection !== DEFAULT_SOURCE)
     root.dataset.homeCover = String(settings.cover)
     root.dataset.postLayout = settings.layout
     root.dataset.bannerTitle = String(settings.title)
@@ -100,29 +116,36 @@
     request.onerror = () => reject(request.error || new Error('无法访问本地图片存储'))
     request.onblocked = () => reject(new Error('图片存储被其他页面占用'))
   })
-  const readUpload = async () => {
+  const readUpload = async (slot = 'current') => {
     const db = await openDB()
     return new Promise((resolve, reject) => {
       const tx = db.transaction('images', 'readonly')
-      const request = tx.objectStore('images').get('current')
+      const request = tx.objectStore('images').get(slot)
       request.onsuccess = () => resolve(request.result instanceof Blob ? request.result : null)
       request.onerror = () => reject(request.error || new Error('读取本地图片失败'))
       tx.oncomplete = () => db.close()
       tx.onerror = () => { db.close(); reject(tx.error) }
     })
   }
-  const writeUpload = async blob => {
+  const writeUpload = async (blob, slot = 'current') => {
     const db = await openDB()
     return new Promise((resolve, reject) => {
       const tx = db.transaction('images', 'readwrite')
-      if (blob) tx.objectStore('images').put(blob, 'current')
-      else tx.objectStore('images').delete('current')
+      if (blob) tx.objectStore('images').put(blob, slot)
+      else tx.objectStore('images').delete(slot)
       tx.oncomplete = () => { db.close(); resolve() }
       tx.onerror = () => { db.close(); reject(tx.error || new Error('保存本地图片失败')) }
     })
   }
-  const useBlob = blob => {
+  const useBlob = (blob, slot = 'current') => {
     const nextUrl = URL.createObjectURL(blob)
+    if (slot === 'home') {
+      if (homeUploadedObjectUrl) URL.revokeObjectURL(homeUploadedObjectUrl)
+      homeUploadedObjectUrl = nextUrl
+      document.documentElement.style.setProperty('--home-uploaded-wallpaper-image',
+        'url(' + JSON.stringify(nextUrl) + ')')
+      return
+    }
     if (uploadedObjectUrl) URL.revokeObjectURL(uploadedObjectUrl)
     uploadedObjectUrl = nextUrl
     document.documentElement.style.setProperty('--site-uploaded-wallpaper-image',
@@ -145,6 +168,25 @@
     useBlob(file)
     set({ wallpaperSource: 'uploaded', wallpaper: 'fullscreen' })
   }
+  const uploadHome = async file => {
+    await validateImage(file)
+    await writeUpload(file, 'home')
+    useBlob(file, 'home')
+    set({ homeWallpaperSource: 'home-uploaded' })
+  }
+  const useHomeUpload = async () => {
+    const blob = await readUpload('home')
+    if (!blob) throw new Error('没有找到保存的首页图片，请重新上传')
+    useBlob(blob, 'home')
+    set({ homeWallpaperSource: 'home-uploaded' })
+  }
+  const clearHomeUpload = async () => {
+    await writeUpload(null, 'home')
+    if (homeUploadedObjectUrl) URL.revokeObjectURL(homeUploadedObjectUrl)
+    homeUploadedObjectUrl = null
+    document.documentElement.style.removeProperty('--home-uploaded-wallpaper-image')
+    if (settings.homeWallpaperSource === 'home-uploaded') set({ homeWallpaperSource: 'inherit' })
+  }
   const useUpload = async () => {
     const blob = await readUpload()
     if (!blob) throw new Error('没有找到保存的图片，请重新上传')
@@ -160,7 +202,14 @@
   }
   window.wendellAppearance = {
     get: () => ({ ...settings }), set, reset: () => set({ ...defaults }), apply,
-    upload, useUpload, clearUpload, hasUpload: async () => {
+    upload, useUpload, clearUpload,
+    uploadHome, useHomeUpload, clearHomeUpload,
+    hasHomeUpload: async () => {
+      const blob = await readUpload('home')
+      if (blob && !homeUploadedObjectUrl) useBlob(blob, 'home')
+      return Boolean(blob)
+    },
+    hasUpload: async () => {
       const blob = await readUpload()
       if (blob && !uploadedObjectUrl) useBlob(blob)
       return Boolean(blob)
@@ -169,10 +218,26 @@
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply)
   document.addEventListener('astro:page-load', apply)
   apply()
-  if (settings.wallpaperSource === 'uploaded') {
+  if (settings.wallpaperSource === 'uploaded' ||
+      (settings.homeWallpaperSource === 'inherit' && settings.wallpaperSource === 'uploaded') ||
+      settings.homeWallpaperSource === 'uploaded') {
     readUpload().then(blob => {
       if (blob) { useBlob(blob); apply() }
-      else set({ wallpaperSource: DEFAULT_SOURCE })
-    }).catch(() => set({ wallpaperSource: DEFAULT_SOURCE }))
+      else {
+        const next = { wallpaperSource: DEFAULT_SOURCE }
+        if (settings.homeWallpaperSource === 'uploaded') next.homeWallpaperSource = 'inherit'
+        set(next)
+      }
+    }).catch(() => {
+      const next = { wallpaperSource: DEFAULT_SOURCE }
+      if (settings.homeWallpaperSource === 'uploaded') next.homeWallpaperSource = 'inherit'
+      set(next)
+    })
+  }
+  if (settings.homeWallpaperSource === 'home-uploaded') {
+    readUpload('home').then(blob => {
+      if (blob) { useBlob(blob, 'home'); apply() }
+      else set({ homeWallpaperSource: 'inherit' })
+    }).catch(() => set({ homeWallpaperSource: 'inherit' }))
   }
 })()
