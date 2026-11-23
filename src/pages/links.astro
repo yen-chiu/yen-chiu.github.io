@@ -122,13 +122,13 @@ const friendInfo = [
                 data-search={[link.name, link.intro, new URL(link.link).hostname].join(' ').toLowerCase()}>
                 {getIcon(link) && (
                   <img class='card-backdrop' src={sitePath(getIcon(link))} alt='' aria-hidden='true'
-                    loading='lazy' data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')} />
+                    loading='lazy' data-link-icon-backdrop />
                 )}
                 <span class='card-shade' aria-hidden='true'></span>
                 <span class='link-mark' aria-hidden='true'>
                   {getIcon(link) ? (
                     <img src={sitePath(getIcon(link))} width='56' height='56' alt=''
-                      loading='lazy' data-avatar-fallback={sitePath('/favicon/wendell-avatar-192.png')} />
+                      loading='lazy' data-link-icon data-fallback-mark={'mark' in link ? link.mark : link.name.slice(0, 1)} />
                   ) : 'mark' in link ? link.mark : '↗'}
                 </span>
                 <span class='link-copy'>
@@ -218,11 +218,15 @@ const friendInfo = [
         }
         friendGrid.replaceChildren(...cards)
       }
-      this.querySelectorAll<HTMLImageElement>('[data-avatar-fallback]').forEach(img => {
+      this.querySelectorAll<HTMLImageElement>('[data-link-icon]').forEach(img => {
         img.addEventListener('error', () => {
-          const fallback = img.dataset.avatarFallback
-          if (fallback && img.src !== new URL(fallback, location.href).href) img.src = fallback
+          const card = img.closest('.link-card')
+          card?.querySelector('[data-link-icon-backdrop]')?.remove()
+          img.replaceWith(document.createTextNode(img.dataset.fallbackMark || '↗'))
         }, { signal })
+      })
+      this.querySelectorAll<HTMLImageElement>('[data-link-icon-backdrop]').forEach(img => {
+        img.addEventListener('error', () => img.remove(), { signal })
       })
       let currentGroup = groupTabs[0].dataset.linkTab
       let currentFriendView = 'active'
