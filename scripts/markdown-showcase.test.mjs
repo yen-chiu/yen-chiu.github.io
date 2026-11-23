@@ -56,7 +56,11 @@ test('code fences and display math blocks remain paired', () => {
 
 test('mobile readability rules include internal scrolling for wide content', () => {
   const css = readFileSync('src/assets/styles/global.css', 'utf8')
-  assert.match(css, /span\.katex-display\s*\{[^}]*overflow-x:\s*auto/s)
+  assert.match(css, /#content \.katex-display\s*\{[^}]*overflow-x:\s*auto/s)
+  assert.match(css, /#content \.katex-display > \.katex\s*\{[^}]*width:\s*max-content/s)
+  assert.match(css, /#content \.katex-display > \.katex\s*\{[^}]*margin-inline:\s*auto/s)
+  assert.doesNotMatch(css, /span\.katex-display\s*\{/,
+    'Avoid competing global math scroll containers')
   // Wide tables scroll via the `.overflow-x-auto` wrapper rather than the table
   // element itself: a block-level table would be capped at 100% and squeeze its
   // columns. The table keeps real table layout and may grow past the column.
@@ -64,6 +68,16 @@ test('mobile readability rules include internal scrolling for wide content', () 
   assert.match(css, /#content table\s*\{[^}]*overflow-x:\s*visible/s)
   // Flex centering would push a wider-than-column table's left edge out of reach.
   assert.match(css, /#content \.overflow-x-auto\s*\{[^}]*justify-content:\s*flex-start/s)
+})
+
+test('Nernst derivation keeps short aligned relations apart from boxed long result', () => {
+  const chemistry = page.slice(page.indexOf('#### 化学篇'), page.indexOf('#### 再来一段论文式混合版面'))
+  const displays = [...chemistry.matchAll(/\$\$([\s\S]*?)\$\$/g)].map(match => match[1])
+  const aligned = displays.find(math => math.includes('\\Delta_{\\mathrm r}G'))
+  const boxed = displays.find(math => math.includes('\\boxed{') && math.includes('\\ln Q'))
+  assert.ok(aligned && boxed, 'Missing Nernst math sections')
+  assert.notEqual(aligned, boxed, 'Long boxed result must not widen the aligned relation table')
+  assert.match(aligned, /\\begin\{aligned\}/)
 })
 
 test('Mermaid chart types use distinct mobile sizing and one scroll container', () => {
