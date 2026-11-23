@@ -697,11 +697,15 @@ html.dark #content .astro-code pre span {
   margin-inline: auto;
 }
 @media (max-width: 767px) {
+  /* Gantt SVGs use their own viewBox. Forcing a large CSS min-width
+     magnifies text and gridlines on narrow screens. */
   #content .mermaid svg[aria-roledescription='gantt'],
   #content .mermaid svg[id*='gantt'] {
-    min-width: 720px;
-    max-width: none !important;
-    margin-inline: 0;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin-inline: auto;
   }
   /* Pie charts are overview graphics, not wide timelines. Keep them
      inside the reading column instead of forcing a 420px overflow. */
