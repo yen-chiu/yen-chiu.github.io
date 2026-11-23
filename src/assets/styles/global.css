@@ -72,16 +72,6 @@ html.motion-off *::after {
   animation-delay: 150ms;
 }
 
-/* [KaTeX] Keep long equations inside the reading column on narrow screens. */
-span.katex-display {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 0.7rem 0.5rem;
-  scrollbar-width: thin;
-}
-
 /* Article tables: keep real table layout so auto layout can wrap text, and let
    the wrapper (`.overflow-x-auto`) own horizontal scrolling. The previous
    `display: block` made the table itself the scroll container at a fixed 100%
@@ -673,7 +663,10 @@ html.dark #content .astro-code pre span {
   display: none;
 }
 
-/* Wide math: local scrolling, natural left origin, no viewport clipping. */
+/* KaTeX has one scroll owner. A max-content block with automatic inline
+   margins centers equations that fit, but uses a zero start margin when the
+   rendered math is wider than the reading column. This preserves the beginning
+   of long matrices/derivations without offsetting ordinary equations. */
 #content .katex-display {
   display: block;
   box-sizing: border-box;
@@ -682,17 +675,18 @@ html.dark #content .astro-code pre span {
   min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
-  text-align: left;
   overscroll-behavior-x: contain;
   scrollbar-width: thin;
-  padding-block: .5rem;
+  padding: .6rem 0 .75rem;
+  text-align: initial;
 }
 #content .katex-display > .katex {
-  display: inline-block;
+  display: block;
+  box-sizing: border-box;
   width: max-content;
-  min-width: 0;
   max-width: none;
-  text-align: left;
+  margin-inline: auto;
+  text-align: center;
   white-space: nowrap;
 }
 #content .katex-display .katex-html {
@@ -702,15 +696,10 @@ html.dark #content .astro-code pre span {
 #content .katex-display .katex-html .base {
   margin-inline: 0;
 }
-/* Long expressions remain full-size and scroll inside the reading column.
-   A subtle inset edge signals that the equation is an independent viewport. */
 @media (max-width: 767px) {
   #content .katex-display {
-    margin-inline: 0;
-    padding: .65rem 0 .9rem;
     scroll-padding-inline: 0;
     -webkit-overflow-scrolling: touch;
-    border-bottom: 1px solid hsl(var(--foreground) / .12);
   }
 }
 
