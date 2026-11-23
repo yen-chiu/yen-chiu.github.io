@@ -110,23 +110,15 @@ span.katex-display {
   padding-inline-start: 0.5rem;
 }
 
-/* [Mermaid constraints] */
+/* Mermaid base: chart-specific sizing is handled below, not here. */
 .mermaid {
-  overflow-x: auto;
+  min-width: 0;
   max-width: 100%;
   padding: 1rem 0;
-  display: flex;
-  justify-content: center;
   background: transparent !important;
 }
-
 .mermaid svg {
-  max-width: 100% !important;
-  height: auto !important;
-  background-color: transparent !important;
-}
-
-.dark .mermaid svg {
+  height: auto;
   background-color: transparent !important;
 }
 
@@ -681,49 +673,56 @@ html.dark #content .astro-code pre span {
   }
 }
 
-/* Mermaid: dense diagrams scroll locally rather than compressing labels. */
+/* Mermaid chart types need different mobile strategies.
+   Flow/sequence/gantt preserve readable labels in a scrollable viewport;
+   pies are scaled down and centered. Do not stretch the SVG viewBox. */
 #content .mermaid {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
-  text-align: center;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  text-align: center;
 }
 #content .mermaid svg {
   display: block;
   height: auto !important;
+  max-width: 100%;
   margin-inline: auto;
 }
 @media (max-width: 767px) {
-  /* Gantt SVGs use their own viewBox. Forcing a large CSS min-width
-     magnifies text and gridlines on narrow screens. */
-  #content .mermaid svg[aria-roledescription='gantt'],
-  #content .mermaid svg[id*='gantt'] {
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    height: auto !important;
-    margin-inline: auto;
-  }
-  /* Pie charts are overview graphics, not wide timelines. Keep them
-     inside the reading column instead of forcing a 420px overflow. */
-  #content .mermaid:has(svg[aria-roledescription='pie']),
-  #content .mermaid:has(svg[id*='pie']) {
-    overflow-x: hidden;
-  }
   #content .mermaid svg[aria-roledescription='pie'],
   #content .mermaid svg[id*='pie'] {
-    display: block;
     width: min(82%, 340px) !important;
     min-width: 0 !important;
     max-width: 100% !important;
     margin-inline: auto !important;
-    height: auto !important;
+  }
+  #content .mermaid:has(svg[aria-roledescription='pie']),
+  #content .mermaid:has(svg[id*='pie']) {
+    overflow-x: hidden;
+  }
+  /* Mermaid's native viewBox is retained. A min-width on the SVG
+     itself stretches the whole drawing and makes text enormous. */
+  #content .mermaid svg[aria-roledescription='gantt'],
+  #content .mermaid svg[id*='gantt'],
+  #content .mermaid svg[aria-roledescription='sequence'],
+  #content .mermaid svg[id*='sequence'] {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-inline: 0 !important;
+  }
+  #content .mermaid svg[aria-roledescription='flowchart'],
+  #content .mermaid svg[id*='flowchart'] {
+    width: auto;
+    max-width: 100%;
   }
 }
-
 /* Typst output is usually an SVG; contain it without cutting off text. */
 #content svg.typst-doc,
 #content .typst-doc,
