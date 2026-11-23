@@ -276,7 +276,7 @@ $$
 
 资料来源：[OpenStax《University Physics Volume 2》，第 16.1 节](https://openstax.org/books/university-physics-volume-2/pages/16-1-maxwells-equations-and-electromagnetic-waves)，特别是式 16.8—16.11。原文有一句很适合放在这里：
 
-> “With the correction for the displacement current, Maxwell’s equations take the form”
+> With the correction for the displacement current, Maxwell’s equations take the form
 
 这句话说的是：把位移电流一项补进安培环路定律后，四条电磁规律就能写成完整的形式。下面是**依据教材标准公式重新组织的演示**，不是整段翻译或原书页面截图。
 
@@ -654,7 +654,7 @@ $
 
 资料来源：[OpenStax《Chemistry 2e》，第 17.4 节](https://openstax.org/books/chemistry-2e/pages/17-4-potential-free-energy-and-equilibrium)。教材在推导 Nernst 方程时写道：
 
-> “Notice the reaction quotient, Q, appears in this equation”
+> Notice the reaction quotient, Q, appears in this equation
 
 这提醒我们，电池电势不仅与标准状态有关，也随反应体系的组成变化。先写出热力学的基本关系式，再与电池电势联系起来：
 
@@ -1071,7 +1071,7 @@ Vesper 配置了 Obsidian 风格的 Wiki-link 转换。下面的语法会被转�
 
 这段示例故意保持短小，避免测试页面被大量排版源码淹没：
 
-<Typst code={`
+<div class="typst-mobile-scroll">\n<Typst code={`
 #set page(width: auto, height: auto, margin: 0.8em)
 #set text(size: 11pt)
 
@@ -1087,9 +1087,7 @@ $ A = mat(1, 2; 3, 4) $
   [Alpha], [1.0], [OK],
   [Beta], [2.0], [OK],
 )
-`} />
-
-如果编译正常，上方应当直接出现一段排好的 Typst 内容，而不是原始 `#table` 源码。
+`} />\n</div>\n\n如果编译正常，上方应当直接出现一段排好的 Typst 内容，而不是原始 `#table` 源码。
 
 <Aside type="note" title="Typst 与 LaTeX 不是同一种语法">
 
