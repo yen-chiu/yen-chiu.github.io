@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 24
       - name: Install dependencies for icon discovery
-        run: npm ci --ignore-scripts
+        run: npm ci
       - name: Check links, discover icons and aggregate RSS
         run: |
           node scripts/check-friend-links.mjs
