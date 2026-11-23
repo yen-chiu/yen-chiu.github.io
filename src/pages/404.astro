@@ -69,7 +69,7 @@ const meta = {
         <div class="nf-body">
           <p class="nf-code" aria-hidden="true">404</p>
           <h1 class="nf-title" id="nf-title">这一页，没有被印出来。</h1>
-          <p class="nf-sub">地址可能改过，也可能它只是草稿里的一句话。<br>先读一页再走 —— 灯还在。</p>
+          <p class="nf-sub">地址可能换了，或者这页已经搬家。<br>试试下面的搜索，也许还能找回来。</p>
           <p class="nf-path"><span>你找的是</span><code id="nf-path">/404.html</code></p>
         </div>
     
@@ -81,7 +81,7 @@ const meta = {
             </svg>
             <label class="nf-sr" for="nf-q">站内搜索</label>
             <input id="nf-q" type="text" autocomplete="off" spellcheck="false"
-                   placeholder="找一找 —— 标题、标签，或者你记得的那句话"
+                   placeholder="搜标题、标签，或者记得的几个字"
                    role="combobox" aria-expanded="false" aria-controls="nf-results" aria-autocomplete="list">
             <kbd>/</kbd>
           </div>
@@ -99,7 +99,7 @@ const meta = {
             <span class="nf-sep" aria-hidden="true">·</span>
             <a href="/about">关于</a>
           </nav>
-          <p class="nf-hint">灯照到哪里，字才亮到哪里</p>
+          <p class="nf-hint">书没丢，只是这页暂时没翻到</p>
         </div>
       </section>
     </div>
@@ -742,7 +742,7 @@ const meta = {
 
     if (!index) {
       if (failed) {
-        meta.textContent = "检索暂时没翻动，先用下面的链接吧";
+        meta.textContent = "搜索出了点问题，先试试下面的链接";
         return;
       }
       meta.textContent = "正在翻书…";
