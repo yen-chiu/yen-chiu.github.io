@@ -6,7 +6,7 @@ const { compact = false } = Astro.props
 ---
 <vesper-music-player class:list={['vesper-music-player', compact && 'is-compact']} data-tracks={JSON.stringify(musicTracks)} aria-label='Vesper 音乐播放器'>
   <div class='music-deck'>
-    <div class='music-art' aria-hidden='true'><div class='music-vinyl'><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span></div><div class='music-tonearm'><span class='music-tonearm-pivot'></span><span class='music-tonearm-rod'></span><span class='music-tonearm-head'></span></div></div>
+    <div class='music-art' aria-hidden='true'><div class='music-vinyl'><span class='music-spindle'></span><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span></div><div class='music-tonearm'><span class='music-tonearm-pivot'></span><span class='music-tonearm-rod'></span><span class='music-tonearm-head'></span></div></div>
     <div class='music-info'>
       <span class='music-kicker'>VESPER · NIGHT RADIO</span>
       <h3 data-song-title>夜曲 Op. 9 No. 2</h3>
@@ -14,7 +14,7 @@ const { compact = false } = Astro.props
     </div>
     <div class='music-timeline'>
       <label class='sr-only' for={compact ? 'home-music-seek' : 'music-page-seek'}>播放进度</label>
-      <div class='music-wave-seek' data-wave-seek style='--music-progress:0%'>
+      <div class='music-wave-seek' data-wave-seek style='--music-progress:0%'><output class='music-seek-tooltip' data-seek-tooltip aria-hidden='true'>0:00</output>
         <div class='music-wave-bars' aria-hidden='true'>
           {Array.from({length:64},(_,i)=>{const h=5+Math.round(23*Math.abs(Math.sin(i*1.73)*Math.cos(i*.37)+.2*Math.sin(i*.61)));return <span class='music-wave-bar' style={`--bar-height:${h}px`}></span>})}
         </div>
@@ -51,7 +51,7 @@ const { compact = false } = Astro.props
       <input id='music-song-search' class='music-search' type='search' data-search placeholder='搜索曲目或演奏者…' />
       <ol data-playlist class='music-playlist'>
         {musicTracks.map(track=><li data-track-id={track.id} data-search-text={`${track.title} ${track.artist}`.toLowerCase()}>
-          <button type='button' data-select-song={track.id} class='music-track'><span class='music-track-symbol' aria-hidden='true'>♪</span><span class='music-track-name'><b>{track.title}</b><small>{track.artist}</small></span><span class='music-track-provider'>{track.provider}</span></button>
+          <button type='button' data-select-song={track.id} class='music-track'><span class='music-track-symbol' aria-hidden='true'><span class='music-track-note'>♪</span><span class='music-track-equalizer'><i></i><i></i><i></i></span></span><span class='music-track-name'><b>{track.title}</b><small>{track.artist}</small></span><span class='music-track-provider'>{track.provider}</span></button>
         </li>)}
       </ol>
     </div>
@@ -80,6 +80,8 @@ const { compact = false } = Astro.props
       const symbol=this.querySelector<HTMLElement>('[data-play-symbol]')!
       const seek=this.querySelector<HTMLInputElement>('[data-seek]')!
       const waveSeek=this.querySelector<HTMLElement>('[data-wave-seek]')!
+      const seekTooltip=this.querySelector<HTMLOutputElement>('[data-seek-tooltip]')!
+      let dragging=false
       const volume=this.querySelector<HTMLInputElement>('[data-volume]')!
       const current=this.querySelector<HTMLElement>('[data-current]')!
       const duration=this.querySelector<HTMLElement>('[data-duration]')!
@@ -110,8 +112,8 @@ const { compact = false } = Astro.props
         current.textContent=formatTime(snapshot.currentTime)
         duration.textContent=snapshot.duration?formatTime(snapshot.duration):'--:--'
         const fraction=snapshot.duration?Math.max(0,Math.min(1,snapshot.currentTime/snapshot.duration)):0
-        seek.value=String(Math.round(fraction*1000))
-        waveSeek.style.setProperty('--music-progress',`${fraction*100}%`)
+        if(!dragging){seek.value=String(Math.round(fraction*1000));waveSeek.style.setProperty('--music-progress',`${fraction*100}%`);seekTooltip.textContent=formatTime(snapshot.currentTime)}
+        seek.setAttribute('aria-valuetext',`${formatTime(snapshot.currentTime)} / ${formatTime(snapshot.duration)}`)
         volume.value=String(snapshot.volume)
         status.textContent=snapshot.status
         play.setAttribute('aria-label',snapshot.playing?'暂停':'播放')
@@ -122,14 +124,21 @@ const { compact = false } = Astro.props
         repeat.setAttribute('aria-label',snapshot.repeat==='off'?'循环模式：关闭':snapshot.repeat==='all'?'循环模式：列表循环':'循环模式：单曲循环')
         repeat.setAttribute('aria-pressed',String(snapshot.repeat!=='off'))
         shuffle.setAttribute('aria-pressed',String(snapshot.shuffle))
-        this.querySelectorAll<HTMLElement>('[data-track-id]').forEach(el=>el.classList.toggle('is-active',el.dataset.trackId===snapshot.id))
+        this.querySelectorAll<HTMLElement>('[data-track-id]').forEach(el=>{const active=el.dataset.trackId===snapshot.id;el.classList.toggle('is-active',active);el.classList.toggle('is-track-playing',active&&snapshot.playing);const button=el.querySelector('button');if(active)button?.setAttribute('aria-current','true');else button?.removeAttribute('aria-current')})
       })
       play.addEventListener('click',()=>{void musicEngine.toggle()},{signal})
       this.querySelector('[data-previous]')?.addEventListener('click',()=>{void musicEngine.previous()},{signal})
       this.querySelector('[data-next]')?.addEventListener('click',()=>{void musicEngine.next()},{signal})
       repeat.addEventListener('click',()=>musicEngine.cycleRepeat(),{signal})
       shuffle.addEventListener('click',()=>musicEngine.toggleShuffle(),{signal})
-      seek.addEventListener('input',()=>{waveSeek.style.setProperty('--music-progress',`${Number(seek.value)/10}%`);musicEngine.seek(Number(seek.value)/1000)},{signal})
+      const preview=()=>{const fraction=Number(seek.value)/1000;waveSeek.style.setProperty('--music-progress',`${fraction*100}%`);seekTooltip.textContent=formatTime(fraction*musicEngine.snapshot.duration);seek.setAttribute('aria-valuetext',`${seekTooltip.textContent} / ${formatTime(musicEngine.snapshot.duration)}`)}
+      seek.addEventListener('pointerdown',()=>{dragging=true;waveSeek.classList.add('is-scrubbing')},{signal})
+      const finish=()=>{dragging=false;waveSeek.classList.remove('is-scrubbing')}
+      seek.addEventListener('pointerup',finish,{signal})
+      seek.addEventListener('pointercancel',finish,{signal})
+      seek.addEventListener('blur',finish,{signal})
+      seek.addEventListener('input',()=>{preview();musicEngine.seek(Number(seek.value)/1000)},{signal})
+      seek.addEventListener('change',finish,{signal})
       volume.addEventListener('input',()=>musicEngine.setVolume(Number(volume.value)),{signal})
       this.querySelectorAll<HTMLButtonElement>('[data-select-song]').forEach(button=>button.addEventListener('click',()=>musicEngine.select(button.dataset.selectSong||''),{signal}))
       const search=this.querySelector<HTMLInputElement>('[data-search]')
@@ -153,13 +162,17 @@ const { compact = false } = Astro.props
   .music-tonearm-pivot{position:absolute;top:0;right:0;width:23%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 34%,#f0f2f4,#8e99a7 55%,#3b4552 72%);box-shadow:0 0 0 3px #273346}
   .music-tonearm-rod{position:absolute;top:10%;right:9%;width:9%;height:77%;border-radius:999px;background:linear-gradient(90deg,#697483,#e2e8ee 45%,#8996a5);transform:rotate(-18deg);transform-origin:top center}
   .music-tonearm-head{position:absolute;bottom:6%;right:26%;width:27%;height:12%;border-radius:3px;background:linear-gradient(145deg,#cbd4df,#475467);transform:rotate(-18deg)}
-  .music-vinyl{width:90%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:repeating-radial-gradient(circle at center,transparent 0 3px,#ffffff0c 4px 5px,transparent 6px 9px),conic-gradient(from 30deg,#192238,#384865,#11192d,#536178,#172036,#192238);box-shadow:0 12px 26px #0004;animation:music-spin 24s linear infinite;animation-play-state:paused}
+  .music-spindle{position:absolute;z-index:3;width:5px;height:5px;border-radius:50%;background:linear-gradient(145deg,#fff,#74869b);box-shadow:0 0 0 2px #1c293a;pointer-events:none}
+  .music-vinyl{position:relative;overflow:hidden;width:90%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:repeating-radial-gradient(circle at center,transparent 0 3px,#ffffff0c 4px 5px,transparent 6px 9px),conic-gradient(from 30deg,#192238,#384865,#11192d,#536178,#172036,#192238);box-shadow:0 12px 26px #0004;animation:music-spin 24s linear infinite;animation-play-state:paused}
+  .music-vinyl::after{content:'';position:absolute;inset:2%;border-radius:50%;pointer-events:none;background:conic-gradient(from 215deg,transparent 0deg,#ffffff12 38deg,transparent 62deg,transparent 220deg,#ffffff08 255deg,transparent 285deg)}
   .is-playing .music-vinyl{animation-play-state:running}
   .music-cover{width:100%;height:100%;object-fit:cover;border-radius:50%;grid-area:1/1}.music-cover[hidden],.music-vinyl-label[hidden]{display:none!important}
   .music-vinyl-label{grid-area:1/1;display:grid;place-items:center;width:28%;aspect-ratio:1;border-radius:50%;background:linear-gradient(130deg,#bdcfe0,#e4e9ee);color:#24324c;font-family:Georgia,serif;font-size:2rem}
   .music-info{min-height:5rem}.music-kicker{font-size:.63rem;letter-spacing:.17em;color:hsl(var(--muted-foreground))}.music-info h3{font-size:clamp(1.08rem,2.5vw,1.4rem);margin:.65rem 0 .2rem}.music-info p{font-size:.78rem;color:hsl(var(--muted-foreground));line-height:1.65}
   .music-timeline{width:100%;max-width:28rem;margin:1.35rem 0 .8rem}.music-timeline input{width:100%;accent-color:var(--music-accent);cursor:pointer}.music-times{display:flex;justify-content:space-between;color:hsl(var(--muted-foreground));font-size:.72rem;font-variant-numeric:tabular-nums}
   /* Decorative waveform, not a measured waveform of the remote recording. */
+  .music-seek-tooltip{position:absolute;z-index:3;left:clamp(24px,var(--music-progress),calc(100% - 24px));top:-15px;transform:translate(-50%,-50%);padding:.24rem .42rem;border-radius:.4rem;background:hsl(var(--foreground));color:hsl(var(--background));font-size:.7rem;font-variant-numeric:tabular-nums;opacity:0;pointer-events:none;transition:opacity .12s;white-space:nowrap}
+  .music-wave-seek:hover .music-seek-tooltip,.music-wave-seek:focus-within .music-seek-tooltip,.music-wave-seek.is-scrubbing .music-seek-tooltip{opacity:1}
   .music-wave-seek{position:relative;height:44px;width:100%;display:flex;align-items:center;--music-progress:0%}
   .music-wave-bars{position:absolute;inset:0;display:flex;align-items:center;gap:2px;pointer-events:none}
   .music-wave-bar{flex:1;min-width:0;height:var(--bar-height);max-height:30px;border-radius:999px;background:hsl(var(--muted-foreground)/.32)}
@@ -176,12 +189,13 @@ const { compact = false } = Astro.props
   .music-transport-button[aria-pressed='true']{color:var(--music-accent);background:hsl(var(--primary)/.12)}
   .music-status{min-height:1.4rem;margin:.9rem 0 0;font-size:.71rem;color:hsl(var(--muted-foreground));line-height:1.5}
   .music-side{display:flex;flex-direction:column}.music-tabs{align-self:center;background:hsl(var(--muted)/.55);border-radius:999px;padding:.25rem;display:flex;gap:.25rem}.music-tabs button{border:0;background:transparent;padding:.55rem 1.7rem;border-radius:999px;color:inherit;cursor:pointer;min-height:40px;font-size:.85rem}.music-tabs button[aria-selected='true']{background:var(--music-accent);color:hsl(var(--primary-foreground))}.music-pane{flex:1;min-height:0;overflow:auto;padding:1.5rem .2rem}.music-pane[hidden]{display:none}.music-empty{min-height:250px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.7rem;text-align:center}.music-empty>span{font-size:2.5rem;color:var(--music-accent)}.music-empty p{font-size:1.1rem}.music-empty small{font-size:.78rem;color:hsl(var(--muted-foreground))}.music-side-note{border-top:1px solid hsl(var(--border)/.7);padding-top:1rem;font-size:.7rem;line-height:1.6;color:hsl(var(--muted-foreground))}.music-side-note a{text-decoration:underline;text-underline-offset:3px}
-  .music-search{width:100%;padding:.7rem 1rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background));color:inherit;font-size:.85rem}.music-playlist{list-style:none;margin:.75rem 0 0;padding:0}.music-playlist li[hidden]{display:none}.music-track{width:100%;display:flex;align-items:center;text-align:left;gap:.8rem;background:transparent;border:0;border-radius:.8rem;padding:.7rem;cursor:pointer;color:inherit}.music-track:hover,.is-active .music-track{background:hsl(var(--primary)/.08)}.music-track-symbol{display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:.65rem;background:hsl(var(--primary)/.15);color:var(--music-accent)}.music-track-name{display:grid;flex:1;min-width:0;gap:.2rem}.music-track-name b{font-size:.85rem}.music-track-name small,.music-track-provider{font-size:.68rem;color:hsl(var(--muted-foreground))}.music-track-provider{white-space:nowrap}
+  .music-search{width:100%;padding:.7rem 1rem;border:1px solid hsl(var(--border));border-radius:999px;background:hsl(var(--background));color:inherit;font-size:.85rem}.music-playlist{list-style:none;margin:.75rem 0 0;padding:0}.music-playlist li[hidden]{display:none}.music-track{width:100%;display:flex;align-items:center;text-align:left;gap:.8rem;background:transparent;border:0;border-radius:.8rem;padding:.7rem;cursor:pointer;color:inherit}.music-track{position:relative;min-height:54px;transition:background-color .15s ease}.is-active .music-track::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:5px;background:var(--music-accent)}.music-track-equalizer{display:none;align-items:end;justify-content:center;gap:2px;height:16px}.music-track-equalizer i{width:3px;height:55%;border-radius:2px;background:currentColor}.music-track-equalizer i:nth-child(2){height:100%}.music-track-equalizer i:nth-child(3){height:72%}.is-active .music-track-note{display:none}.is-active .music-track-equalizer{display:flex}.is-track-playing .music-track-equalizer i{animation:music-meter .85s ease-in-out infinite alternate}.is-track-playing .music-track-equalizer i:nth-child(2){animation-delay:-.5s}.is-track-playing .music-track-equalizer i:nth-child(3){animation-delay:-.3s}.music-track:hover,.is-active .music-track{background:hsl(var(--primary)/.08)}.music-track-symbol{display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:.65rem;background:hsl(var(--primary)/.15);color:var(--music-accent)}.music-track-name{display:grid;flex:1;min-width:0;gap:.2rem}.music-track-name b{font-size:.85rem}.music-track-name small,.music-track-provider{font-size:.68rem;color:hsl(var(--muted-foreground))}.music-track-provider{white-space:nowrap}
   .is-compact{display:block;max-width:100%}.is-compact .music-deck{min-height:0;display:grid;grid-template-columns:4rem minmax(0,1fr);align-items:center;text-align:left;gap:.65rem 1rem;padding:1rem 1.2rem}.is-compact .music-art{grid-row:span 2;width:4rem;margin:0;filter:none}.is-compact .music-info{min-height:0}.is-compact .music-info h3{font-size:1rem;margin:.25rem 0}.is-compact .music-kicker{font-size:.6rem}.is-compact .music-info p{font-size:.7rem}.is-compact .music-timeline{grid-column:1/-1;max-width:none;margin:.15rem 0 0}.is-compact .music-actions{grid-column:1/-1;justify-content:flex-start;gap:1rem}.is-compact .music-main-button{width:2.75rem;height:2.75rem;font-size:1rem}.is-compact .music-status{grid-column:1/-1;margin:0}.music-more{margin-left:auto;font-size:.77rem;color:var(--music-accent);text-decoration:underline;text-underline-offset:3px}
+  @keyframes music-meter{to{height:25%}}
   @keyframes music-spin{to{transform:rotate(360deg)}}
   .music-empty .has-lyrics{white-space:pre-line;line-height:2;overflow-wrap:anywhere}
-  @media(max-width:680px){.music-actions{gap:.35rem .65rem}.music-transport-button{min-width:44px;min-height:44px}.music-volume{flex-basis:100%;justify-content:center}.is-compact .music-actions{justify-content:center}.is-compact .music-more{margin:0}.music-tabs button{min-height:44px}.vesper-music-player:not(.is-compact){grid-template-columns:1fr}.music-deck,.music-side{min-height:0}.music-side{min-height:300px}.music-art{width:clamp(150px,44vw,210px)}.music-pane{min-height:200px}.music-side-note{margin-top:0}}
-  @media(prefers-reduced-motion:reduce){.music-vinyl{animation:none!important}.music-tonearm{transition:none!important}}
+  @media(max-width:680px){.music-deck{padding:1.25rem}.music-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));justify-items:center;gap:.4rem}.music-actions .music-volume{grid-column:1/-1;justify-self:stretch;min-width:0}.music-actions .music-volume input{width:100%}.is-compact .music-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem}.is-compact .music-actions [data-shuffle],.is-compact .music-actions [data-repeat],.is-compact .music-actions .music-volume{display:none}.is-compact .music-actions .music-more{grid-column:1/-1;justify-self:center;margin:.2rem 0 0}.is-compact .music-art{width:3.5rem}.music-track-provider{display:none}.music-track{min-height:48px}.music-seek-tooltip{top:-12px}.music-actions{gap:.35rem .65rem}.music-transport-button{min-width:44px;min-height:44px}.music-volume{flex-basis:100%;justify-content:center}.is-compact .music-actions{justify-content:center}.is-compact .music-more{margin:0}.music-tabs button{min-height:44px}.vesper-music-player:not(.is-compact){grid-template-columns:1fr}.music-deck,.music-side{min-height:0}.music-side{min-height:300px}.music-art{width:clamp(150px,44vw,210px)}.music-pane{min-height:200px}.music-side-note{margin-top:0}}
+  @media(prefers-reduced-motion:reduce){.music-vinyl,.music-track-equalizer i{animation:none!important}.music-tonearm,.music-track{transition:none!important}}
   :global(html.motion-off) .music-tonearm,:global(html[data-effect-quality='low']) .music-tonearm,:global(html[data-effect-quality='static']) .music-tonearm{transition:none!important}
   :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='low']) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
   :global(html[data-effects-paused='true']) .music-vinyl{animation-play-state:paused!important}
