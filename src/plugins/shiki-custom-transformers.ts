@@ -128,9 +128,15 @@ export const addCollapse = (displayLineCount?: number): ShikiTransformer => {
     name: 'shiki-transformer-add-collapse',
     pre(node) {
       if (this.lines.length <= line) return
+      // node.properties.class 可能是数组（Shiki 主题会写成多个类名），
+      // 直接模板字符串会拼成 "astro-code,github-dark" 这种非法类名，
+      // 导致 .astro-code 选择器整体失效（语言标签、复制按钮掉到正文里）。
+      const existing = node.properties?.class
+      const asList = Array.isArray(existing) ? existing : typeof existing === 'undefined' || existing === null ? [] : [existing]
+      const classes = asList.filter((item) => typeof item === 'string' || typeof item === 'number').map(String)
       node.properties = {
         ...node.properties,
-        class: `${(node.properties?.class as string) || ''} collapsed`
+        class: [...classes, 'collapsed'].join(' ')
       }
       const collapse = h(
         'button',
