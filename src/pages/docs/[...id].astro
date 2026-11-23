@@ -132,16 +132,16 @@ const updatedLabel = updatedAt
     {/* 评论：和文章页同一套 Giscus，term 用文档标题 */}
     <section id='doc-comments' class='doc-comments'>
       <header class='doc-comments__head'>
-        <h3 class='doc-comments__title'>关于这篇文档</h3>
-        <p class='doc-comments__lede'>哪里写得不清楚、或者有更新的做法，都可以留在这里。</p>
+        <h3 class='doc-comments__title'>这篇哪里没讲清？</h3>
+        <p class='doc-comments__lede'>发现错字、步骤过期，或者有更省事的办法？告诉我一声。</p>
       </header>
       <Giscus term={`${title} | Wendell 文档`} defer />
     </section>
 
     {/* Show docs contents grid */}
     <div class='mt-10'>
-      <h3 class='text-xl font-bold text-foreground tracking-tight mb-2'>探索更多</h3>
-      <p class='text-sm text-muted-foreground mb-6'>精选文档与阅读入口；完整维护记录请前往 Folio。</p>
+      <h3 class='text-xl font-bold text-foreground tracking-tight mb-2'>接着读</h3>
+      <p class='text-sm text-muted-foreground mb-6'>这里还有几篇文档；完整的维护笔记在 Folio。</p>
       <DocsContents layout='grid' class='!mt-0' />
     </div>
   </div>
