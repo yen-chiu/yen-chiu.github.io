@@ -57,7 +57,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
       icon='list'
       eyebrow='CHANGELOG'
       title='更新日志'
-      description='只记站点本身真正变过的部分：先按代次、再按站点收拢，每条标出改动方式；文章发布不在这里。'
+      description='网站改过什么、什么时候改的，都按版本记在这里；普通文章发布不单独计入。'
       stats={[
         { label: '代次', value: generations.length },
         { label: '版本', value: versionCount },
@@ -142,12 +142,12 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
             <h2 id='changelog-comments-title'>说说这些改动</h2>
             <span>反馈与评论</span>
           </header>
-          <p class='feedback-lede'>哪条写漏了、哪个版本说得不清楚，都可以留在这里。每条版本下面也能先点一下「有用 / 没用」，再决定要不要细说。</p>
+          <p class='feedback-lede'>发现漏记、写错，或者哪个版本让你摸不着头脑？直接说。也可以先给版本点个「有用 / 没用」。</p>
 
           <div class='feedback-form' data-feedback>
             <label class='fb-field'>
               <span class='fb-label'>想说的话</span>
-              <textarea name='message' rows='4' maxlength='2000' placeholder='比如：v2.2026.11.03 那条漏了…'></textarea>
+              <textarea name='message' rows='4' maxlength='2000' placeholder='哪条版本记录写错了？说具体点更好找。'></textarea>
             </label>
             <label class='fb-field'>
               <span class='fb-label'>怎么联系你（可选）</span>
@@ -157,7 +157,7 @@ const versionCount = groups.reduce((sum, group) => sum + group.versions.length, 
               <button type='button' class='fb-submit' data-send>发送反馈</button>
               <button type='button' class='fb-copy' data-copy>复制内容</button>
             </div>
-            <p class='fb-hint'>站点没有后端：发送会用你的邮件客户端打开一封填好的信；不想开邮件就点「复制内容」粘到别处。</p>
+            <p class='fb-hint'>点击发送会唤起你的邮件应用，并填好内容；不会直接从网页发出去。不方便发邮件，也可以复制文字。</p>
             <p class='fb-state' data-state hidden></p>
           </div>
 
