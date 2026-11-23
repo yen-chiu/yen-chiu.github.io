@@ -9,9 +9,9 @@ const groups = [
   {
     id: 'interactive',
     title: '交互作品',
-    description: '从一个问题或一段故事开始，做成可以亲手体验的东西。'
+    description: '不止放截图，点进去真的能玩、能用。'
   },
-  { id: 'building', title: '网站与文档', description: '写作、整理，也维护这些作品背后的基础。' }
+  { id: 'building', title: '网站与文档', description: '博客和文档库也算作品，维护起来还挺费工夫。' }
 ]
 const external = (href: string) => href.startsWith('https:')
 ---
@@ -22,7 +22,7 @@ const external = (href: string) => href.startsWith('https:')
       icon='bulb'
       eyebrow='PROJECTS & EXPERIMENTS'
       title='项目'
-      description='把想法做成可以打开、也可以继续完善的东西。'
+      description='有些是认真做的，有些纯粹想试试。都摆在这里了。'
       stats={[
         { label: '项目', value: projects.length },
         { label: '交互作品', value: projects.filter((p) => p.group === 'interactive').length },
@@ -132,7 +132,7 @@ const external = (href: string) => href.startsWith('https:')
       ))
     }
     <p class='project-tail'>
-      更多代码和实验，放在 <a
+      还想看别的折腾？代码大多放在 <a
         href='https://github.com/yen-chiu'
         target='_blank'
         rel='noopener noreferrer'>GitHub ↗</a
