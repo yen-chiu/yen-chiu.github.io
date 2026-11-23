@@ -2,6 +2,14 @@
 
 Both exports use the same untouched-RGBA frames. GIF is only a compatibility
 asset; the lossless animated WebP is used on the site.
+
+Run this by hand after the source portrait changes:
+
+    python -m pip install Pillow
+    python scripts/generate-avatar-gif.py
+
+The two files under public/favicon/ are committed, so CI never needs Python:
+it only needs the checked-in assets.
 """
 import math
 from pathlib import Path
