@@ -44,7 +44,9 @@ def flatten(image):
 palette_source = Image.new("RGB", (SIZE * COUNT, SIZE), matte)
 for i, frame in enumerate(frames):
     palette_source.paste(flatten(frame), (i * SIZE, 0))
-palette = palette_source.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+# Reserve the top index: every pixel is shifted by one so slot 0 can stay
+# transparent, and a 256-colour palette would push index 255 out of range.
+palette = palette_source.quantize(colors=254, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
 shared_rgb = Image.new("P", (1, 1))
 shared_rgb.putpalette(palette.getpalette()[:765] + [0] * (768 - len(palette.getpalette()[:765])))
 
@@ -53,7 +55,9 @@ for frame in frames:
     quantized = flatten(frame).quantize(palette=shared_rgb, dither=Image.Dither.NONE)
     # Shift palette indices by one, keeping slot 0 fully transparent.
     raw = quantized.tobytes()
-    shifted = bytes(value + 1 for value in raw)
+    # +1 keeps slot 0 transparent; clamp in case the quantizer picked a padded
+    # palette entry (index 254) for a near-black pixel.
+    shifted = bytes(value + 1 if value < 254 else 254 for value in raw)
     alpha = frame.getchannel("A").tobytes()
     pixels = bytes(p if a >= 128 else 0 for p, a in zip(shifted, alpha))
     output = Image.frombytes("P", frame.size, pixels)
