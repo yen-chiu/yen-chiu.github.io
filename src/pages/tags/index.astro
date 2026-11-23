@@ -33,7 +33,7 @@ const graphLinks = [...tagLinkCounts.entries()].map(([key, count]) => {
 })
 
 const meta = {
-  description: "Browse all the topics I've written about",
+  description: '按标签查找本站文章',
   title: 'Tags'
 }
 ---
@@ -44,7 +44,7 @@ const meta = {
       icon='hashtag'
       eyebrow='Topic index'
       title='标签'
-      description='沿着主题浏览文章，并发现跨目录重复出现的概念与联系。'
+      description='想找建站笔记、技术折腾还是随笔？挑个标签看看。'
       stats={[
         { label: '标签', value: allTags.length },
         { label: '文章', value: allPosts.length },
@@ -121,7 +121,7 @@ const meta = {
           <div class='tag-empty'>
             <span class='tag-empty__icon'>#</span>
             <strong>暂无标签</strong>
-            <p>Published posts with tags will appear here.</p>
+            <p>文章有了标签，就会出现在这里。</p>
           </div>
         )
       }
