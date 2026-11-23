@@ -59,3 +59,12 @@ test('queue navigation and playback modes are wired to shared engine', () => {
   assert.match(player, /data-repeat/)
   assert.match(player, /data-shuffle/)
 })
+
+
+test('cover and lyrics fallback and mobile controls exist', () => {
+  assert.match(player, /data-cover/)
+  assert.match(player, /data-cover-fallback/)
+  assert.match(player, /data-lyrics-body/)
+  assert.match(player, /track\.lyrics\?\.trim\(\)/)
+  assert.match(player, /min-width:44px/)
+})
