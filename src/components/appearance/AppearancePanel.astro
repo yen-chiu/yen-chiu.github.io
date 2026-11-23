@@ -16,6 +16,7 @@ const wallpaperPresets = [
     <strong>外观设置</strong>
     <button type='button' data-appearance-close aria-label='关闭外观设置'>×</button>
   </header>
+  <h2 class='settings-group-title'>全站外观</h2>
   <fieldset>
     <legend>主题颜色 <output data-hue-value>267°</output></legend>
     <div class='presets'>{colors.map(color => (
@@ -40,6 +41,83 @@ const wallpaperPresets = [
   </fieldset>
 
   <fieldset>
+    <legend>动画效果</legend>
+    <div class='options'>
+      {['system', 'always', 'reduced'].map((value, i) => (
+        <button type='button' data-motion-choice={value} aria-pressed={i === 0 ? 'true' : 'false'}>
+          {['跟随系统', '总是开启', '减少动画'][i]}
+        </button>
+      ))}
+    </div>
+    <p class='setting-hint'>觉得页面太晃就选「减少动画」。想保留打字机、卡片浮现和点击烟花，可以选「总是开启」。</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>头像</legend>
+    <label class='switch'>动态头像（Animated WebP）<input type='checkbox' data-animated-avatar-choice /></label>
+    <p class='setting-hint'>默认开启动态头像。首页人物在固定头像框内轻微浮动，关于页使用 Animated WebP；选择「减少动画」或系统启用减少动态效果时保持静态。</p>
+  </fieldset>
+
+  <h2 class='settings-group-title'>首页</h2>
+  <fieldset>
+    <legend>首页封面</legend>
+    <label class='switch'>显示封面插画<input type='checkbox' data-cover-choice checked /></label>
+    <label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label>
+    <label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label>
+    <p class='setting-hint'>首页保留全屏入口，下滑后收起。</p>
+  </fieldset>
+
+  <fieldset class='home-wallpaper-settings'>
+    <legend>首页壁纸</legend>
+    <div class='options'>
+      <button type='button' data-home-wallpaper-mode='inherit' aria-pressed='true'>跟随内页</button>
+      <button type='button' data-home-wallpaper-mode='separate' aria-pressed='false'>单独设置</button>
+    </div>
+    <p class='setting-hint'>默认沿用内页选定的图片，但不改变首页封面的显示方式。也可以为首页单独设置图片。</p>
+    <div data-home-wallpaper-specific hidden>
+      <div class='wallpaper-gallery home-wallpaper-gallery' aria-label='首页壁纸预设'>
+        {wallpaperPresets.map(preset => (
+          <button type='button' class='wallpaper-tile' data-home-wallpaper-source={preset.src}
+            aria-pressed='false' title={preset.subtitle}>
+            <img src={sitePath(preset.src)} alt='' width='150' height='78' loading='lazy' decoding='async' />
+            <span class='wallpaper-tile-caption'><strong>{preset.name}</strong><small>{preset.subtitle}</small></span>
+          </button>
+        ))}
+        <button type='button' class='wallpaper-tile' data-home-wallpaper-use-uploaded hidden aria-pressed='false'>
+          <span class='home-uploaded-preview' aria-hidden='true'></span>
+          <span class='wallpaper-tile-caption'><strong>首页照片</strong><small>仅保存在本机</small></span>
+        </button>
+      </div>
+      <div class='wallpaper-custom'>
+        <label for='home-wallpaper-custom-url'>首页图片地址（HTTPS）</label>
+        <div class='wallpaper-url-row'>
+          <input id='home-wallpaper-custom-url' data-home-wallpaper-url type='url'
+            inputmode='url' maxlength='2048' spellcheck='false'
+            placeholder='https://example.com/cover.webp' autocomplete='off' />
+          <button type='button' data-home-wallpaper-url-apply>使用链接</button>
+        </div>
+      </div>
+      <div class='wallpaper-local-actions'>
+        <label class='wallpaper-upload-action' for='home-wallpaper-upload'>
+          上传首页图片
+          <input id='home-wallpaper-upload' type='file' data-home-wallpaper-file
+            accept='image/jpeg,image/png,image/webp,image/avif' />
+        </label>
+        <button type='button' data-home-wallpaper-clear-upload hidden>删除首页图片</button>
+      </div>
+      <p class='setting-hint'>支持 JPG / PNG / WebP / AVIF（不超过 8 MB）。首页上传的图片与内页上传图分开保存，都只留在当前浏览器。</p>
+      <p class='wallpaper-status' data-home-wallpaper-status role='status' aria-live='polite'></p>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>首页开场</legend>
+    <label class='switch'>银墨开场动画<input type='checkbox' data-silver-ink-choice /></label>
+    <p class='setting-hint'>默认关闭。开启后，每次新会话进入首页时最多播放一次银墨动画；不喜欢可以随时关掉。</p>
+  </fieldset>
+
+  <h2 class='settings-group-title'>内页</h2>
+  <fieldset>
     <legend>内页背景</legend>
     <div class='options wallpaper'>
       {['banner', 'fullscreen', 'overlay'].map((value, i) => (
@@ -52,7 +130,7 @@ const wallpaperPresets = [
   </fieldset>
 
   <fieldset class='wallpaper-settings'>
-    <legend>选择壁纸</legend>
+    <legend>内页壁纸图片</legend>
     <div class='wallpaper-gallery' aria-label='壁纸预设'>
       {wallpaperPresets.map(preset => (
         <button type='button' class='wallpaper-tile' data-wallpaper-source={preset.src}
@@ -99,84 +177,15 @@ const wallpaperPresets = [
     <p class='wallpaper-status' data-wallpaper-status role='status' aria-live='polite'></p>
   </fieldset>
 
-  <fieldset class='home-wallpaper-settings'>
-    <legend>首页壁纸</legend>
-    <div class='options'>
-      <button type='button' data-home-wallpaper-mode='inherit' aria-pressed='true'>跟随内页</button>
-      <button type='button' data-home-wallpaper-mode='separate' aria-pressed='false'>单独设置</button>
-    </div>
-    <p class='setting-hint'>跟随内页只共享图片，不改变首页全屏封面。选择单独设置后，首页和文章可以用两张不同的图。</p>
-    <div data-home-wallpaper-specific hidden>
-      <div class='wallpaper-gallery home-wallpaper-gallery' aria-label='首页壁纸预设'>
-        {wallpaperPresets.map(preset => (
-          <button type='button' class='wallpaper-tile' data-home-wallpaper-source={preset.src}
-            aria-pressed='false' title={preset.subtitle}>
-            <img src={sitePath(preset.src)} alt='' width='150' height='78' loading='lazy' decoding='async' />
-            <span class='wallpaper-tile-caption'><strong>{preset.name}</strong><small>{preset.subtitle}</small></span>
-          </button>
-        ))}
-        <button type='button' class='wallpaper-tile' data-home-wallpaper-use-uploaded hidden aria-pressed='false'>
-          <span class='home-uploaded-preview' aria-hidden='true'></span>
-          <span class='wallpaper-tile-caption'><strong>首页照片</strong><small>仅保存在本机</small></span>
-        </button>
-      </div>
-      <div class='wallpaper-custom'>
-        <label for='home-wallpaper-custom-url'>首页图片地址（HTTPS）</label>
-        <div class='wallpaper-url-row'>
-          <input id='home-wallpaper-custom-url' data-home-wallpaper-url type='url'
-            inputmode='url' maxlength='2048' spellcheck='false'
-            placeholder='https://example.com/cover.webp' autocomplete='off' />
-          <button type='button' data-home-wallpaper-url-apply>使用链接</button>
-        </div>
-      </div>
-      <div class='wallpaper-local-actions'>
-        <label class='wallpaper-upload-action' for='home-wallpaper-upload'>
-          上传首页图片
-          <input id='home-wallpaper-upload' type='file' data-home-wallpaper-file
-            accept='image/jpeg,image/png,image/webp,image/avif' />
-        </label>
-        <button type='button' data-home-wallpaper-clear-upload hidden>删除首页图片</button>
-      </div>
-      <p class='setting-hint'>支持 JPG / PNG / WebP / AVIF（不超过 8 MB）。首页上传的图片与内页上传图分开保存，都只留在当前浏览器。</p>
-      <p class='wallpaper-status' data-home-wallpaper-status role='status' aria-live='polite'></p>
-    </div>
-  </fieldset>
-
+  <h2 class='settings-group-title'>文章列表</h2>
   <fieldset>
-    <legend>文章布局</legend>
+    <legend>文章列表布局</legend>
     <div class='options'>
       <button type='button' data-layout-choice='list' aria-pressed='true'>列表</button>
       <button type='button' data-layout-choice='grid' aria-pressed='false'>网格</button>
     </div>
   </fieldset>
-  <fieldset>
-    <legend>动画效果</legend>
-    <div class='options'>
-      {['system', 'always', 'reduced'].map((value, i) => (
-        <button type='button' data-motion-choice={value} aria-pressed={i === 0 ? 'true' : 'false'}>
-          {['跟随系统', '总是开启', '减少动画'][i]}
-        </button>
-      ))}
-    </div>
-    <p class='setting-hint'>觉得页面太晃就选「减少动画」。想保留打字机、卡片浮现和点击烟花，可以选「总是开启」。</p>
-  </fieldset>
-  <fieldset>
-    <legend>头像</legend>
-    <label class='switch'>动态头像（Animated WebP）<input type='checkbox' data-animated-avatar-choice /></label>
-    <p class='setting-hint'>默认开启动态头像。首页人物在固定头像框内轻微浮动，关于页使用 Animated WebP；选择「减少动画」或系统启用减少动态效果时保持静态。</p>
-  </fieldset>
-  <fieldset>
-    <legend>首页开场</legend>
-    <label class='switch'>银墨开场动画<input type='checkbox' data-silver-ink-choice /></label>
-    <p class='setting-hint'>默认关闭。开启后，每次新会话进入首页时最多播放一次银墨动画；不喜欢可以随时关掉。</p>
-  </fieldset>
-  <fieldset>
-    <legend>首页封面</legend>
-    <label class='switch'>显示封面插画<input type='checkbox' data-cover-choice checked /></label>
-    <label class='switch'>显示标题<input type='checkbox' data-title-choice checked /></label>
-    <label class='switch'>轻微波浪<input type='checkbox' data-waves-choice /></label>
-    <p class='setting-hint'>首页保留全屏入口，下滑后收起。</p>
-  </fieldset>
+
   <button class='reset' type='button' data-appearance-reset>恢复默认外观</button>
 </appearance-panel>
 
@@ -489,6 +498,16 @@ const wallpaperPresets = [
   button { font:inherit;cursor:pointer;color:inherit; }
   button:disabled { cursor:wait;opacity:.5; }
   header button { border:0;background:transparent;font-size:1.3rem;min-width:44px;min-height:44px; }
+  .settings-group-title {
+    margin:1.55rem 0 .7rem;
+    padding:0 0 .4rem;
+    border-bottom:1px solid hsl(var(--border)/.65);
+    font-size:.82rem;
+    font-weight:700;
+    line-height:1.6;
+    color:hsl(var(--foreground));
+  }
+  header + .settings-group-title { margin-top:.75rem; }
   fieldset { border:0;padding:0;margin:1rem 0;min-width:0; }
   legend { display:flex;justify-content:space-between;width:100%;font-size:.78rem;font-weight:650;margin-bottom:.65rem; }
   output { color:hsl(var(--primary));font-variant-numeric:tabular-nums; }
