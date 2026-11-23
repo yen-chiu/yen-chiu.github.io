@@ -1,20 +1,20 @@
 {
-  "checkedAt": "2026-11-22T19:33:26.424Z",
+  "checkedAt": "2026-11-23T15:00:04.703Z",
   "summary": {
-    "healthy": 9,
+    "healthy": 10,
     "suspect": 0,
     "down": 0
   },
   "links": [
     {
       "url": "https://yenchiu.com/",
-      "name": "我的博客",
+      "name": "YenChiu · Vesper 博客",
       "group": "own",
       "state": "healthy",
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://github.com/yen-chiu",
@@ -24,17 +24,17 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
-      "url": "https://github.com/yen-chiu/folio",
-      "name": "Folio",
+      "url": "https://yenchiu.com/folio/",
+      "name": "Folio · 文档库",
       "group": "own",
       "state": "healthy",
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://fuwari.vercel.app/",
@@ -44,7 +44,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://mizuki.mysqil.com/",
@@ -54,7 +54,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://astro.build/",
@@ -64,7 +64,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://996.icu/",
@@ -74,7 +74,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://996.ninja/",
@@ -84,7 +84,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     },
     {
       "url": "https://lemonadorable.github.io/",
@@ -94,7 +94,17 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-22T19:33:26.424Z"
+      "checkedAt": "2026-11-23T15:00:04.703Z"
+    },
+    {
+      "url": "https://www.aibrium.cn/",
+      "name": "Frud's Blog",
+      "group": "friends",
+      "state": "healthy",
+      "code": 200,
+      "failures": 0,
+      "error": null,
+      "checkedAt": "2026-11-23T15:00:04.703Z"
     }
   ]
 }
