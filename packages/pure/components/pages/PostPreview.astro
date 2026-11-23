@@ -44,8 +44,11 @@ const postDate = data.updatedDate ?? data.publishDate ?? new Date(0)
         <Image
           alt={data.heroImage.alt || data.title}
           class='cover-image absolute end-0 top-0 z-0 h-2/3 w-full rounded-3xl object-cover opacity-30 transition-all duration-500 group-hover:opacity-60 md:h-full md:w-3/5 group-hover:scale-105'
-          loading='eager'
           {...data.heroImage}
+          loading='lazy'
+          decoding='async'
+          widths={[320, 480, 640, 960]}
+          sizes='(max-width: 767px) calc(100vw - 2rem), (max-width: 1200px) 45vw, 480px'
         />
       )
     }
