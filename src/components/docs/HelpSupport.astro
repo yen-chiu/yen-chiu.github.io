@@ -3,7 +3,7 @@ const {editPath,repoUrl='https://github.com/yen-chiu/yen-chiu.github.io',class:c
 const email='yenchiu.he@gmail.com'
 ---
 <section class:list={['help-support',className]} aria-label='文档反馈与维护'>
- <h2>一起完善这份文档</h2><p>有疑问或发现错误，欢迎联系 Wendell，也可以直接提交修改。</p>
+ <h2>这页有错？告诉我</h2><p>链接失效、步骤过期，或者哪句没讲明白，都可以来反馈。也欢迎直接提交修改。</p>
  <div class='help-actions'><a href={`mailto:${email}?subject=${encodeURIComponent('博客文档反馈')}`}>邮件反馈 ↗</a>{editPath&&<a href={editPath} target='_blank' rel='noopener noreferrer'>编辑此页 ↗</a>}<a href={`${repoUrl}/issues`} target='_blank' rel='noopener noreferrer'>报告问题 ↗</a><a href='https://yenchiu.com/folio/' target='_blank' rel='noopener noreferrer'>完整文档库 ↗</a></div>
  <small>{email}</small>
 </section>
