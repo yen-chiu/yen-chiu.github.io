@@ -1071,7 +1071,8 @@ Vesper 配置了 Obsidian 风格的 Wiki-link 转换。下面的语法会被转�
 
 这段示例故意保持短小，避免测试页面被大量排版源码淹没：
 
-<div class="typst-mobile-scroll">\n<Typst code={`
+<div class="typst-mobile-scroll">
+<Typst code={`
 #set page(width: auto, height: auto, margin: 0.8em)
 #set text(size: 11pt)
 
@@ -1087,7 +1088,10 @@ $ A = mat(1, 2; 3, 4) $
   [Alpha], [1.0], [OK],
   [Beta], [2.0], [OK],
 )
-`} />\n</div>\n\n如果编译正常，上方应当直接出现一段排好的 Typst 内容，而不是原始 `#table` 源码。
+`} />
+</div>
+
+如果编译正常，上方应当直接出现一段排好的 Typst 内容，而不是原始 `#table` 源码。
 
 <Aside type="note" title="Typst 与 LaTeX 不是同一种语法">
 
