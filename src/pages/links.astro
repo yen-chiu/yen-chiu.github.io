@@ -38,7 +38,7 @@ const friendInfo = [
       icon='link'
       eyebrow='WEB NEIGHBORHOOD'
       title='链接'
-      description='常去的地方，认真做的站点，以及慢慢认识的朋友。'
+      description='我的其他入口、做网站时参考过的地方，还有交换过友链的朋友。'
       stats={[
         { label: '收录站点', value: total },
         { label: '分组', value: groups.length },
@@ -141,7 +141,7 @@ const friendInfo = [
             ))}
           </div>
           <p class='directory-empty' data-link-empty hidden>
-            {group.id_name === 'friends' ? '这里为新朋友留了位置，也可以试试其他分类。' : '没有找到匹配的链接，试试其他关键词。'}
+            {group.id_name === 'friends' ? '还没有符合条件的友链。想交换链接？申请入口就在下面。' : '没搜到这个链接，换个词试试。'}
           </p>
           {group.id_name === 'friends' && (
             <section class='friend-history' id='friend-history-panel' role='tabpanel'
@@ -168,8 +168,8 @@ const friendInfo = [
     </link-directory>
     <section class='link-about' aria-labelledby='exchange-title'>
       <div>
-        <p class='kicker'>SAY HELLO</p><h2 id='exchange-title'>交换一个小小的入口</h2><p>
-          如果也在认真记录，欢迎带着站点名称、地址和一句介绍来打个招呼。
+        <p class='kicker'>SAY HELLO</p><h2 id='exchange-title'>交换友链，打个招呼</h2><p>
+          如果你也有自己的小站，欢迎交换友链。发来网址和一句介绍就行。
         </p><a href={sitePath('/about#comments')}>去留言板认识一下 ↗</a>
       </div><details>
         <summary>本站信息与收录说明 <span aria-hidden='true'>＋</span></summary><pre
@@ -265,8 +265,8 @@ const friendInfo = [
             if (!showingHistory && friends) {
               empty.textContent = currentFriendView === 'down'
                 ? '没有连续检测异常的友情链接。'
-                : '还没有符合条件的友链，欢迎来认识。'
-              if (query) empty.textContent = '没有找到匹配的链接，试试其他关键词。'
+                : '这个分类暂时没有收录链接。想交换友链，可以看看下方申请指南。'
+              if (query) empty.textContent = '没找到匹配的链接，换个词试试。'
             }
           }
           if (showingHistory) {
