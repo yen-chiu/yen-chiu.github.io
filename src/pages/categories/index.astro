@@ -61,7 +61,7 @@ const meta = {
       icon='package'
       eyebrow='Knowledge folders'
       title='分类'
-      description='从建站笔记、技术实践、生活记录三个栏目开始，按主题找到想读的文章。'
+      description='想找哪类文章？从文件夹点进去，一层一层翻就行。'
       stats={[
         { label: '目录', value: categories.length },
         { label: '一级目录', value: rootCategories.length },
@@ -215,7 +215,7 @@ const meta = {
               <section class='preview-section'>
                 <h3>结构说明</h3>
                 <p>
-                  文件夹决定文章的分类归属，但不会进入文章固定网址。移动知识库文件时，分类会自动更新。
+                  文章放在哪个文件夹，就归到哪个分类；网址不会跟着文件夹名变。以后挪动文件，分类也会自动更新。
                 </p>
               </section>
 
@@ -388,7 +388,7 @@ const meta = {
         </section>
       ) : (
         <p id='content' class='empty-state animate'>
-          把文章放进子文件夹后，分类会自动出现在这里。
+          这个分类暂时没有子目录。新建文件夹后会自动显示。
         </p>
       )
     }
