@@ -9,6 +9,7 @@ export interface GalleryPhoto {
  height: number
  thumbnail: string
  preview: string
+ variantWidths?: Record<string,number>
  variants?: Record<string,string>
  featured?: boolean
  camera?: string
