@@ -19,6 +19,7 @@ const groups=[
     {title:'知识图谱',icon:'earth',action:'graph'},{title:'文件管理器',icon:'package',action:'folders'},
     {title:'标签云',icon:'hashtag',action:'tags'},{title:'站内文档',icon:'document',href:'/docs'},
     {title:'夜间留声 · 音乐',icon:'netease',href:'/music/'},
+    {title:'光影档案 · 摄影',icon:'document',href:'/gallery/'},
     {title:'Folio · 文档库',icon:'document',href:'https://yenchiu.com/folio/'}, 
     {title:'链接',icon:'link',href:'/links'},{title:'项目',icon:'bulb',href:'/projects'}
   ]},
@@ -174,7 +175,7 @@ const groups=[
         this.querySelectorAll<HTMLAnchorElement>('nav a,.mobile-reading').forEach(a=>{
           const destination=new URL(a.href).pathname.replace(/\/$/,'')
           const readingLink=a.matches('.mobile-reading,.nav-reading')
-          const current=!a.hash&&(destination===path||(readingLink&&path.startsWith(destination+'/')))
+          const current=!a.hash&&(destination===path||((readingLink||destination.endsWith('/gallery'))&&path.startsWith(destination+'/')))
           if(current)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')
         })
       }
