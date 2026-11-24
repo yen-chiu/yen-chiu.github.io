@@ -4,6 +4,7 @@ on:
     paths:
       - 'scripts/gallery-*'
       - 'src/pages/gallery/**'
+      - 'src/pages/index.astro'
       - 'src/data/gallery-photos.json'
       - 'src/data/photos.ts'
       - 'src/lib/gallery.ts'
@@ -46,7 +47,7 @@ jobs:
         run: |
           node scripts/gallery-browser-check.mjs --fixture
           npm run build
-      - name: Desktop and mobile browser smoke tests
+      - name: Homepage and gallery desktop/mobile browser smoke tests
         run: |
           npm run preview -- --host 127.0.0.1 --port 4321 > /tmp/gallery-preview.log 2>&1 &
           trap 'kill $! 2>/dev/null || true' EXIT
