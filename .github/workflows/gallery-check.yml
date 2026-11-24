@@ -15,8 +15,6 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    env:
-      GALLERY_PLAYWRIGHT_DIR: ${{ runner.temp }}/gallery-playwright
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,6 +32,8 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: test -f dist/gallery/index.html
+      - name: Configure isolated browser test directory
+        run: echo "GALLERY_PLAYWRIGHT_DIR=$RUNNER_TEMP/gallery-playwright" >> "$GITHUB_ENV"
       - name: Install isolated browser test dependency
         run: |
           mkdir -p "$GALLERY_PLAYWRIGHT_DIR"
