@@ -1,0 +1,118 @@
+---
+const { bvid, title = 'Bilibili 视频' } = Astro.props
+---
+
+<bilibili-click-to-load class="bili-embed" data-bvid={bvid} data-title={title}>
+  <button class="bili-load" type="button" aria-label={`加载视频：${title}`}>
+    <span class="bili-play" aria-hidden="true">▶</span>
+    <span class="bili-copy">
+      <strong>{title}</strong>
+      <span>点击加载 Bilibili 播放器</span>
+    </span>
+    <span class="bili-external" aria-hidden="true">↗</span>
+  </button>
+  <noscript><a href={`https://www.bilibili.com/video/${bvid}/`}>在 Bilibili 打开视频</a></noscript>
+</bilibili-click-to-load>
+
+<script>
+  class BilibiliClickToLoad extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector<HTMLButtonElement>('.bili-load')
+      if (!button || button.dataset.bound === 'true') return
+      button.dataset.bound = 'true'
+      button.addEventListener('click', () => {
+        const bvid = this.dataset.bvid
+        if (!bvid) return
+        const frame = document.createElement('iframe')
+        frame.src = `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(bvid)}&page=1&autoplay=0`
+        frame.title = this.dataset.title || 'Bilibili 视频'
+        frame.loading = 'eager'
+        frame.allow = 'fullscreen; encrypted-media; picture-in-picture'
+        frame.allowFullscreen = true
+        frame.referrerPolicy = 'strict-origin-when-cross-origin'
+        frame.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0'
+        this.replaceChildren(frame)
+      }, { once: true })
+    }
+  }
+
+  if (!customElements.get('bilibili-click-to-load')) {
+    customElements.define('bilibili-click-to-load', BilibiliClickToLoad)
+  }
+</script>
+
+<style>
+  .bili-embed {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #202536, #111827 68%, #29233a);
+    box-shadow: 0 12px 30px rgb(15 23 42 / 16%);
+  }
+
+  .bili-load {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    height: 100%;
+    padding: clamp(16px, 4vw, 28px);
+    border: 0;
+    color: #f8fafc;
+    text-align: left;
+    background:
+      radial-gradient(circle at 82% 18%, rgb(251 113 133 / 22%), transparent 32%),
+      transparent;
+    cursor: pointer;
+  }
+
+  .bili-load:focus-visible {
+    outline: 3px solid #fb7299;
+    outline-offset: -5px;
+  }
+
+  .bili-play {
+    display: grid;
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    padding-left: 3px;
+    border: 1px solid rgb(255 255 255 / 48%);
+    border-radius: 50%;
+    color: white;
+    background: #fb7299;
+    box-shadow: 0 5px 20px rgb(251 114 153 / 32%);
+  }
+
+  .bili-copy {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .bili-copy strong {
+    font-size: clamp(15px, 2.2vw, 19px);
+    line-height: 1.4;
+  }
+
+  .bili-copy span {
+    color: rgb(226 232 240 / 78%);
+    font-size: 13px;
+  }
+
+  .bili-external {
+    margin-left: auto;
+    color: rgb(255 255 255 / 72%);
+    font-size: 22px;
+  }
+
+  @media (max-width: 480px) {
+    .bili-load { gap: 12px; }
+    .bili-play { flex-basis: 44px; width: 44px; height: 44px; }
+    .bili-external { display: none; }
+  }
+</style>
