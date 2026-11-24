@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "id": "22f3707487f591cb838fb7b9",
+    "title": "闲日有伴",
+    "alt": "草地露营区内，人们坐在移动咖啡车旁休息，几只狗围绕在折叠椅与帐篷之间。",
+    "album": "生活纪实",
+    "date": "2026-11-22",
+    "width": 3000,
+    "height": 1998,
+    "thumbnail": "https://gallery-cdn.yenchiu.com/photos/22f3707487f591cb838fb7b9/v1/480.webp",
+    "preview": "https://gallery-cdn.yenchiu.com/photos/22f3707487f591cb838fb7b9/v1/1920.webp",
+    "variants": {
+      "480": "https://gallery-cdn.yenchiu.com/photos/22f3707487f591cb838fb7b9/v1/480.webp",
+      "960": "https://gallery-cdn.yenchiu.com/photos/22f3707487f591cb838fb7b9/v1/960.webp",
+      "1920": "https://gallery-cdn.yenchiu.com/photos/22f3707487f591cb838fb7b9/v1/1920.webp",
+      "3840": "https://gallery-cdn.yenchiu.com/photos/22f3707487f591cb838fb7b9/v1/3840.webp"
+    },
+    "variantWidths": {
+      "480": 480,
+      "960": 960,
+      "1920": 1920,
+      "3840": 3000
+    },
+    "camera": "147mm  F5.6  1/250s  ISO1000",
+    "caption": "上传的第一张照片。草地上的咖啡车，透明帐篷，几把折叠椅，还有几只各自悠闲的狗。寻常日子里，人与动物共享着一小片闲暇。",
+    "featured": true
+  }
+]
