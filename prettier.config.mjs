@@ -25,7 +25,7 @@ export default {
   useTabs: false,
   vueIndentScriptAndStyle: false,
 
-  // Prettier plugins
+  // Astro formatting and consistent import ordering.
   plugins: ['prettier-plugin-astro', '@ianvs/prettier-plugin-sort-imports'],
   importOrder: [
     '^(astro$)|^(astro:(.*)$)',
