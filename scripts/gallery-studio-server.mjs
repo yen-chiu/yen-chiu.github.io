@@ -5,6 +5,8 @@ import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {spawn} from 'node:child_process'
 import sharp from 'sharp'
+import {fileURLToPath} from 'node:url'
+import {safeExif} from './gallery-exif.mjs'
 const port=4783, origin='http://127.0.0.1:'+port, token=randomBytes(32).toString('hex')
 const html=await readFile(new URL('./gallery-studio.html',import.meta.url),'utf8')
 let busy=false
@@ -29,7 +31,7 @@ createServer(async(req,res)=>{
  if(!['jpeg','png','webp','tiff'].includes(meta.format))throw Error('Unsupported image format')
  if(req.url==='/preview'){
  const preview=await sharp(bytes,{limitInputPixels:80000000}).rotate().resize({width:960,height:960,fit:'inside',withoutEnlargement:true}).webp({quality:85}).toBuffer()
- return send(res,200,{image:preview.toString('base64'),bytes:preview.length,width:meta.width,height:meta.height})
+ return send(res,200,{image:preview.toString('base64'),bytes:preview.length,width:meta.width,height:meta.height,exif:safeExif(meta.exif)})
  }
  const item=data.metadata||{}
  for(const k of ['title','alt','album','date'])if(typeof item[k]!=='string'||!item[k].trim()||item[k].length>300)throw Error('Invalid '+k)
@@ -38,7 +40,7 @@ createServer(async(req,res)=>{
  const file=join(dir,'source.'+meta.format), manifest=join(dir,'manifest.json')
  await writeFile(file,bytes,{mode:0o600})
  await writeFile(manifest,JSON.stringify([{file,title:item.title,alt:item.alt,album:item.album,date:item.date,camera:String(item.camera||'').slice(0,300),caption:String(item.caption||'').slice(0,2000),featured:item.featured===true}]),{mode:0o600})
- await new Promise((resolve,reject)=>{const child=spawn(process.execPath,[new URL('./gallery-studio.mjs',import.meta.url).pathname,manifest,'--publish',...(data.backup===true?['--backup-originals']:[])],{stdio:'inherit'});child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error('Publishing failed; check local terminal')))})
+ await new Promise((resolve,reject)=>{const child=spawn(process.execPath,[fileURLToPath(new URL('./gallery-studio.mjs',import.meta.url)),manifest,'--publish',...(data.backup===true?['--backup-originals']:[])],{stdio:'inherit'});child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error('Publishing failed; check local terminal')))})
  send(res,200,{ok:true})
  }catch(e){send(res,400,{error:String(e.message||e)})}finally{if(dir)await rm(dir,{recursive:true,force:true});busy=false}
 }).listen(port,'127.0.0.1',()=>console.log('Gallery Studio: '+origin))
