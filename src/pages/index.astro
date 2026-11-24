@@ -63,7 +63,7 @@ const entries = [
       <section class='home-cover' aria-label='首页封面'>
         <div class='cover-image' aria-hidden='true'></div>
         <div class='cover-shade'></div><div class='star-field' aria-hidden='true'></div>
-        <div class:list={['hero-composition', { 'has-photo': !!coverPhoto }]}>
+        <div class='hero-composition'>
         <div class='hero-intro'>
           <InteractiveAvatar
             ><Image
@@ -75,7 +75,7 @@ const entries = [
               loading='eager'
             /></InteractiveAvatar
           >
-          <p class='eyebrow'>YENCHIU / PERSONAL JOURNAL</p>
+          <p class='eyebrow'>YENCHIU / EST. 2023</p>
           <h1>
             <button
               class='glitch-name'
@@ -85,7 +85,7 @@ const entries = [
             >
           </h1>
           <p class='tagline'>读书，买花，长大。</p>
-          <p class='hero-description'>代码、阅读与生活的片段。<br/>在这里慢慢整理，也继续探索。</p>
+          <p class='hero-description'>代码、阅读与生活的片段。</p>
           <nav class='cover-actions' aria-label='首页入口'>
             <a class='primary-reading' href={sitePath('/blog')}>进入博客 ↗</a><a href={sitePath('/about')}>关于我</a><a
               href='https://github.com/yen-chiu'
@@ -94,14 +94,15 @@ const entries = [
             >
           </nav>
         </div>
-        {coverPhoto && <a class='hero-photo' href={sitePath('/gallery/photo/' + coverPhoto.id + '/')} aria-label={`查看摄影作品：${coverPhoto.title}`}>
-          <span class='photo-top'><span>光影档案</span><span>SELECTED FRAME / 01</span></span>
-          <span class='photo-mat'>
-            <span class='photo-fallback' aria-hidden='true'>LIGHT / MEMORY</span>
-            <img src={coverPhoto.thumbnail} srcset={photoSources} sizes='(max-width: 700px) 85vw, (max-width: 1100px) 45vw, 480px' width={coverPhoto.width} height={coverPhoto.height} alt={coverPhoto.alt} loading='eager' fetchpriority='high' decoding='async' referrerpolicy='no-referrer' />
-          </span>
-          <span class='photo-caption'><span><strong>{coverPhoto.title}</strong><small>{coverPhoto.album} · {coverPhoto.date}</small></span><span class='photo-arrow' aria-hidden='true'>↗</span></span>
-        </a>}
+        <div class='hero-art' aria-hidden='true'>
+          <svg viewBox="0 0 420 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="235" cy="168" r="134" stroke="currentColor" stroke-opacity=".16" stroke-dasharray="2 7"/>
+            <circle cx="235" cy="168" r="109" stroke="currentColor" stroke-opacity=".28"/>
+            <path d="M255 73a96 96 0 1 0 69 139A103 103 0 0 1 255 73Z" stroke="currentColor" stroke-opacity=".72" stroke-width="1.1"/>
+            <g stroke="currentColor" stroke-opacity=".35" stroke-width="1"><path d="M18 263C108 159 190 299 278 243S375 175 410 203"/><path d="M18 273C108 169 190 309 278 253S375 185 410 213"/><path d="M18 283C108 179 190 319 278 263S375 195 410 223"/><path d="M18 293C108 189 190 329 278 273S375 205 410 233"/><path d="M18 303C108 199 190 339 278 283S375 215 410 243"/></g>
+            <g stroke="currentColor" stroke-opacity=".75" stroke-linecap="round"><path d="M155 268v-36l17-5v32m-17-21 17-5M296 242v-43l20-7v36"/><ellipse cx="149" cy="269" rx="6" ry="3" fill="currentColor"/><ellipse cx="166" cy="260" rx="6" ry="3" fill="currentColor"/><ellipse cx="290" cy="244" rx="6" ry="3" fill="currentColor"/><ellipse cx="310" cy="229" rx="6" ry="3" fill="currentColor"/><path d="M94 351c72-44 130-34 208-49m-209 57c53-12 91-7 135-22m-44 34c43-7 78-12 129-29" opacity=".45"/><path d="M79 102v18m-9-9h18M338 54v20m-10-10h20M369 140v12m-6-6h12M112 178v10m-5-5h10"/></g>
+          </svg><span>NOCTURNE / IN SILVER INK</span>
+        </div>
         </div>
         <button type='button' class='scroll-hint' data-collapse aria-describedby='scroll-hint-hint'
           ><span>往下看看</span><b aria-hidden='true'>⌄</b></button
@@ -152,13 +153,6 @@ const entries = [
         <a class='profile-link' href={sitePath('/rss.xml')}>RSS 订阅 <span aria-hidden='true'>↗</span></a>
       </aside>
       </div>
-      <section class='home-music-section' aria-labelledby='home-music-title'>
-        <div class='home-music-heading'>
-          <div><span>VESPER / MUSIC</span><h3 id='home-music-title'>夜间留声</h3><p>写累了，就听一会儿。</p></div>
-          <a href={sitePath('/music/')}>走进音乐页 ↗</a>
-        </div>
-        <MusicPlayer compact />
-      </section>
       <div class='directory-heading'><p class='section-kicker'>INDEX / SITE DIRECTORY</p><h3>在这里，还可以去往……</h3></div>
       <nav class='entry-grid' aria-label='探索本站'>
         {
@@ -178,6 +172,25 @@ const entries = [
           ))
         }
       </nav>
+      <section class='home-photography' aria-labelledby='home-photography-title'>
+        <div class='section-heading'><div><p class='section-kicker'>02 / PHOTOGRAPHY</p><h3 id='home-photography-title'>光影档案</h3></div><a href={sitePath('/gallery/')}>全部作品 ↗</a></div>
+        {coverPhoto && <a class='photo-feature' href={sitePath('/gallery/photo/' + coverPhoto.id + '/')} aria-label={`查看摄影作品：${coverPhoto.title}`}>
+          
+          <span class='photo-mat' style={{aspectRatio: coverPhoto.width + '/' + coverPhoto.height}}>
+            <span class='photo-fallback' aria-hidden='true'>LIGHT / MEMORY</span>
+            <img src={coverPhoto.thumbnail} srcset={photoSources} sizes='(max-width: 700px) 90vw, 720px' width={coverPhoto.width} height={coverPhoto.height} alt={coverPhoto.alt} loading='lazy' decoding='async' referrerpolicy='no-referrer' />
+          </span>
+          <span class='photo-caption'><span><strong>{coverPhoto.title}</strong><small>{coverPhoto.album} · {coverPhoto.date}</small></span><span class='photo-arrow' aria-hidden='true'>↗</span></span>
+        </a>}
+        {!coverPhoto && <p class='profile-text'>摄影作品整理中。</p>}
+      </section>
+      <section class='home-music-section' aria-labelledby='home-music-title'>
+        <div class='home-music-heading'>
+          <div><span>VESPER / MUSIC</span><h3 id='home-music-title'>夜间留声</h3><p>写累了，就听一会儿。</p></div>
+          <a href={sitePath('/music/')}>走进音乐页 ↗</a>
+        </div>
+        <MusicPlayer compact />
+      </section>
       <p class='home-note'>
         从 2023 年开始记录，已留下 <a href={sitePath('/blog')}>{posts.length} 篇文章</a>。<a
           href={sitePath('/rss.xml')}>订阅 RSS ↗</a
@@ -201,11 +214,7 @@ const entries = [
         cover = this.querySelector<HTMLElement>('.home-cover')!,
         intro = this.querySelector<HTMLElement>('.hero-intro')!,
         credit = this.querySelector<HTMLAnchorElement>('.cover-credit')!
-      const photo = this.querySelector<HTMLAnchorElement>('.hero-photo')
-      const photoImg = photo?.querySelector('img')
-      const markPhotoFailed = () => photo?.classList.add('is-image-unavailable')
-      photoImg?.addEventListener('error', markPhotoFailed, { signal })
-      if (photoImg?.complete && !photoImg.naturalWidth) markPhotoFailed()
+      const art = this.querySelector<HTMLElement>('.hero-art')
       const syncCoverCredit = () => {
         const appearance = window.wendellAppearance?.get()
         const chosen = appearance?.homeWallpaperSource === 'inherit' || !appearance?.homeWallpaperSource
@@ -380,12 +389,11 @@ const entries = [
           : `translate3d(0,${-value * 9}px,0) scale(${1 - value * 0.08})`
         intro.style.visibility = visible ? 'visible' : 'hidden'
         intro.inert = !visible
-        if (photo) {
+        if (art) {
           const opacity = 1 - fadeProgress(p, 0.04, 0.65)
-          photo.style.opacity = String(opacity)
-          photo.style.visibility = opacity < 0.001 ? 'hidden' : 'visible'
-          photo.inert = opacity < 0.02
-          photo.style.transform = motionReduced() ? '' : `translateY(${-p * 18}px)`
+          art.style.opacity = String(opacity)
+          art.style.visibility = opacity < 0.001 ? 'hidden' : 'visible'
+          art.style.transform = motionReduced() ? '' : `translateY(${-p * 18}px)`
         }
         const caption = fadeProgress(p, 0.35, 0.8)
         credit.classList.toggle('is-visible', caption > 0.001)
@@ -487,6 +495,16 @@ const entries = [
     }
   }
   if (!customElements.get('landing-hero')) customElements.define('landing-hero', LandingHero)
+  function bindHomePhotography() {
+    const feature = document.querySelector('.photo-feature')
+    const img = feature?.querySelector('img')
+    if (!img) return
+    const unavailable = () => feature?.classList.add('is-image-unavailable')
+    img.addEventListener('error', unavailable, { once: true })
+    if (img.complete && !img.naturalWidth) unavailable()
+  }
+  bindHomePhotography()
+  document.addEventListener('astro:page-load', bindHomePhotography)
 </script>
 <style>
   .home-page {
@@ -1088,23 +1106,23 @@ const entries = [
   .landing-track{height:max(680px,88vh);height:max(680px,88svh)}
   .home-cover{height:100%}
   .hero-composition{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;width:min(100% - 3rem,66rem);gap:clamp(1.5rem,5vw,5rem);padding:5.5rem 0 5rem}
-  .hero-composition.has-photo{grid-template-columns:minmax(0,1.04fr) minmax(0,1fr)}
-  .hero-composition.has-photo .hero-intro{align-items:flex-start;text-align:left;padding:0;min-width:0}
-  .hero-composition.has-photo .cover-actions{justify-content:flex-start}
+  .hero-composition{grid-template-columns:minmax(0,1.04fr) minmax(0,1fr)}
+  .hero-composition .hero-intro{align-items:flex-start;text-align:left;padding:0;min-width:0}
+  .hero-composition .cover-actions{justify-content:flex-start}
   .hero-intro .eyebrow{font-size:.68rem;letter-spacing:.18em}
   .hero-intro .glitch-name{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:clamp(3.2rem,7vw,6.2rem);letter-spacing:-.065em;padding-left:0}
   .hero-intro .tagline{font-family:Georgia,'Noto Serif SC',serif;letter-spacing:.13em;font-size:clamp(1rem,2vw,1.25rem);margin:.8rem 0 .7rem}
   .hero-description{font-size:.86rem;line-height:1.85;color:#ffffffe0;margin:0 0 1.4rem}
   .cover-shade{background:linear-gradient(90deg,#0c142cbb,#10172f44 72%),linear-gradient(180deg,#10172f22,#10172fbb)}
   :global(html[data-home-wallpaper-custom='true']) .cover-shade{background:linear-gradient(90deg,#0a1027c9,#0a10276b),linear-gradient(180deg,#0a10273a,#0a1027c9)}
-  .hero-photo{display:flex;flex-direction:column;min-width:0;gap:.75rem;padding:clamp(.8rem,2vw,1.25rem);background:#f5f1e6;color:#252c32;border:1px solid #fff7;border-radius:3px;box-shadow:0 20px 60px #060b1b55;text-decoration:none;transition:box-shadow .2s ease}
-  .hero-photo:hover{box-shadow:0 24px 70px #060b1b88}
+  .photo-feature{display:flex;flex-direction:column;min-width:0;gap:.75rem;padding:clamp(.8rem,2vw,1.25rem);background:#f5f1e6;color:#252c32;border:1px solid #fff7;border-radius:3px;box-shadow:0 20px 60px #060b1b55;text-decoration:none;transition:box-shadow .2s ease}
+  .photo-feature:hover{box-shadow:0 24px 70px #060b1b88}
   .photo-top{display:flex;justify-content:space-between;align-items:center;gap:.4rem;font-size:.63rem;letter-spacing:.12em;color:#565d63}
   .photo-top span:first-child{font-weight:650;color:#252c32}
   .photo-mat{display:block;position:relative;overflow:hidden;aspect-ratio:3/2;background:#243447}
   .photo-mat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
   .photo-fallback{position:absolute;inset:0;display:grid;place-items:center;color:#e1e6e9;font-size:.68rem;letter-spacing:.28em;background:radial-gradient(ellipse at 30% 30%,#596d78,transparent 70%),#26394b}
-  .hero-photo.is-image-unavailable img{visibility:hidden}
+  .photo-feature.is-image-unavailable img{visibility:hidden}
   .photo-caption{display:flex;align-items:center;justify-content:space-between;gap:1rem}
   .photo-caption strong{display:block;font:600 clamp(1.1rem,2vw,1.6rem)/1.3 Georgia,'Noto Serif SC',serif;color:#252c32}
   .photo-caption small{display:block;color:#525b63;font-size:.68rem;margin-top:.3rem}
@@ -1137,9 +1155,9 @@ const entries = [
   .entry-grid a{min-width:0;overflow-wrap:anywhere}
   @media(max-width:700px){
     .landing-track{height:max(780px,100vh);height:max(780px,100svh)}
-    .hero-composition,.hero-composition.has-photo{grid-template-columns:minmax(0,1fr);width:calc(100% - 2rem);gap:1rem;padding:5.5rem 0 4.3rem}
-    .hero-composition.has-photo .hero-intro{align-items:center;text-align:center}
-    .hero-composition.has-photo .cover-actions{justify-content:center}
+    .hero-composition,.hero-composition{grid-template-columns:minmax(0,1fr);width:calc(100% - 2rem);gap:1rem;padding:5.5rem 0 4.3rem}
+    .hero-composition .hero-intro{align-items:center;text-align:center}
+    .hero-composition .cover-actions{justify-content:center}
     .hero-intro{padding:0}
     .hero-intro :global(interactive-avatar button){width:76px;height:76px}
     .hero-intro .eyebrow{margin:.65rem 0 .25rem}
@@ -1147,7 +1165,7 @@ const entries = [
     .hero-description{font-size:.76rem;margin:0 0 .8rem}
     .hero-description br{display:none}
     .hero-intro .tagline{margin:.35rem 0 .5rem}
-    .hero-photo{width:min(100%,24rem);justify-self:center;padding:.65rem;gap:.45rem}
+    .photo-feature{width:min(100%,24rem);justify-self:center;padding:.65rem;gap:.45rem}
     .photo-mat{aspect-ratio:16/9}
     .photo-top,.photo-caption small{font-size:.62rem}
     .photo-arrow{width:2rem;height:2rem;font-size:1rem}
@@ -1158,5 +1176,43 @@ const entries = [
     .home-doorway header{align-items:flex-start}
   }
   @media(max-width:360px){.landing-track{height:max(840px,100svh)}.guide-card{grid-template-columns:minmax(0,1fr)}.guide-read{grid-column:1;grid-row:auto}}
-  @media(prefers-reduced-motion:reduce){.hero-photo{transition:none}}
+  @media(prefers-reduced-motion:reduce){.photo-feature{transition:none}}
+  /* Nocturne Editorial: identity before content, no photo request in the cover. */
+  .landing-track{height:max(530px,86vh);height:max(530px,86svh)}
+  .hero-composition{width:min(calc(100% - 4rem),62rem);padding:4.5rem 0 4rem}
+  .hero-description{margin-bottom:1.1rem}
+  .hero-art{color:#c0cbd8;min-width:0;display:grid;justify-items:center;pointer-events:none}
+  .hero-art svg{width:100%;height:auto;max-width:360px;max-height:42vh;display:block}
+  .hero-art span{font:10px system-ui,sans-serif;letter-spacing:.2em;opacity:.65}
+  :global(html[data-home-wallpaper-custom='true']) .hero-art,:global(html[data-home-cover='false']) .hero-art,:global(html[data-effects-paused='true']) .hero-art{visibility:hidden!important}
+  .home-profile{border:0;border-block:1px solid var(--vesper-surface-border);border-radius:0;background:none;padding:1.1rem .25rem}
+  .entry-grid{gap:0;column-gap:1.2rem;border-top:1px solid var(--vesper-surface-border)}
+  .entry-grid a{border:0;border-bottom:1px solid var(--vesper-surface-border);border-radius:0;background:none;padding:1rem .25rem}
+  .entry-symbol{font-size:1.25rem;margin-bottom:.4rem}
+  .entry-arrow{right:.25rem;top:1rem}
+  .home-photography{margin:clamp(2.5rem,6vw,4rem) 0}
+  .section-heading{display:flex;justify-content:space-between;align-items:end;gap:1rem;margin-bottom:1rem}
+  .section-heading h3{font:500 clamp(1.3rem,3vw,1.85rem)/1.4 Georgia,'Noto Serif SC',serif}
+  .section-heading>a{color:hsl(var(--primary));font-size:.78rem;white-space:nowrap}
+  .photo-feature,.photo-feature:hover{display:block;max-width:45rem;width:100%;margin:0 auto;padding:0;background:none;border:0;border-radius:0;box-shadow:none;color:inherit}
+  .photo-mat{max-height:70vh;margin:auto;position:relative}
+  .photo-mat img{object-fit:contain;background:hsl(var(--background))}
+  .photo-caption{border-bottom:1px solid var(--vesper-surface-border);padding:.8rem 0}
+  .photo-caption strong,.photo-caption small{color:inherit}
+  .photo-caption small{color:hsl(var(--muted-foreground))}
+  .photo-arrow{border:0;color:hsl(var(--primary))}
+  .home-music-section{padding:1.2rem 0;border:0;border-block:1px solid var(--vesper-surface-border);border-radius:0;background:none}
+  @media(max-width:700px){
+    .landing-track{height:max(490px,80vh);height:max(490px,80svh)}
+    .hero-composition,.hero-composition.has-photo{grid-template-columns:minmax(0,1fr);width:calc(100% - 2rem);gap:0;padding:4rem 0 3.2rem;position:relative}
+    .hero-composition .hero-intro{align-items:center;text-align:center;position:relative;z-index:1}
+    .hero-composition .cover-actions{justify-content:center;gap:.4rem}
+    .cover-actions a{padding:.48rem .85rem}
+    .hero-art{position:absolute;inset:auto -1rem 0 auto;width:min(58%,220px);opacity:.19!important;z-index:0}
+    .hero-art span{display:none}
+    .hero-art svg{max-height:none}
+    .scroll-hint{bottom:.6rem}
+    .photo-feature{width:100%}
+  }
+  @media(prefers-reduced-motion:reduce){.hero-art{transform:none!important}}
 </style>
