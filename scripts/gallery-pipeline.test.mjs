@@ -20,7 +20,7 @@ test('portrait preview preserves actual widths and never publishes',async()=>{
  assert.equal(p.variantWidths[3840],300)
  assert.equal(p.height,600)
  assert.equal(await readFile(join(dir,'src/data/gallery-photos.json'),'utf8'),'[]')
- const meta=await sharp(join(dir,'.gallery-studio-output',p.id,'480.webp')).metadata()
+ const meta=await sharp(await readFile(join(dir,'.gallery-studio-output',p.id,'480.webp'))).metadata()
  assert.equal(meta.width,240);assert.equal(meta.exif,undefined)
  }finally{await rm(dir,{recursive:true,force:true})}
 })
