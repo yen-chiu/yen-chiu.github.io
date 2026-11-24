@@ -2,6 +2,10 @@
 import { musicTracks } from '@/data/music'
 import musicWaveforms from '@/data/music-waveforms.json'
 import { sitePath } from '@/utils/site-path'
+import { existsSync } from 'node:fs'
+const artwork = { vinyl: '/images/music/vinyl.webp', tonearm: '/images/music/tonearm.webp' }
+const hasVinyl = existsSync('public' + artwork.vinyl)
+const hasTonearm = existsSync('public' + artwork.tonearm)
 interface Props { compact?: boolean }
 const { compact = false } = Astro.props
 const fallbackWaveform = Array.from({length:64},()=>0.18)
@@ -9,7 +13,15 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
 ---
 <vesper-music-player class:list={['vesper-music-player', compact && 'is-compact']} data-tracks={JSON.stringify(musicTracks)} data-waveforms={JSON.stringify(musicWaveforms)} aria-label='Vesper 音乐播放器'>
   <div class='music-deck'>
-    <div class='music-art' aria-hidden='true'><div class='music-vinyl'><span class='music-spindle'></span><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span></div><div class='music-tonearm'><span class='music-tonearm-pivot'></span><span class='music-tonearm-rod'></span><span class='music-tonearm-head'></span></div></div>
+    <div class='music-art' aria-hidden='true'>
+      <div class:list={['music-vinyl', hasVinyl && 'has-vinyl-asset']}>
+        {hasVinyl && <img class='vinyl-asset' src={sitePath(artwork.vinyl)} alt='' width='768' height='768' decoding='async' loading={compact?'lazy':'eager'} />}
+        <span class='music-spindle'></span><img class='music-cover' data-cover alt='' hidden /><span class='music-vinyl-label' data-cover-fallback>V</span>
+      </div>
+      <div class:list={['music-tonearm', hasTonearm && 'has-tonearm-asset']}>
+        {hasTonearm ? <img class='tonearm-asset' src={sitePath(artwork.tonearm)} alt='' width='314' height='512' decoding='async' loading={compact?'lazy':'eager'} /> : <><span class='music-tonearm-pivot'></span><span class='music-tonearm-rod'></span><span class='music-tonearm-head'></span></>}
+      </div>
+    </div>
     <div class='music-info'>
       <span class='music-kicker'>VESPER · NIGHT RADIO</span>
       <h3 data-song-title>夜曲 Op. 9 No. 2</h3>
@@ -209,4 +221,27 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
   :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='low']) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
   :global(html[data-effects-paused='true']) .music-vinyl{animation-play-state:paused!important}
   button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--music-accent);outline-offset:3px}
+  /* The supplied transparent artwork is the record itself, not a full-disc
+     track cover. Keep the label at the hub and rotate only the platter. */
+  .music-art{background:none;filter:none;width:clamp(172px,21vw,256px);overflow:visible}
+  .music-vinyl.has-vinyl-asset{background:none;box-shadow:none;overflow:visible}
+  .music-vinyl.has-vinyl-asset::after{display:none}
+  .vinyl-asset{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+  .music-vinyl.has-vinyl-asset .music-vinyl-label{display:none}
+  .music-cover{position:relative;z-index:2;width:27%;height:27%;object-fit:cover}
+  .has-vinyl-asset .music-spindle{background:#111;box-shadow:none;width:3%;height:3%}
+  .has-vinyl-asset:not(:has(.music-cover:not([hidden]))) .music-spindle{visibility:hidden}
+  .music-tonearm.has-tonearm-asset{top:-4%;right:-5%;width:43%;height:auto;aspect-ratio:314/512;transform-origin:78% 20%;transform:rotate(-29deg);filter:drop-shadow(1px 3px 2px #0004)}
+  .is-playing .music-tonearm.has-tonearm-asset{transform:rotate(0deg)}
+  .tonearm-asset{display:block;width:100%;height:auto;object-fit:contain;pointer-events:none}
+  .vesper-music-player:not(.is-compact) .music-deck,.vesper-music-player:not(.is-compact) .music-side{box-shadow:none;border-radius:1rem;background:hsl(var(--background)/.87)}
+  .is-compact .music-art{width:4rem}
+  @media(max-width:680px){
+    .vesper-music-player:not(.is-compact) .music-art{width:clamp(148px,43vw,190px);margin:.65rem auto .8rem}
+    .vesper-music-player:not(.is-compact) .music-deck{padding:1rem .8rem}
+    .music-info{min-height:0}
+    .music-timeline{margin:.8rem 0 .5rem}
+    .music-actions{gap:.3rem}
+    .music-status{margin:.65rem 0 0}
+  }
 </style>
