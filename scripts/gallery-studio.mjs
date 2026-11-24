@@ -26,7 +26,9 @@ const upload=(file,key,privateBucket=false)=>{
  const bucket=process.env[prefix+'_BUCKET']
  const access=process.env[prefix+'_ACCESS_KEY_ID'],secret=process.env[prefix+'_SECRET_ACCESS_KEY']
  if(!account||!bucket||!access||!secret)throw Error('Missing '+prefix+' configuration')
- execFileSync('aws',['s3','cp',file,'s3://'+bucket+'/'+key,'--endpoint-url','https://'+account+'.r2.cloudflarestorage.com','--region','auto',...(privateBucket?[]:['--content-type','image/webp','--cache-control','public,max-age=31536000,immutable'])],{stdio:'inherit',env:{...process.env,AWS_ACCESS_KEY_ID:access,AWS_SECRET_ACCESS_KEY:secret,AWS_SESSION_TOKEN:'',AWS_PROFILE:''}})
+ const env={...process.env,AWS_ACCESS_KEY_ID:access,AWS_SECRET_ACCESS_KEY:secret,AWS_EC2_METADATA_DISABLED:'true',AWS_PAGER:''}
+ delete env.AWS_PROFILE;delete env.AWS_DEFAULT_PROFILE;delete env.AWS_SESSION_TOKEN
+ execFileSync('aws',['s3','cp',file,'s3://'+bucket+'/'+key,'--endpoint-url','https://'+account+'.r2.cloudflarestorage.com','--region','auto',...(privateBucket?[]:['--content-type','image/webp','--cache-control','public,max-age=31536000,immutable'])],{stdio:'inherit',env,windowsHide:true})
 }
 for(const item of config){
  if(!item.file||!item.title||!item.alt||!item.album||!/^\d{4}-\d{2}-\d{2}$/.test(item.date))throw Error('Missing required photo metadata')

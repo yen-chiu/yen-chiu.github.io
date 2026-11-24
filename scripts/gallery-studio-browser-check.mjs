@@ -22,6 +22,7 @@ try{
  await writeFile(join(bin,'aws'),`#!/bin/sh
 set -eu
 if [ "$1" = --version ]; then exit 0; fi
+[ "\${AWS_PROFILE+x}" != x ] && [ "\${AWS_DEFAULT_PROFILE+x}" != x ] && [ "\${AWS_SESSION_TOKEN+x}" != x ] || exit 10
 if [ "$1" = s3api ]; then
  [ "$AWS_ACCESS_KEY_ID" = "${access}" ] && [ "$AWS_SECRET_ACCESS_KEY" = "${secret}" ] && [ "$2" = list-objects-v2 ]
  exit $?
@@ -37,7 +38,7 @@ printf '%s\\n' "$4" >> "$GALLERY_TEST_DIR/uploads.log"
 `,{mode:0o700})
  const env={...process.env}
  for(const key of Object.keys(env))if(key.startsWith('R2_')||key.startsWith('AWS_'))delete env[key]
- Object.assign(env,{GALLERY_TEST_DIR:dir,GALLERY_STUDIO_CONFIG:config,GALLERY_STUDIO_PORT:'4783',PATH:bin+delimiter+env.PATH})
+ Object.assign(env,{GALLERY_TEST_DIR:dir,GALLERY_STUDIO_CONFIG:config,GALLERY_STUDIO_PORT:'4783',PATH:bin+delimiter+env.PATH,AWS_PROFILE:'unrelated-profile',AWS_DEFAULT_PROFILE:'unrelated-default-profile',AWS_SESSION_TOKEN:'unrelated-session-token'})
  child=spawn(process.execPath,[fileURLToPath(new URL('./gallery-studio-server.mjs',import.meta.url))],{env,cwd:dir,stdio:'inherit'})
  for(let i=0;i<80;i++){try{if((await fetch(base)).ok)break}catch{}if(i===79)throw Error('Studio did not start');await new Promise(r=>setTimeout(r,250))}
  assert.equal((await fetch(base+'/config/status',{method:'POST',body:'{}'})).status,403)
