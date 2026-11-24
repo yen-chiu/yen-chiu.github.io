@@ -1,3 +1,4 @@
+# Shared text encoding and line endings for repository files.
 root = true
 
 [*]

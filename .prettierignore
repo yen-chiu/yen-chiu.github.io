@@ -1,3 +1,4 @@
+# Dependencies and generated assets use their own formatting.
 node_modules/**
 src/icons/**
 public/scripts/*
