@@ -11,6 +11,12 @@ const config=JSON.parse(await readFile(manifest,'utf8'))
 if(!Array.isArray(config)) throw Error('Manifest must be an array')
 const base=(process.env.R2_PUBLIC_URL||'https://gallery-cdn.yenchiu.com').replace(/\/$/,'')
 if(!/^https:\/\/[^/]+$/.test(base)) throw Error('Invalid public URL')
+if(publish){
+ for(const prefix of ['R2_PUBLIC',...(backup?['R2_PRIVATE']:[])])for(const suffix of ['BUCKET','ACCESS_KEY_ID','SECRET_ACCESS_KEY'])if(!process.env[prefix+'_'+suffix])throw Error('Missing '+prefix+'_'+suffix)
+ if(!/^[a-f0-9]{32}$/i.test(process.env.R2_ACCOUNT_ID||''))throw Error('Invalid R2 account ID')
+ if(process.env.R2_PUBLIC_BUCKET===process.env.R2_PRIVATE_BUCKET)throw Error('Public and private buckets must differ')
+ execFileSync('aws',['--version'],{stdio:'ignore'})
+}
 const catalogue='src/data/gallery-photos.json'
 const existing=JSON.parse(await readFile(catalogue,'utf8'))
 const output=resolve('.gallery-studio-output')
@@ -29,18 +35,19 @@ for(const item of config){
  const dir=join(output,id);await mkdir(dir,{recursive:true})
  const metadata=await sharp(bytes).metadata()
  if(!metadata.width||!metadata.height)throw Error('Invalid image')
- const variants={}
+ const variants={}, variantWidths={}
  let dimensions
  for(const size of [480,960,1920,3840]){
   const name=size+'.webp', file=join(dir,name)
   const info=await sharp(bytes).rotate().resize({width:size,height:size,fit:'inside',withoutEnlargement:true}).webp({quality:85}).toFile(file)
   if(size===3840)dimensions=info
-  const key='photos/'+id+'/'+name
+  variantWidths[size]=info.width
+  const key='photos/'+id+'/v1/'+name
   if(publish)upload(file,key)
   variants[size]=base+'/'+key
  }
  if(publish&&backup)upload(item.file,'originals/'+id+'/'+id+'.'+(metadata.format==='jpeg'?'jpg':metadata.format),true)
- const record={id,title:item.title,alt:item.alt,album:item.album,date:item.date,width:dimensions.width,height:dimensions.height,thumbnail:variants[480],preview:variants[1920],variants,camera:item.camera||'',caption:item.caption||'',featured:item.featured===true}
+ const record={id,title:item.title,alt:item.alt,album:item.album,date:item.date,width:dimensions.width,height:dimensions.height,thumbnail:variants[480],preview:variants[1920],variants,variantWidths,camera:item.camera||'',caption:item.caption||'',featured:item.featured===true}
  const i=existing.findIndex(p=>p.id===id);if(i<0)existing.push(record);else existing[i]=record
 }
 await mkdir(output,{recursive:true})
