@@ -1,0 +1,18 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { orderedPhotos,albumId } from '@/lib/gallery'
+export function getStaticPaths(){return orderedPhotos.map(photo=>({params:{id:photo.id},props:{photo}}))}
+const {photo}=Astro.props
+const siblings=orderedPhotos.filter(p=>p.album===photo.album)
+const index=siblings.findIndex(p=>p.id===photo.id)
+const previous=siblings[index-1],next=siblings[index+1]
+---
+<BaseLayout meta={{title:photo.title+' · 光影档案',description:photo.caption||photo.alt}}>
+<main class="work"><a href={'/gallery/album/'+albumId(photo.album)+'/'}>← {photo.album}</a><header><small>YENCHIU / PHOTOGRAPHY</small><h1>{photo.title}</h1><p>{photo.date}</p></header>
+<figure><a href={photo.variants?.[3840]||photo.preview} aria-label="查看高清照片"><img src={photo.preview} alt={photo.alt} width={photo.width} height={photo.height} decoding="async"/></a><figcaption>点击查看高清版本</figcaption></figure>
+<section>{photo.caption&&<p>{photo.caption}</p>}{photo.camera&&<p class="meta">{photo.camera}</p>}</section>
+<nav aria-label="相册作品导航">{previous&&<a href={'/gallery/photo/'+previous.id+'/'}>← {previous.title}</a>}{next&&<a href={'/gallery/photo/'+next.id+'/'}>{next.title} →</a>}</nav></main>
+</BaseLayout>
+<style>
+.work{max-width:76rem;margin:auto;padding:2rem 0 4rem}header{padding:2rem 0 1rem}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.2}small{letter-spacing:.15em}figure{margin:0}img{display:block;width:100%;height:auto;max-height:80dvh;object-fit:contain;background:#111}figcaption,.meta{font-size:.85rem;opacity:.75}section{max-width:48rem;margin:2rem auto}nav{display:flex;justify-content:space-between;gap:1rem;border-top:1px solid hsl(var(--border));padding-top:1rem}
+</style>

@@ -1,0 +1,12 @@
+[
+  {
+    "file": "/path/to/export.jpg",
+    "title": "作品标题",
+    "alt": "照片内容描述",
+    "album": "自然风光",
+    "date": "2026-11-24",
+    "camera": "Nikon",
+    "caption": "",
+    "featured": true
+  }
+]
