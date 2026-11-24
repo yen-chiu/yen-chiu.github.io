@@ -254,4 +254,14 @@ const groups=[
     .header-tools{gap:.2rem;}
   }
   @media(prefers-reduced-motion:reduce){header-component{transition:none;}}
+  /* The cover is dark even with a light site theme. Keep bare controls legible,
+     without changing the colors of the actual navigation/settings panels. */
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded):not(:has(#appearance-panel:not([hidden]))) .brand,
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded):not(:has(#appearance-panel:not([hidden]))) .header-tools,
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded):not(:has(#appearance-panel:not([hidden]))) .navigation-panel>nav>summary,
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded):not(:has(#appearance-panel:not([hidden]))) .nav-group>summary{color:#edf1f7}
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded) .header-tools :global(.search-button){color:#edf1f7}
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded) .mobile-reading,
+  :global(body[data-page='home']) header-component:not(.not-top):not(.expanded) .nav-reading .cat-writing{color:#f3a6ce}
+  @media(max-width:600px){.header-tools>button,.header-tools :global(.search-button){min-width:44px;min-height:44px}}
 </style>
