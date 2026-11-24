@@ -14,7 +14,9 @@ permissions:
   contents: read
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    env:
+      GALLERY_PLAYWRIGHT_DIR: ${{ runner.temp }}/gallery-playwright
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,8 +36,9 @@ jobs:
       - run: test -f dist/gallery/index.html
       - name: Install isolated browser test dependency
         run: |
-          npm install --no-save --package-lock=false playwright@1.56.1
-          npx playwright install --with-deps chromium
+          mkdir -p "$GALLERY_PLAYWRIGHT_DIR"
+          npm install --prefix "$GALLERY_PLAYWRIGHT_DIR" --no-audit --no-fund playwright@1.56.1
+          "$GALLERY_PLAYWRIGHT_DIR/node_modules/.bin/playwright" install --with-deps chromium
       - name: Build with temporary photography fixtures
         run: |
           node scripts/gallery-browser-check.mjs --fixture
