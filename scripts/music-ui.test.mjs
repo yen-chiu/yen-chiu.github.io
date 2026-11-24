@@ -85,3 +85,16 @@ test('visual refinements keep seek accessibility and compact controls',()=>{asse
 
 
 test('waveform data is sourced from precomputed RMS values, not synthetic trigonometry',()=>{assert.match(player,/music-waveforms\.json/);assert.match(player,/data-waveforms/);assert.match(player,/renderWave\(track\.id\)/);assert.doesNotMatch(player,/Math\.sin\(i\*1\.73\)/)})
+
+test('rebuilt vinyl and tonearm are shipped as WebP assets, not just CSS placeholders',()=>{
+  for(const name of ['vinyl','tonearm']){
+    const bytes=readFileSync('public/images/music/'+name+'.webp')
+    assert.equal(bytes.toString('ascii',0,4),'RIFF')
+    assert.equal(bytes.toString('ascii',8,12),'WEBP')
+    assert(bytes.length>1024&&bytes.length<150000, name+' asset size outside budget')
+  }
+  assert.match(player,/class='vinyl-asset'/)
+  assert.match(player,/class='tonearm-asset'/)
+  assert.match(player,/\.has-vinyl-asset/)
+  assert.match(player,/transform-origin:78% 20%/)
+})
