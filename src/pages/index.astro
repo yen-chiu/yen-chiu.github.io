@@ -459,7 +459,7 @@ const entries = [
         () => {
           const compact = Math.min(340, innerHeight * 0.42)
           window.scrollTo({
-            top: window.scrollY + this.getBoundingClientRect().top + this.offsetHeight - compact,
+            top: Math.max(0, window.scrollY + this.getBoundingClientRect().top) + this.offsetHeight - compact,
             behavior: motionReduced() ? 'instant' : 'smooth'
           })
         },
@@ -811,7 +811,7 @@ const entries = [
   :global(html[data-banner-waves='true']) .cover-wave {
     display: block;
   }
-  :global(html[data-banner-title='false']) :is(h1, .eyebrow, .tagline) {
+  :global(html[data-banner-title='false']) :is(h1, .eyebrow, .tagline, .hero-description) {
     visibility: hidden;
   }
   :global(html[data-home-cover='false']) :is(.cover-image, .star-field) {
