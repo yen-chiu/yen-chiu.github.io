@@ -219,7 +219,8 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
   @media(prefers-reduced-motion:reduce){.music-vinyl,.music-track-equalizer i{animation:none!important}.music-tonearm,.music-track{transition:none!important}}
   /* A brief, user-triggered transform is cheap even on mobile. Only explicit reduced motion disables it. */
   :global(html.motion-off) .music-tonearm,:global(html[data-effect-quality='static']) .music-tonearm{transition:none!important}
-  :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='low']) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
+  /* Keep playback feedback on low-quality mobile devices; respect explicit/static reduced motion. */
+  :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
   :global(html[data-effects-paused='true']) .music-vinyl{animation-play-state:paused!important}
   button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--music-accent);outline-offset:3px}
   /* The supplied transparent artwork is the record itself, not a full-disc
