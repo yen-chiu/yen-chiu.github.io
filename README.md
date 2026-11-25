@@ -27,6 +27,29 @@ Personal website · Blog · Documentation · *余白* Journal
 | [Blog](https://yenchiu.com/blog) | [Documentation](https://yenchiu.com/folio/) | [*余白*](https://yenchiu.com/journal/) |
 | Essays, notes, and experiments | Reference material and project notes | A home for collected writing |
 
+## Website showcase
+
+Real captures of the local production build, using the existing Vesper artwork and Wendell avatar.
+
+[![Vesper homepage](./docs/assets/showcase/home-desktop.webp)](https://yenchiu.com/)
+
+| **Search · results and preview** | **Archives · calendar and writing history** |
+| :--- | :--- |
+| [![Full-text search](./docs/assets/showcase/search-desktop.webp)](./docs/assets/showcase/search-desktop.webp) | [![Writing archives](./docs/assets/showcase/archives-desktop.webp)](https://yenchiu.com/archives/) |
+
+<details>
+<summary><strong>On a smaller screen</strong></summary>
+
+<p align="center">
+  <img src="./docs/assets/showcase/home-mobile.webp" alt="Vesper homepage on mobile" width="30%">
+  <img src="./docs/assets/showcase/search-mobile.webp" alt="Search results on mobile" width="30%">
+  <img src="./docs/assets/showcase/archives-mobile.webp" alt="Writing history on mobile" width="30%">
+</p>
+
+</details>
+
+Capture details and resource decisions: [brand asset audit](./docs/brand-assets-audit.md). Upstream attribution remains in the [archived Iris README](./migration/upstream-README.md); historical screenshots have been removed.
+
 ## At a glance
 
 | | |
@@ -72,6 +95,8 @@ See the [maintenance handbook (中文)](./docs/README.md) for Gallery, Gallery S
 | `src/pages/journal.astro` | Cover page for *余白* |
 | `src/pages/persona.astro` | Nianzhen persona page |
 | `migration/content-manifest.json` | Migration records and legacy URLs |
+| `docs/assets/showcase/` | Current Vesper screenshots (WebP) |
+| `migration/upstream-assets/` | Upstream asset removal record |
 | `migration/upstream-README.md` | Archived upstream Iris README |
 | `migration/upstream-examples` | Archived examples excluded from content generation |
 | `scripts/` | Migration and validation utilities |

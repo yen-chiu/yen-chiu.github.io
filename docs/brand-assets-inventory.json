@@ -1,0 +1,2427 @@
+{
+  "scope": "All git-tracked raster/vector images and text files; basename references are candidates, not proof of runtime reachability. Dynamic globs, legacy URLs and remote assets require manual review.",
+  "imageCount": 292,
+  "totalBytes": 17984090,
+  "duplicates": [
+    [
+      "public/verify/images/bailu_2.jpg",
+      "public/verify/images/bailu_4.jpg"
+    ],
+    [
+      "public/verify/images/bailu_2.webp",
+      "public/verify/images/bailu_4.webp"
+    ],
+    [
+      "public/verify/images/haiou_1.jpg",
+      "public/verify/images/haiou_4.jpg"
+    ],
+    [
+      "public/verify/images/haiou_1.webp",
+      "public/verify/images/haiou_4.webp"
+    ]
+  ],
+  "withoutLiteralBasenameReference": [
+    "preset/icons/androidstudio.svg",
+    "preset/icons/animate.svg",
+    "preset/icons/arc.svg",
+    "preset/icons/safari.svg",
+    "preset/icons/tailscale.svg",
+    "preset/icons/warp.svg",
+    "preset/icons/zerotier.svg",
+    "public/assets/img/404/404 Template.png",
+    "public/assets/img/404/liukanshan_wire.svg",
+    "public/assets/img/avatar/avatar_old.png",
+    "public/assets/img/favicons/favicon-16x16.png",
+    "public/assets/img/favicons/favicon-32x32.png",
+    "public/assets/img/og-default.png",
+    "public/assets/img/persona/nz-expressions.webp",
+    "public/assets/img/persona/nz-summer-sparkler.webp",
+    "public/assets/img/readme-banner.svg",
+    "public/assets/img/readme-preview.png",
+    "public/assets/img/subdomain/对话_200.png",
+    "public/assets/img/subdomain/对话_32.png",
+    "public/assets/img/subdomain/对话_32_green.png",
+    "public/assets/img/subdomain/对话_32_green.svg",
+    "public/assets/img/subdomain/研究文库_32.svg",
+    "public/assets/img/uploads/2026/11/1000465590-1793690041062.png",
+    "public/assets/img/uploads/2026/11/1000465702-1793679255623.jpg",
+    "public/assets/img/uploads/2026/11/1000465703-1793679291920.jpg",
+    "public/favicon/moon-stars-16.png",
+    "public/favicon/moon-stars-180.png",
+    "public/favicon/moon-stars-32.png",
+    "public/favicon/moon-stars-48.png",
+    "public/favicon/moon-stars-dark-192.png",
+    "public/favicon/moon-stars.ico",
+    "public/favicon/moon-stars.svg",
+    "public/favicon/wendell-avatar-128.png",
+    "public/favicon/wendell-avatar-16.png",
+    "public/favicon/wendell-avatar-256.png",
+    "public/favicon/wendell-avatar-48.png",
+    "public/favicon/wendell-avatar-64.png",
+    "public/favicon/wendell-avatar-animated.gif",
+    "public/images/wendell-moon-stars.svg",
+    "public/verify/images/bailu_1.webp",
+    "public/verify/images/bailu_3.webp",
+    "public/verify/images/banjiu_1.webp",
+    "public/verify/images/banjiu_2.webp",
+    "public/verify/images/banjiu_3.webp",
+    "public/verify/images/banjiu_4.webp",
+    "public/verify/images/gezi_1.webp",
+    "public/verify/images/gezi_2.webp",
+    "public/verify/images/gezi_3.webp",
+    "public/verify/images/gezi_4.webp",
+    "public/verify/images/haiou_2.webp",
+    "public/verify/images/haiou_3.webp",
+    "public/verify/images/qie_1.webp",
+    "public/verify/images/qie_2.webp",
+    "public/verify/images/qie_3.webp",
+    "public/verify/images/qie_4.webp",
+    "public/verify/images/shan_banjiu_1.webp",
+    "public/verify/images/shan_banjiu_2.webp",
+    "public/verify/images/shan_banjiu_3.webp",
+    "public/verify/images/shan_banjiu_4.webp",
+    "public/verify/images/yelu_1.webp",
+    "public/verify/images/yelu_2.webp",
+    "public/verify/images/yelu_3.webp",
+    "public/verify/images/yelu_4.webp",
+    "public/verify/images/zhujing_banjiu_1.webp",
+    "public/verify/images/zhujing_banjiu_2.webp",
+    "public/verify/images/zhujing_banjiu_3.webp",
+    "public/verify/images/zhujing_banjiu_4.webp",
+    "src/assets/projects/miko-cover.png",
+    "src/assets/tools/chatgpt.svg",
+    "src/assets/tools/firefox.svg",
+    "src/assets/tools/kvm.svg",
+    "src/assets/tools/lua.svg",
+    "src/assets/tools/notion.svg"
+  ],
+  "brandMentions": [
+    "CODE_OF_CONDUCT.md",
+    "README-zh-CN.md",
+    "README.md",
+    "docs/brand-assets-audit.md",
+    "migration/theme-references/README.md",
+    "migration/upstream-README.md",
+    "migration/upstream-examples/blog/astro-theme-iris.mdx",
+    "migration/upstream-examples/docs/advanced/about.mdx",
+    "migration/upstream-examples/docs/advanced/customize.mdx",
+    "migration/upstream-examples/docs/advanced/faq.md",
+    "migration/upstream-examples/docs/advanced/optimize.mdx",
+    "migration/upstream-examples/docs/advanced/update.mdx",
+    "migration/upstream-examples/docs/integrations/advanced.mdx",
+    "migration/upstream-examples/docs/integrations/links.mdx",
+    "migration/upstream-examples/docs/setup/getting-started.mdx",
+    "migration/upstream-examples/index.astro",
+    "migration/upstream-examples/pages-about/index.astro",
+    "migration/upstream-examples/pages-links/index.astro",
+    "migration/upstream-examples/pages-projects/index.astro",
+    "migration/validation/about-page-qa.json",
+    "migration/validation/appearance-qa.json",
+    "migration/validation/cards-background-qa.json",
+    "migration/validation/favicon-qa.json",
+    "migration/validation/mobile-controls-qa.json",
+    "migration/validation/search-motion-qa.json",
+    "migration/validation/ui-density-projects-qa.json",
+    "packages/pure/README.md",
+    "packages/pure/components/basic/Footer.astro",
+    "packages/pure/package.json",
+    "packages/pure/utils/reading-time.ts",
+    "preset/components/signature/index.mdx",
+    "public/links-feed.json",
+    "public/links-status.json",
+    "public/links.json",
+    "scripts/audit-brand-assets.mjs",
+    "src/components/bento/widgets/GithubWidget.astro",
+    "src/components/bento/widgets/ProfileWidget.astro",
+    "src/components/bento/widgets/ProjectWidget.astro",
+    "src/content/blog/Blogging/Tutorial/post-2023-04-06-02.mdx",
+    "src/content/blog/技术/逆向/post-2026-11-06-17.md",
+    "src/content/docs/meta/changelog-convention.md",
+    "src/content/docs/showcase/name-origin.md",
+    "src/data/changelog.json",
+    "src/data/site-generations.json",
+    "src/pages/terms.astro",
+    "src/pages/terms/copyright.astro"
+  ],
+  "missingDocumentationAssets": [],
+  "images": [
+    {
+      "file": "docs/assets/showcase/archives-desktop.webp",
+      "bytes": 42570,
+      "sha256": "0dba761755d82a53985c83a5c7fc083fb888578031c1ba27cbf50437e519b014",
+      "references": [
+        "README-zh-CN.md",
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "docs/assets/showcase/archives-mobile.webp",
+      "bytes": 15566,
+      "sha256": "9bd43ad8cfbb2321dcb87f040c4318b1a2058fba5282dc98b56f02c64fae1b44",
+      "references": [
+        "README-zh-CN.md",
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "docs/assets/showcase/home-desktop.webp",
+      "bytes": 37868,
+      "sha256": "5f4a8f39108358034d959341ab89cc6bd8b0fbfcf872b4ab015d5cc6d091d40c",
+      "references": [
+        "README-zh-CN.md",
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "docs/assets/showcase/home-mobile.webp",
+      "bytes": 19636,
+      "sha256": "1e38811820374bdad057f1ec37665516e23e410502503cea5eeafd63a39364e7",
+      "references": [
+        "README-zh-CN.md",
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "docs/assets/showcase/search-desktop.webp",
+      "bytes": 55024,
+      "sha256": "e28905e664798a7501bf7bc645e6b8993d1e788c87756342c9a9d81ec27ee11c",
+      "references": [
+        "README-zh-CN.md",
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "docs/assets/showcase/search-mobile.webp",
+      "bytes": 8812,
+      "sha256": "779a65226341fca7b090a822c84e003c085797be54e4b85c591e566070aeb9da",
+      "references": [
+        "README-zh-CN.md",
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "migration/upstream-examples/blog/theme-guide/thumbnail.jpg",
+      "bytes": 676504,
+      "sha256": "6ec975200c8299b459235d6225677c768e07a9ceb76cb637d7ec7556dbee185c",
+      "references": [
+        "migration/upstream-examples/blog/theme-guide/index.mdx",
+        "migration/upstream-examples/docs/setup/content.mdx"
+      ]
+    },
+    {
+      "file": "preset/components/signature/signature.svg",
+      "bytes": 1253,
+      "sha256": "dfd338bdca2029360a43b039028338d6a7c6e1ff3c58ba6cf01b1ecad10b3fe9",
+      "references": [
+        "preset/components/signature/Signature.astro",
+        "preset/components/signature/index.mdx"
+      ]
+    },
+    {
+      "file": "preset/icons/androidstudio.svg",
+      "bytes": 1847,
+      "sha256": "fabdaf7a9d6da0042d5f042a6a6d46f828bf4e97f920c4f0bd66c2ff8347a453",
+      "references": []
+    },
+    {
+      "file": "preset/icons/animate.svg",
+      "bytes": 1615,
+      "sha256": "a8f029b8e6741538604bfb5d81083b95fdfdfae5f1a10791e590b064bd910893",
+      "references": []
+    },
+    {
+      "file": "preset/icons/arc.svg",
+      "bytes": 843,
+      "sha256": "0fd0f3550c5f3f2cdf3897c12b5dd2f80974dd67da5221de9f320dfae885eeda",
+      "references": []
+    },
+    {
+      "file": "preset/icons/qt.svg",
+      "bytes": 1046,
+      "sha256": "95a852a3a50f411af833d510222ef710c92ae4e580df2bd3b47b4d3898aba284",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "preset/icons/safari.svg",
+      "bytes": 3325,
+      "sha256": "3d56557c3164455e3ade0abc8f9ef5e17bb7fd8365690246ea612e68975d7095",
+      "references": []
+    },
+    {
+      "file": "preset/icons/tailscale.svg",
+      "bytes": 624,
+      "sha256": "e16344df321f49afad11df96534118505782b328f82d06bb3a106ddfe4aafae4",
+      "references": []
+    },
+    {
+      "file": "preset/icons/unity.svg",
+      "bytes": 885,
+      "sha256": "1561730266f6c45d5b936ec5f6572c28986736cd6638bd4f06be06e8ee97c839",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "preset/icons/warp.svg",
+      "bytes": 911,
+      "sha256": "1a9d56a4059453cc0d9b15cd604780cb890a14b4e4bfee2497201736198d09fe",
+      "references": []
+    },
+    {
+      "file": "preset/icons/zerotier.svg",
+      "bytes": 327,
+      "sha256": "ecd279b81e69d75d8400609ec816b392c0a8deb2fc75f99d99519bcb34e9420a",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/404/404 Template.png",
+      "bytes": 54939,
+      "sha256": "a8381a7ce5017df35c3ff77fe1e4c7173e45131365d84cf07cedcbafd9c09c86",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/404/liukanshan_wire.svg",
+      "bytes": 8079,
+      "sha256": "70ac5a18eec4c2f2bfcddfa6033e79d1a2af408fa6d7cde4c065908578cc4887",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/avatar/avatar_old.png",
+      "bytes": 153579,
+      "sha256": "5fbc74bbb4dba5ee16aac17bd4c15beba7db5d26d6ce4c1c8769cf2d6fb4b335",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/external_links/github-mark/github-mark/github-mark-white.png",
+      "bytes": 4837,
+      "sha256": "60d03f0f1a09aafcc2df2e10b4ffd24eab44787b451f8fdb367c3baf589cf95a",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/external_links/github-mark/github-mark/github-mark-white.svg",
+      "bytes": 960,
+      "sha256": "fab00c2d598c56cb4838603981b66e3490ebe27ea56fb188120a7e6d4ca46970",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/external_links/github-mark/github-mark/github-mark.png",
+      "bytes": 6393,
+      "sha256": "367d5cb2adc609451cf9127250edfe893837485e7c779d7dcb4e31234f59b001",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/external_links/github-mark/github-mark/github-mark.svg",
+      "bytes": 963,
+      "sha256": "7a0dd11e373830a51a565de9fed4a985707c67ccd390f9ae4946a152303ea676",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/favicons/android-chrome-192x192.png",
+      "bytes": 46152,
+      "sha256": "4c240559d6069187a09b317ad6bd9546e52d226a0475cd2965946fa7b6c3ec36",
+      "references": [
+        "public/assets/img/favicons/site.webmanifest"
+      ]
+    },
+    {
+      "file": "public/assets/img/favicons/android-chrome-512x512.png",
+      "bytes": 230149,
+      "sha256": "513aed389ac44ce1ede3f61a473618b43fbc5bc7b74aaa25dbe2edea1d53739f",
+      "references": [
+        "public/assets/img/favicons/site.webmanifest"
+      ]
+    },
+    {
+      "file": "public/assets/img/favicons/apple-touch-icon.png",
+      "bytes": 41655,
+      "sha256": "ded7f773b65eb01adf7403afc160f6d477366e5166fcb426c8f93bd158781036",
+      "references": [
+        "scripts/discover-link-avatars.mjs"
+      ]
+    },
+    {
+      "file": "public/assets/img/favicons/favicon-16x16.png",
+      "bytes": 807,
+      "sha256": "75650ea0e8f84decb164bc583cfd77e275c5f0aefdd6d81782d8f2e73689f1ac",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/favicons/favicon-32x32.png",
+      "bytes": 2373,
+      "sha256": "3f8f7dcfdf18c9c44e94ca67ca4da6b052fc2e2d4bdf980133eb69dec77d67ca",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/favicons/favicon.ico",
+      "bytes": 67646,
+      "sha256": "913367f09bfbbf1b8952560d8048859d666bc02900fc9b7824bf8882acdab8ac",
+      "references": [
+        "migration/upstream-examples/docs/advanced/update.mdx",
+        "migration/upstream-examples/docs/integrations/links.mdx",
+        "packages/pure/schemas/links.ts",
+        "scripts/discover-link-avatars.mjs",
+        "src/plugins/friendCircle.ts"
+      ]
+    },
+    {
+      "file": "public/assets/img/favicons/mstile-150x150.png",
+      "bytes": 30589,
+      "sha256": "13ac1beeceb3ff3cb5e5c2c6dd40feb0db2ce54cd08f2d46b9511a48d3a589a9",
+      "references": [
+        "public/assets/img/favicons/browserconfig.xml"
+      ]
+    },
+    {
+      "file": "public/assets/img/og-default.png",
+      "bytes": 75434,
+      "sha256": "3b3e1e9e543e4d6f49fc7a18e0aaf776a87445e930f5f867888920e06ae89bb3",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/persona/nz-archive-160.webp",
+      "bytes": 121248,
+      "sha256": "97770ac5f2f86c81f75c5689dc9931008f7f846b1a40b7a67ff2063b146f9071",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-autumn-ginkgo.webp",
+      "bytes": 124490,
+      "sha256": "61d73173cdea7483d659dafa3e97b207cfd209a8a4624ce6f1d8a59b6ad6d808",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-bookstore-crouch.webp",
+      "bytes": 148190,
+      "sha256": "35486db3832a0b6f6fae0c05fff93249fcc679475203059afb75228ad91cb7d8",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-bookstore-hand.webp",
+      "bytes": 91710,
+      "sha256": "bd75998e642647c52e290f8f90e8f46db137df024088ed5c60243890c25b7dcd",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-camera-leaves.webp",
+      "bytes": 108386,
+      "sha256": "1669a8e5f33c5ad79be330e1b9dc0e81d80aea8dc1903661d16cba3f8fa13ca5",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-cat-camera.webp",
+      "bytes": 78706,
+      "sha256": "7bca6141cf3a429c77dc015a77064d479b072800d7ce358ba1f47cedf643e7f5",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-clay-cat.webp",
+      "bytes": 66666,
+      "sha256": "ee2826ebf6d72a4ce789672d58c33734f134f43946e13f867bfc1bfbd1e76696",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-convenience-store.webp",
+      "bytes": 96582,
+      "sha256": "b6c0094069c6cf149ff4d350bdac1add22d42ec10e1ee46007a020d9310d2f62",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-desk-nap.webp",
+      "bytes": 43516,
+      "sha256": "9385390092ea3e47c96343a1eaea3d94d831530558eeb8225870b2486b8423cd",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-desk-top.webp",
+      "bytes": 64922,
+      "sha256": "c40498c43bec2a67276844d139278e8bb0537962845ff197a0b8f61f1f348c0b",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-detail-earring.webp",
+      "bytes": 8346,
+      "sha256": "b9fe7bd12ccea98a9f8ce23da9abaedfd952b2eb261a7a1b8bed9f1d31c98ff5",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-detail-hairpin.webp",
+      "bytes": 9382,
+      "sha256": "b16907eae905668c7534cc0574311262b837b80daaf984e1a1c4ba28d7bf36de",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-detail-hand.webp",
+      "bytes": 5754,
+      "sha256": "1ecb7b49c1631bf3f79f2c74991644760a8e4908f3c03d44ddde356bc6e246c5",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-detail-pocket.webp",
+      "bytes": 8736,
+      "sha256": "1575cedbec25522a27283e80deb7bde7a1e75d3b206d78d8816878df5ced9d7c",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-1-laugh.webp",
+      "bytes": 37820,
+      "sha256": "7d49cfd3ba63a37d9eb1d876115730ef4d1826d6ce7b5a2123ee8a0dadaad143",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-2-smile.webp",
+      "bytes": 36524,
+      "sha256": "d74f9c27ab865e156c21901293bb65583003a72368a65ed89c58efc4cff7c134",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-3-calm.webp",
+      "bytes": 35476,
+      "sha256": "6ee0fea5fab244a6b1a6d9693be4133aaa29b60f72adc1637742b9a6cee9b765",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-4-sleepy.webp",
+      "bytes": 38750,
+      "sha256": "7553cd76513ec776dd0ae3dc7e7c3042883e0a62121e783cd2fbd14c780c7204",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-5-stubborn.webp",
+      "bytes": 39652,
+      "sha256": "bb524f5b825eecc0034acd623fab89ed8fdafbd02cd279beccdd83faaf25910e",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-6-surprised.webp",
+      "bytes": 36420,
+      "sha256": "5805c3abe69712fc5e4b15ad701fd5201517e6aafc15ad5fcad6b6a6a1f68849",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-7-focus.webp",
+      "bytes": 40762,
+      "sha256": "561a99db3c6864287db77a556400cd174279c91c6cd1a4471d891bbda030482a",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-8-smug.webp",
+      "bytes": 37974,
+      "sha256": "e8b8e20c7334211a8c5e00dc0dc6de54efca2be01e2e7710cd6f28f59e0f8044",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expr-9-wronged.webp",
+      "bytes": 38860,
+      "sha256": "119e4aad82c45b491785cf351e4a8ae08830c72596907f8ce4597ae0ad2faed5",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-expressions.webp",
+      "bytes": 338134,
+      "sha256": "1fe38f50ce084105435b2481538ec846a417996fc7d97380985d118ec85600d3",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/persona/nz-hallway.webp",
+      "bytes": 82174,
+      "sha256": "b6ff5801c9919f3172c17020c904844757816b0db4fef92464d6f0daed430476",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-intp-split.webp",
+      "bytes": 55892,
+      "sha256": "2f2be816e49c32efc1695cb08c09ae20d8ef5270e9cb23e1c2a0c91ff1b010ac",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-kalimba-window.webp",
+      "bytes": 158508,
+      "sha256": "4679b131a6c30c5ec071574e92c44173d9682c2e6c26dbaa2ee6b55ef88b6800",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-laugh.webp",
+      "bytes": 92390,
+      "sha256": "9e3eac3df294a055af2417b8a01d5836918f641a4f565e61350ad50ad10c7115",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-laundry-balcony.webp",
+      "bytes": 115412,
+      "sha256": "5c691b2c9c9a469d401f8d02b6a7bb5427e9712a7ab99979027a6e68cf103b9d",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-material-brass.webp",
+      "bytes": 4882,
+      "sha256": "085db9d3fc390bd073dd4bc1e8073220bf40226f25f4551b7d9548f12804c564",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-material-cotton.webp",
+      "bytes": 5772,
+      "sha256": "ca1d11a130ce6d9cd840c4b4e0bf13f0e75e9f2d80c9370ce3e16e3cf02db7fd",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-material-knit.webp",
+      "bytes": 7208,
+      "sha256": "2dde5ce0069265cc9a3ed19fff1e42a7b0f9bab1659cf1c9d258860a26334f11",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-material-paper.webp",
+      "bytes": 4416,
+      "sha256": "c7a2f22db8e8c048801d53e5a559695598158931e4d956eaa26a074c6a840e44",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-night-bus.webp",
+      "bytes": 66066,
+      "sha256": "c2c9f5bd2e6668f716a06a0977d6da904871fbf87d12f79bb893485bd5a7e4bd",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-offer-candy.webp",
+      "bytes": 112612,
+      "sha256": "50de8c6a61d7434959c9e905a8d433d523945325a9fa880a20696ea15e49fae0",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-portrait.webp",
+      "bytes": 93304,
+      "sha256": "19429bd35d1c14ad8bb0028ca83cbb3a9f6604ad809c0ca0f9bf61c022e145b5",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-quote-flowers.webp",
+      "bytes": 64422,
+      "sha256": "7442cb9681e7b68d47d188cef9d74644e992dfd0c0ef0fabe11c3e4073d6963d",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-rain-shelter.webp",
+      "bytes": 116910,
+      "sha256": "d2fb492b046d6e82df78925f43634a825f6f235719bc6f361ef983ae7cdb9c66",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-rooftop-night.webp",
+      "bytes": 66146,
+      "sha256": "922031cbc83ad88323368bece2a6ca81e5a6e0cfd9ff7038f67a852aa29bbf06",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-seasons.webp",
+      "bytes": 143702,
+      "sha256": "39e1e95c4c21ab74799964eb1b12456d95c2344c0c0b85133fc0ee85152814c0",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-shadow-camera.webp",
+      "bytes": 83386,
+      "sha256": "8fed156a1399bafaed1ab3a32baf882c95f78ebb36bb58ed12be91dbb7d20733",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-shadow-hand.webp",
+      "bytes": 51028,
+      "sha256": "5638b91e00ac48f3a38c0408252abfe000aa3655b14af8d442bc077282fc16fb",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-sheet.view.webp",
+      "bytes": 116826,
+      "sha256": "a01c34722d1c12c9d042e83f32d10a4d7950d4ceb646cf1be6e59d6e4984e5eb",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-sheet.webp",
+      "bytes": 349622,
+      "sha256": "e63143f2cf0d3eee837f3554ef23778504defad24bf121218c8b8379b42249d4",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-shelf-build.webp",
+      "bytes": 99896,
+      "sha256": "852cbb93d840749a2934a736853120c13cbb24b1e69bcf20cc9f846eb88728fe",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-stairwell-light.webp",
+      "bytes": 90290,
+      "sha256": "f2caa4a28672fa1b50b09ca1e373cfcc4b5bfebb38bb61c5ceba0707979f1262",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-state-code.webp",
+      "bytes": 87308,
+      "sha256": "6b0218df782dca75cbe79ab56701508556b6fc1fe254fbd132cd29606bc2ee69",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-store-night.webp",
+      "bytes": 101748,
+      "sha256": "39bf5320b9d4f113623820d7200597999d4e551fc5151abd7d45752e2de6f94e",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-subway-platform.webp",
+      "bytes": 69290,
+      "sha256": "8050c4c22599cce3da753b5bf377f0573b20598ba2146da3ca5b5a2fc946fcea",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-summer-sparkler.webp",
+      "bytes": 81674,
+      "sha256": "cbf7d6abcd3edd9d384283146fb6a302543027f6815ba5ae9677696a51332e12",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/persona/nz-typhoon-window.webp",
+      "bytes": 85856,
+      "sha256": "a7d0dc20d0e6619cbf32f654dc34578fbd8a6fdcb8f35bfd599f4d45c6ad5598",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-unhappy.webp",
+      "bytes": 70256,
+      "sha256": "49a5c87adf211c496cb37ec3057f0ad1afac9132b1c4dc25967974839d22df77",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-upscale-01-eyes.png",
+      "bytes": 1215244,
+      "sha256": "537fa9af87cc7b706c8c1d39c45e378e5cda12ca0070e73b18e56b73a248cef0",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-upscale-01-eyes.view.webp",
+      "bytes": 41690,
+      "sha256": "386ad5a0a7a88f3e01817ce3f4154a9da3acc20ffcb263c4274a702a90a2b589",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-upscale-02-knit.png",
+      "bytes": 1028944,
+      "sha256": "d4e596ee2d1c394bb5001869e40fb4580f74f488ee6ede454da4c9bb9eb56b16",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-upscale-02-knit.view.webp",
+      "bytes": 33040,
+      "sha256": "f3749e0ee0b5b56bb6e1921d8e1a53aa88cb87eb4e261a4b37a2b96449e292bb",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-upscale-03-hair.png",
+      "bytes": 1193633,
+      "sha256": "24e7e3612e46672aa05e8a9cabab7ee064702d8f9c123f68d0d6ca9bb2a8f41f",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-upscale-03-hair.view.webp",
+      "bytes": 31236,
+      "sha256": "2608239aa755561b875e1fb97f76e06fb186f213f523fd15afd4a081c9fc5dcb",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/persona/nz-walk-candy.webp",
+      "bytes": 94360,
+      "sha256": "9990b10c740b9877c0ce01ae9fcdb2b006631e6aaf3a94225dd7bfd75a753e7b",
+      "references": [
+        "src/migration-persona.html"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/device-login/cover.png",
+      "bytes": 80719,
+      "sha256": "8b9ef9714f09935f8666c6b47b9ebf16d31a79a5218757f79d5f251051bb3fee",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/github-fork-sync/cover.png",
+      "bytes": 81230,
+      "sha256": "1c0e9448c311aa2cb8081fcc482b267869a0a331a63a169e88e899cbb9f7a5b2",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/github-page-paths/cover.png",
+      "bytes": 79369,
+      "sha256": "ff2cdb12ec44ab1dad6ee213a9e91f4a51079190325e693b7cbbc6c70f8e43c8",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/markdown-notes/cover.png",
+      "bytes": 80411,
+      "sha256": "344b0de9d2c422a217f9cc12be39ec57a99e9881fdb0bf19c8e8ecbeecef2ac8",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/marxism-micro-lesson/cover.jpg",
+      "bytes": 196131,
+      "sha256": "54d250fe23a38aee870c2317123b0a5176a6e36af9be426984821e871bb5bbe8",
+      "references": [
+        "migration/content-manifest.json"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/miko-web/cover.webp",
+      "bytes": 17650,
+      "sha256": "e37ff3da44b2d98dc00ed34955074acfdcbaf5197e87c93b8fbacd2c7acb72c3",
+      "references": [
+        "migration/content-manifest.json",
+        "migration/validation/ui-density-projects-qa.json",
+        "src/components/appearance/AppearancePanel.astro",
+        "src/data/projects.ts"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/my-first-blog/cover.jpg",
+      "bytes": 164666,
+      "sha256": "245b2927e0067f5a67432c21683d34eaeb043b5ef956b91b1fc642dd5dcd1c85",
+      "references": [
+        "migration/content-manifest.json"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/my-first-blog/current-home.webp",
+      "bytes": 69040,
+      "sha256": "0410addfa3e7e0571d320e37cce120875823c551dca466a930dbcc3211e0927e",
+      "references": [
+        "src/content/blog/杂记/Feeling/post-2023-10-11-05.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/my-first-blog/current-tag-graph.webp",
+      "bytes": 30820,
+      "sha256": "b6d9afe1984a8baacb396c0ed988c5fc579d252d49cd2021df3c058d9bcc0ad5",
+      "references": [
+        "src/content/blog/杂记/Feeling/post-2023-10-11-05.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/my-first-blog/first-look.webp",
+      "bytes": 15090,
+      "sha256": "3b1c870682b2f229094d383da0958643f5391cbced46ca62b4215a6ad9f1f92d",
+      "references": [
+        "src/content/blog/杂记/Feeling/post-2023-10-11-05.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/my-first-blog/old-template.webp",
+      "bytes": 100888,
+      "sha256": "5c9adff168d56e82fc70abb029f21ba5a2225cdbbec32707ca4b1ff16b756196",
+      "references": [
+        "src/content/blog/杂记/Feeling/post-2023-10-11-05.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/my-first-blog/writing-studio-mobile.webp",
+      "bytes": 18532,
+      "sha256": "cb3852d415ab96d4f082c770861fedc28e0eab12df46b797debc87922751361b",
+      "references": [
+        "src/content/blog/杂记/Feeling/post-2023-10-11-05.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/nianzhen-web/architecture.webp",
+      "bytes": 81128,
+      "sha256": "4717bb7de94c12ff41ce0042a36555617b63015ebfe8514fd03cbc62fc7e4cf5",
+      "references": [
+        "src/content/blog/技术/运维/post-2026-11-05-16.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/nianzhen-web/cover.png",
+      "bytes": 65541,
+      "sha256": "06b9e713451b83d1206289e6fcd56c721718574b0b483f12439c9f59e5c6dc6e",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/qq-bot-postmortem/cover.png",
+      "bytes": 86543,
+      "sha256": "ca0221a9cb178281211c3cc765553adb9de357b97c099c7213e13866262e2788",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/r2-migration/cover.png",
+      "bytes": 79619,
+      "sha256": "495c80b742facace90830953ed9a506acd0e527b3168476239c43678498bcbaf",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/rea-install/cover.png",
+      "bytes": 93450,
+      "sha256": "f3d58c4ef7fcecef5a88df47d40e619dd95d838a99205f359e2698c253edbfac",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/refresh-button/cover.png",
+      "bytes": 69588,
+      "sha256": "46250ed79d3d07033e941b20f791d70d9f1488d23f168149d1f7e00239c88d54",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/site-diet/cover.png",
+      "bytes": 71834,
+      "sha256": "0c66b95a31042dd0c5f159dd0b0fbc072315625262b3a29e4f4a38225bd52a4f",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/volunteer-visit/cover.png",
+      "bytes": 176458,
+      "sha256": "ecaed986d65eddc49cee0e57ad7130bb233c43b2e40f2828fdaa872da2a05c4b",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/volunteer-visit/papercut-interview.png",
+      "bytes": 150157,
+      "sha256": "fa99b04bfd652fc501350b7566e600e45f86873cafe80e7478f69ec2e43a1b78",
+      "references": [
+        "src/content/blog/杂记/Writing/post-2023-04-23-03.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/volunteer-visit/papercut-neighbors.png",
+      "bytes": 668614,
+      "sha256": "55e7f623b91b16ee8f6c2447cd20c081f4e0f96f2a1f11de4f5880cb6af5479f",
+      "references": [
+        "src/content/blog/Blogging/post-2026-11-03-11.md",
+        "src/content/blog/杂记/Writing/post-2023-04-23-03.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/volunteer-visit/street-interview.png",
+      "bytes": 716476,
+      "sha256": "0d844a5fd9dc6b02131fc5d645937e09b762b74b96038f660790c368ea4617aa",
+      "references": [
+        "src/content/blog/Blogging/post-2026-11-03-11.md",
+        "src/content/blog/杂记/Writing/post-2023-04-23-03.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/volunteer-visit/zhou-laoren.png",
+      "bytes": 173468,
+      "sha256": "c50ce1453e593b52eb941d060db74751920290b85716e82992c2b244c7c66d48",
+      "references": [
+        "src/content/blog/Blogging/post-2026-11-03-11.md",
+        "src/content/blog/杂记/Writing/post-2023-04-23-03.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/writing-studio/cover.png",
+      "bytes": 69344,
+      "sha256": "d03bb4985ef9af805ead6eb4d57bccb7fec294c8cd5cf3e4993f234b73d5b164",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/posts/xss-audit/cover.png",
+      "bytes": 81833,
+      "sha256": "d07d979b85831a635282dca446aefb317fdfc70be21839c3e72c71e98a91703d",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/Blogging/post-2026-11-03-11.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/readme-banner.svg",
+      "bytes": 5162,
+      "sha256": "9f6b554ecaa6b3361c802f65d898d6402f30f3179d36ece8671ab1cc82488704",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/readme-preview.png",
+      "bytes": 353573,
+      "sha256": "c02410f017c5763c90e57ae2d23afc196e4eb1308b54b0103b897c88eb430d1a",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/readme/dino.gif",
+      "bytes": 383971,
+      "sha256": "a30845dc327a08619568f055e9c2283365fdf52cff5d7cbefa76ea5c55067c09",
+      "references": [
+        "src/data/changelog.json"
+      ]
+    },
+    {
+      "file": "public/assets/img/subdomain/对话_200.png",
+      "bytes": 8934,
+      "sha256": "05e89ee210cc24b7738f9cd8609806be73705e815f6a225ffb75cbd9423c7f83",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/subdomain/对话_32.png",
+      "bytes": 1532,
+      "sha256": "a6f2095754a37516504bfafe07bdba491e2d818e96ca5c93438ca69f1dd10a8d",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/subdomain/对话_32_green.png",
+      "bytes": 1430,
+      "sha256": "1b7a3e0c11dc09042bbe7a07035659e06d0dd2cee208a5e495c20adae90f01dd",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/subdomain/对话_32_green.svg",
+      "bytes": 2071,
+      "sha256": "3041f63d722eb05e7c6414a8243683fecf72aeb61a1741a2e99c11f78c333e55",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/subdomain/研究文库_32.svg",
+      "bytes": 1478,
+      "sha256": "af95c314ba9cea8ce8de965aaa274b7ed85edc44ca7aed197343c826026aa0ab",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/uploads/2026/11/1000465590-1793690041062.png",
+      "bytes": 528805,
+      "sha256": "622b9c53b852b5352887aa1c5d1044132f314fbb3df9e9bb2db4aed64c655f02",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/uploads/2026/11/1000465702-1793679255623.jpg",
+      "bytes": 82605,
+      "sha256": "c7836a0ddda747f9464feb91296d8fc8e5de5305a7fab635cd061c95aca00e00",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/uploads/2026/11/1000465703-1793679291920.jpg",
+      "bytes": 87205,
+      "sha256": "ba093a29a08bcd1ef96223ca5d55b5e7186b6d551081c5b8409a05d876a35eec",
+      "references": []
+    },
+    {
+      "file": "public/assets/img/uploads/2026/11/屏幕截图-2026-10-19-231914-1793725100447.webp",
+      "bytes": 58472,
+      "sha256": "8803d980d7082826b5f44c06b4b49977181617b956a473d57bfedaa0928f3d69",
+      "references": [
+        "migration/content-manifest.json",
+        "src/content/blog/杂记/影视/post-2026-11-04-14.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/uploads/2026/11/屏幕截图-2026-10-19-232145-1793725726577.webp",
+      "bytes": 112292,
+      "sha256": "13ef274222b0499a21e47ea6afe8006a24510f193bb1613d3de7a60d326d4949",
+      "references": [
+        "src/content/blog/杂记/影视/post-2026-11-04-14.md"
+      ]
+    },
+    {
+      "file": "public/assets/img/uploads/2026/11/屏幕截图-2026-10-19-235650-1793724514062.webp",
+      "bytes": 60086,
+      "sha256": "bde2629bf0a6a568a36d17db5a9895d916498969f45d4f837a637674b9b20c3d",
+      "references": [
+        "src/content/blog/杂记/影视/post-2026-11-04-14.md"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/1c30e61a2fb14cd3.jpg",
+      "bytes": 3378,
+      "sha256": "1c30e61a2fb14cd3c2ea3e57a29c56554faa206acf969b7d1992a3d197fb8ab3",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/2714c1c5daee650d.ico",
+      "bytes": 21238,
+      "sha256": "2714c1c5daee650d3ef07f9d080285df96035f4c15d6b599937ce6caca1ddc20",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/4cdd558d9be637b8.png",
+      "bytes": 2280,
+      "sha256": "4cdd558d9be637b83f0b959ecd99608630514c6d2c3a00c0523669b72bf85a9e",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/74cf90ac2fe6624a.png",
+      "bytes": 958,
+      "sha256": "74cf90ac2fe6624ab1056cacea11cf7ed4f8bef54bbb0e869638013bba45bc08",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/7db314dcf9e2677a.png",
+      "bytes": 14120,
+      "sha256": "7db314dcf9e2677a9ae88b2cd55b5d48e225d7756c6403987bb0f0aa37a83104",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/ab08515fa79cef05.png",
+      "bytes": 2942,
+      "sha256": "ab08515fa79cef05d169d17bb9bb053df49f05a461fe3cb06310f44231d2a237",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/avatars/sites/d64dc192e990065d.png",
+      "bytes": 3420,
+      "sha256": "d64dc192e990065d26cd69d134b638001354f4e820b10f1e9efd40a5bbc32498",
+      "references": [
+        "public/links-avatars.json"
+      ]
+    },
+    {
+      "file": "public/favicon/moon-stars-16.png",
+      "bytes": 586,
+      "sha256": "c3a01bee6512d566b6c0edbf8558db6183eac3fe85b9f7bef98ae33dc7b50ec1",
+      "references": []
+    },
+    {
+      "file": "public/favicon/moon-stars-180.png",
+      "bytes": 7298,
+      "sha256": "27267cf116f35f0cf11606d46b620a6b1381ffcd3ba2c938379f8f34d312d1c4",
+      "references": []
+    },
+    {
+      "file": "public/favicon/moon-stars-192.png",
+      "bytes": 7895,
+      "sha256": "dae78353971b7adf9c2e0d3536b2acccab76d231a45e1ba9a1ce840630a11ef7",
+      "references": [
+        "public/favicon/wendell.webmanifest"
+      ]
+    },
+    {
+      "file": "public/favicon/moon-stars-32.png",
+      "bytes": 1307,
+      "sha256": "2ca4e8f61891b751e0daf4b81209b36259484dbe9e3d812b8db81f555820d5ce",
+      "references": []
+    },
+    {
+      "file": "public/favicon/moon-stars-48.png",
+      "bytes": 1930,
+      "sha256": "b40f4990c9974d6de53712450b4ddf9d56973860bbd9eeb880b7b9fc78b064c7",
+      "references": []
+    },
+    {
+      "file": "public/favicon/moon-stars-512.png",
+      "bytes": 25414,
+      "sha256": "7d6aeb5a4bb89bf757646dd8c4c0c88b70dfd2a18373e7eccf56305db6617496",
+      "references": [
+        "public/favicon/wendell.webmanifest"
+      ]
+    },
+    {
+      "file": "public/favicon/moon-stars-dark-192.png",
+      "bytes": 7865,
+      "sha256": "2d797304c5955929f9903bd2473d32d4b3dfce13b1f5fe1c0f3bb3d2eb19a60e",
+      "references": []
+    },
+    {
+      "file": "public/favicon/moon-stars.ico",
+      "bytes": 3877,
+      "sha256": "fd38f2c71bf19ba010456eb87c3a0709c9a7e4c8e10283f04599252288cc16ef",
+      "references": []
+    },
+    {
+      "file": "public/favicon/moon-stars.svg",
+      "bytes": 1114,
+      "sha256": "edb623951ec61fb1618bcee9bd98c6d7f24c40dc00a640e5ff459da039d271df",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-128.png",
+      "bytes": 14396,
+      "sha256": "8f93b73b7d5eb327a4138e6f0b31d4cdf92e6b8b4868982f59ae747bf635c50f",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-16.png",
+      "bytes": 618,
+      "sha256": "561bde2fab596e3d162b69dd90ec240d7c347b725dceb2eaa4b5d43140911e47",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-180.png",
+      "bytes": 25428,
+      "sha256": "0ef47067e51105aadacabebde5220f2d22d1689564203df18efb4eb59678dc91",
+      "references": [
+        "src/components/BaseHead.astro"
+      ]
+    },
+    {
+      "file": "public/favicon/wendell-avatar-192.png",
+      "bytes": 28391,
+      "sha256": "3c39e34657b8e915e023eb617af3b9d5c73d79c8428353de89dcbb34e3a45768",
+      "references": [
+        ".github/friend-link.config.json",
+        "public/favicon/wendell-avatar.webmanifest",
+        "public/links.json",
+        "src/components/links/FriendFeed.astro",
+        "src/components/links/FriendList.astro",
+        "src/components/links/friendFeedClient.ts",
+        "src/pages/links.astro",
+        "src/site.config.ts"
+      ]
+    },
+    {
+      "file": "public/favicon/wendell-avatar-256.png",
+      "bytes": 44920,
+      "sha256": "7babe86667d48200c1623526347389eb5a39e607024e7c87fa696a76b3ae5f8a",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-32.png",
+      "bytes": 1553,
+      "sha256": "ac8d772b264180263a3872c1ea401662f2f3017beccd348686614f1bc636e8f7",
+      "references": [
+        "src/components/BaseHead.astro"
+      ]
+    },
+    {
+      "file": "public/favicon/wendell-avatar-48.png",
+      "bytes": 2907,
+      "sha256": "304e24505fdea1b8d740943a46eb5dd8cc5f88d3ff8cd5ece6ce6b3c74dd44c0",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-512.png",
+      "bytes": 142015,
+      "sha256": "1f0a2d599126eed0db84107ef1050b4b3faa479a6fe08929050919c94e891a4e",
+      "references": [
+        "public/favicon/wendell-avatar.webmanifest"
+      ]
+    },
+    {
+      "file": "public/favicon/wendell-avatar-64.png",
+      "bytes": 4613,
+      "sha256": "a16ae3cf5e7c04d1aaaf23f36bc9785734dbb03fb5118451103e88fe68906ebf",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-animated.gif",
+      "bytes": 199337,
+      "sha256": "8c80fbc58e1b2de3a71fbface9b9e476cf63cf2e37976ec3161eca85d454e3a2",
+      "references": []
+    },
+    {
+      "file": "public/favicon/wendell-avatar-animated.webp",
+      "bytes": 425284,
+      "sha256": "79b1f1bc247d636fd96308cf9bd205445b62ac9e3cd9153fc172474ed3d5e9ef",
+      "references": [
+        "src/components/InteractiveAvatar.astro"
+      ]
+    },
+    {
+      "file": "public/favicon/wendell-avatar-source.png",
+      "bytes": 615273,
+      "sha256": "4c3a2a70b3df075b98112acf2cdacaa2ab8d8a40272e7d474850146b031ca193",
+      "references": [
+        "public/favicon/NOTICE.md",
+        "scripts/generate-branding.mjs"
+      ]
+    },
+    {
+      "file": "public/favicon/wendell-avatar.ico",
+      "bytes": 69109,
+      "sha256": "b095f3ee762f8a9bf677d177d556eeec5b7130e20b9f8afc55193874ece7e886",
+      "references": [
+        "scripts/generate-branding.mjs",
+        "src/components/BaseHead.astro"
+      ]
+    },
+    {
+      "file": "public/icons/code.svg",
+      "bytes": 3176,
+      "sha256": "7085505b801251c29659a2468795fb96d435d910c3272fabb29b3af970491b9c",
+      "references": [
+        "migration/upstream-examples/docs/setup/deployment.mdx",
+        "migration/upstream-examples/pages-about/index.astro",
+        "src/plugins/shiki-custom-transformers.ts"
+      ]
+    },
+    {
+      "file": "public/icons/heart-item.svg",
+      "bytes": 1241,
+      "sha256": "ee8a7021b7bebab6c0b7d947770bce7d3f9e4e7774d4ef7a9fefb45ce65f86ac",
+      "references": [
+        "src/components/waline/Comment.astro"
+      ]
+    },
+    {
+      "file": "public/images/moonlit-cover.svg",
+      "bytes": 1844,
+      "sha256": "13f80d5486f4dc60c55c8d8e2b62085790cf93dc1b552ad1f845347872828ae7",
+      "references": [
+        "scripts/wallpaper-settings.test.mjs",
+        "src/components/appearance/AppearancePanel.astro",
+        "src/components/appearance/appearance-bootstrap.js",
+        "src/content/blog/Blogging/Tutorial/post-2023-04-06-02.mdx",
+        "src/layouts/BaseLayout.astro",
+        "src/pages/index.astro"
+      ]
+    },
+    {
+      "file": "public/images/music/tonearm.webp",
+      "bytes": 16788,
+      "sha256": "ec297098ea525489c9ad113d7c2ab6bd9e596e8dc32f846e1809129f9fe295ff",
+      "references": [
+        "docs/music/README.md",
+        "src/components/music/MusicPlayer.astro"
+      ]
+    },
+    {
+      "file": "public/images/music/vinyl.webp",
+      "bytes": 62014,
+      "sha256": "dfe8c1858165623d9886511ffa50ec4f2e37b06ce7800a7603a2f5825939c270",
+      "references": [
+        "docs/music/README.md",
+        "src/components/music/MusicPlayer.astro"
+      ]
+    },
+    {
+      "file": "public/images/projects/inhuman-cover.svg",
+      "bytes": 1446,
+      "sha256": "f4c7b969dafbb1228a0b4eca0a242b406bc55a050799ef3a2e3a7c21e338cd81",
+      "references": [
+        "src/data/projects.ts"
+      ]
+    },
+    {
+      "file": "public/images/projects/miko-cover.webp",
+      "bytes": 91812,
+      "sha256": "bf3b837422b91f77991243db7c08a7dac34008965c775fd37ac8eec53d5733f0",
+      "references": [
+        "migration/validation/ui-density-projects-qa.json",
+        "src/data/projects.ts"
+      ]
+    },
+    {
+      "file": "public/images/wallpapers/aurora-ridge.svg",
+      "bytes": 1912,
+      "sha256": "75d718599213327c370f1826c0afb10131b44aada0b4703d83db928223ac391c",
+      "references": [
+        "scripts/wallpaper-settings.test.mjs",
+        "src/components/appearance/AppearancePanel.astro",
+        "src/pages/index.astro"
+      ]
+    },
+    {
+      "file": "public/images/wallpapers/rose-twilight.svg",
+      "bytes": 1436,
+      "sha256": "236be83982a07007455d3a84fabbd2b7c38de5b46fd05855f5ed6b1d357e9092",
+      "references": [
+        "scripts/wallpaper-settings.test.mjs",
+        "src/components/appearance/AppearancePanel.astro",
+        "src/content/blog/Blogging/Tutorial/post-2023-04-06-02.mdx",
+        "src/pages/index.astro"
+      ]
+    },
+    {
+      "file": "public/images/wallpapers/silver-mist.svg",
+      "bytes": 1529,
+      "sha256": "6c6af9adb700f20aced536da6ec3a6f9482d62ef35d035246c944a2b6b1f1475",
+      "references": [
+        "scripts/wallpaper-settings.test.mjs",
+        "src/components/appearance/AppearancePanel.astro",
+        "src/content/blog/Blogging/Tutorial/post-2023-04-06-02.mdx",
+        "src/pages/index.astro"
+      ]
+    },
+    {
+      "file": "public/images/wendell-avatar-card.png",
+      "bytes": 156862,
+      "sha256": "58bef9ca8c9bec9b4b63c584468076380bdd28bde6f6ae13c506505aafeeffd7",
+      "references": [
+        "migration/validation/supplied-icon-qa.json",
+        "scripts/generate-branding.mjs",
+        "src/site.config.ts"
+      ]
+    },
+    {
+      "file": "public/images/wendell-avatar-card.svg",
+      "bytes": 156936,
+      "sha256": "27b569d5ea510fd141977740e21a8aeb0bdd27590a0303b357cef31f49ffc34b",
+      "references": [
+        "scripts/generate-branding.mjs"
+      ]
+    },
+    {
+      "file": "public/images/wendell-moon-stars.png",
+      "bytes": 61549,
+      "sha256": "91ef4d4f51670dcd208085ccf5799243026054a1e0103c04c6824e347566ed74",
+      "references": [
+        "migration/validation/favicon-qa.json"
+      ]
+    },
+    {
+      "file": "public/images/wendell-moon-stars.svg",
+      "bytes": 1752,
+      "sha256": "ada5b67a75826d9662690a83dfe575a4429b286a0ab54d87a51fb1c73dce5bf2",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/bailu_1.jpg",
+      "bytes": 10433,
+      "sha256": "f3814c138af522c034dcc544e4c62f883233ecda5f0f1f9ccbe1de75ed39f085",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/bailu_1.webp",
+      "bytes": 9292,
+      "sha256": "aeace47f12b411c01406c6f05aef5715835a0c9a6ff02145cd2649f8b265377a",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/bailu_2.jpg",
+      "bytes": 8830,
+      "sha256": "93496da4ce72a1194e451bd5805d445bbd4f3de2e6e77379c138cd140260b691",
+      "references": [
+        "docs/brand-assets-audit.md",
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/bailu_2.webp",
+      "bytes": 6040,
+      "sha256": "50ef4fb5a8338b31f3c4c79a8d9ab63cb155a4447ad7f286de4071b9dee43636",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/verify/images/bailu_3.jpg",
+      "bytes": 17975,
+      "sha256": "11da81add55cec1032f0004d57de28ef1f8b8f9848214aa395d7c4ea5f1fd923",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/bailu_3.webp",
+      "bytes": 15162,
+      "sha256": "9cdbeb17a4fabdb39144e4e95a1b0ee570ec8083e9dea6bc208e5634de04e1a8",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/bailu_4.jpg",
+      "bytes": 8830,
+      "sha256": "93496da4ce72a1194e451bd5805d445bbd4f3de2e6e77379c138cd140260b691",
+      "references": [
+        "docs/brand-assets-audit.md",
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/bailu_4.webp",
+      "bytes": 6040,
+      "sha256": "50ef4fb5a8338b31f3c4c79a8d9ab63cb155a4447ad7f286de4071b9dee43636",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/verify/images/banjiu_1.jpg",
+      "bytes": 5930,
+      "sha256": "e6b8b0aaaeaf198e05d431c2d97aea2480efe8a61772b25c3286097df4be33b1",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/banjiu_1.webp",
+      "bytes": 4896,
+      "sha256": "e8f94810fea0fc30b8f04064c015db116364dde265aa90de60170ac7e35f682e",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/banjiu_2.jpg",
+      "bytes": 8668,
+      "sha256": "8220b85e23576e0bcfbbc2bde8baa429449740a4cc8069100f4f16eb8b53414c",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/banjiu_2.webp",
+      "bytes": 6736,
+      "sha256": "791a249c7168e7d06216491ee649bb3c99320859bdfeb981191e8529c98c9b68",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/banjiu_3.jpg",
+      "bytes": 8137,
+      "sha256": "cac6ab2711cb17a6a911fed51e570543964a34174ef0d3954e4a9e3ac7a11545",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/banjiu_3.webp",
+      "bytes": 5530,
+      "sha256": "346ba01d888ffa8b3ae78155fdbc86723a4c89e12963073517017c2ef826497d",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/banjiu_4.jpg",
+      "bytes": 9552,
+      "sha256": "2aed0f745b40247aa888aba68c54d1759b4675f3181f41da1a2979c79a5fa22c",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/banjiu_4.webp",
+      "bytes": 7916,
+      "sha256": "c4e20c40d7f556c1ded7a2648a543b04d7662f393aa8c58a5e455ffaaa480529",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/gezi_1.jpg",
+      "bytes": 9877,
+      "sha256": "6da62c02ea81bfa3d9995f1450bd5370cf1412073567649afe7188f24b31f8cf",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/gezi_1.webp",
+      "bytes": 8158,
+      "sha256": "37966a072580faf80310c89a55a242e02890b532476ca4f3fbbe95e45ff82c15",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/gezi_2.jpg",
+      "bytes": 12559,
+      "sha256": "f3973fa5b5f1c4baaf2f60b5f9158ccabe71aa1b81d7d058f7810e1a6e28f6e7",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/gezi_2.webp",
+      "bytes": 12308,
+      "sha256": "f6c8e74d496f3517d7c61b24164d8a1cdcc842e8d16a06df12bc2cf96be97405",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/gezi_3.jpg",
+      "bytes": 12379,
+      "sha256": "34ac0b1ae00673c97a139e9a67cc7838cfb81d07363b98c9adfbd12fa7bfcc20",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/gezi_3.webp",
+      "bytes": 10282,
+      "sha256": "17487631b3d1845499e748c629345cae67c82b3e7e8989cbacb09514f2dd4a10",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/gezi_4.jpg",
+      "bytes": 11481,
+      "sha256": "907e868a4e642568cc2acd75a6f8c788dc5859eabb1d6fe81185e59775fcdb7d",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/gezi_4.webp",
+      "bytes": 9492,
+      "sha256": "0bdc8bf9e2ddcc06f245e09842b68990e3eadf3906eac9f7e47052cd83a7d59e",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/haiou_1.jpg",
+      "bytes": 7074,
+      "sha256": "f732d1a146561028bf9b5aa49783a980b669053c9c69d0566ffdb05fd54beef7",
+      "references": [
+        "docs/brand-assets-audit.md",
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/haiou_1.webp",
+      "bytes": 5354,
+      "sha256": "52eb1a2a4c2b59c65843e3c42f66ff1bf1a4cb18db6e394def6ec2037f5817d2",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/verify/images/haiou_2.jpg",
+      "bytes": 10237,
+      "sha256": "dd676ecbd4b6bdf54309f4a41ccc72efb0e381551a495c0c53695ae99e69868b",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/haiou_2.webp",
+      "bytes": 8840,
+      "sha256": "6c49a233776174f9c9f47d91573e7d5cf2c15d9c88870fa18d0e18b34247a5dd",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/haiou_3.jpg",
+      "bytes": 12856,
+      "sha256": "02cac1366970bab76bdf5afe90745199eeef60c32b1e4453c4261ccd52ae2d1a",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/haiou_3.webp",
+      "bytes": 10450,
+      "sha256": "fbe33c23d42888e0aecdae02bf5733663aff2f8db971c1c05724d37436fe48af",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/haiou_4.jpg",
+      "bytes": 7074,
+      "sha256": "f732d1a146561028bf9b5aa49783a980b669053c9c69d0566ffdb05fd54beef7",
+      "references": [
+        "docs/brand-assets-audit.md",
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/haiou_4.webp",
+      "bytes": 5354,
+      "sha256": "52eb1a2a4c2b59c65843e3c42f66ff1bf1a4cb18db6e394def6ec2037f5817d2",
+      "references": [
+        "docs/brand-assets-audit.md"
+      ]
+    },
+    {
+      "file": "public/verify/images/qie_1.jpg",
+      "bytes": 14108,
+      "sha256": "ff483f731bd31517a25e787c45287810aa18eca09d2da5cd072f2cfec7e44d62",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/qie_1.webp",
+      "bytes": 10612,
+      "sha256": "e46a43cfe4377b0115b71df85afee44d8d12b47c73b589db1fab063dfdb4011d",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/qie_2.jpg",
+      "bytes": 19208,
+      "sha256": "22de99b829291306b087ce701d5547ea581813c3cdb267b23152929604a8294a",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/qie_2.webp",
+      "bytes": 13950,
+      "sha256": "4d7466966839f6a032c183c11ed13d1912d912f40c4cd5644dc6302ff3331f55",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/qie_3.jpg",
+      "bytes": 14388,
+      "sha256": "5383c1474a32face3cd6de219ef66363865ef2ee804d6fb528c3fc5d8632d6fd",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/qie_3.webp",
+      "bytes": 13968,
+      "sha256": "0a8b2fb01a8e1fdb8dd3fc19984c811636bff4df4a01c20a3023d8b5bf511c98",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/qie_4.jpg",
+      "bytes": 6257,
+      "sha256": "37944b53b6ece37ad3be2aa03a4277368aca536ad2a46a5eebfdd77e725b1020",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/qie_4.webp",
+      "bytes": 4446,
+      "sha256": "64d1ca47df458ebe1de2c27370c3c629de651558e9a88db3d533ebbedb6153ef",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_1.jpg",
+      "bytes": 12313,
+      "sha256": "ee44032571953551d1a9da9fcfbfc4c24b259f2422f4c58f088e124555db749f",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_1.webp",
+      "bytes": 10068,
+      "sha256": "97305365b4f7e2c7cbac3a6b5734eb88a2049bc5ea2d2bdb028a71f4647d7482",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_2.jpg",
+      "bytes": 17898,
+      "sha256": "42d05ba5e0c90635d6a553c4179edb66226f6315e10f4c3d99893c742cd23db8",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_2.webp",
+      "bytes": 14406,
+      "sha256": "14cee744a7d1f8aaabd835ac1901d4d6e22f0723b79e5bfc4e7e71f180bc36b8",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_3.jpg",
+      "bytes": 13620,
+      "sha256": "746d6914c43e908788bec1a7f085e32e43e642857408240ae166c522232514df",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_3.webp",
+      "bytes": 12658,
+      "sha256": "a231375257856343b4e73da61b958dbc064094659e3b9ba37566ca0909da6e0e",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_4.jpg",
+      "bytes": 19118,
+      "sha256": "c5c1f9eab1a37910ca1bda4553cbc144a94a54febc705709528758e9a9b1c054",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/shan_banjiu_4.webp",
+      "bytes": 19190,
+      "sha256": "71b97fcff16eb6a90d7896cb3ef011b0a083b3466ac27c71526f02b992e5b0b4",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/yelu_1.jpg",
+      "bytes": 9937,
+      "sha256": "c0b66a7b58d460860aaa5e4a1f70ef9de776766c59324cd89fad24d1fb5ff702",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/yelu_1.webp",
+      "bytes": 8030,
+      "sha256": "14b53271362af45dd3c3bc64004c8d917abae22f70b265955e72d89c2d950635",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/yelu_2.jpg",
+      "bytes": 10981,
+      "sha256": "18673af6ed7817970cdc3383b46c1eb2950c39e528bc90ad986c2ba58b3a503e",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/yelu_2.webp",
+      "bytes": 9848,
+      "sha256": "f2164800b8b45bf7d7c0bc2ccc584731087292ba5d87183c8cd2ffbe9033ac3d",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/yelu_3.jpg",
+      "bytes": 14584,
+      "sha256": "abb784f4e59ec65a36c5c0973a3f29f07817602393d28f46be3091a7678a6627",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/yelu_3.webp",
+      "bytes": 11454,
+      "sha256": "4be04aff34cdffb4fad0204f316313f05e6df76057cc443778e7ebc66d570e70",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/yelu_4.jpg",
+      "bytes": 10568,
+      "sha256": "193113c3cb006ac6d4a4afae508377b55abe164cf852e22216a7151f6e486c93",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/yelu_4.webp",
+      "bytes": 9148,
+      "sha256": "bc920a657a64216e04eb98b77cc82f42272f6cdd0538997d78d5c69ec1a96563",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_1.jpg",
+      "bytes": 16374,
+      "sha256": "25beaf176a3a7bb05a05c4e9bbf3f3a225f3af2d89f97104236abb49fa313aa2",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_1.webp",
+      "bytes": 15616,
+      "sha256": "60073ed96e34244db9242f30a73c88029f1c27c8a8ec66fe0bdd46200f8a7833",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_2.jpg",
+      "bytes": 13987,
+      "sha256": "f00353d05380e2537641da391eb2e66d4964fb07b525441f5cc119cec79aac5f",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_2.webp",
+      "bytes": 14270,
+      "sha256": "d373e031c42bce7e9b625c03394ab809809b6447f0a81886c1773092be43107f",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_3.jpg",
+      "bytes": 10904,
+      "sha256": "bf8792885928188f4752f1475cdd26b4058fd877952b64c8b4734ae4e3d9a760",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_3.webp",
+      "bytes": 8844,
+      "sha256": "efc366b5e8da7ca3791383febe43006aaff9256de9e2a2090919c7d50b2c7dfe",
+      "references": []
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_4.jpg",
+      "bytes": 8575,
+      "sha256": "451b9428a0be72a4d2baf509cc5d2b8178847b5ad1238ca266dc3cc937e7bb88",
+      "references": [
+        "public/verify/index.html"
+      ]
+    },
+    {
+      "file": "public/verify/images/zhujing_banjiu_4.webp",
+      "bytes": 6798,
+      "sha256": "25a342e53c8932437ef840b5b3bdc864c3214261920fd50894a197850883eeca",
+      "references": []
+    },
+    {
+      "file": "src/assets/avatar.png",
+      "bytes": 28772,
+      "sha256": "f41fda39bda3150b283e6dde5b899db5855e3a168d1127e54061dc578b723d54",
+      "references": [
+        ".github/ISSUE_TEMPLATE/friend-link.yml",
+        "docs/brand-assets-audit.md",
+        "docs/links-maintenance.md",
+        "migration/upstream-examples/docs/setup/getting-started.mdx",
+        "src/components/links/FriendApplyGuide.astro",
+        "src/content/blog/Blogging/post-2026-11-03-11.md",
+        "src/pages/about.astro",
+        "src/pages/index.astro",
+        "src/site.config.ts"
+      ]
+    },
+    {
+      "file": "src/assets/icons/key.svg",
+      "bytes": 1194,
+      "sha256": "6539caf6bf2b6b01610e307be2475016a9963493a1c1db5dfa74dd9e8462fcfa",
+      "references": [
+        "migration/upstream-examples/docs/integrations/components.mdx",
+        "migration/upstream-examples/pages-projects/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/projects/1.avif",
+      "bytes": 4692,
+      "sha256": "aa23ea864c4c1ef2592954a368636741d168db227b11d46d64aa38e6ea61579f",
+      "references": [
+        "docs/brand-assets-audit.md",
+        "src/components/bento/widgets/ProjectWidget.astro"
+      ]
+    },
+    {
+      "file": "src/assets/projects/miko-cover.png",
+      "bytes": 96094,
+      "sha256": "dc582f5cd72b5b251532d4e75801058afdfdde7db232de08875996bf883e17da",
+      "references": []
+    },
+    {
+      "file": "src/assets/social/bluesky.png",
+      "bytes": 1125,
+      "sha256": "8ef6f45a6dc05b9a8cf0378d90329c3336c752f5d19f6599709c041c24db7d6e",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/social/facebook.png",
+      "bytes": 1636,
+      "sha256": "01fc1c8a025c7386885162fad90db412c6435c8e0c93e5f5368084621e7e750e",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/social/farcaster.png",
+      "bytes": 737,
+      "sha256": "44e2311fc749b39fa5e3cda382e5fd27f24d8ce1bf01dca6f02955348a876a5b",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/social/firefly.png",
+      "bytes": 9662,
+      "sha256": "e530414537e40fe5266374d95dccf4f133455d6bb94ee5d71ecfe9bc6fcfec9e",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/social/lens.png",
+      "bytes": 6691,
+      "sha256": "8258e5b69f961a71f6d600ef71aaa9b5288361f336043ddd6d20debb2ba61bb3",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/social/paragraph.png",
+      "bytes": 1262,
+      "sha256": "e47ea061c481e818c5c66ce3b1250a02666c02cb5cba76b3c3cf299a2d70cd32",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/aftereffects.svg",
+      "bytes": 1951,
+      "sha256": "eead7d32caa39cac822dadfd8da06c03d2f65334b0456443e978969dcad2fa4f",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/apple.svg",
+      "bytes": 722,
+      "sha256": "d559c79010aac2c3d5325187370de4fcbd0d2b8d6a6c97147fc97648ceb1386d",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/archlinux.svg",
+      "bytes": 906,
+      "sha256": "7b460de836e7657646c487e6b13844b012f0fec97093cca6f624a7d02d67a8fe",
+      "references": [
+        "migration/upstream-examples/docs/advanced/update.mdx",
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/blender.svg",
+      "bytes": 2921,
+      "sha256": "9e49b47760f4cae1015941228b4502fadb6b104c4e94bf4d1cac8f713098bfb0",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/c.svg",
+      "bytes": 738,
+      "sha256": "3ae32c75cf1455e0488139d89fcb1e3679cbededb353e8fb7a9c27031c4a3893",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/chatgpt.svg",
+      "bytes": 1625,
+      "sha256": "65f15a225924b654d36a47410df90aacf0f43d7ae5992a540a36629bd2b239a5",
+      "references": []
+    },
+    {
+      "file": "src/assets/tools/chrome.svg",
+      "bytes": 1001,
+      "sha256": "ca20ca76f5b3fd36dfa442fca04768ce60d2d9a2b9f50645f4308928bc5fc3da",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/cpp.svg",
+      "bytes": 863,
+      "sha256": "6b6c1c458f123fbf41dca7f398cf9788226049856589d0e00c85906bdb8717cf",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/csharp.svg",
+      "bytes": 851,
+      "sha256": "7093478d0888e22a224b6fa832da6c9ffd14c433de8bd14aab0c1cb50925f3ee",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/css3.svg",
+      "bytes": 3384,
+      "sha256": "9fad4f20ec563047f29950b55b55598283cf230d204e10c7562946e0ebbdf511",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/debian.svg",
+      "bytes": 4446,
+      "sha256": "72f528cd80ddfd6892d34742c38899534324875b33b0da335d1ec728074c7e77",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/docker.svg",
+      "bytes": 972,
+      "sha256": "8c9eb415cc9c5682856eb960d2cdb6fbeb6af604d35b4f7de69f7732961ab15a",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/dotnet.svg",
+      "bytes": 1126,
+      "sha256": "fd28876898b8d44da996f438d4eb06a697eb25900275930dec53ccd608ace5a5",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/edge.svg",
+      "bytes": 7038,
+      "sha256": "c5c6e37aca2865203289b1438e44ba6815312f681cd45de1a6361d1c7dcbb14a",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/firefox.svg",
+      "bytes": 12400,
+      "sha256": "c02f4e962f3dfc2dccec35a9e35b6ba53318a1fcae8db39a8b1b5e93bc499065",
+      "references": []
+    },
+    {
+      "file": "src/assets/tools/git.svg",
+      "bytes": 2799,
+      "sha256": "2d9b8e8252c9ec99582488b75ec849c27398318cbc1b6f06bbc641d60871dd95",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/html5.svg",
+      "bytes": 651,
+      "sha256": "f962b55cd0b29f1cb17d875ddfe7834d79d7f26aa3866373f34a9f383a14eebc",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/illustrator.svg",
+      "bytes": 1168,
+      "sha256": "effa5a719a72d4ffd13f3de08e1c5b292e6a719a2585ce328b4232b1fd4975f5",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/javascript.svg",
+      "bytes": 1113,
+      "sha256": "49df18d97941f6b3337340adfaea34f10c461dbc980f2ee712676e5f49874fc9",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/kali.svg",
+      "bytes": 13101,
+      "sha256": "46119c2f46a28ca6272f4e7c4e04ad5930eb1cd1eb4132b6bb0d7609425034e2",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/kvm.png",
+      "bytes": 16832,
+      "sha256": "79c38eb915552130b4487869ff049ec6da910cb35b9f05a3ffa1d871dcf5bd1e",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/kvm.svg",
+      "bytes": 339,
+      "sha256": "f2d625229ec2184749eafb33c53bf62ab63063bc1601ed9fd77e4af632b0f854",
+      "references": []
+    },
+    {
+      "file": "src/assets/tools/lua.gif",
+      "bytes": 187398,
+      "sha256": "f54cf48cc11e7da003602433c90526a59afeb410abcbc1a50969e3a13de73f4f",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/lua.svg",
+      "bytes": 2898,
+      "sha256": "e2475de131a56193bbd843b26c748e247e477e0e8c46f72863854da3e8cb92c8",
+      "references": []
+    },
+    {
+      "file": "src/assets/tools/matlab.svg",
+      "bytes": 2459,
+      "sha256": "4539c7be63f551e0b513d95fb6ea99d12706ac36e946068977469c413d80641f",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/neovim.svg",
+      "bytes": 1475,
+      "sha256": "84ae506872839aa3168c3c8f94bdbd6c5b5b8c3a771b5c928d4f7ea51f47a5fa",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/notion.svg",
+      "bytes": 398,
+      "sha256": "0fb099136b50a05a5a124d8c276dd1e8273f8c8495959c3462212aaf56c0efd5",
+      "references": []
+    },
+    {
+      "file": "src/assets/tools/obsidian.svg",
+      "bytes": 8070,
+      "sha256": "5490b80da3241e042d073692ad7ddbd16e0dae26e32556228cc0bd272d8c5186",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/openwrt.svg",
+      "bytes": 4226,
+      "sha256": "16ad706dd2fc93b5f8a94233959b463f9abbe7c3a599fea50dcdedd110d324c5",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/photoshop.svg",
+      "bytes": 2459,
+      "sha256": "ac772bea01d8172d70d5ee6f671be8e281c1a02cd3900b0058e85d08cae2e866",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/postgresql.svg",
+      "bytes": 3953,
+      "sha256": "b84169ee1bda3672b57b302a6619945b74d39f81d9e7a3117e5caa9e340d4c2f",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/premiere.svg",
+      "bytes": 2166,
+      "sha256": "7044b21d4b0f39cfa511befbe30f55c04307760f3cdc44eb8fa14d474967c209",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/pve.svg",
+      "bytes": 10668,
+      "sha256": "a1c0628db0e433e9b1dc4ce787f7618b4721fb3668d8b911cf92dbaf56585555",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/python.svg",
+      "bytes": 1960,
+      "sha256": "37f35fa1bab43b96639117a73ee96fc224649ec337570b35856cde80f1bf97b7",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/qt.svg",
+      "bytes": 1841,
+      "sha256": "7b0c35e508136933c3559b575496759709cdcb3916f2ebef60a4b2963aa6c975",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/react.svg",
+      "bytes": 2022,
+      "sha256": "560f8c535385e287a3f48aec6e299bcfc90c3a9c143ed2cde3738af105e15a9c",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/rust.svg",
+      "bytes": 8894,
+      "sha256": "abb236f778cd688ab63ae94b18a8b42731056776f52560bc2188826a064389c2",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/solidity.svg",
+      "bytes": 784,
+      "sha256": "d43a6bb557cf468e9c59109480493c364f94e30291bb76af6459b625d031b13a",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/typescript.svg",
+      "bytes": 1761,
+      "sha256": "b07125836e2fd34f9cdb9c2d99a7238dfd07dfbd87ead4c09485eff4973f7796",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/unity.svg",
+      "bytes": 2199,
+      "sha256": "c886aaa5fe7d510b72d734d64ce47b1f422f29b9c0517cdbcfae0411dc500043",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/vscode.svg",
+      "bytes": 3405,
+      "sha256": "12bb519cbacb7b16535d03ccac46781676f36f8506da4ea1a33ce7a14cccc719",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/windows11.svg",
+      "bytes": 236,
+      "sha256": "5ef818afaac9987d359c5c50f202aa9ba543d02c384fe74c498a45c76c5eb45a",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/zen.svg",
+      "bytes": 1413,
+      "sha256": "85c8c558a6587e24d6626506fb1339a16d53fb66d57011617c289475209a70d1",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    },
+    {
+      "file": "src/assets/tools/zotero.svg",
+      "bytes": 3387,
+      "sha256": "44c36683d8c078ae5e640067964412ed59efa500db9194e3cdd08810c61f7779",
+      "references": [
+        "migration/upstream-examples/pages-about/index.astro"
+      ]
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {
   "avatars": {
-    "https://github.com/yen-chiu": "/public/avatars/sites/74cf90ac2fe6624a.png",
-    "https://fuwari.vercel.app/": "/public/avatars/sites/ab08515fa79cef05.png",
-    "https://astro.build/": "/public/avatars/sites/d64dc192e990065d.png",
-    "https://mizuki.mysqil.com/": "/public/avatars/sites/2714c1c5daee650d.ico",
-    "https://996.ninja/": "/public/avatars/sites/7db314dcf9e2677a.png",
-    "https://996.icu/": "/public/avatars/sites/4cdd558d9be637b8.png",
-    "https://www.aibrium.cn/": "/public/avatars/sites/1c30e61a2fb14cd3.jpg"
+    "https://github.com/yen-chiu": "/avatars/sites/74cf90ac2fe6624a.png",
+    "https://fuwari.vercel.app/": "/avatars/sites/ab08515fa79cef05.png",
+    "https://astro.build/": "/avatars/sites/d64dc192e990065d.png",
+    "https://mizuki.mysqil.com/": "/avatars/sites/2714c1c5daee650d.ico",
+    "https://996.ninja/": "/avatars/sites/7db314dcf9e2677a.png",
+    "https://996.icu/": "/avatars/sites/4cdd558d9be637b8.png",
+    "https://www.aibrium.cn/": "/avatars/sites/1c30e61a2fb14cd3.jpg"
   }
 }

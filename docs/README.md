@@ -12,6 +12,7 @@
 | Avatar Studio | [独立头像发布工具](avatar-studio/README.md) | feature/avatar-studio |
 | 网络与性能 | [大陆访问优化、缓存及测速](network/README.md) | main |
 | 仓库维护 | [分支清理与发布规范](branches.md) | main |
+| 品牌资源 | [Vesper 资源审计与上游资源清理](brand-assets-audit.md) | chore/brand-assets-cleanup |
 
 ## 通用工作流
 

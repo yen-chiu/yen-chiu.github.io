@@ -17,7 +17,21 @@ function walk(dir, out = []) {
 const files = walk(DIST)
 
 // 1. 字体：只保留 woff2
-const legacyFonts = files.filter((f) => /\.(ttf|woff)$/i.test(f))
+// 同步移除 CSS 中的旧格式回退，避免引用随后删除的文件。
+// 仅处理已有 woff2 的 @font-face，其他字体保持完整。
+const removableFonts = new Set()
+for (const cssFile of files.filter(f => f.endsWith('.css'))) {
+  const before = fs.readFileSync(cssFile, 'utf8')
+  const after = before.replace(/@font-face\s*\{[^}]*\}/g, face => {
+    if (!/url\([^)]*\.woff2(?:["']?\))/.test(face)) return face
+    return face.replace(/,\s*url\(["']?([^"')]+\.(?:woff|ttf))["']?\)\s*format\([^)]+\)/g, (_, url) => {
+      removableFonts.add(url.startsWith('/') ? path.resolve(DIST, '.' + url) : path.resolve(path.dirname(cssFile), url))
+      return ''
+    })
+  })
+  if (after !== before) fs.writeFileSync(cssFile, after)
+}
+const legacyFonts = files.filter(f => removableFonts.has(path.resolve(f)))
 let reclaimed = 0
 for (const file of legacyFonts) {
   reclaimed += fs.statSync(file).size
