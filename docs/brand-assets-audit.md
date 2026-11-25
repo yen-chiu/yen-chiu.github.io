@@ -8,16 +8,16 @@
 
 Markdown 图片用语法树解析，排除代码块中的教学示例；站点绝对路径按 `public/` 解析。生产产物另检查所有 HTML 中的图片、srcset、脚本、样式表、图标、预载入资源，以及 CSS 和内联样式的 `url()`。外部服务的可用性不属于本地文件存在性检查，旧 QA 文件中指向 `.work/` 的证据路径也不作为当前展示资源。
 
-## 迁移清单
+## 上游图片删除清单
 
-以下文件均保持原始字节，不重画、不转码、不改变归属：
+2026-11-26 按维护者要求，删除此前归档的以下 10 张图片；表中归档路径仅用于记录已删除文件，不是可访问资源。
 
-| 原路径 | 新路径 | 理由 |
+| 原路径 | 已删除的归档路径 | 说明 |
 | --- | --- | --- |
-| `function.png` | `migration/upstream-assets/function.png` | Iris 功能截图归档 |
-| `index.png` | `migration/upstream-assets/index.png` | Iris 首页截图归档 |
-| `logo.png` | `migration/upstream-assets/logo.png` | Iris Logo 归档 |
-| `search.png` | `migration/upstream-assets/search.png` | Iris 搜索截图归档 |
+| `function.png` | `migration/upstream-assets/function.png` | Iris 旧功能截图 |
+| `index.png` | `migration/upstream-assets/index.png` | Iris 旧首页截图 |
+| `logo.png` | `migration/upstream-assets/logo.png` | Iris 旧 Logo |
+| `search.png` | `migration/upstream-assets/search.png` | Iris 旧搜索截图 |
 | `src/assets/projects/2.avif` | `migration/upstream-assets/projects/2.avif` | 无调用方使用的上游植物演示图 |
 | `src/assets/projects/3.avif` | `migration/upstream-assets/projects/3.avif` | 无调用方使用的上游花卉演示图 |
 | `src/assets/projects/4.avif` | `migration/upstream-assets/projects/4.avif` | 无调用方使用的上游抽象演示图 |
@@ -25,9 +25,9 @@ Markdown 图片用语法树解析，排除代码块中的教学示例；站点�
 | `.github/assets/body.webp` | `migration/upstream-assets/pure/body.webp` | 无引用的 Pure 演示拼图 |
 | `.github/assets/lighthouse-score.png` | `migration/upstream-assets/pure/lighthouse-score.png` | 上游历史跑分，不能作为 Vesper 当前结果 |
 
-另将 `.github/FUNDING.yml` 移至 `migration/upstream-assets/upstream-FUNDING.yml`，保留原上游赞助配置作为历史资料，移除当前仓库指向上游个人赞助入口的默认配置。
+另删除此前从 `.github/FUNDING.yml` 归档的 `migration/upstream-assets/upstream-FUNDING.yml`，不保留上游赞助配置副本。
 
-`migration/upstream-README.md` 的四张图片改指归档目录；中文说明链接指向上游中文 README，许可证链接修正为 GitHub 文件地址。原说明、作者归属和许可文字保留。
+`migration/upstream-README.md` 移除四张已删除图片的展示块并注明删除；中文说明链接指向上游中文 README，许可证链接使用正确的 GitHub 文件地址。原说明、作者归属和许可文字保留。
 
 ## 替换与新增清单
 
@@ -97,6 +97,6 @@ PLAYWRIGHT_PACKAGE=/path/to/playwright/package.json node scripts/capture-showcas
 
 本次不直接合并 main；通过独立 PR 审阅。
 
-`npm test` 全量测试 78 项通过、0 失败。归档的 10 张图片已与基线 Git blob 逐字节比对，内容一致；赞助配置同样保留原始内容。双语 README 使用 GFM 渲染后检查桌面及 390px 窄屏，本地展示图均正常加载。
+`npm test` 全量测试 78 项通过、0 失败。10 张上游图片及赞助配置已按后续要求删除，资源清单已重新生成。双语 README 使用 GFM 渲染后检查桌面及 390px 窄屏，本地展示图均正常加载。
 
 最终生产构建生成 159 个页面；类型检查 0 错误、0 警告、8 条既有提示。构建期间第三方嵌入抓取 `https://yenchiu.com/links/` 曾输出网络失败提示，但构建完成并返回 0；另有既有大体积 JS chunk 提示。站内本地资源检查结果见 [构建资源检查](./built-assets-check.json)，缺失项为 0。浏览器验收使用桌面 Chrome 的移动视口模拟，未覆盖实体手机或全部外部服务。

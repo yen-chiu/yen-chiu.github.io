@@ -5,33 +5,16 @@ English | [简体中文](https://github.com/LemonAdorable/astro-theme-iris/blob/
 > [!CAUTION]
 > This project is undergoing frequent changes, and automatic merging may overwrite your local customizations. When pulling updates, please do not use `git pull` directly. Instead, use `git fetch` + `git merge --no-commit` to manually review and control the merge results.
 
-<div align="center">
-  <img src="./upstream-assets/logo.png" alt="Astro Theme Iris Logo" width="200">
-</div>
-
 ---
 
 ## 📸 Screenshots
+
+> Historical screenshots and the Iris logo were removed from this repository on 2026-11-26. See the [upstream project](https://github.com/LemonAdorable/astro-theme-iris) for its original presentation.
 
 **Demo Blog**: [https://lemonadorable.github.io/](https://lemonadorable.github.io/)
 
 > [!NOTE]
 > Known issues: Header & customize options is still under development (template exposed still).
-
-<div align="center">
-  <img src="./upstream-assets/index.png" alt="Homepage Showcase" width="100%">
-  <p><em>Full-screen homepage with animation effects</em></p>
-</div>
-
-<div align="center">
-  <img src="./upstream-assets/search.png" alt="Search Feature Showcase" width="100%">
-  <p><em>Powerful search preview system - supports category filtering, real-time preview, and scroll markers</em></p>
-</div>
-
-<div align="center">
-  <img src="./upstream-assets/function.png" alt="Feature Showcase" width="100%">
-  <p><em>Wikilink preview, Graph View, and knowledge graph</em></p>
-</div>
 
 ---
 

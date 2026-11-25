@@ -48,7 +48,7 @@
 
 </details>
 
-截图信息与资源处理记录见[品牌资源审计](./docs/brand-assets-audit.md)。Iris 原展示截图保留在[上游存档](./migration/upstream-README.md)中。
+截图信息与资源处理记录见[品牌资源审计](./docs/brand-assets-audit.md)。Iris 历史展示图片已删除，上游归属说明继续保留在[上游 README 存档](./migration/upstream-README.md)中。
 
 ## 项目概览
 
@@ -96,7 +96,7 @@ npm run build
 | `src/pages/persona.astro` | 念真页面 |
 | `migration/content-manifest.json` | 文章迁移记录与旧地址 |
 | `docs/assets/showcase/` | 当前 Vesper 展示截图（WebP） |
-| `migration/upstream-assets/` | 上游图片与演示素材存档 |
+| `migration/upstream-assets/` | 上游资源删除记录 |
 | `migration/upstream-README.md` | Iris 上游 README 存档 |
 | `migration/upstream-examples` | 不参与内容生成的上游示例 |
 | `scripts/` | 迁移与校验脚本 |

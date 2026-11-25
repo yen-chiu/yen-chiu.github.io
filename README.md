@@ -48,7 +48,7 @@ Real captures of the local production build, using the existing Vesper artwork a
 
 </details>
 
-Capture details and resource decisions: [brand asset audit](./docs/brand-assets-audit.md). Original Iris screenshots are preserved in [the upstream archive](./migration/upstream-README.md).
+Capture details and resource decisions: [brand asset audit](./docs/brand-assets-audit.md). Upstream attribution remains in the [archived Iris README](./migration/upstream-README.md); historical screenshots have been removed.
 
 ## At a glance
 
@@ -96,7 +96,7 @@ See the [maintenance handbook (中文)](./docs/README.md) for Gallery, Gallery S
 | `src/pages/persona.astro` | Nianzhen persona page |
 | `migration/content-manifest.json` | Migration records and legacy URLs |
 | `docs/assets/showcase/` | Current Vesper screenshots (WebP) |
-| `migration/upstream-assets/` | Preserved upstream artwork and demos |
+| `migration/upstream-assets/` | Upstream asset removal record |
 | `migration/upstream-README.md` | Archived upstream Iris README |
 | `migration/upstream-examples` | Archived examples excluded from content generation |
 | `scripts/` | Migration and validation utilities |

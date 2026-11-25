@@ -1,7 +1,7 @@
 {
   "scope": "All git-tracked raster/vector images and text files; basename references are candidates, not proof of runtime reachability. Dynamic globs, legacy URLs and remote assets require manual review.",
-  "imageCount": 302,
-  "totalBytes": 19539856,
+  "imageCount": 292,
+  "totalBytes": 17984090,
   "duplicates": [
     [
       "public/verify/images/bailu_2.jpg",
@@ -96,13 +96,10 @@
     "src/assets/tools/notion.svg"
   ],
   "brandMentions": [
-    "docs/brand-assets-audit.md",
-    "migration/upstream-assets/README.md",
-    "migration/upstream-assets/upstream-FUNDING.yml",
-    "scripts/audit-brand-assets.mjs",
     "CODE_OF_CONDUCT.md",
     "README-zh-CN.md",
     "README.md",
+    "docs/brand-assets-audit.md",
     "migration/theme-references/README.md",
     "migration/upstream-README.md",
     "migration/upstream-examples/blog/astro-theme-iris.mdx",
@@ -133,6 +130,7 @@
     "public/links-feed.json",
     "public/links-status.json",
     "public/links.json",
+    "scripts/audit-brand-assets.mjs",
     "src/components/bento/widgets/GithubWidget.astro",
     "src/components/bento/widgets/ProfileWidget.astro",
     "src/components/bento/widgets/ProjectWidget.astro",
@@ -152,10 +150,10 @@
       "bytes": 42570,
       "sha256": "0dba761755d82a53985c83a5c7fc083fb888578031c1ba27cbf50437e519b014",
       "references": [
-        "docs/assets/showcase/capture-report.json",
-        "docs/brand-assets-audit.md",
         "README-zh-CN.md",
-        "README.md"
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
       ]
     },
     {
@@ -163,10 +161,10 @@
       "bytes": 15566,
       "sha256": "9bd43ad8cfbb2321dcb87f040c4318b1a2058fba5282dc98b56f02c64fae1b44",
       "references": [
-        "docs/assets/showcase/capture-report.json",
-        "docs/brand-assets-audit.md",
         "README-zh-CN.md",
-        "README.md"
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
       ]
     },
     {
@@ -174,10 +172,10 @@
       "bytes": 37868,
       "sha256": "5f4a8f39108358034d959341ab89cc6bd8b0fbfcf872b4ab015d5cc6d091d40c",
       "references": [
-        "docs/assets/showcase/capture-report.json",
-        "docs/brand-assets-audit.md",
         "README-zh-CN.md",
-        "README.md"
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
       ]
     },
     {
@@ -185,10 +183,10 @@
       "bytes": 19636,
       "sha256": "1e38811820374bdad057f1ec37665516e23e410502503cea5eeafd63a39364e7",
       "references": [
-        "docs/assets/showcase/capture-report.json",
-        "docs/brand-assets-audit.md",
         "README-zh-CN.md",
-        "README.md"
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
       ]
     },
     {
@@ -196,10 +194,10 @@
       "bytes": 55024,
       "sha256": "e28905e664798a7501bf7bc645e6b8993d1e788c87756342c9a9d81ec27ee11c",
       "references": [
-        "docs/assets/showcase/capture-report.json",
-        "docs/brand-assets-audit.md",
         "README-zh-CN.md",
-        "README.md"
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
       ]
     },
     {
@@ -207,105 +205,10 @@
       "bytes": 8812,
       "sha256": "779a65226341fca7b090a822c84e003c085797be54e4b85c591e566070aeb9da",
       "references": [
-        "docs/assets/showcase/capture-report.json",
-        "docs/brand-assets-audit.md",
         "README-zh-CN.md",
-        "README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/function.png",
-      "bytes": 264719,
-      "sha256": "6599177814b336b679110c2b922bc3202dc07fb9a7e03994b29de206def62fbb",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md",
-        "migration/upstream-README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/index.png",
-      "bytes": 321296,
-      "sha256": "011814ceae6683e5a50c8957a0fbe0504eaa8f0eb54e3c0d23ba035f79e8ed43",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md",
-        "migration/upstream-README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/logo.png",
-      "bytes": 268785,
-      "sha256": "4c24375df2a593fd151c55700bd6f2e4337281a0c5a6bb1d93da2358c3153d66",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md",
-        "migration/upstream-README.md",
-        "src/data/changelog.json"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/projects/2.avif",
-      "bytes": 10110,
-      "sha256": "693be3693670d6534de53f6ae92a0a35677a1ef55bf10dd643e8af87e0bd5d70",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/projects/3.avif",
-      "bytes": 3717,
-      "sha256": "ff347d9a3070e69d694c4eceec17286f494ff8031ce35fa4ee694195fc55d8b5",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/projects/4.avif",
-      "bytes": 2231,
-      "sha256": "6ee7fabad03254d359dd53019ebc1b413e8233bb85e8454b2802ffd02444bcef",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/pure/body.webp",
-      "bytes": 387362,
-      "sha256": "40e08c6174d63edb0f79612c5bafb77b9a5f69a061960abbb4dee79f251a5e00",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/pure/header.webp",
-      "bytes": 63736,
-      "sha256": "031798870a964342df10cb6d1c500d35688f810a9d142e3b2ea385df68d1e978",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/pure/lighthouse-score.png",
-      "bytes": 18966,
-      "sha256": "06fe51cd27451c9473cc0211e2f0d1dc575477c14f1d99fde98472487ef3b63a",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md"
-      ]
-    },
-    {
-      "file": "migration/upstream-assets/search.png",
-      "bytes": 214844,
-      "sha256": "94e2908b15f1a36a277b5d8323fbd2c7e4e143d4ec9e2647743870fbca2d91f8",
-      "references": [
-        "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md",
-        "migration/upstream-README.md"
+        "README.md",
+        "docs/assets/showcase/capture-report.json",
+        "docs/brand-assets-audit.md"
       ]
     },
     {
@@ -2094,8 +1997,8 @@
       "bytes": 28772,
       "sha256": "f41fda39bda3150b283e6dde5b899db5855e3a168d1127e54061dc578b723d54",
       "references": [
-        "docs/brand-assets-audit.md",
         ".github/ISSUE_TEMPLATE/friend-link.yml",
+        "docs/brand-assets-audit.md",
         "docs/links-maintenance.md",
         "migration/upstream-examples/docs/setup/getting-started.mdx",
         "src/components/links/FriendApplyGuide.astro",
@@ -2120,7 +2023,6 @@
       "sha256": "aa23ea864c4c1ef2592954a368636741d168db227b11d46d64aa38e6ea61579f",
       "references": [
         "docs/brand-assets-audit.md",
-        "migration/upstream-assets/README.md",
         "src/components/bento/widgets/ProjectWidget.astro"
       ]
     },
