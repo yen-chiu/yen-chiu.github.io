@@ -10,6 +10,7 @@
 | Nocturne Editorial | [首页、壁纸与动效](home/README.md) | main |
 | 友情链接 | [申请、健康检查、RSS](links-maintenance.md) | main |
 | Avatar Studio | [独立头像发布工具](avatar-studio/README.md) | feature/avatar-studio |
+| 网络与性能 | [大陆访问优化、缓存及测速](network/README.md) | main |
 | 仓库维护 | [分支清理与发布规范](branches.md) | main |
 
 ## 通用工作流

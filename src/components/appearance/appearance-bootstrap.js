@@ -116,7 +116,7 @@
     syncEffectQuality()
     syncNetwork()
     root.dataset.motion = settings.motion
-    root.dataset.animatedAvatar = String(settings.animatedAvatar && settings.motion !== 'reduced' && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+    root.dataset.animatedAvatar = String(root.dataset.networkMode !== 'saving' && settings.animatedAvatar && settings.motion !== 'reduced' && !matchMedia('(prefers-reduced-motion: reduce)').matches)
     root.classList.toggle('motion-always', settings.motion === 'always')
     root.classList.toggle('motion-off', settings.motion === 'reduced')
     window.dispatchEvent(new CustomEvent('wendell:appearance'))
@@ -241,7 +241,7 @@
     }
   }
   matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', apply)
-  connection?.addEventListener?.('change', syncNetwork)
+  connection?.addEventListener?.('change', apply)
   window.addEventListener('resize', syncEffectQuality, { passive: true })
   document.addEventListener('visibilitychange', syncEffectQuality)
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply)
