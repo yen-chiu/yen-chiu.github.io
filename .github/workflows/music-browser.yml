@@ -1,0 +1,33 @@
+name: Music browser validation
+on:
+  pull_request:
+    paths:
+      - 'src/components/music/**'
+      - 'src/utils/music-engine.ts'
+      - 'src/pages/music/**'
+      - 'scripts/music-*'
+      - '.github/workflows/music-browser.yml'
+permissions:
+  contents: read
+jobs:
+  music-browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: echo "MUSIC_PLAYWRIGHT_DIR=$RUNNER_TEMP/music-playwright" >> "$GITHUB_ENV"
+      - run: |
+          npm install --prefix "$MUSIC_PLAYWRIGHT_DIR" --no-audit --no-fund playwright@1.56.1
+          "$MUSIC_PLAYWRIGHT_DIR/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check real tonearm transition and motion preferences
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4321 > /tmp/music-preview.log 2>&1 &
+          trap 'kill $! 2>/dev/null || true' EXIT
+          node scripts/music-tonearm-browser-check.mjs

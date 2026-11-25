@@ -178,7 +178,7 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
   .music-deck{display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center}
   .music-art{width:clamp(150px,20vw,240px);aspect-ratio:1;display:grid;place-items:center;margin:1rem auto 1.3rem;border-radius:50%;background:radial-gradient(circle at 55% 38%,hsl(var(--primary)/.28),transparent 60%);filter:drop-shadow(0 12px 22px hsl(var(--primary)/.18))}
   .music-art{position:relative;isolation:isolate}
-  .music-tonearm{position:absolute;z-index:2;top:2%;right:3%;width:38%;height:58%;transform-origin:84% 11%;transform:rotate(-28deg);transition:transform .65s cubic-bezier(.22,.8,.3,1);pointer-events:none;filter:drop-shadow(0 3px 3px #0005)}
+  .music-tonearm{position:absolute;z-index:2;top:2%;right:3%;width:38%;height:58%;transform-origin:84% 11%;transform:rotate(-28deg);transition:transform 900ms cubic-bezier(.45,0,.25,1);pointer-events:none;filter:drop-shadow(0 3px 3px #0005)}
   .is-playing .music-tonearm{transform:rotate(0deg)}
   .music-tonearm-pivot{position:absolute;top:0;right:0;width:23%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 34%,#f0f2f4,#8e99a7 55%,#3b4552 72%);box-shadow:0 0 0 3px #273346}
   .music-tonearm-rod{position:absolute;top:10%;right:9%;width:9%;height:77%;border-radius:999px;background:linear-gradient(90deg,#697483,#e2e8ee 45%,#8996a5);transform:rotate(-18deg);transform-origin:top center}
@@ -217,8 +217,10 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
   .music-empty .has-lyrics{white-space:pre-line;line-height:2;overflow-wrap:anywhere}
   @media(max-width:680px){.music-deck{padding:1.25rem}.music-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));justify-items:center;gap:.4rem}.music-actions .music-volume{grid-column:1/-1;justify-self:stretch;min-width:0}.music-actions .music-volume input{width:100%}.is-compact .music-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem}.is-compact .music-actions [data-shuffle],.is-compact .music-actions [data-repeat],.is-compact .music-actions .music-volume{display:none}.is-compact .music-actions .music-more{grid-column:1/-1;justify-self:center;margin:.2rem 0 0}.is-compact .music-art{width:3.5rem}.music-track-provider{display:none}.music-track{min-height:48px}.music-seek-tooltip{top:-12px}.music-actions{gap:.35rem .65rem}.music-transport-button{min-width:44px;min-height:44px}.music-volume{flex-basis:100%;justify-content:center}.is-compact .music-actions{justify-content:center}.is-compact .music-more{margin:0}.music-tabs button{min-height:44px}.vesper-music-player:not(.is-compact){grid-template-columns:1fr}.music-deck,.music-side{min-height:0}.music-side{min-height:300px}.music-art{width:clamp(150px,44vw,210px)}.music-pane{min-height:200px}.music-side-note{margin-top:0}}
   @media(prefers-reduced-motion:reduce){.music-vinyl,.music-track-equalizer i{animation:none!important}.music-tonearm,.music-track{transition:none!important}}
-  :global(html.motion-off) .music-tonearm,:global(html[data-effect-quality='low']) .music-tonearm,:global(html[data-effect-quality='static']) .music-tonearm{transition:none!important}
-  :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='low']) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
+  /* A brief, user-triggered transform is cheap even on mobile. Only explicit reduced motion disables it. */
+  :global(html.motion-off) .music-tonearm,:global(html[data-effect-quality='static']) .music-tonearm{transition:none!important}
+  /* Keep playback feedback on low-quality mobile devices; respect explicit/static reduced motion. */
+  :global(html.motion-off) .music-vinyl,:global(html[data-effect-quality='static']) .music-vinyl{animation:none!important}
   :global(html[data-effects-paused='true']) .music-vinyl{animation-play-state:paused!important}
   button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--music-accent);outline-offset:3px}
   /* The supplied transparent artwork is the record itself, not a full-disc
