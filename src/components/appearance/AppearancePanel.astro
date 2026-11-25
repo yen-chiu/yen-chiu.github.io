@@ -53,6 +53,15 @@ const wallpaperPresets = [
   </fieldset>
 
   <fieldset>
+    <legend>网络加载</legend>
+    <div class='options'>
+      {['auto', 'standard', 'saving'].map((value, i) => (
+        <button type='button' data-network-choice={value} aria-pressed={i === 0 ? 'true' : 'false'}>{['自动', '标准', '节省流量'][i]}</button>
+      ))}
+    </div>
+    <p class='setting-hint'>自动根据浏览器提供的节流偏好及网络类型减少提前加载；节省流量不会关闭正文或主动播放的音乐。所有模式均需主动加载评论。</p>
+  </fieldset>
+  <fieldset>
     <legend>头像</legend>
     <label class='switch'>动态头像（Animated WebP）<input type='checkbox' data-animated-avatar-choice /></label>
     <p class='setting-hint'>默认开启动态头像。首页人物在固定头像框内轻微浮动，关于页使用 Animated WebP；选择「减少动画」或系统启用减少动态效果时保持静态。</p>
@@ -228,7 +237,7 @@ const wallpaperPresets = [
           button.setAttribute('aria-pressed', String(Number(button.dataset.hue) === settings.hue)))
         for (const [selector, key] of [
           ['theme-choice', 'theme'], ['wallpaper-choice', 'wallpaper'],
-          ['layout-choice', 'layout'], ['motion-choice', 'motion']
+          ['layout-choice', 'layout'], ['motion-choice', 'motion'], ['network-choice', 'network']
         ] as const) {
           this.querySelectorAll<HTMLButtonElement>('[data-' + selector + ']').forEach(button =>
             button.setAttribute('aria-pressed',
@@ -412,6 +421,8 @@ const wallpaperPresets = [
         }
         if (button.dataset.layoutChoice)
           api()?.set({ layout: button.dataset.layoutChoice as AppearanceSettings['layout'] })
+        if (button.dataset.networkChoice)
+          api()?.set({ network: button.dataset.networkChoice as AppearanceSettings['network'] })
         if (button.dataset.motionChoice)
           api()?.set({ motion: button.dataset.motionChoice as AppearanceSettings['motion'] })
         if (button.hasAttribute('data-wallpaper-url-apply')) void applyExternalImage()

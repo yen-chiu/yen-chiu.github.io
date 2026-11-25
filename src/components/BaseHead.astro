@@ -26,10 +26,7 @@ const socialImageURL = new URL(sitePath(ogImage || config.socialCard), Astro.sit
 <meta content='IE=edge' http-equiv='X-UA-Compatible' />
 <title>{siteTitle}</title>
 
-{/* Preconnect hints for third-party origins */}
-<link rel='preconnect' href='https://cdn.jsdelivr.net' crossorigin />
-<link rel='preconnect' href='https://giscus.app' crossorigin />
-<link rel='dns-prefetch' href='https://dummyjson.com' />
+{/* Third-party features connect only when explicitly requested. */}
 
 {/* Icons / Favicon */}
 <link rel='icon' type='image/x-icon' sizes='16x16 32x32 48x48 64x64 128x128 256x256' href={sitePath('/favicon/wendell-avatar.ico')} />

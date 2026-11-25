@@ -143,14 +143,14 @@ import './styles/search.css'
       button.addEventListener(
         'pointerenter',
         () => {
-          void loadSearch().catch(() => {})
+          if (document.documentElement.dataset.networkMode !== 'saving') void loadSearch().catch(() => {})
         },
         { once: true }
       )
       button.addEventListener(
         'focus',
         () => {
-          void loadSearch().catch(() => {})
+          if (document.documentElement.dataset.networkMode !== 'saving') void loadSearch().catch(() => {})
         },
         { once: true }
       )

@@ -77,7 +77,27 @@ import { Icon } from 'astro-pure/user'
 <template data-category-icon='search'><Icon name='search' /></template>
 
 <script>
-  import './category-browser-overlay'
+  import { sitePath } from '@/utils/site-path'
+  let loaded = false
+  let pending: Promise<unknown> | undefined
+  document.addEventListener('click', async (event) => {
+    const trigger = (event.target as Element | null)?.closest<HTMLElement>('[data-category-open], a[href="#category-browser"]')
+    if (!trigger || loaded || event.button === 2) return
+    event.preventDefault()
+    if (pending) return
+    trigger.setAttribute('aria-busy', 'true')
+    try {
+      pending = import('./category-browser-overlay')
+      await pending
+      loaded = true
+      if (trigger.isConnected) trigger.click()
+    } catch {
+      if (trigger.isConnected) location.assign(sitePath('/categories/'))
+    } finally {
+      pending = undefined
+      trigger.removeAttribute('aria-busy')
+    }
+  }, { capture: true })
 </script>
 
 <style>
