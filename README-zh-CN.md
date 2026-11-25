@@ -59,6 +59,10 @@ npm run build
 
 </details>
 
+## 子项目维护手册
+
+[子项目文档总览](./docs/README.md) 汇总光影档案、Gallery Studio、夜间留声、首页外观、友情链接和 Avatar Studio 的架构、使用及维护说明。另见 [分支清理与发布规范](./docs/branches.md)，其中记录已合并分支的清理候选及必须保留的独立工具分支。
+
 ## 仓库导览
 
 | 路径 | 用途 |
