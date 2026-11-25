@@ -98,3 +98,12 @@ test('rebuilt vinyl and tonearm are shipped as WebP assets, not just CSS placeho
   assert.match(player,/\.has-vinyl-asset/)
   assert.match(player,/transform-origin:78% 20%/)
 })
+
+test('tonearm has a smooth transform on mobile but respects reduced motion',()=>{
+  assert.match(player,/\.music-tonearm\{[^}]*transition:transform 900ms cubic-bezier\(/)
+  assert.match(player,/\.is-playing \.music-tonearm\.has-tonearm-asset\{transform:rotate\(0deg\)\}/)
+  assert.doesNotMatch(player,/data-effect-quality='low'\]\) \.music-tonearm/)
+  assert.match(player,/html\.motion-off\) \.music-tonearm/)
+  assert.match(player,/data-effect-quality='static'\]\) \.music-tonearm\{transition:none!important\}/)
+  assert.match(player,/prefers-reduced-motion:reduce[^\n]*\.music-tonearm[^\n]*transition:none!important/)
+})
