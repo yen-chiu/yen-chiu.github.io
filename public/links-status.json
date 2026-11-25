@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-24T15:01:16.270Z",
+  "checkedAt": "2026-11-25T14:40:30.446Z",
   "summary": {
     "healthy": 10,
     "suspect": 0,
@@ -14,7 +14,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://github.com/yen-chiu",
@@ -24,7 +24,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://yenchiu.com/folio/",
@@ -34,7 +34,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://fuwari.vercel.app/",
@@ -44,7 +44,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://mizuki.mysqil.com/",
@@ -54,7 +54,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://astro.build/",
@@ -64,7 +64,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://996.icu/",
@@ -74,7 +74,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://996.ninja/",
@@ -84,7 +84,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://lemonadorable.github.io/",
@@ -94,7 +94,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     },
     {
       "url": "https://www.aibrium.cn/",
@@ -104,7 +104,7 @@
       "code": 200,
       "failures": 0,
       "error": null,
-      "checkedAt": "2026-11-24T15:01:16.270Z"
+      "checkedAt": "2026-11-25T14:40:30.446Z"
     }
   ]
 }
