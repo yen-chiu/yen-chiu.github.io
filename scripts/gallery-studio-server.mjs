@@ -52,9 +52,9 @@ createServer(async(req,res)=>{
  const meta=await sharp(bytes,{limitInputPixels:80000000}).metadata()
  if(!['jpeg','png','webp','tiff'].includes(meta.format))throw Error('Unsupported image format')
  if(req.url==='/preview'){
- const preview=await sharp(bytes,{limitInputPixels:80000000}).rotate().resize({width:960,height:960,fit:'inside',withoutEnlargement:true}).webp({quality:85}).toBuffer()
+ const {data:preview,info:previewInfo}=await sharp(bytes,{limitInputPixels:80000000}).rotate().resize({width:960,height:960,fit:'inside',withoutEnlargement:true}).webp({quality:85}).toBuffer({resolveWithObject:true})
  const thumbnail=await sharp(preview).resize({width:120,height:120,fit:'inside',withoutEnlargement:true}).webp({quality:70}).toBuffer()
- return send(res,200,{image:preview.toString('base64'),thumbnail:thumbnail.toString('base64'),bytes:preview.length,width:meta.width,height:meta.height,exif:safeExif(meta.exif)})
+ return send(res,200,{image:preview.toString('base64'),thumbnail:thumbnail.toString('base64'),bytes:preview.length,width:meta.width,height:meta.height,format:meta.format,previewWidth:previewInfo.width,previewHeight:previewInfo.height,exif:safeExif(meta.exif)})
  }
  const item=data.metadata||{}
  for(const k of ['title','alt','album','date'])if(typeof item[k]!=='string'||!item[k].trim()||item[k].length>300)throw Error('Invalid '+k)
