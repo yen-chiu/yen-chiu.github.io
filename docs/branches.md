@@ -42,4 +42,10 @@ PR #44 已合并，其开发分支已不存在；PR #45 因原目标分支不再
 - Gallery Studio 2.0：当前为未合并的开发分支。正式验收后再决定是否保留独立工作台分支。
 - 其他短期功能：从最新 main 开分支，提交 PR，检查 CI 与实际环境后 squash merge；不继续复用已 squash 的旧功能分支。
 
-本轮只标记，不删除任何分支。
+本次历史核查仅标记，未执行删除。
+
+## 后续清理记录 · 2026-11-25
+
+远端现已只保留 main、feature/avatar-studio、feat/gallery-studio-editorial（本次新建集成分支前）。原九个候选及 docs/subproject-maintenance 已不存在；旧 feat/photo-gallery push 触发器随 2.0 集成 PR 移除，保留 PR 路径校验并增加手动触发。
+
+新分支 feat/gallery-studio-v2-integration 基于最新 main，迁移 2.0 独有实现并整合文档。原 feat/gallery-studio-editorial 暂作备份，等新 PR 合并、验证且确认无额外提交后再列入清理候选。集成分支合并后也可清理。
