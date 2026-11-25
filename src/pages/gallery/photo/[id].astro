@@ -1,18 +1,208 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { orderedPhotos,albumId } from '@/lib/gallery'
-export function getStaticPaths(){return orderedPhotos.map(photo=>({params:{id:photo.id},props:{photo}}))}
-const {photo}=Astro.props
-const siblings=orderedPhotos.filter(p=>p.album===photo.album)
-const index=siblings.findIndex(p=>p.id===photo.id)
-const previous=siblings[index-1],next=siblings[index+1]
+import { orderedPhotos, albumId } from '@/lib/gallery'
+
+export function getStaticPaths() {
+  return orderedPhotos.map(photo => ({ params: { id: photo.id }, props: { photo } }))
+}
+
+const { photo } = Astro.props
+const siblings = orderedPhotos.filter(p => p.album === photo.album)
+const index = siblings.findIndex(p => p.id === photo.id)
+const previous = siblings[index - 1], next = siblings[index + 1]
+const full = photo.variants?.[3840] || photo.preview
+const camera = photo.camera?.trim()
+const exif = camera?.match(/^([\d.]+\s*mm)\s+f\/?\s*([\d.]+)\s+(\d+(?:\/\d+)?(?:\.\d+)?\s*s)\s+ISO\s*(\d+)$/i)
+const settings = exif ? [
+  { label: '焦距', value: exif[1] },
+  { label: '光圈', value: 'f/' + exif[2] },
+  { label: '快门', value: exif[3] },
+  { label: '感光度', value: 'ISO ' + exif[4] },
+] : []
 ---
-<BaseLayout meta={{title:photo.title+' · 光影档案',description:photo.caption||photo.alt}}>
-<main class="work"><a href={'/gallery/album/'+albumId(photo.album)+'/'}>← {photo.album}</a><header><small>YENCHIU / PHOTOGRAPHY</small><h1>{photo.title}</h1><p>{photo.date}</p></header>
-<figure><a href={photo.variants?.[3840]||photo.preview} aria-label="查看高清照片"><img src={photo.preview} alt={photo.alt} width={photo.width} height={photo.height} decoding="async"/></a><figcaption>点击查看高清版本</figcaption></figure>
-<section>{photo.caption&&<p>{photo.caption}</p>}{photo.camera&&<p class="meta">{photo.camera}</p>}</section>
-<nav aria-label="相册作品导航">{previous&&<a href={'/gallery/photo/'+previous.id+'/'}>← {previous.title}</a>}{next&&<a href={'/gallery/photo/'+next.id+'/'}>{next.title} →</a>}</nav></main>
+<BaseLayout meta={{ title: photo.title + ' · 光影档案', description: photo.caption || photo.alt }}>
+  <main class="work">
+    <a class="back-link" href={'/gallery/album/' + albumId(photo.album) + '/'}>
+      <span aria-hidden="true">←</span> {photo.album}
+    </a>
+
+    <div class="work-layout">
+      <header class="work-heading">
+        <p class="eyebrow">YENCHIU / PHOTOGRAPHY</p>
+        <h1>{photo.title}</h1>
+        <p class="work-date"><time datetime={photo.date}>{photo.date.replaceAll('-', '.')}</time></p>
+      </header>
+
+      <figure class="work-figure">
+        <a class="work-image" href={full} aria-label="查看高清照片">
+          <img src={photo.preview} alt={photo.alt} width={photo.width} height={photo.height} decoding="async" />
+        </a>
+        <figcaption>
+          <span class="work-number">{String(index + 1).padStart(2, '0')} / {String(siblings.length).padStart(2, '0')}</span>
+          <a class="full-link" href={full}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 3h7v7M21 3l-8 8M10 21H3v-7M3 21l8-8" />
+            </svg>
+            查看高清版本
+          </a>
+        </figcaption>
+      </figure>
+
+      <section class="work-info" aria-label="作品信息">
+        {photo.caption && <p class="description">{photo.caption}</p>}
+        {settings.length > 0 ? (
+          <dl class="camera-settings" aria-label="拍摄参数">
+            {settings.map(setting => (
+              <div><dt>{setting.label}</dt><dd>{setting.value}</dd></div>
+            ))}
+          </dl>
+        ) : camera && <p class="camera-fallback">{camera}</p>}
+      </section>
+    </div>
+
+    <nav aria-label="相册作品导航">
+      {previous && <a class="previous" href={'/gallery/photo/' + previous.id + '/'}><span>上一篇</span><strong>← {previous.title}</strong></a>}
+      {next && <a class="next" href={'/gallery/photo/' + next.id + '/'}><span>下一篇</span><strong>{next.title} →</strong></a>}
+      {!previous && !next && <a class="album-return" href={'/gallery/album/' + albumId(photo.album) + '/'}>返回相册 →</a>}
+    </nav>
+  </main>
 </BaseLayout>
+
 <style>
-.work{max-width:76rem;margin:auto;padding:2rem 0 4rem}header{padding:2rem 0 1rem}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.2}small{letter-spacing:.15em}figure{margin:0}img{display:block;width:100%;height:auto;max-height:80dvh;object-fit:contain;background:#111}figcaption,.meta{font-size:.85rem;opacity:.75}section{max-width:48rem;margin:2rem auto}nav{display:flex;justify-content:space-between;gap:1rem;border-top:1px solid hsl(var(--border));padding-top:1rem}
+  .work {
+    max-width: 65rem;
+    margin: auto;
+    padding: clamp(.75rem, 2vw, 1.5rem) 0 3rem;
+    min-width: 0;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    min-height: 44px;
+    font-size: .875rem;
+    color: hsl(var(--muted-foreground));
+    margin-bottom: .75rem;
+  }
+  .work-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "heading" "figure" "info";
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .work-heading { grid-area: heading; min-width: 0; }
+  .eyebrow, .work-date, .description, .camera-fallback { margin: 0; }
+  .eyebrow {
+    font-size: .6875rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    line-height: 1.5;
+    color: hsl(var(--muted-foreground));
+  }
+  h1 {
+    margin: .4rem 0 .45rem;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    line-height: 1.25;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .work-date {
+    font-size: .8125rem;
+    font-variant-numeric: tabular-nums;
+    color: hsl(var(--muted-foreground));
+  }
+  .work-figure { grid-area: figure; margin: 0; min-width: 0; }
+  .work-image { display: grid; place-items: center; min-width: 0; }
+  /* The published derivative is the artwork: preserve its existing ambient
+     surround, shadow, decoration and entire composition without cropping. */
+  .work-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 78dvh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .25rem .75rem;
+    margin-top: .3rem;
+    font-size: .75rem;
+    color: hsl(var(--muted-foreground));
+  }
+  .work-number { font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+  .full-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    min-height: 44px;
+    margin-left: auto;
+  }
+  .work-info { grid-area: info; min-width: 0; }
+  .description {
+    font-size: .9375rem;
+    line-height: 1.85;
+    overflow-wrap: anywhere;
+  }
+  .camera-settings {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .75rem .5rem;
+    margin: 1.25rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid hsl(var(--foreground) / .18);
+  }
+  .camera-settings > div { min-width: 0; }
+  .camera-settings dt {
+    font-size: .6875rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.5;
+  }
+  .camera-settings dd {
+    margin: .25rem 0 0;
+    font-size: .8125rem;
+    font-weight: 500;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .camera-fallback {
+    margin-top: 1rem;
+    font-size: .8125rem;
+    line-height: 1.7;
+    color: hsl(var(--muted-foreground));
+    overflow-wrap: anywhere;
+  }
+  nav {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid hsl(var(--foreground) / .18);
+  }
+  nav a { min-width: 0; min-height: 44px; overflow-wrap: anywhere; }
+  nav span { display: block; font-size: .75rem; color: hsl(var(--muted-foreground)); }
+  nav strong { font-size: .875rem; font-weight: 500; }
+  .next { margin-left: auto; text-align: right; }
+  .album-return { font-size: .875rem; margin-left: auto; }
+  a:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 4px; border-radius: 4px; }
+  @media (min-width: 960px) {
+    .work-layout {
+      grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "figure heading" "figure info";
+      column-gap: clamp(1.5rem, 3vw, 3rem);
+      row-gap: 1.5rem;
+    }
+    .work-heading { padding-top: .25rem; }
+    .camera-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 359px) {
+    .camera-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
 </style>

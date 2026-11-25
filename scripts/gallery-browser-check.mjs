@@ -10,7 +10,7 @@ const rows=[['a','横幅测试','山野',1200,800],['b','竖幅测试','山野',
   variants[size]='https://gallery-cdn.yenchiu.com/photos/'+id+'/v1/'+size+'.webp'
   variantWidths[size]=Math.min(width,Math.round(width*size/Math.max(width,height)))
  }
- return {id,title,alt:title,album,date:'2026-01-0'+(3-i),width,height,thumbnail:variants[480],preview:variants[1920],variants,variantWidths,featured:i===0,caption:'CI fixture'}
+ return {id,title,alt:title,album,date:'2026-01-0'+(3-i),width,height,thumbnail:variants[480],preview:variants[1920],variants,variantWidths,featured:i===0,caption:'CI fixture',camera:'147mm  F5.6  1/250s  ISO1000'}
 })
 if(process.argv.includes('--fixture')){
  if(process.env.CI!=='true')throw Error('Fixture generation is CI-only')
@@ -137,9 +137,30 @@ if(process.argv.includes('--fixture')){
  await page.locator('.wall figure a').first().click()
  await page.waitForURL('**/gallery/photo/'+rows[0].id+'/**')
  assert.equal(await page.locator('h1').textContent(),'横幅测试')
+ const checkDetail=async row=>{
+  await page.waitForFunction(()=>{const img=document.querySelector('.work-image img');return img?.complete&&img.naturalWidth>0})
+  assert.equal(await page.locator('.work-image img').getAttribute('src'),row.preview)
+  assert.equal(await page.locator('.full-link').getAttribute('href'),row.variants[3840])
+  assert.deepEqual(await page.locator('.camera-settings dd').allTextContents(),['147mm','f/5.6','1/250s','ISO 1000'])
+  const layout=await page.evaluate(()=>{
+   const rect=selector=>document.querySelector(selector).getBoundingClientRect()
+   const img=document.querySelector('.work-image img')
+   const r=img.getBoundingClientRect()
+   return {heading:rect('.work-heading').toJSON(),figure:rect('.work-figure').toJSON(),info:rect('.work-info').toJSON(),ratio:r.width/r.height,natural:img.naturalWidth/img.naturalHeight,noOverflow:document.documentElement.scrollWidth<=innerWidth}
+  })
+  assert(layout.noOverflow,'Photo detail must not overflow horizontally')
+  assert(Math.abs(layout.ratio/layout.natural-1)<.025,'Photography composition must preserve its aspect ratio')
+  if(mobile){
+   assert(layout.heading.bottom<=layout.figure.top&&layout.figure.bottom<=layout.info.top,'Mobile detail must follow heading, photograph, information order')
+  }else{
+   assert(layout.figure.right<=layout.heading.left&&layout.heading.bottom<=layout.info.top,'Desktop detail must show photo left, information right')
+  }
+ }
+ await checkDetail(rows[0])
  await page.locator('nav[aria-label="相册作品导航"] a').click()
  await page.waitForURL('**/gallery/photo/'+rows[1].id+'/**')
  assert.equal(await page.locator('h1').textContent(),'竖幅测试')
+ await checkDetail(rows[1])
  await context.close()
  console.log(mobile?'Mobile viewport smoke test passed':'Desktop smoke test passed')
  }
