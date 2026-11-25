@@ -229,12 +229,9 @@ html.dark .vesper-feed {
   border: 1px solid var(--feed-card-edge);
 }
 .vesper-feed__article time {
-  flex-shrink: 0;
-  padding: .16rem .4rem;
-  border: 1px solid var(--feed-card-edge);
-  border-radius: .4rem;
-  background: hsl(var(--background));
-  color: var(--feed-text);
+  display: block;
+  margin-top: .35rem;
+  color: var(--feed-muted);
   white-space: nowrap;
   font-size: .69rem;
 }
