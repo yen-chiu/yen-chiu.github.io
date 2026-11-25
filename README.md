@@ -59,6 +59,10 @@ The project's `.npmrc` enables `legacy-peer-deps`. On Windows, if esbuild encoun
 
 </details>
 
+## Subproject documentation
+
+See the [maintenance handbook (中文)](./docs/README.md) for Gallery, Gallery Studio, Night Radio, Nocturne Editorial, friend links, and Avatar Studio. The [branch inventory](./docs/branches.md) records verified cleanup candidates and retention requirements. Independent development versions are documented separately from features already on main.
+
 ## Repository map
 
 | Location | Purpose |
