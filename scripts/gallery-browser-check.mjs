@@ -50,6 +50,46 @@ if(process.argv.includes('--fixture')){
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true)
  assert.equal(await page.evaluate(()=>{const r=document.querySelector('.primary-reading').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}),true)
  assert.equal(await page.evaluate(()=>document.querySelector('.home-photography').getBoundingClientRect().top>innerHeight),true)
+ // Exercise normal motion, not just the reduced-motion smoke path.
+ if(mobile){
+  await page.emulateMedia({reducedMotion:'no-preference'})
+  await page.waitForFunction(()=>customElements.get('landing-hero')&&document.querySelector('.home-cover').style.height)
+  const sample=async fraction=>page.evaluate(async fraction=>{
+   const track=document.querySelector('landing-hero')
+   const cover=track.querySelector('.home-cover')
+   const ruler=track.querySelector('.hero-compact-measure')
+   const name=track.querySelector('h1')
+   const actions=track.querySelector('.cover-actions')
+   const credit=track.querySelector('.cover-credit')
+   const end=Math.max(0,scrollY+track.getBoundingClientRect().top)+track.offsetHeight-ruler.offsetHeight
+   window.scrollTo({top:Math.round(end*fraction),behavior:'instant'})
+   const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve))
+   await frame();await frame();await frame()
+   const read=()=>({height:cover.offsetHeight,opacity:Number(name.style.opacity),transform:name.style.transform,visibility:name.style.visibility,actions:Number(actions.style.opacity),credit:Number(credit.style.opacity)})
+   const first=read()
+   for(let i=0;i<8;i++)await frame()
+   return {first,last:read()}
+  },fraction)
+  let previous={height:Infinity,opacity:1}
+  for(const fraction of [0,.2,.45,.7,.85,1]){
+   const {first,last}=await sample(fraction)
+   assert.deepEqual(first,last,'Mobile cover must not rebound or flicker after scrolling stops')
+   assert(last.height<=previous.height&&last.opacity<=previous.opacity,'Collapse must be monotonic')
+   if(last.credit>.02)assert(last.actions<.02,'Wallpaper credit must not overlap hero actions')
+   previous=last
+  }
+  assert.equal(previous.opacity,0)
+  assert.equal(previous.visibility,'hidden')
+  let expanded=previous
+  for(const fraction of [.85,.5,0]){
+   const {first,last}=await sample(fraction)
+   assert.deepEqual(first,last,'Reverse scroll must settle without rebound')
+   assert(last.height>=expanded.height&&last.opacity>=expanded.opacity)
+   expanded=last
+  }
+  assert.equal(expanded.opacity,1)
+  await page.emulateMedia({reducedMotion:'reduce'})
+ }
  const hint=page.locator('[data-collapse]')
  await hint.click()
  await page.waitForFunction(()=>document.querySelector('landing-hero')?.classList.contains('is-collapsed'))
