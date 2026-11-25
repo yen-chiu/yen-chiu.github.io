@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { orderedPhotos, albumId } from '@/lib/gallery'
+import { parseCamera } from '@/lib/gallery-camera.mjs'
 
 export function getStaticPaths() {
   return orderedPhotos.map(photo => ({ params: { id: photo.id }, props: { photo } }))
@@ -11,14 +12,7 @@ const siblings = orderedPhotos.filter(p => p.album === photo.album)
 const index = siblings.findIndex(p => p.id === photo.id)
 const previous = siblings[index - 1], next = siblings[index + 1]
 const full = photo.variants?.[3840] || photo.preview
-const camera = photo.camera?.trim()
-const exif = camera?.match(/^([\d.]+\s*mm)\s+f\/?\s*([\d.]+)\s+(\d+(?:\/\d+)?(?:\.\d+)?\s*s)\s+ISO\s*(\d+)$/i)
-const settings = exif ? [
-  { label: '焦距', value: exif[1] },
-  { label: '光圈', value: 'f/' + exif[2] },
-  { label: '快门', value: exif[3] },
-  { label: '感光度', value: 'ISO ' + exif[4] },
-] : []
+const { settings, notes } = parseCamera(photo.camera)
 ---
 <BaseLayout meta={{ title: photo.title + ' · 光影档案', description: photo.caption || photo.alt }}>
   <main class="work">
@@ -56,7 +50,8 @@ const settings = exif ? [
               <div><dt>{setting.label}</dt><dd>{setting.value}</dd></div>
             ))}
           </dl>
-        ) : camera && <p class="camera-fallback">{camera}</p>}
+        ) : null}
+        {notes.length > 0 && <p class="camera-fallback">{notes.join(' · ')}</p>}
       </section>
     </div>
 
@@ -202,7 +197,7 @@ const settings = exif ? [
     .work-heading { padding-top: .25rem; }
     .camera-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  @media (max-width: 359px) {
+  @media (max-width: 600px) {
     .camera-settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>
