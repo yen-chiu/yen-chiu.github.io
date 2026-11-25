@@ -10,7 +10,8 @@ const { class: className, term, defer = false } = Astro.props
 ---
 
 <div id='giscus' class={className} data-repo={config.integ.giscus?.repo} data-repo-id={config.integ.giscus?.repoId} data-category={config.integ.giscus?.category} data-category-id={config.integ.giscus?.categoryId} data-term={term} data-defer={defer ? 'true' : undefined}>
-  <div class='giscus-loading'><p data-comment-status role='status'>评论由 GitHub Discussions 提供，点击后加载。</p><button type='button' data-load-comments>加载评论</button><a href='https://github.com/yen-chiu/blog-v2/discussions' target='_blank' rel='noopener noreferrer'>前往讨论区 ↗</a></div>
+  <div class='giscus-loading'><p data-comment-status role='status'>评论由 GitHub Discussions 提供，点击后加载。</p><button type='button' data-load-comments>加载评论</button></div>
+  <a class='giscus-fallback' href='https://github.com/yen-chiu/blog-v2/discussions' target='_blank' rel='noopener noreferrer'>前往讨论区 ↗</a>
 </div>
 
 <script>
@@ -121,7 +122,7 @@ const { class: className, term, defer = false } = Astro.props
   }
 
   .giscus-loading button { border: 1px solid hsl(var(--border)); border-radius: .65rem; padding: .55rem 1rem; min-height: 44px; cursor: pointer; color: hsl(var(--foreground)); }
-  .giscus-loading a { text-decoration: underline; }
+  .giscus-fallback { display: inline-block; font-size: .8rem; text-decoration: underline; }
   #giscus.giscus-ready .giscus-loading {
     display: none;
   }

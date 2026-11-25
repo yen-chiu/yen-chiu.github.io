@@ -1,0 +1,42 @@
+name: Network browser validation
+on:
+  pull_request:
+    paths:
+      - 'astro.config.ts'
+      - 'public/sw.js'
+      - 'src/components/BaseHead.astro'
+      - 'src/components/giscus/**'
+      - 'src/components/appearance/**'
+      - 'src/components/Search.astro'
+      - 'src/components/categories/**'
+      - 'src/types/appearance.ts'
+      - 'scripts/network-*.mjs'
+      - '.github/workflows/network-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install isolated Chromium test tooling
+        run: |
+          echo "NETWORK_PLAYWRIGHT_DIR=$RUNNER_TEMP/network-playwright" >> "$GITHUB_ENV"
+          npm install --prefix "$RUNNER_TEMP/network-playwright" --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/network-playwright/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Browser network and offline regression
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4321 > /tmp/network-preview.log 2>&1 &
+          trap 'kill $! 2>/dev/null || true' EXIT
+          node scripts/network-browser-check.mjs
