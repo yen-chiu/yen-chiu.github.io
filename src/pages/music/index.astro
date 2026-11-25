@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import MusicPlayer from '@/components/music/MusicPlayer.astro'
 import { musicSources, musicTracks } from '@/data/music'
+import { sitePath } from '@/utils/site-path'
 ---
 <BaseLayout meta={{ title: 'Vesper Music · 夜间留声', description: '夜间留声：Vesper 的独立音乐空间，收听具有公开播放许可的音乐，探索各平台的官方音乐入口。' }}>
   <main class='music-page'>
@@ -23,10 +24,15 @@ import { musicSources, musicTracks } from '@/data/music'
       </div>
     </section>
     <footer class='music-fine-print' aria-label='音乐来源与版权说明'>
-      <h2>音乐来源与授权</h2>
-      <p>本站仅收录具有公开播放许可的示范录音。作品与具体录音的权利可能不同，请以各来源页面的许可条款为准。</p>
-      <ul>{musicTracks.map(track=><li><a href={track.attribution.match(/https:\/\/\S+/)?.[0] || 'https://commons.wikimedia.org/wiki/File:Nocturne_Op._9_no._2_in_E_flat_major.mp3'} target='_blank' rel='noopener noreferrer'>{track.title} · 录音来源及授权 ↗</a></li>)}</ul>
-      <p>没有隐藏抓取或绕过音乐平台的收费限制。站内切换页面会尽量保持播放；完整刷新、离站或浏览器限制可能中断音频。</p>
+      <div>
+        <h2>音乐来源与授权</h2>
+        <p>作品与录音的权利可能不同。当前曲目的许可与来源随播放器显示，完整署名见授权档案。</p>
+      </div>
+      <a class='credits-link' href={sitePath('/music/credits/')}>
+        <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z M9 12l2 2 4-4'/></svg>
+        <span>音乐授权档案 <small>（{musicTracks.length} 首）</small></span>
+        <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M7 17 17 7M7 7h10v10'/></svg>
+      </a>
     </footer>
   </main>
 </BaseLayout>
@@ -35,7 +41,7 @@ import { musicSources, musicTracks } from '@/data/music'
   .music-heading{margin:0 0 2rem}.music-label{font-size:.67rem;letter-spacing:.2em;font-weight:650;color:hsl(var(--primary))}.music-heading h1{font-size:clamp(2.3rem,7vw,4.3rem);line-height:1.25;letter-spacing:-.045em;font-weight:730;margin:.65rem 0}.music-heading h1 span{font-size:.6em;color:hsl(var(--primary));vertical-align:top}.music-heading p{font-size:.94rem;color:hsl(var(--muted-foreground));line-height:1.8}
   .music-library{margin-top:3.5rem}.library-heading{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1.2rem}.library-heading h2{font-size:1.5rem;margin:.45rem 0 0}.library-heading p{max-width:26rem;font-size:.77rem;line-height:1.7;color:hsl(var(--muted-foreground))}
   .source-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.7rem}.music-source{min-height:108px;padding:1rem;border:1px solid hsl(var(--border)/.8);border-radius:1rem;background:hsl(var(--background)/.7);display:flex;flex-direction:column;gap:.4rem;transition:border-color .2s ease}.music-source:hover{border-color:hsl(var(--primary)/.6)}.music-source>span{align-self:flex-end;color:hsl(var(--primary))}.music-source strong{font-size:.88rem}.music-source small{font-size:.69rem;line-height:1.5;color:hsl(var(--muted-foreground))}
-  .music-fine-print{margin:3.5rem 0 0;padding-top:1.3rem;border-top:1px solid hsl(var(--border)/.65);font-size:.73rem;line-height:1.9;color:hsl(var(--muted-foreground))}.music-fine-print h2{font-size:.85rem;font-weight:650;color:hsl(var(--foreground));margin:0 0 .5rem}.music-fine-print ul{padding-left:1.2rem;margin:.5rem 0 1rem;display:grid;gap:.2rem}.music-fine-print a{text-decoration:underline;text-underline-offset:3px}
+  .music-fine-print{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:2.5rem 0 0;padding:1rem 1.1rem;border:1px solid hsl(var(--border));border-radius:1rem;background:hsl(var(--background)/.96);color:hsl(var(--foreground));font-size:.78rem;line-height:1.7}.music-fine-print h2{font-size:.9rem;font-weight:650;margin:0 0 .35rem}.music-fine-print p{margin:0;color:hsl(var(--muted-foreground))}.credits-link{display:flex;align-items:center;gap:.4rem;flex:none;min-height:44px;color:hsl(var(--primary));font-weight:600}.credits-link small{font-weight:400;color:hsl(var(--muted-foreground))}.credits-link:hover{text-decoration:underline}.credits-link svg{flex:none}@media(max-width:600px){.music-fine-print{display:block}.credits-link{margin-top:.4rem}}
   @media(max-width:850px){.source-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media(max-width:600px){.music-page{padding-top:1.3rem}.library-heading{display:block}.library-heading p{margin-top:.65rem}.source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.music-library{margin-top:2.2rem}}
 </style>

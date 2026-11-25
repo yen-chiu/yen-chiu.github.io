@@ -1,0 +1,139 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { musicTracks } from '@/data/music'
+import { sitePath } from '@/utils/site-path'
+const licenses = [...new Set(musicTracks.map(track => track.license))].sort()
+---
+<BaseLayout meta={{ title: '音乐授权档案 · Vesper Music', description: '查阅夜间留声收录曲目的录音来源、演奏者和许可信息。' }}>
+  <main class='credits-page'>
+    <a class='back-link' href={sitePath('/music/')}>← 返回夜间留声</a>
+    <header class='credits-heading'>
+      <span>VESPER / RECORDING CREDITS</span>
+      <h1>音乐授权档案</h1>
+      <p>作品与具体录音的权利可能不同。本档案随曲目目录更新；具体许可条款以各来源页面为准。</p>
+    </header>
+    <music-credits class='credits-catalogue'>
+      <div class='credits-controls' data-controls hidden>
+        <label>搜索曲目、作者或来源<input data-search type='search' placeholder='输入关键词…' /></label>
+        <label>许可类型<select data-license><option value=''>全部许可</option>{licenses.map(license=><option value={license}>{license}</option>)}</select></label>
+        <p data-count role='status' aria-live='polite'>共 {musicTracks.length} 首</p>
+      </div>
+      <ul class='credits-list'>
+        {musicTracks.map(track=><li id={track.id} data-credit-row data-license={track.license} data-search-text={`${track.title} ${track.artist} ${track.provider} ${track.attribution} ${track.license}`.toLowerCase()}>
+          <article class='credit-record' aria-labelledby={track.id+'-title'}>
+            <div class='credit-heading'><h2 id={track.id+'-title'}>{track.title}</h2><span class='license-label'>{track.license}</span></div>
+            <p class='credit-artist'>{track.artist}</p>
+            <p class='attribution'>{track.attribution}</p>
+            <p class='provider'>来源：{track.provider}</p>
+            <div class='record-links'>
+              <a href={track.sourceUrl} target='_blank' rel='noopener noreferrer'>录音来源 ↗</a>
+              {track.licenseUrl && <a href={track.licenseUrl} target='_blank' rel='noopener noreferrer'>许可条款 ↗</a>}
+            </div>
+          </article>
+        </li>)}
+      </ul>
+      <p data-empty hidden>没有找到符合条件的曲目。</p>
+      <nav data-pagination class='pagination' aria-label='授权档案分页' hidden>
+        <button type='button' data-prev>上一页</button><span data-page aria-live='polite'></span><button type='button' data-next>下一页</button>
+      </nav>
+    </music-credits>
+    <footer class='credits-note'>
+      <h2>使用说明</h2>
+      <p>本站使用具有公开播放许可的示范录音，并提供音乐平台的官方播放入口，不绕过平台付费限制。站内切换页面会尽量保持播放；完整刷新、离站或浏览器限制可能中断音频。</p>
+      <p>如需再使用录音，请核对原始来源页的完整署名、许可与修改说明等要求。</p>
+    </footer>
+  </main>
+</BaseLayout>
+<script>
+  class MusicCredits extends HTMLElement {
+    private controller?: AbortController
+    connectedCallback() {
+      this.controller?.abort()
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const search = this.querySelector<HTMLInputElement>('[data-search]')!
+      const license = this.querySelector<HTMLSelectElement>('[data-license]')!
+      const count = this.querySelector<HTMLElement>('[data-count]')!
+      const empty = this.querySelector<HTMLElement>('[data-empty]')!
+      const pagination = this.querySelector<HTMLElement>('[data-pagination]')!
+      const previous = this.querySelector<HTMLButtonElement>('[data-prev]')!
+      const next = this.querySelector<HTMLButtonElement>('[data-next]')!
+      const pageLabel = this.querySelector<HTMLElement>('[data-page]')!
+      const rows = [...this.querySelectorAll<HTMLElement>('[data-credit-row]')]
+      const pageSize = 20
+      let page = 1
+      const matching = () => {
+        const q = search.value.trim().toLowerCase()
+        return rows.filter(row => (!license.value || row.dataset.license === license.value) && (!q || (row.dataset.searchText ?? '').includes(q)))
+      }
+      const render = () => {
+        const filtered = matching()
+        const pages = Math.max(1, Math.ceil(filtered.length / pageSize))
+        page = Math.min(pages, Math.max(1, page))
+        const visible = new Set(filtered.slice((page - 1) * pageSize, page * pageSize))
+        rows.forEach(row => { row.hidden = !visible.has(row) })
+        count.textContent = `显示 ${filtered.length} / ${rows.length} 首`
+        empty.hidden = filtered.length > 0
+        pagination.hidden = pages <= 1
+        previous.disabled = page === 1
+        next.disabled = page === pages
+        pageLabel.textContent = `${page} / ${pages}`
+      }
+      const revealHash = () => {
+        let id = ''
+        try { id = decodeURIComponent(location.hash.slice(1)) } catch { return }
+        const index = rows.findIndex(row => row.id === id)
+        if (index < 0) return
+        search.value = ''
+        license.value = ''
+        page = Math.floor(index / pageSize) + 1
+        render()
+        requestAnimationFrame(() => { if (!signal.aborted) rows[index].scrollIntoView({block:'start'}) })
+      }
+      const reset = () => { page = 1; render() }
+      search.addEventListener('input', reset, { signal })
+      license.addEventListener('change', reset, { signal })
+      previous.addEventListener('click', () => { page--; render() }, { signal })
+      next.addEventListener('click', () => { page++; render() }, { signal })
+      window.addEventListener('hashchange', revealHash, { signal })
+      this.querySelector<HTMLElement>('[data-controls]')!.hidden = false
+      render()
+      revealHash()
+    }
+    disconnectedCallback() { this.controller?.abort() }
+  }
+  if (!customElements.get('music-credits')) customElements.define('music-credits', MusicCredits)
+</script>
+<style>
+  .credits-page{width:min(100%,55rem);margin:auto;padding:2rem 0 4rem;overflow-wrap:anywhere}
+  .back-link{display:inline-flex;align-items:center;min-height:44px;color:hsl(var(--primary));font-size:.85rem}
+  .credits-heading{margin:1rem 0 1.5rem;padding:1.25rem;border-radius:1rem;background:hsl(var(--background)/.96);color:hsl(var(--foreground))}
+  .credits-heading>span{font-size:.65rem;letter-spacing:.18em;color:hsl(var(--primary));font-weight:650}
+  .credits-heading h1{font-size:clamp(1.8rem,5vw,3rem);margin:.5rem 0}
+  .credits-heading p,.credits-note p{font-size:.84rem;line-height:1.85;color:hsl(var(--muted-foreground))}
+  .credits-catalogue{display:block;border:1px solid hsl(var(--border));border-radius:1rem;padding:clamp(.85rem,3vw,1.5rem);background:hsl(var(--background)/.97);color:hsl(var(--foreground))}
+  .credits-controls{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:.8rem}
+  .credits-controls label{display:flex;flex-direction:column;gap:.35rem;font-size:.76rem;color:hsl(var(--muted-foreground))}
+  .credits-controls input,.credits-controls select{min-width:0;width:100%;min-height:44px;border:1px solid hsl(var(--border));border-radius:.6rem;padding:.5rem .65rem;background:hsl(var(--background));color:hsl(var(--foreground));font-size:.85rem}
+  [data-count]{grid-column:1/-1;font-size:.76rem;color:hsl(var(--muted-foreground));margin:0}
+  .credits-list{list-style:none;padding:0;margin:0}
+  .credits-list li{scroll-margin-top:7rem;border-bottom:1px solid hsl(var(--border))}
+  .credits-list li:last-child{border-bottom:0}
+  .credit-record{padding:1rem .15rem}
+  .credit-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:.35rem .7rem}
+  .credit-heading h2{font-size:1rem;line-height:1.5;margin:0}
+  .license-label{font-size:.7rem;color:hsl(var(--primary));border:1px solid hsl(var(--border));border-radius:.35rem;padding:.1rem .4rem}
+  .credit-record p{font-size:.8rem;line-height:1.7;margin:.25rem 0}
+  .credit-artist,.provider{color:hsl(var(--muted-foreground))}
+  .record-links{display:flex;flex-wrap:wrap;gap:1rem}
+  .record-links a{display:inline-flex;align-items:center;min-height:44px;color:hsl(var(--primary));font-size:.8rem;text-decoration:underline;text-underline-offset:3px}
+  .credits-list li:target{background:hsl(var(--primary)/.06)}
+  .pagination{display:flex;align-items:center;justify-content:center;gap:.7rem;margin-top:.8rem;font-size:.8rem}
+  .pagination button{min-height:44px;padding:.3rem .75rem;border:1px solid hsl(var(--border));border-radius:.5rem;color:hsl(var(--foreground))}
+  .pagination button:disabled{opacity:.4}
+  [data-empty]{font-size:.85rem;padding:1rem 0}
+  [hidden]{display:none!important}
+  .credits-note{margin-top:1.5rem;padding:1.1rem 1.25rem;border-radius:1rem;background:hsl(var(--background)/.96);color:hsl(var(--foreground))}
+  .credits-note h2{font-size:.95rem;margin:0}
+  @media(max-width:600px){.credits-controls{grid-template-columns:1fr}.credits-page{padding-top:1rem}}
+</style>

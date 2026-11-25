@@ -8,6 +8,8 @@ const hasVinyl = existsSync('public' + artwork.vinyl)
 const hasTonearm = existsSync('public' + artwork.tonearm)
 interface Props { compact?: boolean }
 const { compact = false } = Astro.props
+const initialTrack = musicTracks.find(track => track.source === 'audio')
+const creditsPath = sitePath('/music/credits/')
 const fallbackWaveform = Array.from({length:64},()=>0.18)
 const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Record<string,number[]>)[id];return Array.isArray(values)&&values.length===64?values:fallbackWaveform}
 ---
@@ -24,8 +26,16 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
     </div>
     <div class='music-info'>
       <span class='music-kicker'>VESPER · NIGHT RADIO</span>
-      <h3 data-song-title>夜曲 Op. 9 No. 2</h3>
-      <p data-song-artist>Frédéric Chopin</p>
+      <h3 data-song-title>{initialTrack?.title ?? '暂无曲目'}</h3>
+      <p data-song-artist>{initialTrack?.artist ?? ''}</p>
+      <div class='music-credit' data-credit hidden={!initialTrack}>
+        <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z M9 12l2 2 4-4'/></svg>
+        <a data-credit-license href={initialTrack?.licenseUrl ?? initialTrack?.sourceUrl} target='_blank' rel='noopener noreferrer'>{initialTrack?.license}</a>
+        <span aria-hidden='true'>·</span>
+        <a data-credit-source href={initialTrack?.sourceUrl} target='_blank' rel='noopener noreferrer'>录音来源</a>
+        <span aria-hidden='true'>·</span>
+        <a data-credit-detail data-credits-path={creditsPath} href={creditsPath + (initialTrack ? '#' + initialTrack.id : '')}>授权详情</a>
+      </div>
     </div>
     <div class='music-timeline'>
       <label class='sr-only' for={compact ? 'home-music-seek' : 'music-page-seek'}>播放进度</label>
@@ -108,6 +118,11 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
       const status=this.querySelector<HTMLElement>('[data-status]')!
       const title=this.querySelector<HTMLElement>('[data-song-title]')!
       const artist=this.querySelector<HTMLElement>('[data-song-artist]')!
+      const credit=this.querySelector<HTMLElement>('[data-credit]')!
+      const creditLicense=this.querySelector<HTMLAnchorElement>('[data-credit-license]')!
+      const creditSource=this.querySelector<HTMLAnchorElement>('[data-credit-source]')!
+      const creditDetail=this.querySelector<HTMLAnchorElement>('[data-credit-detail]')!
+      let currentCreditId:string | undefined
       const cover=this.querySelector<HTMLImageElement>('[data-cover]')!
       const fallback=this.querySelector<HTMLElement>('[data-cover-fallback]')!
       const lyricsTitle=this.querySelector<HTMLElement>('[data-lyrics-title]')
@@ -119,6 +134,14 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
           renderWave(track.id)
           title.textContent=track.title
           artist.textContent=track.artist
+          if(currentCreditId!==track.id){
+            currentCreditId=track.id
+            credit.hidden=false
+            creditLicense.textContent=track.license
+            creditLicense.href=track.licenseUrl ?? track.sourceUrl
+            creditSource.href=track.sourceUrl
+            creditDetail.href=(creditDetail.dataset.creditsPath ?? '')+'#'+encodeURIComponent(track.id)
+          }
           const image=track.cover?.trim()
           if(image && image.startsWith('https://')) {
             if(cover.getAttribute('src')!==image) {cover.hidden=false;fallback.hidden=true;cover.src=image}
@@ -130,6 +153,7 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
             lyricsBody.classList.toggle('has-lyrics',Boolean(words))
           }
         }
+        else {credit.hidden=true;currentCreditId=undefined}
         current.textContent=formatTime(snapshot.currentTime)
         duration.textContent=snapshot.duration?formatTime(snapshot.duration):'--:--'
         const fraction=snapshot.duration?Math.max(0,Math.min(1,snapshot.currentTime/snapshot.duration)):0
@@ -246,4 +270,11 @@ const waveformFor = (id:string):number[] => {const values=(musicWaveforms as Rec
     .music-actions{gap:.3rem}
     .music-status{margin:.65rem 0 0}
   }
+  .music-credit{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.15rem .4rem;margin:.35rem 0 .2rem;font-size:.7rem;color:hsl(var(--foreground)/.85);line-height:1.5}
+  .music-credit[hidden]{display:none}
+  .music-credit svg{flex:none;color:var(--music-accent)}
+  .music-credit a{padding:.3rem 0;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+  .music-credit a:hover{color:var(--music-accent)}
+  .is-compact .music-credit{justify-content:flex-start;font-size:.66rem}
+  @media(pointer:coarse){.music-credit a{display:inline-flex;align-items:center;min-height:32px}}
 </style>
