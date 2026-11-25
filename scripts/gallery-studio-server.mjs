@@ -25,16 +25,20 @@ createServer(async(req,res)=>{
  if(req.method!=='POST'||req.headers.origin!==origin||req.headers['x-studio-token']!==token)return send(res,403,{error:'Forbidden'})
  if(!['/preview','/publish','/publish/status','/albums','/config/status','/config/save','/config/test'].includes(req.url))return send(res,404,{error:'Not found'})
  if(req.url==='/publish/status'){
-  try{const data=await body(req);return send(res,200,{progress:progress?.id===data.id?progress:null})}catch{return send(res,400,{error:'Invalid status request'})}
+  try{const data=await body(req);return send(res,200,{progress:typeof data.id==='string'&&progress?.id===data.id?progress:null})}catch{return send(res,400,{error:'Invalid status request'})}
+ }
+ if(req.url==='/albums'){
+  try{
+   await body(req)
+   const catalogue=JSON.parse(await readFile('src/data/gallery-photos.json','utf8'))
+   return send(res,200,{albums:[...new Set(catalogue.map(p=>p.album).filter(a=>typeof a==='string'&&a.trim()))].sort((a,b)=>a.localeCompare(b,'zh-CN'))})
+  }catch{return send(res,400,{error:'无法读取本地相册索引'})}
  }
  if(busy)return send(res,409,{error:'Another operation is running'})
  busy=true;let dir
  try{
  const data=await body(req)
- if(req.url==='/albums'){
-  const catalogue=JSON.parse(await readFile('src/data/gallery-photos.json','utf8'))
-  return send(res,200,{albums:[...new Set(catalogue.map(p=>p.album).filter(a=>typeof a==='string'&&a.trim()))].sort((a,b)=>a.localeCompare(b,'zh-CN'))})
- }
+
  if(req.url==='/publish'){
   const id=typeof data.id==='string'&&/^[a-f0-9-]{36}$/i.test(data.id)?data.id:null
   progress={id,done:0,total:data.backup===true?11:10,label:'正在验证照片与发布信息'}
