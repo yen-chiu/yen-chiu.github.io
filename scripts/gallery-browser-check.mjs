@@ -10,7 +10,7 @@ const rows=[['a','横幅测试','山野',1200,800],['b','竖幅测试','山野',
   variants[size]='https://gallery-cdn.yenchiu.com/photos/'+id+'/v1/'+size+'.webp'
   variantWidths[size]=Math.min(width,Math.round(width*size/Math.max(width,height)))
  }
- return {id,title,alt:title,album,date:'2026-01-0'+(3-i),width,height,thumbnail:variants[480],preview:variants[1920],variants,variantWidths,featured:i===0,caption:'CI fixture',camera:'147mm  F5.6  1/250s  ISO1000'}
+ return {id,title,alt:title,album,date:'2026-01-0'+(3-i),width,height,thumbnail:variants[480],preview:variants[1920],variants,variantWidths,featured:i===0,caption:'CI fixture',camera:i===0?'147mm  F5.6  1/250s  ISO1000':i===1?'相机: Nikon D750 · 镜头: 70-200mm f/2.8 · ISO400 · 0.5s · 未记录焦距':'ISO200'}
 })
 if(process.argv.includes('--fixture')){
  if(process.env.CI!=='true')throw Error('Fixture generation is CI-only')
@@ -141,7 +141,8 @@ if(process.argv.includes('--fixture')){
   await page.waitForFunction(()=>{const img=document.querySelector('.work-image img');return img?.complete&&img.naturalWidth>0})
   assert.equal(await page.locator('.work-image img').getAttribute('src'),row.preview)
   assert.equal(await page.locator('.full-link').getAttribute('href'),row.variants[3840])
-  assert.deepEqual(await page.locator('.camera-settings dd').allTextContents(),['147mm','f/5.6','1/250s','ISO 1000'])
+  assert.deepEqual(await page.locator('.camera-settings dd').allTextContents(),row===rows[0]?['147mm','f/5.6','1/250s','ISO 1000']:['Nikon D750','70-200mm f/2.8','0.5s','ISO 400'])
+  if(row===rows[1])assert.equal(await page.locator('.camera-fallback').textContent(),'未记录焦距')
   const layout=await page.evaluate(()=>{
    const rect=selector=>document.querySelector(selector).getBoundingClientRect()
    const img=document.querySelector('.work-image img')

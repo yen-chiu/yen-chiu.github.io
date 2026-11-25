@@ -10,6 +10,7 @@ import {safeExif} from './gallery-exif.mjs'
 import {configStatus,saveConfig,testConfig,publishEnv} from './gallery-studio-config.mjs'
 const port=Number(process.env.GALLERY_STUDIO_PORT||4783), origin='http://127.0.0.1:'+port, token=randomBytes(32).toString('hex')
 const html=await readFile(new URL('./gallery-studio.html',import.meta.url),'utf8')
+const cameraParser=await readFile(new URL('../src/lib/gallery-camera.mjs',import.meta.url),'utf8')
 let busy=false
 const send=(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data))}
 async function body(req){
@@ -19,7 +20,8 @@ async function body(req){
 }
 createServer(async(req,res)=>{
  if(req.headers.host!=='127.0.0.1:'+port)return send(res,403,{error:'Invalid host'})
- if(req.method==='GET'&&req.url==='/'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self'; frame-ancestors 'none'"});return res.end(html.replace('__STUDIO_TOKEN__',token))}
+ if(req.method==='GET'&&req.url==='/'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'self'; frame-ancestors 'none'"});return res.end(html.replace('__STUDIO_TOKEN__',token))}
+ if(req.method==='GET'&&req.url==='/camera-parser.mjs'){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(cameraParser)}
  if(req.method!=='POST'||req.headers.origin!==origin||req.headers['x-studio-token']!==token)return send(res,403,{error:'Forbidden'})
  if(!['/preview','/publish','/config/status','/config/save','/config/test'].includes(req.url))return send(res,404,{error:'Not found'})
  if(busy)return send(res,409,{error:'Another operation is running'})

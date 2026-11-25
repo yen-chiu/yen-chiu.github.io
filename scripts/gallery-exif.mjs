@@ -29,7 +29,9 @@ export function safeExif(buffer){
  read(u32(4),[271,272,34665])
  if(Number.isInteger(tags.get(34665)))read(tags.get(34665),[33434,33437,34855,36867,37386,42036])
  const exposure=tags.get(33434),aperture=tags.get(33437),iso=tags.get(34855),focal=tags.get(37386)
- const camera=[tags.get(272)||tags.get(271),tags.get(42036),focal>0?focal.toFixed(0)+'mm':'',aperture>0?'f/'+aperture.toFixed(1):'',exposure>0?(exposure<1?'1/'+Math.round(1/exposure):exposure)+'s':'',iso>0?'ISO '+iso:''].filter(Boolean).join(' · ')
+ const model=tags.get(272)||tags.get(271),lens=tags.get(42036)
+ const equipment=value=>String(value).replace(/[·|;,，；\r\n]/g,' ').trim()
+ const camera=[model?'相机: '+equipment(model):'',lens?'镜头: '+equipment(lens):'',focal>0?focal.toFixed(0)+'mm':'',aperture>0?'f/'+aperture.toFixed(1):'',exposure>0?(exposure<1?'1/'+Math.round(1/exposure):exposure)+'s':'',iso>0?'ISO '+iso:''].filter(Boolean).join(' · ')
  const date=String(tags.get(36867)||'').match(/^(\d{4}):(\d{2}):(\d{2})/)
  return {camera,date:date?date.slice(1).join('-'):''}
  }catch{return {}}
