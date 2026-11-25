@@ -4,8 +4,8 @@
   --feed-card-edge: hsl(var(--border) / .9);
   --feed-text: hsl(var(--foreground));
   --feed-muted: hsl(var(--muted-foreground));
-  --feed-overlay: linear-gradient(105deg, hsl(var(--background) / .7), hsl(var(--background) / .93) 84%);
-  --feed-image-opacity: .14;
+  --feed-overlay: linear-gradient(90deg, hsl(var(--background) / .98) 35%, hsl(var(--background) / .9) 55%, hsl(var(--background) / .3));
+  --feed-image-opacity: .7;
   color: var(--feed-text);
   position: relative;
   margin-top: 1.4rem;
@@ -18,8 +18,8 @@ html.dark .vesper-feed {
   --feed-surface: hsl(var(--background) / .94);
   --feed-card: hsl(var(--muted) / .34);
   --feed-card-edge: hsl(var(--border) / .94);
-  --feed-overlay: linear-gradient(105deg, hsl(var(--background) / .62), hsl(var(--background) / .92) 84%);
-  --feed-image-opacity: .2;
+  --feed-overlay: linear-gradient(90deg, hsl(var(--background) / .98) 35%, hsl(var(--background) / .88) 55%, hsl(var(--background) / .3));
+  --feed-image-opacity: .6;
 }
 .vesper-feed [hidden] { display: none !important; }
 .vesper-feed__heading {
@@ -84,15 +84,19 @@ html.dark .vesper-feed {
   pointer-events: none;
   background: var(--feed-overlay);
 }
-.vesper-feed__feature-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.vesper-feed__feature-bg { position: absolute; inset: 0 0 0 auto; width: 50%; z-index: 0; overflow: hidden; pointer-events: none; }
 .vesper-feed__feature-bg img {
-  width: 100%;
+  position: absolute;
+  right: 0;
+  width: auto;
+  max-width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: left center;
+  object-fit: contain;
+  object-position: right center;
   opacity: var(--feed-image-opacity);
-  filter: blur(12px) saturate(.65);
-  transform: scale(1.15);
+  filter: saturate(.9);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 65%);
+  mask-image: linear-gradient(90deg, transparent, #000 65%);
 }
 .vesper-feed__feature > :not(.vesper-feed__feature-bg) { position: relative; z-index: 2; }
 .vesper-feed__feature-top {
@@ -183,14 +187,16 @@ html.dark .vesper-feed {
 .vesper-feed__article-bg {
   position: absolute;
   z-index: 0;
-  inset: 0;
-  width: 100%;
+  inset: 0 0 0 auto;
+  width: auto;
+  max-width: 50%;
   height: 100%;
-  object-fit: cover;
-  object-position: left center;
+  object-fit: contain;
+  object-position: right center;
   opacity: var(--feed-image-opacity);
-  filter: blur(10px);
-  transform: scale(1.12);
+  filter: saturate(.9);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 65%);
+  mask-image: linear-gradient(90deg, transparent, #000 65%);
   pointer-events: none;
 }
 .vesper-feed__article > :not(.vesper-feed__article-bg) { position: relative; z-index: 2; }
@@ -222,7 +228,16 @@ html.dark .vesper-feed {
   border-radius: 50%;
   border: 1px solid var(--feed-card-edge);
 }
-.vesper-feed__article time { color: var(--feed-muted); white-space: nowrap; font-size: .69rem; }
+.vesper-feed__article time {
+  flex-shrink: 0;
+  padding: .16rem .4rem;
+  border: 1px solid var(--feed-card-edge);
+  border-radius: .4rem;
+  background: hsl(var(--background));
+  color: var(--feed-text);
+  white-space: nowrap;
+  font-size: .69rem;
+}
 .vesper-feed__article-title {
   color: var(--feed-text);
   display: -webkit-box;
