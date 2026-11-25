@@ -107,3 +107,11 @@ test('tonearm has a smooth transform on mobile but respects reduced motion',()=>
   assert.match(player,/data-effect-quality='static'\]\) \.music-tonearm\{transition:none!important\}/)
   assert.match(player,/prefers-reduced-motion:reduce[^\n]*\.music-tonearm[^\n]*transition:none!important/)
 })
+
+test('vinyl rotation follows playback even in low-quality mobile mode',()=>{
+  assert.match(player,/\.music-vinyl\{[^}]*animation:music-spin 24s linear infinite;animation-play-state:paused/)
+  assert.match(player,/\.is-playing \.music-vinyl\{animation-play-state:running\}/)
+  assert.doesNotMatch(player,/data-effect-quality='low'\]\) \.music-vinyl/)
+  assert.match(player,/html\.motion-off\) \.music-vinyl/)
+  assert.match(player,/prefers-reduced-motion:reduce[^\n]*\.music-vinyl[^\n]*animation:none!important/)
+})
