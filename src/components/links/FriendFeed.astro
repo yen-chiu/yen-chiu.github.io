@@ -118,10 +118,10 @@ const PAGE_SIZE = 6
                   loading='lazy' data-feed-fallback={FALLBACK_AVATAR} />
                 <span>{article.site}</span>
               </button>
-              <time datetime={article.publishedAt ?? undefined}>{dateText(article.publishedAt)}</time>
             </div>
             <a href={article.url} target='_blank' rel='noopener noreferrer'
               class='vesper-feed__article-title'>{article.title}</a>
+            <time datetime={article.publishedAt ?? undefined}>{dateText(article.publishedAt)}</time>
             {article.stale && <span class='vesper-feed__cached'>历史缓存</span>}
           </li>
         ))}
