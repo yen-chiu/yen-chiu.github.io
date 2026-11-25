@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
 import { fadeProgress, springStep } from '../src/utils/hero-motion.ts'
 
@@ -24,3 +25,15 @@ for (let p = 0; p <= 1; p += 0.01) {
 }
 assert.equal(springStep({ position: 0, velocity: 0 }, 1, 0).position, 0)
 console.log('Spring convergence, bounded rebound, reverse motion and continuous fade checks passed')
+
+const home = readFileSync('src/pages/index.astro', 'utf8')
+assert.match(home, /const directScroll = \(\) => touchViewport\.matches \|\| motionReduced\(\)/)
+assert.match(home, /spring = directScroll\(\)\s*\? \{ position: target, velocity: 0 \}/)
+assert.match(home, /const rebound = directScroll\(\) \? 0/)
+assert.match(home, /height: clamp\(230px, 42svh, 340px\)/)
+assert.match(home, /const compact = compactHeight\(\)/)
+assert.match(home, /this\.viewportObserver\.observe\(this\)/)
+assert.match(home, /if \(cover\.style\.height !== nextHeight\)/)
+assert.match(home, /\.hero-intro\{animation:none!important\}/)
+assert.match(home, /\.cover-actions a,\.cover-credit\{backdrop-filter:none\}/)
+assert.doesNotMatch(home, /Math\.min\(340, innerHeight \* 0\.42\)/)

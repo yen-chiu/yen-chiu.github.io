@@ -49,6 +49,7 @@ const entries = [
 >
   <main class='home-page'>
     <landing-hero class='landing-track'>
+      <span class='hero-compact-measure' aria-hidden='true'></span>
       <div class='opening-motto' aria-hidden='true' inert>
         <canvas class='opening-ink' aria-hidden='true'></canvas>
         <div class='opening-vignette' aria-hidden='true'></div>
@@ -349,9 +350,13 @@ const entries = [
         }
       }
       const hint = this.querySelector<HTMLElement>('[data-collapse]')!
+      const compactMeasure = this.querySelector<HTMLElement>('.hero-compact-measure')!
+      const touchViewport = matchMedia('(max-width: 700px), (pointer: coarse)')
+      const directScroll = () => touchViewport.matches || motionReduced()
+      const compactHeight = () => compactMeasure.offsetHeight
       const measure = () => {
         const height = this.offsetHeight,
-          compact = Math.min(340, innerHeight * 0.42)
+          compact = compactHeight()
         /* 封面被 margin-top:-90px 拉到页面顶上方，rect.top 一开局就是负数；
            直接拿 -top 当进度会让首屏就先收起十几像素。以文档内起点（不小于 0）为基准，
            保证 scrollY=0 时进度正好是 0，封面完整铺满。 */
@@ -361,21 +366,23 @@ const entries = [
           0,
           Math.min(1, (window.scrollY - start) / Math.max(1, height - compact))
         )
-        cover.style.height = `${height - (height - compact) * target}px`
+        const nextHeight = `${Math.round(height - (height - compact) * target)}px`
+        if (cover.style.height !== nextHeight) cover.style.height = nextHeight
         return target
       }
       let target = measure(),
         spring = { position: target, velocity: 0 },
         lastTime = 0
       const paint = () => {
-        const value = spring.position,
-          p = Math.max(0, Math.min(1, value))
+        const p = Math.max(0, Math.min(1, spring.position)),
+          value = p
         let visible = false
         for (const layer of layers) {
           const element = layer.element
           if (!element) continue
-          const opacity = 1 - fadeProgress(p, layer.start, layer.end)
-          const rebound = Math.max(-0.025, Math.min(0.035, -spring.velocity * 0.012))
+          const end = touchViewport.matches && element.classList.contains('cover-actions') ? 0.78 : layer.end
+          const opacity = 1 - fadeProgress(p, layer.start, end)
+          const rebound = directScroll() ? 0 : Math.max(-0.025, Math.min(0.035, -spring.velocity * 0.012))
           element.style.opacity = String(opacity)
           element.style.transform = motionReduced()
             ? ''
@@ -395,9 +402,10 @@ const entries = [
           art.style.visibility = opacity < 0.001 ? 'hidden' : 'visible'
           art.style.transform = motionReduced() ? '' : `translateY(${-p * 18}px)`
         }
-        const caption = fadeProgress(p, 0.35, 0.8)
+        const caption = touchViewport.matches ? fadeProgress(p, 0.80, 1) : fadeProgress(p, 0.35, 0.8)
         credit.classList.toggle('is-visible', caption > 0.001)
         credit.style.opacity = String(caption)
+        credit.inert = caption < 0.02
         credit.style.transform = motionReduced() ? '' : `translateY(${(1 - caption) * 6}px)`
         const hintOpacity = 1 - fadeProgress(p, 0, 0.35)
         hint.style.opacity = String(hintOpacity)
@@ -409,7 +417,7 @@ const entries = [
         target = measure()
         const dt = lastTime ? (time - lastTime) / 1000 : 1 / 60
         lastTime = time
-        spring = motionReduced()
+        spring = directScroll()
           ? { position: target, velocity: 0 }
           : springStep(spring, target, dt)
         const settled =
@@ -425,11 +433,13 @@ const entries = [
         if (!this.frame) this.frame = requestAnimationFrame(tick)
       }
       const resize = () => {
-        this.style.setProperty('--viewport-width', `${document.documentElement.clientWidth}px`)
+        const width = `${document.documentElement.clientWidth}px`
+        if (this.style.getPropertyValue('--viewport-width') !== width) this.style.setProperty('--viewport-width', width)
         schedule()
       }
       this.viewportObserver = new ResizeObserver(resize)
-      this.viewportObserver.observe(document.documentElement)
+      this.viewportObserver.observe(this)
+      touchViewport.addEventListener('change', () => { spring.velocity = 0; schedule() }, { signal })
       window.addEventListener('scroll', schedule, { passive: true, signal })
       window.addEventListener('resize', resize, { signal })
       window.addEventListener('wendell:appearance', () => {
@@ -465,7 +475,7 @@ const entries = [
       this.querySelector('[data-collapse]')?.addEventListener(
         'click',
         () => {
-          const compact = Math.min(340, innerHeight * 0.42)
+          const compact = compactHeight()
           window.scrollTo({
             top: Math.max(0, window.scrollY + this.getBoundingClientRect().top) + this.offsetHeight - compact,
             behavior: motionReduced() ? 'instant' : 'smooth'
@@ -492,6 +502,7 @@ const entries = [
       this.viewportObserver?.disconnect()
       this.controller?.abort()
       cancelAnimationFrame(this.frame)
+      this.frame = 0
     }
   }
   if (!customElements.get('landing-hero')) customElements.define('landing-hero', LandingHero)
@@ -518,6 +529,15 @@ const entries = [
     position: relative;
     width: var(--viewport-width, 100%);
     margin-left: calc(50% - var(--viewport-width, 100%) / 2);
+  }
+  /* Small viewport units keep the collapse endpoint stable as mobile browser chrome moves. */
+  .hero-compact-measure {
+    position: absolute;
+    width: 0;
+    height: clamp(230px, 42vh, 340px);
+    height: clamp(230px, 42svh, 340px);
+    visibility: hidden;
+    pointer-events: none;
   }
   .home-cover {
     position: sticky;
@@ -805,7 +825,6 @@ const entries = [
     color: #ffffffe0;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.25s;
   }
   .cover-credit-icon, .cover-credit-arrow {
     flex-shrink: 0;
@@ -1208,7 +1227,11 @@ const entries = [
     .hero-composition .hero-intro{align-items:center;text-align:center;position:relative;z-index:1}
     .hero-composition .cover-actions{justify-content:center;gap:.4rem}
     .cover-actions a{padding:.48rem .85rem}
-    .hero-art{position:absolute;inset:auto -1rem 0 auto;width:min(58%,220px);opacity:.19!important;z-index:0}
+    .hero-art{position:absolute;inset:auto -1rem 0 auto;width:min(58%,220px);z-index:0}
+    .hero-art svg{opacity:.19}
+    .cover-actions a,.cover-credit{backdrop-filter:none}
+    .hero-intro{animation:none!important}
+    .cover-credit{min-height:38px}
     .hero-art span{display:none}
     .hero-art svg{max-height:none}
     .scroll-hint{bottom:.6rem}

@@ -23,16 +23,24 @@ if(process.argv.includes('--fixture')){
  const base='http://127.0.0.1:4321'
  const albumId=createHash('sha256').update('山野').digest('hex').slice(0,20)
  for(let i=0;i<60;i++){try{if((await fetch(base+'/gallery/')).ok)break}catch{}if(i===59)throw Error('Preview unavailable');await new Promise(r=>setTimeout(r,500))}
+ // Encode all fixture images before routing: no async image work can outlive a navigation.
+ const fixtureImages=new Map()
+ for(const row of rows){
+  for(const size of [480,960,1920,3840]){
+   fixtureImages.set(row.variants[size],await sharp({create:{width:row.width,height:row.height,channels:3,background:'#778899'}}).resize({width:size,height:size,fit:'inside',withoutEnlargement:true}).webp().toBuffer())
+  }
+ }
  const browser=await chromium.launch({headless:true})
  try{
  for(const mobile of [false,true]){
  const context=await browser.newContext({viewport:mobile?{width:390,height:844}:{width:1440,height:900},isMobile:mobile,hasTouch:mobile,serviceWorkers:'block'})
- await context.route('https://gallery-cdn.yenchiu.com/**',async route=>{
-  const row=rows.find(p=>route.request().url().includes(p.id))
-  const size=Number(route.request().url().match(/\/(\d+)\.webp$/)?.[1])
-  if(!row||!size)return route.abort()
-  const body=await sharp({create:{width:row.width,height:row.height,channels:3,background:'#778899'}}).resize({width:size,height:size,fit:'inside',withoutEnlargement:true}).webp().toBuffer()
-  await route.fulfill({status:200,contentType:'image/webp',body})
+ // One handler per context; switch fixture behavior rather than replacing live routes.
+ let failImages=false
+ await context.route('https://gallery-cdn.yenchiu.com/**',route=>{
+  const body=fixtureImages.get(route.request().url())
+  return failImages||!body
+   ? route.abort()
+   : route.fulfill({status:200,contentType:'image/webp',body})
  })
  const page=await context.newPage()
  await page.emulateMedia({reducedMotion:'reduce'})
@@ -50,6 +58,46 @@ if(process.argv.includes('--fixture')){
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true)
  assert.equal(await page.evaluate(()=>{const r=document.querySelector('.primary-reading').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}),true)
  assert.equal(await page.evaluate(()=>document.querySelector('.home-photography').getBoundingClientRect().top>innerHeight),true)
+ // Exercise normal motion, not just the reduced-motion smoke path.
+ if(mobile){
+  await page.emulateMedia({reducedMotion:'no-preference'})
+  await page.waitForFunction(()=>customElements.get('landing-hero')&&document.querySelector('.home-cover').style.height)
+  const sample=async fraction=>page.evaluate(async fraction=>{
+   const track=document.querySelector('landing-hero')
+   const cover=track.querySelector('.home-cover')
+   const ruler=track.querySelector('.hero-compact-measure')
+   const name=track.querySelector('h1')
+   const actions=track.querySelector('.cover-actions')
+   const credit=track.querySelector('.cover-credit')
+   const end=Math.max(0,scrollY+track.getBoundingClientRect().top)+track.offsetHeight-ruler.offsetHeight
+   window.scrollTo({top:Math.round(end*fraction),behavior:'instant'})
+   const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve))
+   await frame();await frame();await frame()
+   const read=()=>({height:cover.offsetHeight,opacity:Number(name.style.opacity),transform:name.style.transform,visibility:name.style.visibility,actions:Number(actions.style.opacity),credit:Number(credit.style.opacity)})
+   const first=read()
+   for(let i=0;i<8;i++)await frame()
+   return {first,last:read()}
+  },fraction)
+  let previous={height:Infinity,opacity:1}
+  for(const fraction of [0,.2,.45,.7,.85,1]){
+   const {first,last}=await sample(fraction)
+   assert.deepEqual(first,last,'Mobile cover must not rebound or flicker after scrolling stops')
+   assert(last.height<=previous.height&&last.opacity<=previous.opacity,'Collapse must be monotonic')
+   if(last.credit>.02)assert(last.actions<.02,'Wallpaper credit must not overlap hero actions')
+   previous=last
+  }
+  assert.equal(previous.opacity,0)
+  assert.equal(previous.visibility,'hidden')
+  let expanded=previous
+  for(const fraction of [.85,.5,0]){
+   const {first,last}=await sample(fraction)
+   assert.deepEqual(first,last,'Reverse scroll must settle without rebound')
+   assert(last.height>=expanded.height&&last.opacity>=expanded.opacity)
+   expanded=last
+  }
+  assert.equal(expanded.opacity,1)
+  await page.emulateMedia({reducedMotion:'reduce'})
+ }
  const hint=page.locator('[data-collapse]')
  await hint.click()
  await page.waitForFunction(()=>document.querySelector('landing-hero')?.classList.contains('is-collapsed'))
@@ -58,22 +106,15 @@ if(process.argv.includes('--fixture')){
  assert(requested.some(url=>/\/(480|960)\.webp$/.test(url)))
  assert(requested.every(url=>/\/(480|960)\.webp$/.test(url)),'Homepage must not download full-size gallery assets')
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true)
+ await page.goto('about:blank')
+ failImages=true
  await page.goto(base+'/')
- await context.unroute('https://gallery-cdn.yenchiu.com/**')
- await context.route('https://gallery-cdn.yenchiu.com/**',route=>route.abort())
- await page.reload()
  await page.locator('.photo-feature').scrollIntoViewIfNeeded()
  await page.locator('.photo-feature.is-image-unavailable').waitFor()
  await page.evaluate(()=>window.scrollTo(0,0))
  await page.locator('.primary-reading').waitFor({state:'visible'})
- await context.unroute('https://gallery-cdn.yenchiu.com/**')
- await context.route('https://gallery-cdn.yenchiu.com/**',async route=>{
-  const row=rows.find(p=>route.request().url().includes(p.id))
-  const size=Number(route.request().url().match(/\/(\d+)\.webp$/)?.[1])
-  if(!row||!size)return route.abort()
-  const body=await sharp({create:{width:row.width,height:row.height,channels:3,background:'#778899'}}).resize({width:size,height:size,fit:'inside',withoutEnlargement:true}).webp().toBuffer()
-  await route.fulfill({status:200,contentType:'image/webp',body})
- })
+ await page.goto('about:blank')
+ failImages=false
  console.log(mobile?'Homepage mobile editorial smoke test passed':'Homepage desktop editorial smoke test passed')
  await page.goto(base+'/gallery/')
  const wall=page.locator('.wall figure')
