@@ -9,5 +9,5 @@ test('reads camera model but ignores GPS and serial tags',()=>{
  for(const [i,tag,value] of [[0,272,'D750'],[1,34853,'GPS!'],[2,42033,'SER!']]){
  const p=10+i*12;b.writeUInt16LE(tag,p);b.writeUInt16LE(2,p+2);b.writeUInt32LE(5,p+4);b.writeUInt32LE(64+i*8,p+8);b.write(value,64+i*8)
  }
- assert.deepEqual(safeExif(b),{camera:'D750',date:''})
+ assert.deepEqual(safeExif(b),{camera:'相机: D750',date:''})
 })
