@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import {createRequire} from 'node:module'
 import {readdir,readFile} from 'node:fs/promises'
 import {join,relative} from 'node:path'
+import {createServer,request as httpRequest} from 'node:http'
+import {once} from 'node:events'
 const {chromium}=createRequire(process.env.NETWORK_PLAYWRIGHT_DIR+'/package.json')('playwright')
 const base='http://127.0.0.1:4321'
 for(let i=0;i<60;i++){
@@ -50,24 +52,63 @@ try{
  assert(commentRequests>0,'Explicit comment click must request service')
  assert.equal(await comments.isEnabled(),true)
  await context.close()
- // Real SW: no interception of same-origin resources. A separate context
- // avoids Playwright request routing disabling the normal browser cache.
+ // Real SW: Chromium's offline emulation can leave loopback reachable from
+ // a service worker. Use a test-only loopback origin that forwards to the
+ // unchanged preview server, then drops transport connections on demand.
+ // Do not mock the worker, cache, navigation response or status code.
+ let disconnected=false
+ const dropped=new Set()
+ const proxy=createServer((req,res)=>{
+  if(disconnected){
+   dropped.add(req.url)
+   req.socket.destroy()
+   return
+  }
+  const upstream=httpRequest(new URL(req.url,base),{
+   method:req.method,headers:{...req.headers,host:new URL(base).host}
+  },response=>{
+   res.writeHead(response.statusCode,response.headers)
+   response.pipe(res)
+  })
+  upstream.on('error',()=>res.destroy())
+  req.on('aborted',()=>upstream.destroy())
+  res.on('close',()=>{if(!res.writableEnded)upstream.destroy()})
+  req.pipe(upstream)
+ })
+ proxy.listen(0,'127.0.0.1')
+ await once(proxy,'listening')
+ const offlineBase='http://127.0.0.1:'+proxy.address().port
  const offline=await browser.newContext({serviceWorkers:'allow'})
- const offlinePage=await offline.newPage()
- await offlinePage.goto(base+'/')
- await offlinePage.evaluate(()=>navigator.serviceWorker.ready)
- await offlinePage.waitForFunction(()=>!!navigator.serviceWorker.controller)
- await offlinePage.goto(base+'/blog/')
- await offlinePage.waitForFunction(async()=>!!(await caches.match(location.href)),{},{timeout:20000})
- await offline.setOffline(true)
- const cached=await offlinePage.goto(base+'/blog/',{waitUntil:'domcontentloaded'})
- assert.equal(cached?.status(),200)
- const missing=await offlinePage.goto(base+'/blog/vesper-uncached-offline-test/',{waitUntil:'domcontentloaded'})
- assert.equal(missing?.status(),503)
- assert.match(await offlinePage.locator('body').innerText(),/暂时离线/)
- await offline.setOffline(false)
- await offlinePage.goto(base+'/blog/')
- assert.equal(await offlinePage.locator('html').count(),1)
- await offline.close()
+ try{
+  const offlinePage=await offline.newPage()
+  const missingPath='/blog/vesper-uncached-offline-test/'
+  await offlinePage.goto(offlineBase+'/')
+  await offlinePage.evaluate(()=>navigator.serviceWorker.ready)
+  await offlinePage.waitForFunction(()=>!!navigator.serviceWorker.controller)
+  await offlinePage.goto(offlineBase+'/blog/')
+  await offlinePage.waitForFunction(async()=>!!(await caches.match(location.href)),{},{timeout:20000})
+  // A genuine online 404 must stay a 404, not a fabricated offline page.
+  const online404=await offlinePage.goto(offlineBase+missingPath,{waitUntil:'domcontentloaded'})
+  assert.equal(online404?.status(),404)
+  assert.equal(await offlinePage.evaluate(async()=>!!(await caches.match(location.href))),false)
+  disconnected=true
+  const cached=await offlinePage.goto(offlineBase+'/blog/',{waitUntil:'domcontentloaded'})
+  assert.equal(cached?.status(),200)
+  assert.equal(cached?.fromServiceWorker(),true,'Cached navigation must come from the worker')
+  assert(dropped.has('/blog/'),'Cached page must attempt network first')
+  const missing=await offlinePage.goto(offlineBase+missingPath,{waitUntil:'domcontentloaded'})
+  assert.equal(missing?.status(),503)
+  assert.equal(missing?.fromServiceWorker(),true,'Offline fallback must come from the worker')
+  assert(dropped.has(missingPath),'Uncached navigation must experience transport failure')
+  assert.match(await offlinePage.locator('body').innerText(),/暂时离线/)
+  disconnected=false
+  const restored=await offlinePage.goto(offlineBase+'/blog/',{waitUntil:'domcontentloaded'})
+  assert.equal(restored?.status(),200)
+  assert.equal(await offlinePage.locator('html').count(),1)
+ }finally{
+  await offline.close()
+  proxy.closeAllConnections()
+  await new Promise(resolve=>proxy.close(resolve))
+ }
  console.log('Network UI and offline navigation regression passed')
 }finally{await browser.close()}
