@@ -9,7 +9,7 @@
     hue: 267, theme: 'system', wallpaper: 'banner',
     wallpaperSource: DEFAULT_SOURCE, wallpaperOpacity: 24,
     homeWallpaperSource: 'inherit',
-    cover: true, layout: 'list', title: true, waves: true, motion: 'system', silverInk: false, animatedAvatar: true
+    cover: true, layout: 'list', title: true, waves: true, motion: 'system', network: 'auto', silverInk: false, animatedAvatar: true
   }
   const safeSource = value => {
     if (value === 'uploaded') return value
@@ -41,6 +41,7 @@
       title: typeof v.title === 'boolean' ? v.title : defaults.title,
       waves: typeof v.waves === 'boolean' ? v.waves : defaults.waves,
       motion: ['system', 'always', 'reduced'].includes(v.motion) ? v.motion : defaults.motion,
+      network: ['auto', 'standard', 'saving'].includes(v.network) ? v.network : defaults.network,
       silverInk: typeof v.silverInk === 'boolean' ? v.silverInk : defaults.silverInk,
       animatedAvatar: typeof v.animatedAvatar === 'boolean' ? v.animatedAvatar : defaults.animatedAvatar
     }
@@ -78,6 +79,11 @@
     root.dataset.effectQuality = effectQuality()
     root.dataset.effectsPaused = String(document.hidden)
   }
+  const connection = typeof navigator === 'undefined' ? undefined : navigator.connection
+  const syncNetwork = () => {
+    const constrained = connection?.saveData || ['slow-2g', '2g', '3g'].includes(connection?.effectiveType)
+    document.documentElement.dataset.networkMode = settings.network === 'saving' || (settings.network === 'auto' && constrained) ? 'saving' : 'standard'
+  }
   const apply = () => {
     const root = document.documentElement, h = settings.hue
     let lightness = 46
@@ -108,8 +114,9 @@
     root.dataset.bannerTitle = String(settings.title)
     root.dataset.bannerWaves = String(settings.waves)
     syncEffectQuality()
+    syncNetwork()
     root.dataset.motion = settings.motion
-    root.dataset.animatedAvatar = String(settings.animatedAvatar && settings.motion !== 'reduced' && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+    root.dataset.animatedAvatar = String(root.dataset.networkMode !== 'saving' && settings.animatedAvatar && settings.motion !== 'reduced' && !matchMedia('(prefers-reduced-motion: reduce)').matches)
     root.classList.toggle('motion-always', settings.motion === 'always')
     root.classList.toggle('motion-off', settings.motion === 'reduced')
     window.dispatchEvent(new CustomEvent('wendell:appearance'))
@@ -234,6 +241,7 @@
     }
   }
   matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', apply)
+  connection?.addEventListener?.('change', apply)
   window.addEventListener('resize', syncEffectQuality, { passive: true })
   document.addEventListener('visibilitychange', syncEffectQuality)
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply)

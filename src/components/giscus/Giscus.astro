@@ -10,7 +10,8 @@ const { class: className, term, defer = false } = Astro.props
 ---
 
 <div id='giscus' class={className} data-repo={config.integ.giscus?.repo} data-repo-id={config.integ.giscus?.repoId} data-category={config.integ.giscus?.category} data-category-id={config.integ.giscus?.categoryId} data-term={term} data-defer={defer ? 'true' : undefined}>
-  <p class='giscus-loading'>评论正在预加载...</p>
+  <div class='giscus-loading'><p data-comment-status role='status'>评论由 GitHub Discussions 提供，点击后加载。</p><button type='button' data-load-comments>加载评论</button></div>
+  <a class='giscus-fallback' href='https://github.com/yen-chiu/blog-v2/discussions' target='_blank' rel='noopener noreferrer'>前往讨论区 ↗</a>
 </div>
 
 <script>
@@ -53,6 +54,19 @@ const { class: className, term, defer = false } = Astro.props
     script.setAttribute('crossorigin', giscusConfig.crossorigin)
     script.async = true
 
+    const button = container.querySelector<HTMLButtonElement>('[data-load-comments]')!
+    const status = container.querySelector<HTMLElement>('[data-comment-status]')!
+    button.disabled = true
+    status.textContent = '正在连接评论服务…'
+    const fail = () => {
+      if (!container.isConnected || container.querySelector('iframe.giscus-frame')) return
+      script.remove()
+      delete container.dataset.giscusLoaded
+      button.disabled = false
+      status.textContent = '评论暂时无法加载，请重试或前往讨论区。'
+    }
+    const timeout = window.setTimeout(fail, 12000)
+    script.addEventListener('error', () => { window.clearTimeout(timeout); fail() }, { once: true })
     container.appendChild(script)
   }
 
@@ -69,43 +83,7 @@ const { class: className, term, defer = false } = Astro.props
     })
     frameObserver.observe(container, { childList: true, subtree: true })
 
-    const disclosure = container.closest('details')
-    if (container.dataset.defer === 'true' && disclosure) {
-      if (disclosure.open) loadGiscus(container)
-      disclosure.addEventListener('toggle', () => {
-        if (disclosure.open) loadGiscus(container)
-      })
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return
-        observer.disconnect()
-        loadGiscus(container)
-      },
-      { rootMargin: '1800px 0px' }
-    )
-    observer.observe(container)
-
-    const idleLoad = () => {
-      observer.disconnect()
-      loadGiscus(container)
-    }
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number
-    }
-    if (idleWindow.requestIdleCallback) {
-      idleWindow.requestIdleCallback(idleLoad, { timeout: 4000 })
-    } else {
-      window.setTimeout(idleLoad, 2500)
-    }
-
-    // Short pages can reach the comments before the observer's first callback.
-    if (container.getBoundingClientRect().top < window.innerHeight + 1800) {
-      observer.disconnect()
-      loadGiscus(container)
-    }
+    container.querySelector('[data-load-comments]')?.addEventListener('click', () => loadGiscus(container))
   }
 
   function setupThemeListener() {
@@ -134,13 +112,17 @@ const { class: className, term, defer = false } = Astro.props
 
   .giscus-loading {
     display: grid;
-    min-height: 12rem;
+    min-height: 6rem;
     place-items: center;
+    align-content: center;
+    gap: .65rem;
     margin: 0;
     color: hsl(var(--muted-foreground));
     font-size: 0.8rem;
   }
 
+  .giscus-loading button { border: 1px solid hsl(var(--border)); border-radius: .65rem; padding: .55rem 1rem; min-height: 44px; cursor: pointer; color: hsl(var(--foreground)); }
+  .giscus-fallback { display: inline-block; font-size: .8rem; text-decoration: underline; }
   #giscus.giscus-ready .giscus-loading {
     display: none;
   }

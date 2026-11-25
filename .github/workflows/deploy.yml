@@ -40,6 +40,23 @@ jobs:
       - name: Build
         run: node --check scripts/discover-link-avatars.mjs && node scripts/discover-link-avatars.mjs && node --check scripts/check-friend-links.mjs && node --check scripts/aggregate-friend-feeds.mjs && node --check scripts/build-links-history.mjs && node --check .github/scripts/process-friend-request.cjs && npm test && npm run build && node scripts/pages-paths.mjs && node scripts/category-taxonomy.test.mjs --built && node scripts/seo-audit.test.mjs
 
+      - name: Audit generated network dependencies
+        run: node scripts/network-build-audit.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: network-build-audit
+          path: network-build-audit.json
+          retention-days: 14
+      - name: Generate exact cache purge manifest
+        if: github.event_name != 'pull_request' && vars.CF_CACHE_PURGE_ENABLED == 'true'
+        run: node scripts/cache-purge-manifest.mjs
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request' && vars.CF_CACHE_PURGE_ENABLED == 'true'
+        with:
+          name: cache-purge-urls
+          path: cache-purge-urls.json
+          retention-days: 1
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
@@ -61,3 +78,26 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+
+  purge-cache:
+    needs: deploy
+    if: github.event_name != 'pull_request' && vars.CF_CACHE_PURGE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: cache-purge-urls
+      - name: Purge deployed public URLs
+        env:
+          CF_CACHE_PURGE_TOKEN: ${{ secrets.CF_CACHE_PURGE_TOKEN }}
+          CF_ZONE_ID: ${{ vars.CF_ZONE_ID }}
+        run: node scripts/cache-purge.mjs

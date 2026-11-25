@@ -45,3 +45,8 @@ bunfig.toml
 .gallery-studio/
 .env.*
 !.env.example
+
+# Local network measurement and cache purge manifests
+/network-probe.json
+/network-build-audit.json
+/cache-purge-urls.json

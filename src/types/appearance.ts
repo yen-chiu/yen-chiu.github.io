@@ -12,6 +12,7 @@ export interface AppearanceSettings {
   title: boolean
   waves: boolean
   motion: 'system' | 'always' | 'reduced'
+  network: 'auto' | 'standard' | 'saving'
   silverInk: boolean
   animatedAvatar: boolean
 }

@@ -1,0 +1,26 @@
+name: Network probe (non-mainland baseline)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 2,12 * * *'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Public HTTPS checks from this runner
+        run: node scripts/network-probe.mjs --label=github-hosted-not-mainland --samples=3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: network-probe
+          path: network-probe.json
+          retention-days: 14
