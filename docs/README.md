@@ -5,7 +5,7 @@
 | 子项目 | 说明与架构 | 维护位置 |
 | --- | --- | --- |
 | 光影档案 / Gallery | [摄影集与 R2](gallery.md) | main |
-| Gallery Studio | [本地摄影发布工作台](gallery-studio/README.md) | main；2.0 尚在独立分支 |
+| Gallery Studio | [本地摄影发布工作台](gallery-studio/README.md) | main（与 2.0 代码同步合并） |
 | Night Radio / 夜间留声 | [音乐目录、播放与授权](music/README.md) | main |
 | Nocturne Editorial | [首页、壁纸与动效](home/README.md) | main |
 | 友情链接 | [申请、健康检查、RSS](links-maintenance.md) | main |

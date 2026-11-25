@@ -7,6 +7,7 @@ import {execFileSync} from 'node:child_process'
 const [manifest,...flags]=process.argv.slice(2)
 if(!manifest) throw Error('Usage: node scripts/gallery-studio.mjs manifest.json [--publish] [--backup-originals]')
 const publish=flags.includes('--publish'), backup=flags.includes('--backup-originals')
+const report=(stage,size)=>{if(typeof process.send==='function')process.send({stage,size})}
 const config=JSON.parse(await readFile(manifest,'utf8'))
 if(!Array.isArray(config)) throw Error('Manifest must be an array')
 const base=(process.env.R2_PUBLIC_URL||'https://gallery-cdn.yenchiu.com').replace(/\/$/,'')
@@ -42,17 +43,19 @@ for(const item of config){
  for(const size of [480,960,1920,3840]){
   const name=size+'.webp', file=join(dir,name)
   const info=await sharp(bytes).rotate().resize({width:size,height:size,fit:'inside',withoutEnlargement:true}).webp({quality:85}).toFile(file)
+  report('generated',size)
   if(size===3840)dimensions=info
   variantWidths[size]=info.width
   const key='photos/'+id+'/v1/'+name
-  if(publish)upload(file,key)
+  if(publish){upload(file,key);report('uploaded',size)}
   variants[size]=base+'/'+key
  }
- if(publish&&backup)upload(item.file,'originals/'+id+'/'+id+'.'+(metadata.format==='jpeg'?'jpg':metadata.format),true)
+ if(publish&&backup){upload(item.file,'originals/'+id+'/'+id+'.'+(metadata.format==='jpeg'?'jpg':metadata.format),true);report('backup')}
  const record={id,title:item.title,alt:item.alt,album:item.album,date:item.date,width:dimensions.width,height:dimensions.height,thumbnail:variants[480],preview:variants[1920],variants,variantWidths,camera:item.camera||'',caption:item.caption||'',featured:item.featured===true}
  const i=existing.findIndex(p=>p.id===id);if(i<0)existing.push(record);else existing[i]=record
 }
 await mkdir(output,{recursive:true})
 const target=publish?catalogue:join(output,'preview-catalogue.json')
 await writeFile(target+'.tmp',JSON.stringify(existing,null,2)+'\n');await rename(target+'.tmp',target)
+if(publish)report('catalogue')
 console.log(publish?'Published catalogue; review and commit it.':'Local derivatives generated; no uploads or catalogue changes.')

@@ -8,9 +8,9 @@ on:
       - 'src/data/gallery-photos.json'
       - 'src/data/photos.ts'
       - 'src/lib/gallery.ts'
+      - 'src/lib/gallery-camera.mjs'
       - '.github/workflows/gallery-check.yml'
-  push:
-    branches: ['feat/photo-gallery']
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -30,7 +30,7 @@ jobs:
           node --check scripts/gallery-studio.mjs
           node --check scripts/gallery-studio-server.mjs
           node --check scripts/gallery-studio-config.mjs
-          node --test scripts/gallery-exif.test.mjs scripts/gallery-pipeline.test.mjs
+          node --test scripts/gallery-exif.test.mjs scripts/gallery-camera.test.mjs scripts/gallery-pipeline.test.mjs
       - run: npm test
       - run: npm run build
       - run: test -f dist/gallery/index.html
