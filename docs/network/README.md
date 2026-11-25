@@ -86,7 +86,11 @@ Windows 用 curl.exe 和 NUL 替代 /dev/null。观察 CF-Cache-Status、Age、C
 
 ## P2 · 性能监测与香港 A/B
 
-Actions 每天 UTC 02:17 / 12:17（北京时间 10:17 / 20:17）及手动触发探针，保留 14 天报告。此监控不收集用户 IP、Cookie、阅读行为，不向外部分析平台上报访问者。GitHub runner 网络并非中国三网，也不能据此判定大陆改善。
+Actions 暂时仅手动触发探针，保留 14 天报告。原定时计划为每日 UTC 02:17 / 12:17（北京时间 10:17 / 20:17）。2026-11-25 首次探针的 18 次请求中 15 次被 Bot Fight Mode 质询（已由安全事件 Ray ID 核对），因此暂时停用 cron；待 API 防滥用措施验收、站主评估调整 BFM、公开探针与友链/RSS 验证成功后，经 PR 恢复定时计划。此监控不收集用户 IP、Cookie、阅读行为，不向外部分析平台上报访问者。GitHub runner 网络并非中国三网，也不能据此判定大陆改善。
+
+诊断报告保留原始字段并增加 category、mitigated、curlExit（传输失败时）、分类计数及成功率。仅以最终响应的 cf-mitigated: challenge 确认 Cloudflare 质询；普通 401/403 分类为 access_denied，不能单凭状态码判断具体安全产品。DNS、TCP 连接、TLS、超时、重定向、其他传输错误、HTTP 4xx/5xx 及探针自身错误分别记录。所有非成功样本仍导致非零退出，且不进入延迟分位数；全部失败时延迟为 null。Actions Summary 显示各路径成功数及失败 Ray ID；JSON artifact 仍在失败时上传。不要使用伪装浏览器 UA 或跳过安全机制换取绿色状态。
+
+本地离线回归：`node --test scripts/network-probe.test.mjs`，使用模拟 curl 响应，不访问生产或消耗第三方配额。实际公开探针仍需手动运行验证。
 
 香港方案先选择实际可用的 HTTPS 测试域名，在同一内容版本和近似缓存策略下运行：
 ```bash
