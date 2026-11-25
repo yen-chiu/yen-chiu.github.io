@@ -74,6 +74,15 @@ printf '%s\\n' "$4" >> "$GALLERY_TEST_DIR/uploads.log"
  const cameraText='相机: Nikon D750 · 镜头: 70-200mm f/2.8 · ISO1000 · 147mm · 1/250s · F5.6'
  await page.locator('#form [name=camera]').fill(cameraText)
  assert.deepEqual(await page.locator('#cameraFields dd').allTextContents(),['Nikon D750','70-200mm f/2.8','147mm','f/5.6','1/250s','ISO 1000'])
+ assert.match(await page.locator('#cameraHelp').textContent(),/选填.*EXIF/)
+ assert.equal(await page.locator('#cameraGuide').getAttribute('open'),null)
+ await page.locator('#cameraGuide summary').click()
+ assert.equal(await page.locator('#cameraGuide code:visible').count(),3)
+ await page.locator('[data-copy-camera]').first().click()
+ await page.waitForFunction(()=>/已复制示例|示例已选中/.test(document.querySelector('#cameraCopyStatus').textContent))
+ assert.equal(await page.locator('#form [name=camera]').inputValue(),cameraText,'Examples must never overwrite actual metadata')
+ await page.locator('#cameraGuide summary').click()
+
  await page.locator('#queue').selectOption('1')
  await page.waitForFunction(()=>!document.querySelector('#compress').disabled)
  await page.locator('#form [name=title]').fill('第二张')
