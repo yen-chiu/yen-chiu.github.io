@@ -133,7 +133,7 @@ printf '%s\\n' "$4" >> "$GALLERY_TEST_DIR/uploads.log"
  await page.locator('#publish').click()
  await page.waitForFunction(()=>document.querySelector('#queueStatus').textContent.includes('0 /')&&document.querySelector('#status').textContent.includes('Publishing failed'))
  assert.equal(await readFile(catalogue,'utf8'),'[]\n')
- assert.match(await page.locator('#progressText').textContent(),/发布未完成/)
+ await page.waitForFunction(()=>document.querySelector('#progressText').textContent.includes('发布未完成'))
  assert(await page.locator('#progressBar').evaluate(el=>el.value<el.max))
  await rm(join(dir,'fail-upload'))
  await page.locator('#publish').click()
