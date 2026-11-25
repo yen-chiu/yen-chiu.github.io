@@ -111,7 +111,7 @@ async function save(link) {
       const hash = createHash('sha256').update(output).digest('hex').slice(0, 16)
       const file = root + '/' + hash + '.' + ext
       await writeFile(file, output)
-      avatars[link.link] = '/' + file
+      avatars[link.link] = '/' + file.replace(/^public\//, '')
       return
     } catch { /* Try next candidate. */ }
   }

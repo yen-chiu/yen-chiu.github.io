@@ -1,0 +1,90 @@
+{
+  "base": "http://127.0.0.1:4321",
+  "captures": [
+    {
+      "file": "home-desktop.webp",
+      "route": "/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "bytes": 37868,
+      "layout": {
+        "width": 1440,
+        "scrollWidth": 1440
+      },
+      "brokenVisibleImages": []
+    },
+    {
+      "file": "search-desktop.webp",
+      "route": "/ · search dialog · query=Vesper",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "bytes": 55024,
+      "layout": {
+        "width": 1440,
+        "scrollWidth": 1440
+      },
+      "brokenVisibleImages": []
+    },
+    {
+      "file": "archives-desktop.webp",
+      "route": "/archives/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "bytes": 42570,
+      "layout": {
+        "width": 1440,
+        "scrollWidth": 1440
+      },
+      "brokenVisibleImages": []
+    },
+    {
+      "file": "home-mobile.webp",
+      "route": "/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "bytes": 19636,
+      "layout": {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      "brokenVisibleImages": []
+    },
+    {
+      "file": "search-mobile.webp",
+      "route": "/ · search dialog · query=Vesper",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "bytes": 8812,
+      "layout": {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      "brokenVisibleImages": []
+    },
+    {
+      "file": "archives-mobile.webp",
+      "route": "/archives/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "bytes": 15566,
+      "layout": {
+        "width": 390,
+        "scrollWidth": 390
+      },
+      "brokenVisibleImages": []
+    }
+  ],
+  "pageErrors": []
+}

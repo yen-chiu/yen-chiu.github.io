@@ -27,6 +27,29 @@
 | [博客](https://yenchiu.com/blog) | [文档库](https://yenchiu.com/folio/) | [《余白》](https://yenchiu.com/journal/) |
 | 随笔、记录与探索 | 资料整理与项目笔记 | 为文字留一处归档之地 |
 
+## 网站实景
+
+以下为本地生产构建的真实截图，沿用现有 Vesper 视觉与 Wendell 头像。
+
+[![Vesper 首页](./docs/assets/showcase/home-desktop.webp)](https://yenchiu.com/)
+
+| **搜索 · 结果与正文预览** | **时光机 · 日历与写作记录** |
+| :--- | :--- |
+| [![全文搜索](./docs/assets/showcase/search-desktop.webp)](./docs/assets/showcase/search-desktop.webp) | [![文章归档](./docs/assets/showcase/archives-desktop.webp)](https://yenchiu.com/archives/) |
+
+<details>
+<summary><strong>小屏幕上的暮星</strong></summary>
+
+<p align="center">
+  <img src="./docs/assets/showcase/home-mobile.webp" alt="移动端 Vesper 首页" width="30%">
+  <img src="./docs/assets/showcase/search-mobile.webp" alt="移动端搜索结果" width="30%">
+  <img src="./docs/assets/showcase/archives-mobile.webp" alt="移动端写作记录" width="30%">
+</p>
+
+</details>
+
+截图信息与资源处理记录见[品牌资源审计](./docs/brand-assets-audit.md)。Iris 原展示截图保留在[上游存档](./migration/upstream-README.md)中。
+
 ## 项目概览
 
 | | |
@@ -72,6 +95,8 @@ npm run build
 | `src/pages/journal.astro` | 期刊《余白》封面 |
 | `src/pages/persona.astro` | 念真页面 |
 | `migration/content-manifest.json` | 文章迁移记录与旧地址 |
+| `docs/assets/showcase/` | 当前 Vesper 展示截图（WebP） |
+| `migration/upstream-assets/` | 上游图片与演示素材存档 |
 | `migration/upstream-README.md` | Iris 上游 README 存档 |
 | `migration/upstream-examples` | 不参与内容生成的上游示例 |
 | `scripts/` | 迁移与校验脚本 |

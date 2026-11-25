@@ -1,12 +1,12 @@
 # Astro Theme Iris
 
-English | [简体中文](./README-zh-CN.md)
+English | [简体中文](https://github.com/LemonAdorable/astro-theme-iris/blob/main/README-zh-CN.md)
 
 > [!CAUTION]
 > This project is undergoing frequent changes, and automatic merging may overwrite your local customizations. When pulling updates, please do not use `git pull` directly. Instead, use `git fetch` + `git merge --no-commit` to manually review and control the merge results.
 
 <div align="center">
-  <img src="./logo.png" alt="Astro Theme Iris Logo" width="200">
+  <img src="./upstream-assets/logo.png" alt="Astro Theme Iris Logo" width="200">
 </div>
 
 ---
@@ -19,17 +19,17 @@ English | [简体中文](./README-zh-CN.md)
 > Known issues: Header & customize options is still under development (template exposed still).
 
 <div align="center">
-  <img src="./index.png" alt="Homepage Showcase" width="100%">
+  <img src="./upstream-assets/index.png" alt="Homepage Showcase" width="100%">
   <p><em>Full-screen homepage with animation effects</em></p>
 </div>
 
 <div align="center">
-  <img src="./search.png" alt="Search Feature Showcase" width="100%">
+  <img src="./upstream-assets/search.png" alt="Search Feature Showcase" width="100%">
   <p><em>Powerful search preview system - supports category filtering, real-time preview, and scroll markers</em></p>
 </div>
 
 <div align="center">
-  <img src="./function.png" alt="Feature Showcase" width="100%">
+  <img src="./upstream-assets/function.png" alt="Feature Showcase" width="100%">
   <p><em>Wikilink preview, Graph View, and knowledge graph</em></p>
 </div>
 
@@ -185,7 +185,7 @@ Main configuration file is located at `src/site.config.ts`, where you can config
 
 ### 📄 License
 
-This project is open source under the [Apache 2.0 License](https://github.com/LemonAdorable/astro-theme-iris/main/LICENSE).
+This project is open source under the [Apache 2.0 License](https://github.com/LemonAdorable/astro-theme-iris/blob/main/LICENSE).
 
 ### ⭐ Star History
 
