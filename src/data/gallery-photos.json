@@ -24,5 +24,31 @@
     "camera": "147mm  F5.6  1/250s  ISO1000",
     "caption": "上传的第一张照片。草地上的咖啡车，透明帐篷，几把折叠椅，还有几只各自悠闲的狗。寻常日子里，人与动物共享着一小片闲暇。",
     "featured": true
+  },
+  {
+    "id": "2b833398c03301dd5b121604",
+    "title": "风的形状",
+    "alt": "黑白画面中，一只德国牧羊犬向右奔跑，四肢与草地呈现追焦运动模糊。照片采用圆角装裱，底部标注摄影参数。",
+    "album": "动物摄影",
+    "date": "2026-11-26",
+    "width": 2048,
+    "height": 1152,
+    "thumbnail": "https://gallery-cdn.yenchiu.com/photos/2b833398c03301dd5b121604/v1/480.webp",
+    "preview": "https://gallery-cdn.yenchiu.com/photos/2b833398c03301dd5b121604/v1/1920.webp",
+    "variants": {
+      "480": "https://gallery-cdn.yenchiu.com/photos/2b833398c03301dd5b121604/v1/480.webp",
+      "960": "https://gallery-cdn.yenchiu.com/photos/2b833398c03301dd5b121604/v1/960.webp",
+      "1920": "https://gallery-cdn.yenchiu.com/photos/2b833398c03301dd5b121604/v1/1920.webp",
+      "3840": "https://gallery-cdn.yenchiu.com/photos/2b833398c03301dd5b121604/v1/3840.webp"
+    },
+    "variantWidths": {
+      "480": 480,
+      "960": 960,
+      "1920": 1920,
+      "3840": 2048
+    },
+    "camera": "165mm  F6  1/60s  ISO3200",
+    "caption": "以 1/60 秒快门追随奔跑的德牧。黑白影调保留了原有的运动模糊，草地在身后化作流动的灰色纹理。 日期为导出／归档日，非已核实的拍摄日。",
+    "featured": false
   }
 ]
